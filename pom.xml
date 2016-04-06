@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.openmrs.module</groupId>
+	<artifactId>patientimages</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Patient Images</name>
+	<description>Adds UI components and backend services to upload and view patient images within the OpenMRS Reference Application.</description>
+	
+	<developers>
+		<developer>
+			<name>Mekom Solutions</name>
+		</developer>
+	</developers>
+	
+	<organization>
+		<name>Mekom Solutions</name>
+		<url>http://www.mekomsolutions.com</url>
+	</organization>
+
+	<scm>
+		<connection>scm:git:git@github.com:openmrs/openmrs-module-patientimages.git</connection>
+		<developerConnection>scm:git:git@github.com:openmrs/openmrs-module-patientimages.git</developerConnection>
+		<url>https://github.com/openmrs/openmrs-module-patientimages</url>
+	</scm>
+	
+	<properties>
+		<openMRSVersion>1.11.4</openMRSVersion>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<distro.groupId>org.openmrs.distro</distro.groupId>
+		<distro.artifactId>referenceapplication</distro.artifactId>
+		<distro.version>2.3</distro.version>
+	</properties>
+
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- Importing versions from refapp distro -->
+			<dependency>
+				<groupId>${distro.groupId}</groupId>
+				<artifactId>${distro.artifactId}</artifactId>
+				<version>${distro.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- we explicitly use version 3.2.10 since 3.2.11 has a bug which was 
+				giving us issues, can probably remove this after next sass release -->
+			<dependency>
+				<groupId>rubygems</groupId>
+				<artifactId>sass</artifactId>
+				<version>3.2.10</version>
+				<type>gem</type>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.openmrs.api</groupId>
+			<artifactId>openmrs-api</artifactId>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.web</groupId>
+			<artifactId>openmrs-web</artifactId>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.api</groupId>
+			<artifactId>openmrs-api</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.web</groupId>
+			<artifactId>openmrs-web</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.test</groupId>
+			<artifactId>openmrs-test</artifactId>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>appframework-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>uiframework-api</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<target>1.6</target>
+						<source>1.6</source>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.openmrs.maven.plugins</groupId>
+					<artifactId>maven-openmrs-plugin</artifactId>
+					<version>1.0.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>openmrs-repo</id>
+			<name>OpenMRS Nexus Repository</name>
+			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>openmrs-repo</id>
+			<name>OpenMRS Nexus Repository</name>
+			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<modules>
+		<module>api</module>
+		<module>omod</module>
+	</modules>
+</project>

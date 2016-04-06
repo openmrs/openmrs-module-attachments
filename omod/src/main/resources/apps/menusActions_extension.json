@@ -1,0 +1,11 @@
+[
+    {
+        "id": "${project.parent.artifactId}.downloadPatientHistory",
+        "extensionPointId": "patientDashboard.visitActions",
+        "type": "link",
+        "label": "patientimages.visitactions.label",
+        "url": "patientimages/patientImages.page?patient={{patient.uuid}}&visit={{visit.uuid}}",
+        "icon": "icon-picture",
+        "order": 200
+    }
+]
