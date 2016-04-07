@@ -32,3 +32,6 @@ omod/src/main/compass/sass-external/*
 # Rubygems build directories #
 omod/.rubygems
 omod/.rubygems-provided
+
+# Bower resources #
+bower_components
