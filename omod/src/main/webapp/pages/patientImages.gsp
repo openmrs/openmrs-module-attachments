@@ -23,6 +23,7 @@ ui.includeJavascript("patientimages", "patientImagesApp.js")
   window.OpenMRS = window.OpenMRS || {};
 
   var config = ${ jsonConfig }; // Getting the config from the Spring Java controller.
+  config.uploadUrl = '/' + OPENMRS_CONTEXT_PATH + config.uploadUrl + '.form'; // Building the service URL.
     
   Dropzone.options.patientImagesDropzone = false; // We turn off auto-discover for our element because our directive adds it programmatically.
 

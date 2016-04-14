@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * The main controller.
  */
 @Controller
-public class  PatientImagesManageController {
+public class PatientImagesManageController {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	

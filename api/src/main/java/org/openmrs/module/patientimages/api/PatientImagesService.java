@@ -24,9 +24,4 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 public interface PatientImagesService extends OpenmrsService {
-     
-	/*
-	 * Add service methods here
-	 * 
-	 */
 }

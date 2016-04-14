@@ -9,9 +9,9 @@
  */
 package org.openmrs.module.patientimages.api.impl;
 
-import org.openmrs.api.impl.BaseOpenmrsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.patientimages.api.PatientImagesService;
 import org.openmrs.module.patientimages.api.db.PatientImagesDAO;
 
@@ -37,4 +37,5 @@ public class PatientImagesServiceImpl extends BaseOpenmrsService implements Pati
     public PatientImagesDAO getDao() {
 	    return dao;
     }
+    
 }

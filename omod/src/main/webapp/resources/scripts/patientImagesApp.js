@@ -16,15 +16,17 @@ angular.module('dropzoneModule', []).directive('dropzoneDirective', function () 
 
 angular.module('patientImagesApp', ['dropzoneModule']);
 
-angular.module('patientImagesApp').controller('FileUploadCtrl', function ($scope) {
+angular.module('patientImagesApp').controller('FileUploadCtrl', function ($scope, $window) {
   
+    console.log('The upload URL is: ' + $window.config.uploadUrl);
+
   $scope.dropzoneConfig = {
     
     'options': { // passed into the Dropzone constructor
-      'url': '/upload',
+      'url': $window.config.uploadUrl,
       'paramName': 'patientimagefile',
       'maxFiles': 1,
-      'autoProcessQueue': false
+      'autoProcessQueue': true
     },
 
     'eventHandlers': {
