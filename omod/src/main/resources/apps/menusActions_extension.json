@@ -4,7 +4,7 @@
         "extensionPointId": "patientDashboard.visitActions",
         "type": "link",
         "label": "patientimages.visitactions.label",
-        "url": "patientimages/patientImages.page?patient={{patient.uuid}}&visit={{visit.uuid}}",
+        "url": "patientimages/patientImages.page?patient={{patient.uuid}}&patientId={{patient.patientId}}&visit={{visit.uuid}}",
         "icon": "icon-picture",
         "order": 200
     }

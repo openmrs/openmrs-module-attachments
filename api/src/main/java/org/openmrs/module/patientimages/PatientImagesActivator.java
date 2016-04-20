@@ -10,8 +10,16 @@
 package org.openmrs.module.patientimages;
 
 
-import org.apache.commons.logging.Log; 
+import java.util.Locale;
+
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.ConceptClass;
+import org.openmrs.ConceptComplex;
+import org.openmrs.ConceptDatatype;
+import org.openmrs.ConceptName;
+import org.openmrs.api.ConceptService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleActivator;
 
 /**
@@ -46,6 +54,28 @@ public class PatientImagesActivator implements ModuleActivator {
 	 * @see ModuleActivator${symbol_pound}started()
 	 */
 	public void started() {
+		
+		{
+			final String name = "PATIENT IMAGE FOR UPLOAD";
+			final String uuid = "7cac8397-53cd-4f00-a6fe-028e8d743f8e";	// this is also the default GP value set in config.xml
+			
+			ConceptService conceptService = Context.getConceptService();
+			
+			if(null == conceptService.getConceptByUuid(uuid)) {
+				
+				ConceptComplex conceptComplex = new ConceptComplex();
+				conceptComplex.setUuid(uuid);
+				conceptComplex.setHandler("ImageHandler");
+				ConceptName conceptName = new ConceptName(name, Locale.ENGLISH);
+				conceptComplex.setFullySpecifiedName(conceptName);
+				conceptComplex.setPreferredName(conceptName);
+				conceptComplex.setConceptClass( conceptService.getConceptClassByUuid(ConceptClass.QUESTION_UUID) );
+				conceptComplex.setDatatype( conceptService.getConceptDatatypeByUuid(ConceptDatatype.COMPLEX_UUID) );
+				
+				conceptService.saveConcept(conceptComplex);
+			}
+		}
+		
 		log.info("Patient Images Module started");
 	}
 	

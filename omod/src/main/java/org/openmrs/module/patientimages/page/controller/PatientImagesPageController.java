@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class PatientImagesPageController {
 
 	public void controller(
-			@RequestParam(value="patient", required=true) Patient patient,
-			@RequestParam(value="visit", required=true) String visitUuid,
+			@RequestParam("patient") Patient patient,
+			@RequestParam("visit") String visitUuid,
 			@SpringBean("visitService") VisitService visitService,
 			UiSessionContext sessionContext,
 			UiUtils ui,
@@ -37,6 +37,8 @@ public class PatientImagesPageController {
 		
 		model.put("jsonConfig", ui.toJson(jsonConfig));
 		
+		// For Core Apps's patient header.
+		model.put("patient", patient);
 	}
 	
     private Object convertToFull(Object object) {
