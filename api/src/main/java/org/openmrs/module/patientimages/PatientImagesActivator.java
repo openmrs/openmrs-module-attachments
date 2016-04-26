@@ -17,8 +17,11 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptComplex;
 import org.openmrs.ConceptDatatype;
+import org.openmrs.ConceptDescription;
 import org.openmrs.ConceptName;
+import org.openmrs.EncounterType;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleActivator;
 
@@ -57,6 +60,7 @@ public class PatientImagesActivator implements ModuleActivator {
 		
 		{
 			final String name = "PATIENT IMAGE FOR UPLOAD";
+			final String desc = "Concept complex used as a question for obs wrapping patient images.";
 			final String uuid = "7cac8397-53cd-4f00-a6fe-028e8d743f8e";	// this is also the default GP value set in config.xml
 			
 			ConceptService conceptService = Context.getConceptService();
@@ -71,8 +75,24 @@ public class PatientImagesActivator implements ModuleActivator {
 				conceptComplex.setPreferredName(conceptName);
 				conceptComplex.setConceptClass( conceptService.getConceptClassByUuid(ConceptClass.QUESTION_UUID) );
 				conceptComplex.setDatatype( conceptService.getConceptDatatypeByUuid(ConceptDatatype.COMPLEX_UUID) );
+				conceptComplex.addDescription(new ConceptDescription(desc, Locale.ENGLISH));
 				
 				conceptService.saveConcept(conceptComplex);
+			}
+		}
+
+		{
+			final String name = "Image Upload Encounter";
+			final String desc = "Encounters used to record (complex) obs wrapping patient images.";
+			final String uuid = "5021b1a1-e7f6-44b4-ba02-da2f2bcf8718";	// this is also the default GP value set in config.xml
+			
+			EncounterService es = Context.getEncounterService();
+			EncounterType encounterType = es.getEncounterTypeByUuid(uuid);
+
+			if(encounterType == null) {
+				encounterType = new EncounterType(name, desc);
+				encounterType.setUuid(uuid);
+				es.saveEncounterType(encounterType);
 			}
 		}
 		

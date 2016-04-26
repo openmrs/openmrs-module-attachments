@@ -17,6 +17,9 @@
 		<require_module version="${uiframeworkVersion}">
 			org.openmrs.module.uiframework
 		</require_module>
+		<require_module version="${emrapiVersion}">
+			org.openmrs.module.emrapi
+    </require_module>
 	</require_modules>
 
 	
@@ -59,6 +62,22 @@
     <defaultValue>7cac8397-53cd-4f00-a6fe-028e8d743f8e</defaultValue>
     <description>
         UUID of the (question) concept complex representing a patient image
+    </description>
+  </globalProperty>
+
+  <globalProperty>
+    <property>patientimages.encounterTypeUuid</property>
+    <defaultValue>5021b1a1-e7f6-44b4-ba02-da2f2bcf8718</defaultValue>
+    <description>
+        UUID of the encounter type used to record (complex) obs wrapping patient images
+    </description>
+  </globalProperty>
+
+  <globalProperty>
+    <property>patientimages.maxImageFileSize</property>
+    <defaultValue>1.0</defaultValue>
+    <description>
+        Maximum file size allowed for a patient image upload (in Megabytes)
     </description>
   </globalProperty>
 

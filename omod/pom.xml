@@ -87,6 +87,12 @@
 		<!-- End OpenMRS core -->
 		
 		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>emrapi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>rubygems</groupId>
 			<artifactId>compass</artifactId>
 			<version>0.11.7</version>

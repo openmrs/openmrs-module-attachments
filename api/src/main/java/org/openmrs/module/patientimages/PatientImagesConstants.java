@@ -15,4 +15,8 @@ public class PatientImagesConstants {
 	
 	public static final String GP_CONCEPT_COMPLEX_UUID = "patientimages.conceptComplexUuid";
 	
+	public static final String GP_ENCOUNTER_TYPE_UUID = "patientimages.encounterTypeUuid";
+	
+	public static final String GP_MAX_IMAGE_FILE_SIZE = "patientimages.maxImageFileSize";
+	
 }

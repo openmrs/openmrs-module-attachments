@@ -29,7 +29,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<distro.groupId>org.openmrs.distro</distro.groupId>
 		<distro.artifactId>referenceapplication</distro.artifactId>
-		<distro.version>2.3</distro.version>
+		<distro.version>2.4-SNAPSHOT</distro.version>
 	</properties>
 
 
@@ -43,6 +43,13 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+
+			<!-- <dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>emrapi-api-1.11</artifactId>
+				<version>1.12</version>
+				<scope>provided</scope>
+			</dependency> -->
 
 			<!-- we explicitly use version 3.2.10 since 3.2.11 has a bug which was 
 				giving us issues, can probably remove this after next sass release -->
@@ -93,6 +100,7 @@
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>uiframework-api</artifactId>
 		</dependency>
+
 	</dependencies>
 
 	<build>

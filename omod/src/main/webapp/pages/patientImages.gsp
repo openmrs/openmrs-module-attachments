@@ -6,6 +6,9 @@ ui.includeJavascript("uicommons", "angular-resource.min.js")
 ui.includeJavascript("uicommons", "angular-common.js")
 ui.includeJavascript("uicommons", "angular-app.js")
 
+ui.includeJavascript("uicommons", "services/obsService.js")
+ui.includeJavascript("uicommons", "services/session.js")
+
 ui.includeJavascript("patientimages", "dropzone/dropzone.js")
 ui.includeCss("patientimages", "dropzone/basic.css")
 ui.includeCss("patientimages", "dropzone/dropzone.css")
@@ -37,5 +40,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
     <form action="" dropzone-directive="dropzoneConfig" class="dropzone" id="patient-images-dropzone">
       <div class="dz-default dz-message">${ui.message("patientimages.dropzone.innerlabel")}</div>
     </form>
+  </div>
+  <div ng-controller="ListObsCtrl" style="width: 100%"> 
   </div>
 </div>
