@@ -57,6 +57,7 @@
 	<!-- /Internationalization -->
 
 
+	<!-- Global Properties -->
   <globalProperty>
     <property>patientimages.conceptComplexUuid</property>
     <defaultValue>7cac8397-53cd-4f00-a6fe-028e8d743f8e</defaultValue>
@@ -80,5 +81,11 @@
         Maximum file size allowed for a patient image upload (in Megabytes)
     </description>
   </globalProperty>
+
+  <!-- Privileges -->
+	<privilege>
+		<name>App: patientimages.page</name>
+		<description>Allowed to access the Patient Images page</description>
+	</privilege>
 
 </module>

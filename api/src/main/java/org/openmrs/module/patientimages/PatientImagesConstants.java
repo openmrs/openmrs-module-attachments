@@ -11,7 +11,11 @@ package org.openmrs.module.patientimages;
 
 public class PatientImagesConstants {
 
-	public static final String UPLOAD_IMAGE_URL = "/module/patientimages/upload";
+	public static final String MODULE_BASE_URL = "/patientimages";
+	
+	public static final String UPLOAD_IMAGE_URL = MODULE_BASE_URL + "/upload";
+	
+	public static final String DOWNLOAD_IMAGE_URL = "/complexObsServlet?obsId=";
 	
 	public static final String GP_CONCEPT_COMPLEX_UUID = "patientimages.conceptComplexUuid";
 	
@@ -19,4 +23,5 @@ public class PatientImagesConstants {
 	
 	public static final String GP_MAX_IMAGE_FILE_SIZE = "patientimages.maxImageFileSize";
 	
+	public static final String REPRESENTATION_OBS = "(uuid:ref,obsId:ref,comment:ref,obsDatetime:ref)";
 }

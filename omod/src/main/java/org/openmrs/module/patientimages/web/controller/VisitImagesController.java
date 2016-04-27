@@ -1,6 +1,7 @@
 package org.openmrs.module.patientimages.web.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -8,8 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.ConceptComplex;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
-import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
@@ -19,6 +20,8 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
 import org.openmrs.module.patientimages.PatientImagesConstants;
 import org.openmrs.module.patientimages.PatientImagesContext;
+import org.openmrs.module.webservices.rest.web.ConversionUtil;
+import org.openmrs.module.webservices.rest.web.representation.CustomRepresentation;
 import org.openmrs.obs.ComplexData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,20 +44,20 @@ public class VisitImagesController {
 	
     @RequestMapping(value = PatientImagesConstants.UPLOAD_IMAGE_URL, method = RequestMethod.POST)
     @ResponseBody
-    public String uploadImage(
+    public Object uploadImage(
     		@RequestParam("patient") Patient patient,
 			@RequestParam("visit") String visitUuid,
     		MultipartHttpServletRequest request) 
     {
     	String providerUuid = request.getParameter("providerUuid");
-    	String obsComment = request.getParameter("obsComment");
+    	String obsText = request.getParameter("obsText");
 
     	Provider provider = context.getProviderService().getProviderByUuid(providerUuid);
     	
     	Visit visit = context.getVisitService().getVisitByUuid(visitUuid);
-    	Encounter encounter = saveImageUploadEncounter(patient, visit.getLocation(), context.getEncounterType(), provider, context.getEncounterService());
+    	Encounter encounter = saveImageUploadEncounter(patient, visit, context.getEncounterType(), provider, context.getEncounterRole(), context.getEncounterService());
     	
-    	String obsUuid = "";
+    	Obs obs = new Obs();
     	try {
             Iterator<String> fileNameIterator = request.getFileNames();	// Looping through the uploaded file names.
 
@@ -63,34 +66,36 @@ public class VisitImagesController {
                 MultipartFile uploadedFile = request.getFile(uploadedFileName);
                 
                 ConceptComplex conceptComplex = context.getConceptComplex();
-                Obs obs = saveUploadedImageObs(patient.getPerson(), encounter, uploadedFile, obsComment, conceptComplex, context.getObsService());
-                obsUuid = obs.getUuid();
+                obs = saveUploadedImageObs(patient.getPerson(), encounter, uploadedFile, obsText, conceptComplex, context.getObsService());
             }
         }
         catch (Exception e) {
         	log.error(e.getMessage(), e);
         }
     	
-        return obsUuid;
+        return ConversionUtil.convertToRepresentation(obs, new CustomRepresentation(PatientImagesConstants.REPRESENTATION_OBS));
     }
 
     /*
      * @see https://wiki.openmrs.org/display/docs/Complex+Obs+Support
      */
-    protected Obs saveUploadedImageObs(Person person, Encounter encounter, MultipartFile file, String obsComment, ConceptComplex conceptComplex, ObsService obsService) throws IOException {
+    protected Obs saveUploadedImageObs(Person person, Encounter encounter, MultipartFile file, String obsText, ConceptComplex conceptComplex, ObsService obsService) throws IOException {
     	Obs obs = new Obs(person, conceptComplex, encounter.getEncounterDatetime(), encounter.getLocation());
     	obs.setEncounter(encounter);
-    	obs.setComment((obsComment == null) ? "" : obsComment);
+    	obs.setComment(obsText);
+    	obs.setComment((obsText == null) ? "" : obsText);
     	obs.setComplexData( new ComplexData(file.getOriginalFilename(), file.getInputStream()) );
     	return obsService.saveObs(obs, null);
     }
     
-    protected Encounter saveImageUploadEncounter(Patient patient, Location location, EncounterType encounterType, Provider provider, EncounterService encounterService) {
+    protected Encounter saveImageUploadEncounter(Patient patient, Visit visit, EncounterType encounterType, Provider provider, EncounterRole encounterRole, EncounterService encounterService) {
     	Encounter encounter = new Encounter();
+    	encounter.setVisit(visit);
+    	encounter.setProvider(encounterRole, provider);
 		encounter.setEncounterType(encounterType);
 		encounter.setEncounterDatetime(new Date());
-		encounter.setPatient(patient);
-		encounter.setLocation(location);
+		encounter.setPatient(visit.getPatient());
+		encounter.setLocation(visit.getLocation());
 		return encounterService.saveEncounter(encounter);
     }
 }

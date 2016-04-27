@@ -39,6 +39,8 @@ public class PatientImagesPageController {
 		
 		jsonConfig.put("maxFileSize", context.getMaxImageFileSize());
 		
+		jsonConfig.put("obsRep", "custom:" + PatientImagesConstants.REPRESENTATION_OBS);
+		
 		model.put("jsonConfig", ui.toJson(jsonConfig));
 		
 		// For Core Apps's patient header.

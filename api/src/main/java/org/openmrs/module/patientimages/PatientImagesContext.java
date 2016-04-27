@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptComplex;
+import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
@@ -99,5 +100,15 @@ public class PatientImagesContext extends ModuleProperties
 	 */
 	public Double getMaxImageFileSize() {
 		return getDoubleByGlobalProperty(PatientImagesConstants.GP_MAX_IMAGE_FILE_SIZE);
+	}
+	
+	// TODO: Figure out if this is good enough
+	public EncounterRole getEncounterRole() {
+		EncounterRole unknownRole = getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
+		if (unknownRole == null) {
+			throw new IllegalStateException("No 'Unknown' encounter role with uuid "
+			        + EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID + ".");
+		}
+		return unknownRole;
 	}
 }

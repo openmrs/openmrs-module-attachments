@@ -50,6 +50,7 @@ angular.module('patientImagesApp').controller('FileUploadCtrl', ['$scope', '$win
         },
         'sending': function (file, xhr, formData) {
           formData.append('providerUuid', providerUuid);
+          formData.append('obsText', 'oazkdokazopkdzpok');
         },
         'success': function (file, response) {}
       }
@@ -63,9 +64,9 @@ angular.module('patientImagesApp').controller('ListObsCtrl', ['$scope', '$window
     ObsService.getObs({
       patient: $window.config.patient.uuid,
       concept: $window.config.conceptComplexUuid,
-      v: 'full'
+      v: $window.config.obsRep
     }).then(function(obs) {
-      $scope.obs = obs;
+      $scope.obsArray = obs;
     })
 
   }]);
