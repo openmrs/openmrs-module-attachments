@@ -8,6 +8,10 @@ angular.module('dropzoneModule', []).directive('dropzoneDirective',
       // create a Dropzone for the element with the given options
       dropzone = new Dropzone(element[0], config.options);
 
+      scope.processDropzone = function() {
+        dropzone.processQueue();
+      };
+
       // bind the given event handlers
       angular.forEach(config.eventHandlers, function (handler, event) {
         dropzone.on(event, handler);
@@ -35,7 +39,7 @@ angular.module('patientImagesApp').controller('FileUploadCtrl', ['$scope', '$win
         'maxFiles': 1,
         'maxFilesize': $window.config.maxFileSize,
         'acceptedFiles': 'image/*', 
-        'autoProcessQueue': true
+        'autoProcessQueue': false
       },
       'eventHandlers':
       {
@@ -50,10 +54,16 @@ angular.module('patientImagesApp').controller('FileUploadCtrl', ['$scope', '$win
         },
         'sending': function (file, xhr, formData) {
           formData.append('providerUuid', providerUuid);
-          formData.append('obsText', 'oazkdokazopkdzpok');
+          formData.append('obsText', $scope.obsText);
         },
-        'success': function (file, response) {}
+        'success': function (file, response) {
+          $scope.$broadcast('newObsEvent', response);
+        }
       }
+    };
+
+    $scope.uploadFile = function() {
+      $scope.processDropzone();
     };
 
   }]);
@@ -68,6 +78,11 @@ angular.module('patientImagesApp').controller('ListObsCtrl', ['$scope', '$window
     }).then(function(obs) {
       $scope.obsArray = obs;
     })
+
+    $scope.$on('newObsEvent', function(event, obs) {
+      $scope.obsArray.unshift(obs);
+      $scope.$apply();
+    });
 
   }]);
 

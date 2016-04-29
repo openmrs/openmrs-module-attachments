@@ -83,7 +83,6 @@ public class VisitImagesController {
     	Obs obs = new Obs(person, conceptComplex, encounter.getEncounterDatetime(), encounter.getLocation());
     	obs.setEncounter(encounter);
     	obs.setComment(obsText);
-    	obs.setComment((obsText == null) ? "" : obsText);
     	obs.setComplexData( new ComplexData(file.getOriginalFilename(), file.getInputStream()) );
     	return obsService.saveObs(obs, null);
     }

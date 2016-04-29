@@ -56,7 +56,6 @@ only screen and (max-device-width : 320px){
   .galleryItem {width: 96%;}
   .galleryItem img {width: 96%;}
   .galleryItem h3 {font-size: 18px;}
-  .galleryItem p, {font-size: 18px;}
 }
 
 .container {
@@ -67,10 +66,10 @@ only screen and (max-device-width : 320px){
 
 .galleryItem {
   color: #797478;
-  font: 10px/1.5 Verdana, Helvetica, sans-serif;
+  font: 10px/1.5;
   float: left;  
   
-  height: 150px;
+  height: 60px;
   width: 16%;
   margin:  2% 2% 50px 2%; 
 }
@@ -87,7 +86,45 @@ only screen and (max-device-width : 320px){
 }
 
 img {
-  max-height: 120px;
+  max-height: 50px;
+}
+
+textarea {
+  width: 100%;
+  height: 50%;
+  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+  box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+#gallery-container {
+  margin: 40px auto;
+  border: 1px solid #EEE;
+  background-color: #F9F9F9;
+}
+
+.upload-container {
+  float: left;  
+  height: 150px;
+  //border: 1px solid red;
+  //overflow: hidden;
+  display: inline-block;
+}
+
+.dropzone {
+  position: relative;
+  border: 4px dotted #888;
+  border-radius: 5px;
+  min-height: 0px;
+  height: 100%;
+  text-align: center;
+}
+
+.dropzone.in {
+  /*width: 600px;
+  height: 200px;
+  line-height: 200px;
+  font-size: larger;*/
 }
 
 </style>
@@ -98,18 +135,32 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <div ng-app="patientImagesApp">
   
-  <div ng-controller="FileUploadCtrl" style="width: 30%"> 
-    <form action="" dropzone-directive="dropzoneConfig" class="dropzone" id="patient-images-dropzone">
-      <div class="dz-default dz-message">${ui.message("patientimages.dropzone.innerlabel")}</div>
-    </form>
+  <div id="image-upload-container" ng-controller="FileUploadCtrl">
+    <div>
+      <div class="upload-container" style="width: 20%;">
+        <h3>File</h3>
+        <form action="" dropzone-directive="dropzoneConfig" class="dropzone" id="patient-images-dropzone">
+          <div class="dz-default dz-message">${ui.message("patientimages.dropzone.innerlabel")}</div>
+        </form>
+      </div>
+      <div class="upload-container" style="width: 70%;">
+        <h3>Comments</h3>
+        <textarea ng-model="obsText"></textarea>
+        <button class="right" ng-click="uploadFile()" style="margin-top: 2%;">Upload file and comments</button>
+      </div>
+      <div style="clear:both;"/>
+    </div>
+    
   </div>
 
-  <div ng-controller="ListObsCtrl"> 
-    <div class="container">
-      <div class="galleryItem" ng-repeat="obs in obsArray">
-        <a href="#"><img ng-src="http://localhost:8081/openmrs/complexObsServlet?obsId={{obs.obsId}}" alt="" /></a>
-        <h3>{{obs.obsId}}</h3>
-        <p>Lorem ipsum dolor sit amet...</p>
+  <div id="gallery-container">
+    <h2>Visit gallery</h2>
+    <div ng-controller="ListObsCtrl"> 
+      <div class="container">
+        <div class="galleryItem" ng-repeat="obs in obsArray">
+          <a href="#"><img ng-src="http://localhost:8081/openmrs/complexObsServlet?obsId={{obs.obsId}}" alt="" /></a>
+          <p>{{obs.comment}}</p>
+        </div>
       </div>
     </div>
   </div>
