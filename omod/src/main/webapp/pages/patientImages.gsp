@@ -26,10 +26,12 @@ ui.includeJavascript("patientimages", "patientImagesApp.js")
   window.OpenMRS = window.OpenMRS || {};
 
   var config = ${jsonConfig}; // Getting the config from the Spring Java controller.
-  config.uploadUrl = '/' + OPENMRS_CONTEXT_PATH + config.uploadUrl + '.form'; // Building the service URL.
+  config.uploadUrl = '/' + OPENMRS_CONTEXT_PATH + config.uploadUrl;
   config.uploadUrl += '?' + 'patient=' + config.patient.uuid + '&' + 'visit=' + config.visit.uuid;
+
+  config.downloadUrl = '/' + OPENMRS_CONTEXT_PATH + config.downloadUrl + '?' + 'obs=';
     
-  Dropzone.options.patientImagesDropzone = false; // We turn off auto-discover for our element because our directive adds it programmatically.
+  Dropzone.options.patientImagesDropzone = false; // We turn off auto-discover for our DropzoneJS element because our directive adds it programmatically.
 
 </script>
 
@@ -138,15 +140,15 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
   <div id="image-upload-container" ng-controller="FileUploadCtrl">
     <div>
       <div class="upload-container" style="width: 20%;">
-        <h3>File</h3>
+        <h3>${ui.message("patientimages.patientpage.fileTitle")}</h3>
         <form action="" dropzone-directive="dropzoneConfig" class="dropzone" id="patient-images-dropzone">
           <div class="dz-default dz-message">${ui.message("patientimages.dropzone.innerlabel")}</div>
         </form>
       </div>
       <div class="upload-container" style="width: 70%;">
-        <h3>Comments</h3>
+        <h3>${ui.message("patientimages.patientpage.commentTitle")}</h3>
         <textarea ng-model="obsText"></textarea>
-        <button class="right" ng-click="uploadFile()" style="margin-top: 2%;">Upload file and comments</button>
+        <button class="right" ng-click="uploadFile()" style="margin-top: 2%;">${ui.message("patientimages.patientpage.uploadButton")}</button>
       </div>
       <div style="clear:both;"/>
     </div>
@@ -154,11 +156,14 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
   </div>
 
   <div id="gallery-container">
-    <h2>Visit gallery</h2>
+    <h2>${ui.message("patientimages.patientpage.galleryTitle")}</h2>
     <div ng-controller="ListObsCtrl"> 
       <div class="container">
         <div class="galleryItem" ng-repeat="obs in obsArray">
-          <a href="#"><img ng-src="http://localhost:8081/openmrs/complexObsServlet?obsId={{obs.obsId}}" alt="" /></a>
+          <a target="_blank" href="/openmrs/complexObsServlet?obsId={{obs.obsId}}">
+            <img ng-src="{{getThumbnailSrc(obs.uuid)}}" alt="" />
+            <!-- <img data-ng-src="{{getThumbnailDataSrc(obs.uuid)}}" alt="" /> -->
+          </a>
           <p>{{obs.comment}}</p>
         </div>
       </div>

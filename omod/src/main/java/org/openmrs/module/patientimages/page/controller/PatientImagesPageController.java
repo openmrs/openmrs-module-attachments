@@ -33,7 +33,8 @@ public class PatientImagesPageController {
 		Visit visit = context.getVisitService().getVisitByUuid(visitUuid);
 		jsonConfig.put("visit", convertToFull(visit));
 		
-		jsonConfig.put("uploadUrl", PatientImagesConstants.UPLOAD_IMAGE_URL);
+		jsonConfig.put("uploadUrl", "/ws" + PatientImagesConstants.UPLOAD_IMAGE_URL);
+		jsonConfig.put("downloadUrl", "/ws" + PatientImagesConstants.DOWNLOAD_IMAGE_URL_2);
 		
 		jsonConfig.put("conceptComplexUuid", context.getConceptComplex().getUuid());
 		

@@ -69,7 +69,7 @@ public class PatientImagesActivator implements ModuleActivator {
 				
 				ConceptComplex conceptComplex = new ConceptComplex();
 				conceptComplex.setUuid(uuid);
-				conceptComplex.setHandler("ImageHandler");
+				conceptComplex.setHandler("PatientImageHandler");
 				ConceptName conceptName = new ConceptName(name, Locale.ENGLISH);
 				conceptComplex.setFullySpecifiedName(conceptName);
 				conceptComplex.setPreferredName(conceptName);

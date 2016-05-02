@@ -9,27 +9,24 @@
  */
 package org.openmrs.module.patientimages;
 
-import java.io.Serializable;
-import org.openmrs.BaseOpenmrsObject;
-import org.openmrs.BaseOpenmrsMetadata;
+import org.openmrs.obs.ComplexData;
 
-/**
- * It is a model class. It should extend either {@link BaseOpenmrsObject} or {@link BaseOpenmrsMetadata}.
- */
-public class PatientImages extends BaseOpenmrsObject implements Serializable {
+public class PatientImageComplexData extends ComplexData {
 
 	private static final long serialVersionUID = 1L;
+
+	private String type = "";
 	
-	private Integer id;
-	
-	@Override
-	public Integer getId() {
-		return id;
+	public PatientImageComplexData(String title, Object data) {
+		this(title, data, "");
 	}
 	
-	@Override
-	public void setId(Integer id) {
-		this.id = id;
+	public PatientImageComplexData(String title, Object data, String type) {
+		super(title, data);
+		this.type = type;
 	}
-	
+
+	public String getType() {
+		return type;
+	}
 }

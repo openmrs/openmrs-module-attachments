@@ -15,6 +15,10 @@ public class PatientImagesConstants {
 	
 	public static final String UPLOAD_IMAGE_URL = MODULE_BASE_URL + "/upload";
 	
+	public static final String DOWNLOAD_IMAGE_URL_2 = MODULE_BASE_URL + "/download";
+	
+	public static final String DOWNLOAD_IMAGE_BASE64 = DOWNLOAD_IMAGE_URL_2 + "/base64";
+	
 	public static final String DOWNLOAD_IMAGE_URL = "/complexObsServlet?obsId=";
 	
 	public static final String GP_CONCEPT_COMPLEX_UUID = "patientimages.conceptComplexUuid";

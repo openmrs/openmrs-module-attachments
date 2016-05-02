@@ -51,5 +51,15 @@
 			</list>
 		</property>
 	</bean>
+	<bean parent="obsServiceTarget" >
+    <property name="handlers">
+      <map>
+        <entry>
+          <key><value>PatientImageHandler</value></key>
+          <bean class="org.openmrs.module.patientimages.PatientImageHandler"/>
+        </entry>
+      </map>
+    </property>
+	</bean>
 	
 </beans>
