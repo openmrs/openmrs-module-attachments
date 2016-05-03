@@ -9,24 +9,34 @@
  */
 package org.openmrs.module.patientimages;
 
+import java.io.InputStream;
+
 import org.openmrs.obs.ComplexData;
+import org.springframework.http.MediaType;
 
 public class PatientImageComplexData extends ComplexData {
 
 	private static final long serialVersionUID = 1L;
 
 	private String type = "";
+	private MediaType mediaType = MediaType.ALL;
 	
-	public PatientImageComplexData(String title, Object data) {
-		this(title, data, "");
+	public PatientImageComplexData(String title, InputStream stream, String type, MediaType mediaType) {
+		super(title, stream);
+		this.type = type;
+		if (null != mediaType)
+			this.mediaType = mediaType;
 	}
 	
-	public PatientImageComplexData(String title, Object data, String type) {
-		super(title, data);
-		this.type = type;
+	public PatientImageComplexData(String title, InputStream stream) {
+		this(title, stream, "", null);
 	}
 
 	public String getType() {
 		return type;
+	}
+	
+	public String getMediaType() {
+		return mediaType.getType();
 	}
 }

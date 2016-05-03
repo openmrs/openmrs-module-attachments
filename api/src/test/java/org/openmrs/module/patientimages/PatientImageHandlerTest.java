@@ -34,7 +34,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class PatientImageHandlerTest {
 
 	@Test
-	@Verifies(value = "PatientImageHandler should behave as core's ImageHandler with no custom type set", method = "saveObs(obs)")
+	@Verifies(value = "PatientImageHandler should behave as core's ImageHandler when no additional input are provided.", method = "saveObs(obs)")
 	public void patientImageHandler_shouldDefaultOnImageHandler() throws IOException, URISyntaxException {
 		
 		// Setup
@@ -55,8 +55,9 @@ public class PatientImageHandlerTest {
 		
 		// Replay
 		Obs savedObs = new Obs();
-		savedObs.setComplexData( new PatientImageComplexData(imgFileName, new FileInputStream(imageFile), "") );
+		savedObs.setComplexData( new PatientImageComplexData(imgFileName, new FileInputStream(imageFile)) );
 		patientImageHandler.saveObs(savedObs);
+		
 		
 		// Verification
 		final String VIEW = RandomStringUtils.random(10);
