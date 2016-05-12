@@ -26,10 +26,10 @@ ui.includeJavascript("patientimages", "patientImagesApp.js")
   window.OpenMRS = window.OpenMRS || {};
 
   var config = ${jsonConfig}; // Getting the config from the Spring Java controller.
+  config.downloadUrl = '/' + OPENMRS_CONTEXT_PATH + config.downloadUrl;
+
   config.uploadUrl = '/' + OPENMRS_CONTEXT_PATH + config.uploadUrl;
   config.uploadUrl += '?' + 'patient=' + config.patient.uuid + '&' + 'visit=' + config.visit.uuid;
-
-  config.downloadUrl = '/' + OPENMRS_CONTEXT_PATH + config.downloadUrl + '?' + 'obs=';
     
   Dropzone.options.patientImagesDropzone = false; // We turn off auto-discover for our DropzoneJS element because our directive adds it programmatically.
 
@@ -160,9 +160,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
     <div ng-controller="ListObsCtrl"> 
       <div class="container">
         <div class="galleryItem" ng-repeat="obs in obsArray">
-          <a target="_blank" href="/openmrs/complexObsServlet?obsId={{obs.obsId}}">
+          <a target="_blank" href="{{getImageSrc(obs.uuid)}}">
             <img ng-src="{{getThumbnailSrc(obs.uuid)}}" alt="" />
-            <!-- <img data-ng-src="{{getThumbnailDataSrc(obs.uuid)}}" alt="" /> -->
           </a>
           <p>{{obs.comment}}</p>
         </div>

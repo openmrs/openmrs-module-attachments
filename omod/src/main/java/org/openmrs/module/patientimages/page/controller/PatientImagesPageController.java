@@ -6,6 +6,8 @@ import java.util.Map;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.patientimages.PatientImageComplexData;
+import org.openmrs.module.patientimages.PatientImageHandler;
 import org.openmrs.module.patientimages.PatientImagesConstants;
 import org.openmrs.module.patientimages.PatientImagesContext;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
@@ -34,11 +36,14 @@ public class PatientImagesPageController {
 		jsonConfig.put("visit", convertToFull(visit));
 		
 		jsonConfig.put("uploadUrl", "/ws" + PatientImagesConstants.UPLOAD_IMAGE_URL);
-		jsonConfig.put("downloadUrl", "/ws" + PatientImagesConstants.DOWNLOAD_IMAGE_URL_2);
+		jsonConfig.put("downloadUrl", "/ws" + PatientImagesConstants.DOWNLOAD_IMAGE_URL);
+		jsonConfig.put("originalView", PatientImageComplexData.VIEW_ORIGINAL);
+		jsonConfig.put("thumbView",PatientImageComplexData.VIEW_THUMBNAIL);
 		
 		jsonConfig.put("conceptComplexUuid", context.getConceptComplex().getUuid());
 		
-		jsonConfig.put("maxFileSize", context.getMaxImageFileSize());
+		jsonConfig.put("thumbSize", PatientImageHandler.THUMBNAIL_HEIGHT);
+		jsonConfig.put("maxFileSize", context.getMaxUploadFileSize());
 		
 		jsonConfig.put("obsRep", "custom:" + PatientImagesConstants.REPRESENTATION_OBS);
 		

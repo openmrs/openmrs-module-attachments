@@ -84,9 +84,18 @@ angular.module('patientImagesApp').controller('ListObsCtrl', ['$scope', '$window
       $scope.$apply();
     });
 
+    // To parameterize the href attribute for images
+    $scope.getImageSrc = function(obsUuid) {
+      return $window.config.downloadUrl + '?'
+        + 'obs=' + obsUuid+ '&'
+        + 'view=' + $window.config.originalView ;
+    };
+
     // To parameterize the ng-src attribute for thumbnails
     $scope.getThumbnailSrc = function(obsUuid) {
-      return $window.config.downloadUrl + obsUuid;
+      return $window.config.downloadUrl + '?'
+        + 'obs=' + obsUuid + '&'
+        + 'view=' + $window.config.thumbView ;
     };
 
   }]);

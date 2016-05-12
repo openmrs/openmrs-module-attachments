@@ -59,6 +59,7 @@
 				<version>3.2.10</version>
 				<type>gem</type>
 			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -99,6 +100,12 @@
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>uiframework-api</artifactId>
+		</dependency>
+
+		<dependency>
+		  <groupId>net.coobird</groupId>
+		  <artifactId>thumbnailator</artifactId>
+		  <version>[0.4, 0.5)</version>
 		</dependency>
 
 	</dependencies>

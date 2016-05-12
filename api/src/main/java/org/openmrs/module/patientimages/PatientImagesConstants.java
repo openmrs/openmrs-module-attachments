@@ -9,23 +9,22 @@
  */
 package org.openmrs.module.patientimages;
 
+
 public class PatientImagesConstants {
 
 	public static final String MODULE_BASE_URL = "/patientimages";
 	
 	public static final String UPLOAD_IMAGE_URL = MODULE_BASE_URL + "/upload";
 	
-	public static final String DOWNLOAD_IMAGE_URL_2 = MODULE_BASE_URL + "/download";
-	
-	public static final String DOWNLOAD_IMAGE_BASE64 = DOWNLOAD_IMAGE_URL_2 + "/base64";
-	
-	public static final String DOWNLOAD_IMAGE_URL = "/complexObsServlet?obsId=";
+	public static final String DOWNLOAD_IMAGE_URL = MODULE_BASE_URL + "/download";
 	
 	public static final String GP_CONCEPT_COMPLEX_UUID = "patientimages.conceptComplexUuid";
 	
 	public static final String GP_ENCOUNTER_TYPE_UUID = "patientimages.encounterTypeUuid";
 	
-	public static final String GP_MAX_IMAGE_FILE_SIZE = "patientimages.maxImageFileSize";
+	public static final String GP_MAX_UPLOAD_FILE_SIZE = "patientimages.maxUploadFileSize";
+	
+	public static final String GP_MAX_STORAGE_FILE_SIZE = "patientimages.maxStorageFileSize";
 	
 	public static final String REPRESENTATION_OBS = "(uuid:ref,obsId:ref,comment:ref,obsDatetime:ref)";
 }

@@ -75,10 +75,18 @@
   </globalProperty>
 
   <globalProperty>
-    <property>patientimages.maxImageFileSize</property>
-    <defaultValue>1.0</defaultValue>
+    <property>patientimages.maxUploadFileSize</property>
+    <defaultValue>5.0</defaultValue>
     <description>
-        Maximum file size allowed for a patient image upload (in Megabytes)
+        Maximum size (in Megabytes) allowed for a patient file upload 
+    </description>
+  </globalProperty>
+
+  <globalProperty>
+    <property>patientimages.maxStorageFileSize</property>
+    <defaultValue>1.2</defaultValue>
+    <description>
+        Maximum size (in Megabytes) allowed for the storage of a patient file
     </description>
   </globalProperty>
 
