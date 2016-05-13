@@ -105,6 +105,10 @@ public class PatientImageHandler extends ImageHandler {
 			return super.getObs(obs, view);
 		}
 		
+		if (StringUtils.isEmpty(view)) {
+		   view = PatientImageComplexData.VIEW_ORIGINAL;
+		}
+		
 		String instructions = metaDataMap.get(KEY_INSTRUCTIONS);
 		String fileName = metaDataMap.get(KEY_FILE_NAME);
 		String mimeType = metaDataMap.get(KEY_MIME_TYPE);

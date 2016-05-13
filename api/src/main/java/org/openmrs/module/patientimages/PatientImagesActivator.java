@@ -58,9 +58,10 @@ public class PatientImagesActivator implements ModuleActivator {
 	 */
 	public void started() {
 		
+	   // Concept Complex
 		{
-			final String name = "PATIENT IMAGE FOR UPLOAD";
-			final String desc = "Concept complex used as a question for obs wrapping patient images.";
+			final String name = "PATIENT IMAGE";
+			final String desc = "Concept complex used as a question for patient images complex obs.";
 			final String uuid = "7cac8397-53cd-4f00-a6fe-028e8d743f8e";	// this is also the default GP value set in config.xml
 			
 			ConceptService conceptService = Context.getConceptService();
@@ -81,9 +82,10 @@ public class PatientImagesActivator implements ModuleActivator {
 			}
 		}
 
+		// Encounter Type
 		{
-			final String name = "Image Upload Encounter";
-			final String desc = "Encounters used to record (complex) obs wrapping patient images.";
+			final String name = "Image Upload";
+			final String desc = "Encounters used to record patient images complex obs.";
 			final String uuid = "5021b1a1-e7f6-44b4-ba02-da2f2bcf8718";	// this is also the default GP value set in config.xml
 			
 			EncounterService es = Context.getEncounterService();

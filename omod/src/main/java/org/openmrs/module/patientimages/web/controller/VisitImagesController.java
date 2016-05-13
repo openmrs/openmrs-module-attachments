@@ -143,7 +143,7 @@ public class VisitImagesController {
 			log.error("There was an error extracting the byte array for obs with "
 					+ "VALUE_COMPLEX='" + complexObs.getValueComplex() + "'"
 					+ "OBS_ID='" + complexObs.getId() + "'"
-					, e);;
+					, e);
 		}
     }
     

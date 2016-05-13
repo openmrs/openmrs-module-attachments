@@ -1,0 +1,17 @@
+[
+    {
+        "id": "patientimages.encounterTemplate",
+        "extensionPointId": "org.openmrs.referenceapplication.encounterTemplate",
+        "type": "fragment",
+        "extensionParams": {
+            "templateId": "dashboardEncounterTemplate",
+            "templateFragmentProviderName": "patientimages",
+            "templateFragmentId": "dashboardEncounterTemplate",
+            "supportedEncounterTypes": {
+                "5021b1a1-e7f6-44b4-ba02-da2f2bcf8718": { // Image Upload
+                    "icon": "icon-picture"
+                }
+            }
+        }
+    }
+]
