@@ -20,11 +20,14 @@
 		<require_module version="${emrapiVersion}">
 			org.openmrs.module.emrapi
     </require_module>
+    <require_module version="${appuiVersion}">
+			org.openmrs.module.appui
+    </require_module>
 	</require_modules>
 
 	
 	<!-- Module Activator -->
-	<activator>${project.parent.groupId}.${project.parent.artifactId}.PatientImagesActivator</activator>
+	<activator>${project.parent.groupId}.${project.parent.artifactId}.VisitDocumentsActivator</activator>
 	
 	
 	<!-- Adds link to admin page -->
@@ -32,13 +35,6 @@
 		<point>org.openmrs.admin.list</point>
 		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
 	</extension>
-	
-	<!-- Maps hibernate file's, if present -->
-	<mappingFiles>
-
-        PatientImages.hbm.xml
-				
-	</mappingFiles>
 
 	<!-- Internationalization -->
 	<!-- All message codes should start with ${project.parent.artifactId}. -->
@@ -59,7 +55,7 @@
 
 	<!-- Global Properties -->
   <globalProperty>
-    <property>patientimages.conceptComplexUuid</property>
+    <property>visitdocumentsui.conceptComplexUuid</property>
     <defaultValue>7cac8397-53cd-4f00-a6fe-028e8d743f8e</defaultValue>
     <description>
         UUID of the (question) concept complex representing a patient image
@@ -67,33 +63,33 @@
   </globalProperty>
 
   <globalProperty>
-    <property>patientimages.encounterTypeUuid</property>
+    <property>visitdocumentsui.encounterTypeUuid</property>
     <defaultValue>5021b1a1-e7f6-44b4-ba02-da2f2bcf8718</defaultValue>
     <description>
-        UUID of the encounter type used to record (complex) obs wrapping patient images
+        UUID of the encounter type used to upload visit documents
     </description>
   </globalProperty>
 
   <globalProperty>
-    <property>patientimages.maxUploadFileSize</property>
+    <property>visitdocumentsui.maxUploadFileSize</property>
     <defaultValue>5.0</defaultValue>
     <description>
-        Maximum size (in Megabytes) allowed for a patient file upload 
+        Maximum size (in Megabytes) allowed for a visit document file upload 
     </description>
   </globalProperty>
 
   <globalProperty>
-    <property>patientimages.maxStorageFileSize</property>
+    <property>visitdocumentsui.maxStorageFileSize</property>
     <defaultValue>1.2</defaultValue>
     <description>
-        Maximum size (in Megabytes) allowed for the storage of a patient file
+        Maximum size (in Megabytes) allowed for the storage of a visit document file
     </description>
   </globalProperty>
 
   <!-- Privileges -->
 	<privilege>
-		<name>App: patientimages.page</name>
-		<description>Allowed to access the Patient Images page</description>
+		<name>App: visitdocumentsui.visitdocuments.page</name>
+		<description>Allowed to access the Visit Documents page</description>
 	</privilege>
 
 </module>

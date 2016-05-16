@@ -1,4 +1,4 @@
-package org.openmrs.module.patientimages;
+package org.openmrs.module.visitdocumentsui.obs;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Matchers.eq;
@@ -21,6 +21,8 @@ import org.junit.runner.RunWith;
 import org.openmrs.Obs;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.visitdocumentsui.obs.PatientImageComplexData;
+import org.openmrs.module.visitdocumentsui.obs.PatientImageHandler;
 import org.openmrs.obs.ComplexData;
 import org.openmrs.obs.handler.ImageHandler;
 import org.openmrs.test.Verifies;

@@ -1,4 +1,4 @@
-package org.openmrs.module.patientimages;
+package org.openmrs.module.visitdocumentsui.obs;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +11,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Obs;
 import org.openmrs.api.APIException;
+import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.obs.ComplexData;
 import org.openmrs.obs.handler.AbstractHandler;
 import org.openmrs.obs.handler.ImageHandler;
@@ -106,7 +107,7 @@ public class PatientImageHandler extends ImageHandler {
 		}
 		
 		if (StringUtils.isEmpty(view)) {
-		   view = PatientImageComplexData.VIEW_ORIGINAL;
+		   view = VisitDocumentsConstants.DOC_VIEW_ORIGINAL;
 		}
 		
 		String instructions = metaDataMap.get(KEY_INSTRUCTIONS);
@@ -163,7 +164,7 @@ public class PatientImageHandler extends ImageHandler {
 	
 	protected PatientImageComplexData getComplexData_Default(Obs obs, String view, String instructions, String fileName, String mimeType) {
 		
-		if (view.equals(PatientImageComplexData.VIEW_THUMBNAIL)) {
+		if (view.equals(VisitDocumentsConstants.DOC_VIEW_THUMBNAIL)) {
 			fileName = buildThumbnailFileName(fileName);
 		}
 		

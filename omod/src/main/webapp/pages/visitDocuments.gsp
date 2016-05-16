@@ -1,29 +1,29 @@
 <%
-ui.decorateWith("appui", "standardEmrPage")
+  ui.decorateWith("appui", "standardEmrPage")
 
-ui.includeJavascript("uicommons", "angular.min.js")
-ui.includeJavascript("uicommons", "angular-resource.min.js")
-ui.includeJavascript("uicommons", "angular-common.js")
-ui.includeJavascript("uicommons", "angular-app.js")
+  ui.includeJavascript("uicommons", "angular.min.js")
+  ui.includeJavascript("uicommons", "angular-resource.min.js")
+  ui.includeJavascript("uicommons", "angular-common.js")
+  ui.includeJavascript("uicommons", "angular-app.js")
 
-ui.includeJavascript("uicommons", "services/obsService.js")
-ui.includeJavascript("uicommons", "services/session.js")
+  ui.includeJavascript("uicommons", "services/obsService.js")
+  ui.includeJavascript("uicommons", "services/session.js")
 
-ui.includeJavascript("patientimages", "dropzone/dropzone.js")
-ui.includeCss("patientimages", "dropzone/basic.css")
-ui.includeCss("patientimages", "dropzone/dropzone.css")
+  ui.includeJavascript("visitdocumentsui", "dropzone/dropzone.js")
+  ui.includeCss("visitdocumentsui", "dropzone/basic.css")
+  ui.includeCss("visitdocumentsui", "dropzone/dropzone.css")
 
-ui.includeJavascript("patientimages", "patientImagesApp.js")
+  ui.includeJavascript("visitdocumentsui", "visitDocuments.js")
 %>
 
 <script type="text/javascript">
 
-var breadcrumbs = [
-{ icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-{ label: "${ui.message("patientimages.breadcrumbs.label")}"}
-];
+  var breadcrumbs = [
+    { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
+    { label: "${ui.message("visitdocumentsui.breadcrumbs.label")}"}
+  ];
 
-window.OpenMRS = window.OpenMRS || {};
+  window.OpenMRS = window.OpenMRS || {};
 
   var config = ${jsonConfig}; // Getting the config from the Spring Java controller.
   config.downloadUrl = '/' + OPENMRS_CONTEXT_PATH + config.downloadUrl;
@@ -31,11 +31,11 @@ window.OpenMRS = window.OpenMRS || {};
   config.uploadUrl = '/' + OPENMRS_CONTEXT_PATH + config.uploadUrl;
   config.uploadUrl += '?' + 'patient=' + config.patient.uuid + '&' + 'visit=' + config.visit.uuid;
 
-  Dropzone.options.patientImagesDropzone = false; // We turn off auto-discover for our DropzoneJS element because our directive adds it programmatically.
+  Dropzone.options.visitDocumentsDropzone = false; // We turn off auto-discover for our DropzoneJS element because our directive adds it programmatically.
 
-  </script>
+</script>
 
-  <style>
+<style>
 
   /* MEDIA QUERIES*/
   @media only screen and (max-width : 940px),
@@ -60,7 +60,7 @@ window.OpenMRS = window.OpenMRS || {};
     .galleryItem h3 {font-size: 18px;}
   }
 
-  .container {
+  .galleryItemContainer {
     width: 100%;
     margin: 0px auto;
     overflow: hidden;
@@ -133,22 +133,25 @@ window.OpenMRS = window.OpenMRS || {};
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
-<% if (context.hasPrivilege("App: patientimages.page")) { %>
+<% if (context.hasPrivilege("App: visitdocumentsui.visitdocuments.page")) { %>
 
-<div ng-app="patientImagesApp">
+<div ng-app="visitDocumentsApp">
 
-  <div id="image-upload-container" ng-controller="FileUploadCtrl">
-    <div>
+  <div ng-controller="FileUploadCtrl">
+    <div  style="margin-bottom: 10%;">
       <div class="upload-container" style="width: 20%;">
-        <h3>${ui.message("patientimages.patientpage.fileTitle")}</h3>
-        <form action="" dropzone-directive="dropzoneConfig" class="dropzone" id="patient-images-dropzone">
-          <div class="dz-default dz-message">${ui.message("patientimages.dropzone.innerlabel")}</div>
+        <h3>${ui.message("visitdocumentsui.visitdocumentspage.fileTitle")}</h3>
+        <form action="" dropzone-directive="dropzoneConfig" class="dropzone" id="visit-documents-dropzone">
+          <div class="dz-default dz-message">${ui.message("visitdocumentsui.dropzone.innerlabel")}</div>
         </form>
       </div>
-      <div class="upload-container" style="width: 70%;">
-        <h3>${ui.message("patientimages.patientpage.commentTitle")}</h3>
+      <div class="upload-container" style="width: 70%; margin-left: 2%;">
+        <h3>${ui.message("visitdocumentsui.visitdocumentspage.commentTitle")}</h3>
         <textarea ng-model="obsText"></textarea>
-        <button class="right" ng-click="uploadFile()" style="margin-top: 2%;">${ui.message("patientimages.patientpage.uploadButton")}</button>
+        <span class="right" style="margin-top: 4%;">
+          <button class="confirm" ng-click="uploadFile()">${ui.message("visitdocumentsui.visitdocumentspage.uploadButton")}</button>
+          <button class="" ng-click="clearForms()">${ui.message("visitdocumentsui.visitdocumentspage.clearFormsButton")}</button>
+        </span>
       </div>
       <div style="clear:both;"/>
     </div>
@@ -156,9 +159,9 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
   </div>
 
   <div id="gallery-container">
-    <h2>${ui.message("patientimages.patientpage.galleryTitle")}</h2>
+    <h2>${ui.message("visitdocumentsui.visitdocumentspage.galleryTitle")}</h2>
     <div ng-controller="ListObsCtrl"> 
-      <div class="container">
+      <div class="galleryItemContainer">
         <div class="galleryItem" ng-repeat="obs in obsArray">
           <a target="_blank" href="{{getImageSrc(obs.uuid)}}">
             <img ng-src="{{getThumbnailSrc(obs.uuid)}}" alt="" />

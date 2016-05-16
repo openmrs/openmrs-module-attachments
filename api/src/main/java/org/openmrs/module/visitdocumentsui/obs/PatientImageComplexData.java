@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.patientimages;
+package org.openmrs.module.visitdocumentsui.obs;
 
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
@@ -33,9 +33,6 @@ public class PatientImageComplexData extends ComplexData {
 	public static final String INSTRUCTIONS_NONE = "instructions.none";
 	public static final String INSTRUCTIONS_DEFAULT = "instructions.default";
 	public static final String UNKNOWN_MIME_TYPE = "application/unknown";
-	
-	public static final String VIEW_ORIGINAL = "complexdata.view.original";
-	public static final String VIEW_THUMBNAIL = "complexdata.view.thumbnail";
 
 	private String instructions = INSTRUCTIONS_NONE;
 	private String mimeType = UNKNOWN_MIME_TYPE;

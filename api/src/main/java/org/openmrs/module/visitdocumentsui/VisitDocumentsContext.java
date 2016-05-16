@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.patientimages;
+package org.openmrs.module.visitdocumentsui;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,8 +31,8 @@ import org.springframework.stereotype.Component;
 /**
  * Inject this class to access services and global properties.
  */
-@Component("patientImagesContext")
-public class PatientImagesContext extends ModuleProperties
+@Component("visitDocumentsContext")
+public class VisitDocumentsContext extends ModuleProperties
 {
 	protected final Log log = LogFactory.getLog(getClass());
 
@@ -81,7 +81,7 @@ public class PatientImagesContext extends ModuleProperties
 	 * @return The concept complex used to save uploaded image-obs.
 	 */
 	public ConceptComplex getConceptComplex() {
-		String globalPropertyName = PatientImagesConstants.GP_CONCEPT_COMPLEX_UUID;
+		String globalPropertyName = VisitDocumentsConstants.GP_CONCEPT_COMPLEX_UUID;
 		Concept concept = getConceptByGlobalProperty(globalPropertyName);
 		ConceptComplex conceptComplex = getConceptService().getConceptComplex(concept.getConceptId());
 		if (conceptComplex == null) {
@@ -94,7 +94,7 @@ public class PatientImagesContext extends ModuleProperties
 	 * @return The encounter type for encounters recording the upload of an image.
 	 */
 	public EncounterType getEncounterType() {
-		EncounterType encounterType = getEncounterTypeByGlobalProperty(PatientImagesConstants.GP_ENCOUNTER_TYPE_UUID);
+		EncounterType encounterType = getEncounterTypeByGlobalProperty(VisitDocumentsConstants.GP_ENCOUNTER_TYPE_UUID);
 		return encounterType;
 	}
 	
@@ -102,14 +102,14 @@ public class PatientImagesContext extends ModuleProperties
 	 * @return The max file size allowed to be uploaded (in Megabytes).
 	 */
 	public Double getMaxUploadFileSize() {
-		return getDoubleByGlobalProperty(PatientImagesConstants.GP_MAX_UPLOAD_FILE_SIZE);
+		return getDoubleByGlobalProperty(VisitDocumentsConstants.GP_MAX_UPLOAD_FILE_SIZE);
 	}
 	
 	/**
 	 * @return The max file size allowed to be stored (in Megabytes).
 	 */
 	public Double getMaxStorageFileSize() {
-		return getDoubleByGlobalProperty(PatientImagesConstants.GP_MAX_STORAGE_FILE_SIZE);
+		return getDoubleByGlobalProperty(VisitDocumentsConstants.GP_MAX_STORAGE_FILE_SIZE);
 	}
 	
 	// TODO: Figure out if this is good enough

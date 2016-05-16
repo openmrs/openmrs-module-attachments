@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openmrs.module</groupId>
-	<artifactId>patientimages</artifactId>
+	<artifactId>visitdocumentsui</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Patient Images</name>
-	<description>Adds UI components and backend services to upload and view patient images within the OpenMRS Reference Application.</description>
+	<name>Visit Documents UI</name>
+	<description>Adds UI components and backend web services to upload, view and manage visit documents within the OpenMRS Reference Application.</description>
 	
 	<developers>
 		<developer>
@@ -21,7 +21,7 @@
 	</organization>
 
 	<scm>
-		<url>https://github.com/mekomsolutions/openmrs-module-patientimages</url>
+		<url>https://github.com/mekomsolutions/openmrs-module-visitdocumentsui</url>
 	</scm>
 	
 	<properties>
@@ -43,13 +43,6 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-
-			<!-- <dependency>
-				<groupId>org.openmrs.module</groupId>
-				<artifactId>emrapi-api-1.11</artifactId>
-				<version>1.12</version>
-				<scope>provided</scope>
-			</dependency> -->
 
 			<!-- we explicitly use version 3.2.10 since 3.2.11 has a bug which was 
 				giving us issues, can probably remove this after next sass release -->

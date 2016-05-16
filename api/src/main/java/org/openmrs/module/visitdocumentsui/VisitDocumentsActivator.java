@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.patientimages;
+package org.openmrs.module.visitdocumentsui;
 
 
 import java.util.Locale;
@@ -28,7 +28,7 @@ import org.openmrs.module.ModuleActivator;
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
  */
-public class PatientImagesActivator implements ModuleActivator {
+public class VisitDocumentsActivator implements ModuleActivator {
 	
 	protected Log log = LogFactory.getLog(getClass());
 		
@@ -61,7 +61,7 @@ public class PatientImagesActivator implements ModuleActivator {
 	   // Concept Complex
 		{
 			final String name = "PATIENT IMAGE";
-			final String desc = "Concept complex used as a question for patient images complex obs.";
+			final String desc = "Concept complex used as a question for 'patient images with thumbnails' complex obs.";
 			final String uuid = "7cac8397-53cd-4f00-a6fe-028e8d743f8e";	// this is also the default GP value set in config.xml
 			
 			ConceptService conceptService = Context.getConceptService();
@@ -84,8 +84,8 @@ public class PatientImagesActivator implements ModuleActivator {
 
 		// Encounter Type
 		{
-			final String name = "Image Upload";
-			final String desc = "Encounters used to record patient images complex obs.";
+			final String name = "Visit Document Upload";
+			final String desc = "Encounters used to record visit documents complex obs.";
 			final String uuid = "5021b1a1-e7f6-44b4-ba02-da2f2bcf8718";	// this is also the default GP value set in config.xml
 			
 			EncounterService es = Context.getEncounterService();

@@ -30,7 +30,6 @@
 		<property name="moduleId" value="${project.parent.artifactId}"/>
 	</bean>
 	
-	<context:component-scan base-package="org.openmrs.module.patientimages.web.controller" />
- 
-		
+	<context:component-scan base-package="org.openmrs.module.visitdocumentsui.web.controller" />
+  		
 </beans>

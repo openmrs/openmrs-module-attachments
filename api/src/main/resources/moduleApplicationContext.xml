@@ -26,7 +26,7 @@
       <map>
         <entry>
           <key><value>PatientImageHandler</value></key>
-          <bean class="org.openmrs.module.patientimages.PatientImageHandler"/>
+          <bean class="org.openmrs.module.visitdocumentsui.obs.PatientImageHandler"/>
         </entry>
       </map>
     </property>

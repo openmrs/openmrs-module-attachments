@@ -4,24 +4,16 @@
 
     <parent>
         <groupId>org.openmrs.module</groupId>
-        <artifactId>patientimages</artifactId>
+        <artifactId>visitdocumentsui</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>patientimages-omod</artifactId>
+    <artifactId>visitdocumentsui-omod</artifactId>
     <packaging>jar</packaging>
-    <name>Patient Images OMOD</name>
-    <description>OMOD project for Patient Images</description>
+    <name>Visit Documents UI OMOD</name>
+    <description>OMOD project for Visit Documents UI</description>
 
 	<dependencies>
-
-		<!-- 
-		Add other dependencies from parent's pom: 
-		<dependency> 
-			<groupId>org.other.library</groupId> 
-			<artifactId>library-name</artifactId> 
-		</dependency> 
-		-->
 		
 		<!-- Begin OpenMRS modules -->
 		

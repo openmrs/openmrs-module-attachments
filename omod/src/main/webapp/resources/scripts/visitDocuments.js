@@ -1,4 +1,4 @@
-angular.module('dropzoneModule', []).directive('dropzoneDirective',
+  angular.module('dropzoneModule', []).directive('dropzoneDirective',
   function () {
     return function (scope, element, attrs) {
       var config, dropzone;
@@ -12,6 +12,10 @@ angular.module('dropzoneModule', []).directive('dropzoneDirective',
         dropzone.processQueue();
       };
 
+      scope.removeAllFiles = function() {
+        dropzone.removeAllFiles();
+      };
+
       // bind the given event handlers
       angular.forEach(config.eventHandlers, function (handler, event) {
         dropzone.on(event, handler);
@@ -19,9 +23,9 @@ angular.module('dropzoneModule', []).directive('dropzoneDirective',
     };
   });
 
-angular.module('patientImagesApp', ['dropzoneModule', 'obsService', 'session']);
+angular.module('visitDocumentsApp', ['dropzoneModule', 'obsService', 'session']);
 
-angular.module('patientImagesApp').controller('FileUploadCtrl', ['$scope', '$window', 'SessionInfo',
+angular.module('visitDocumentsApp').controller('FileUploadCtrl', ['$scope', '$window', 'SessionInfo',
   function ($scope, $window, SessionInfo) {
 
     // This happens on page load, by the time any file is dropped in, the provider would have been fetched.
@@ -35,7 +39,7 @@ angular.module('patientImagesApp').controller('FileUploadCtrl', ['$scope', '$win
       'options': // passed into the Dropzone constructor
       { 
         'url': $window.config.uploadUrl,
-        'paramName': 'patientimagefile',
+        'paramName': 'visit_document_file',
         'maxFiles': 1,
         'maxFilesize': $window.config.maxFileSize,
         'acceptedFiles': 'image/*', 
@@ -58,6 +62,7 @@ angular.module('patientImagesApp').controller('FileUploadCtrl', ['$scope', '$win
         },
         'success': function (file, response) {
           $scope.$broadcast('newObsEvent', response);
+          $scope.clearForms();
         }
       }
     };
@@ -66,9 +71,15 @@ angular.module('patientImagesApp').controller('FileUploadCtrl', ['$scope', '$win
       $scope.processDropzone();
     };
 
+    $scope.clearForms = function() {
+      $scope.removeAllFiles();
+      $scope.obsText = "";
+      $scope.$apply();
+    }
+
   }]);
 
-angular.module('patientImagesApp').controller('ListObsCtrl', ['$scope', '$window', 'ObsService',
+angular.module('visitDocumentsApp').controller('ListObsCtrl', ['$scope', '$window', 'ObsService',
   function($scope, $window, ObsService) {
 
     ObsService.getObs({
@@ -99,12 +110,3 @@ angular.module('patientImagesApp').controller('ListObsCtrl', ['$scope', '$window
     };
 
   }]);
-
-
-
-
-
-
-
-
-
