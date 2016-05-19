@@ -20,7 +20,7 @@ public class VisitDocumentsPageController {
 
 	public void controller(
 			@RequestParam("patient") Patient patient,
-			@RequestParam("visit") String visitUuid,
+			@RequestParam("visit") Visit visit,
 			UiSessionContext sessionContext,
 			UiUtils ui,
 			@InjectBeans VisitDocumentsContext context,
@@ -31,7 +31,6 @@ public class VisitDocumentsPageController {
 		
 		jsonConfig.put("patient", convertToFull(patient));
 		
-		Visit visit = context.getVisitService().getVisitByUuid(visitUuid);
 		jsonConfig.put("visit", convertToFull(visit));
 		
 		jsonConfig.put("uploadUrl", "/ws" + VisitDocumentsConstants.UPLOAD_DOCUMENT_URL);

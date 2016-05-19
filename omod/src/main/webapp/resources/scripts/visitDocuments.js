@@ -1,4 +1,4 @@
-  angular.module('dropzoneModule', []).directive('dropzoneDirective',
+angular.module('vdui.widget.dropzone', []).directive('dropzoneDirective',
   function () {
     return function (scope, element, attrs) {
       var config, dropzone;
@@ -23,9 +23,9 @@
     };
   });
 
-angular.module('visitDocumentsApp', ['dropzoneModule', 'obsService', 'session']);
+angular.module('vdui.page.main', ['vdui.widget.dropzone', 'obsService', 'session', 'vdui.widget.thumbnail']);
 
-angular.module('visitDocumentsApp').controller('FileUploadCtrl', ['$scope', '$window', 'SessionInfo',
+angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$window', 'SessionInfo',
   function ($scope, $window, SessionInfo) {
 
     // This happens on page load, by the time any file is dropped in, the provider would have been fetched.
@@ -33,6 +33,8 @@ angular.module('visitDocumentsApp').controller('FileUploadCtrl', ['$scope', '$wi
     SessionInfo.get().$promise.then(function(info) {
       providerUuid = info.currentProvider.uuid;
     });
+
+    var provider = SessionInfo.get().currentProvider;
 
     $scope.dropzoneConfig = {
       
@@ -49,7 +51,7 @@ angular.module('visitDocumentsApp').controller('FileUploadCtrl', ['$scope', '$wi
       {
         'addedfile': function(file) {
           $scope.file = file;
-          if (this.files[1]!=null) {
+          if (this.files[1] != null) {
             this.removeFile(this.files[0]);
           }
           $scope.$apply(function() {
@@ -57,8 +59,8 @@ angular.module('visitDocumentsApp').controller('FileUploadCtrl', ['$scope', '$wi
           });
         },
         'sending': function (file, xhr, formData) {
-          formData.append('providerUuid', providerUuid);
-          formData.append('obsText', $scope.obsText);
+          formData.append('provider', providerUuid);
+          formData.append('fileCaption', $scope.fileCaption);
         },
         'success': function (file, response) {
           $scope.$broadcast('newObsEvent', response);
@@ -73,14 +75,13 @@ angular.module('visitDocumentsApp').controller('FileUploadCtrl', ['$scope', '$wi
 
     $scope.clearForms = function() {
       $scope.removeAllFiles();
-      $scope.obsText = "";
-      $scope.$apply();
+      $scope.fileCaption = "";
     }
 
   }]);
 
-angular.module('visitDocumentsApp').controller('ListObsCtrl', ['$scope', '$window', 'ObsService',
-  function($scope, $window, ObsService) {
+angular.module('vdui.page.main').controller('ListObsCtrl', ['$scope', '$window', 'ObsService', 'Obs',
+  function($scope, $window, ObsService, Obs) {
 
     ObsService.getObs({
       patient: $window.config.patient.uuid,
@@ -95,18 +96,13 @@ angular.module('visitDocumentsApp').controller('ListObsCtrl', ['$scope', '$windo
       $scope.$apply();
     });
 
-    // To parameterize the href attribute for images
-    $scope.getImageSrc = function(obsUuid) {
-      return $window.config.downloadUrl + '?'
-        + 'obs=' + obsUuid+ '&'
-        + 'view=' + $window.config.originalView ;
-    };
-
-    // To parameterize the ng-src attribute for thumbnails
-    $scope.getThumbnailSrc = function(obsUuid) {
-      return $window.config.downloadUrl + '?'
-        + 'obs=' + obsUuid + '&'
-        + 'view=' + $window.config.thumbView ;
-    };
+    // Setting the config for the thumbnail directive
+    $scope.cfg = {};
+    $scope.cfg.url = $window.config.downloadUrl + '?'
+        + 'view=' + $window.config.thumbView + '&'
+        + 'obs=';
+    $scope.cfg.afterUrl = $window.config.downloadUrl + '?'
+        + 'view=' + $window.config.originalView + '&'
+        + 'obs=';
 
   }]);

@@ -52,9 +52,13 @@ public class VisitDocumentsController {
       OTHER
    }
    
+   /**
+    * @param mimeType The MIME type of the uploaded content.
+    * @return The type/family of uploaded content based on the MIME type.
+    */
    public static ContentFamily getContentFamily(String mimeType) {
-      ContentFamily contentFamily = ContentFamily.OTHER; 
-      if (StringUtils.contains(mimeType, "image/")) {
+      ContentFamily contentFamily = ContentFamily.OTHER;
+      if (StringUtils.startsWith(mimeType, "image/")) {
          contentFamily = ContentFamily.IMAGES;
       }
       return contentFamily;
@@ -64,16 +68,12 @@ public class VisitDocumentsController {
    @ResponseBody
    public Object uploadDocuments(
          @RequestParam("patient") Patient patient,
-         @RequestParam("visit") String visitUuid,
-         @RequestParam("providerUuid") String providerUuid,
+         @RequestParam("visit") Visit visit,
+         @RequestParam("provider") Provider provider,
+         @RequestParam("fileCaption") String fileCaption,
+         @RequestParam(value="instructions", required=false) String instructions,
          MultipartHttpServletRequest request) 
    {
-      String obsText = request.getParameter("obsText");
-
-      Provider provider = context.getProviderService().getProviderByUuid(providerUuid);
-
-      Visit visit = context.getVisitService().getVisitByUuid(visitUuid);
-
       Obs obs = new Obs();
       try {
          Iterator<String> fileNameIterator = request.getFileNames();	// Looping through the uploaded file names.
@@ -87,7 +87,7 @@ public class VisitDocumentsController {
                   
                   Encounter encounter = saveImageUploadEncounter(patient, visit, context.getEncounterType(), provider, context.getEncounterRole(), context.getEncounterService());
                   ConceptComplex conceptComplex = context.getConceptComplex();
-                  obs = saveUploadedImageObs(patient.getPerson(), encounter, uploadedFile, obsText, conceptComplex, context.getObsService());
+                  obs = saveUploadedImageObs(patient.getPerson(), encounter, uploadedFile, fileCaption, conceptComplex, instructions, context.getObsService());
                   break;
                   
                case OTHER:
@@ -107,7 +107,7 @@ public class VisitDocumentsController {
    /*
     * @see https://wiki.openmrs.org/display/docs/Complex+Obs+Support
     */
-   protected Obs saveUploadedImageObs(Person person, Encounter encounter, MultipartFile file, String obsText, ConceptComplex conceptComplex, ObsService obsService)
+   protected Obs saveUploadedImageObs(Person person, Encounter encounter, MultipartFile file, String fileCaption, ConceptComplex conceptComplex, String instructions, ObsService obsService)
          throws IOException
    {
       Object image = file.getInputStream();
@@ -119,10 +119,12 @@ public class VisitDocumentsController {
 
       Obs obs = new Obs(person, conceptComplex, encounter.getEncounterDatetime(), encounter.getLocation());
       obs.setEncounter(encounter);
-      obs.setComment(obsText);
-      String instructions = PatientImageComplexData.INSTRUCTIONS_DEFAULT;	// TODO: Should be provided through the POST request from the client-side.
+      obs.setComment(fileCaption);
+      if (StringUtils.isEmpty(instructions)) {
+         instructions = PatientImageComplexData.INSTRUCTIONS_DEFAULT;
+      }
       obs.setComplexData( new PatientImageComplexData(instructions, file.getOriginalFilename(), image, file.getContentType()) );
-      return obsService.saveObs(obs, null);
+      return obsService.saveObs(obs, getClass().toString());
    }
 
    protected static double getCompressionRatio(double fileByteSize, double maxByteSize) {
