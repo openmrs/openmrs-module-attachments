@@ -1,6 +1,6 @@
-angular.module('vdui.widget.thumbnail', ['obsService'])
+angular.module('vdui.widget.thumbnail', ['complexObsService'])
 
-  .directive('vduiThumbnail', [ 'Obs', function(Obs) {
+  .directive('vduiThumbnail', [ 'ComplexObs', function(Obs) {
 
     return {
 
@@ -35,6 +35,16 @@ angular.module('vdui.widget.thumbnail', ['obsService'])
 		        $scope.toggleEditMode(false);
 		      }, function(reason) {
 		      	$scope.obs.comment = caption;
+		      });
+		    }
+
+		    $scope.delete = function() {	// Work in progress, see backend
+		      var saved = Obs.purge($scope.obs);
+		      
+		      saved.$promise.then(function(obs) {
+		      	console.log("Obs deleted");
+		      }, function(reason) {
+		      	console.log("Obs deletion error");
 		      });
 		    }
     	}

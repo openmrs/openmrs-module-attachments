@@ -42,7 +42,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 public class VisitDocumentsController {
 
    @Autowired
-   @Qualifier("visitDocumentsContext")
+   @Qualifier(VisitDocumentsConstants.MODULE_CONTEXT_QUALIFIER)
    protected VisitDocumentsContext context;
 
    protected final Log log = LogFactory.getLog(getClass());

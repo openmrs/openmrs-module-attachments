@@ -13,10 +13,11 @@ import org.openmrs.Obs;
 import org.openmrs.api.APIException;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.obs.ComplexData;
+import org.openmrs.obs.ComplexObsHandler;
 import org.openmrs.obs.handler.AbstractHandler;
 import org.openmrs.obs.handler.ImageHandler;
 
-public class PatientImageHandler extends ImageHandler {
+public class PatientImageHandler extends ImageHandler implements ComplexObsHandler {
 
 	/*
 	 * This prefixes the valueComplex of our custom complex obs.

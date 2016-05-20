@@ -100,7 +100,7 @@
 
 	<div class="vdui_thumbnailImage">
 	  <a target="_blank" href="{{config.afterUrl}}{{obs.uuid}}"><img ng-src="{{config.url}}{{obs.uuid}}" alt=""></img></a>
-	  <i ng-show="editMode" class="icon-trash"></i>
+	  <i ng-show="editMode" class="icon-trash" ng-click="delete()"></i>
 	</div>
 
 	<div class="vdui_thumbnailCaption">

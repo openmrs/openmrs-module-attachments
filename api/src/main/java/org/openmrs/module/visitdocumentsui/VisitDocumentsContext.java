@@ -31,14 +31,14 @@ import org.springframework.stereotype.Component;
 /**
  * Inject this class to access services and global properties.
  */
-@Component("visitDocumentsContext")
+@Component(VisitDocumentsConstants.MODULE_CONTEXT_QUALIFIER)
 public class VisitDocumentsContext extends ModuleProperties
 {
 	protected final Log log = LogFactory.getLog(getClass());
 
 	@Autowired
-    @Qualifier("obsService")
-    protected ObsService obsService;
+   @Qualifier("obsService")
+   protected ObsService obsService;
 	
 	/*
 	 * Exposing all needed services through OUR context
@@ -128,6 +128,13 @@ public class VisitDocumentsContext extends ModuleProperties
 			ext = mimeTypes.get(mimeType);
 		}
 		return ext;
+	}
+	
+	/**
+	 * @return The 'view' that should be affected when performing CRUD operation on complex obs.
+	 */
+	public String getCRUDDocumentView() {
+	   return VisitDocumentsConstants.DOC_VIEW_ORIGINAL;
 	}
 	
 	private static final Map<String, String> mimeTypes;

@@ -11,6 +11,8 @@ package org.openmrs.module.visitdocumentsui;
 
 public class VisitDocumentsConstants {
 
+   public static final String MODULE_CONTEXT_QUALIFIER = "visitDocumentsContext";
+   
 	public static final String MODULE_BASE_URL = "/visitdocumentsui";
 	
 	public static final String UPLOAD_DOCUMENT_URL = MODULE_BASE_URL + "/upload";
@@ -22,6 +24,8 @@ public class VisitDocumentsConstants {
 	public static final String DOC_VIEW_ORIGINAL = "complexdata.view.original";
 	
    public static final String DOC_VIEW_THUMBNAIL = "complexdata.view.thumbnail";
+   
+   public static final String DOC_VIEW_CRUD = DOC_VIEW_ORIGINAL;  // Use this view for CRUD operations where a view must be provided.
 	
 	public static final String GP_CONCEPT_COMPLEX_UUID = "visitdocumentsui.conceptComplexUuid";
 	

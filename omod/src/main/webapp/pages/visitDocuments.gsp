@@ -14,7 +14,9 @@
   ui.includeCss("visitdocumentsui", "dropzone/dropzone.css")
 
   ui.includeJavascript("visitdocumentsui", "visitDocuments.js")
+
   ui.includeJavascript("visitdocumentsui", "directives/thumbnail.js")
+  ui.includeJavascript("visitdocumentsui", "services/complexObsService.js")
 %>
 
 <script type="text/javascript">
