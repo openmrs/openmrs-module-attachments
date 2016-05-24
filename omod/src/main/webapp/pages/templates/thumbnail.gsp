@@ -49,7 +49,7 @@
 		padding: 5px;
 	}
 
-	.vdui_thumbnailImage {
+	.vdui_thumbnailImageSection {
 		position: relative;
 		height: 110px; /* Controls the height of the image */
 	}
@@ -63,12 +63,16 @@
 		max-height: 110px; /* Controls the height of the image */
 	}
 
-	.vdui_thumbnailCaption {
+	.vdui_thumbnailContainer img:hover {
+		cursor: pointer;
+	}
+
+	.vdui_thumbnailCaptionSection {
 		margin-top: 10px;
 		position: relative;
 	}
 
-	.vdui_thumbnailImage a {
+	.vdui_thumbnailImageSection a {
 		position: absolute;
 		width: 80%;
 		height: auto;
@@ -76,7 +80,7 @@
     top: 0;	/* Controls how low is placed the clickable image */
 	}
 
-	.vdui_thumbnailImage i {
+	.vdui_thumbnailImageSection i {
 		position: absolute;
     left: 0;
     top: 0;
@@ -84,10 +88,14 @@
     font-size: 300%
 	}
 
-	.vdui_editMode img {
+	.vdui_thumbnailEditMode img {
 		-moz-opacity: 0.20;
 		opacity:.20;
 		filter: alpha(opacity=20);
+	}
+
+	.vdui_thumbnailEditMode img:hover {
+		cursor: auto;
 	}
 
 	.vdui_thumbnailContainer i {
@@ -98,12 +106,13 @@
 
 <div class="vdui_thumbnailContainer" ng-class="editModeCss">
 
-	<div class="vdui_thumbnailImage">
-	  <a target="_blank" href="{{config.afterUrl}}{{obs.uuid}}"><img ng-src="{{config.url}}{{obs.uuid}}" alt=""></img></a>
+	<div class="vdui_thumbnailImageSection">
+	  <!-- <a target="_blank" href="{{config.afterUrl}}{{obs.uuid}}"><img ng-src="{{config.url}}{{obs.uuid}}" alt=""></img></a> -->
+	  <img ng-click="show()" ng-src="{{config.url}}{{obs.uuid}}" alt=""></img>
 	  <i ng-show="editMode" class="icon-trash" ng-click="delete()"></i>
 	</div>
 
-	<div class="vdui_thumbnailCaption">
+	<div class="vdui_thumbnailCaptionSection">
 		<p ng-show="!editMode" ng-click="toggleEditMode(true)">{{obs.comment}}</p>
 		<div ng-show="editMode">
 	    <input ng-model="newCaption" class="left" type="text"/>

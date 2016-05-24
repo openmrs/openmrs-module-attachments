@@ -17,6 +17,8 @@
 
   ui.includeJavascript("visitdocumentsui", "directives/thumbnail.js")
   ui.includeJavascript("visitdocumentsui", "services/complexObsService.js")
+
+  ui.includeJavascript("visitdocumentsui", "directives/modalImage.js")
 %>
 
 <script type="text/javascript">
@@ -110,6 +112,10 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <div ng-app="vdui.page.main">
 
+  <!-- The overlay image, hidden at first -->
+  <vdui-modal-image></vdui-modal-image>
+
+  <!-- Looping through the thumbnails -->
   <div class="vdui_mainSection vdui_thumbnailsContainer" ng-controller="ListObsCtrl">
     <vdui-thumbnail ng-repeat="obs in obsArray" obs="obs" config="cfg"></vdui-thumbnail>
   </div>

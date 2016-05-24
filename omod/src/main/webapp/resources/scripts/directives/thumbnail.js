@@ -6,20 +6,22 @@ angular.module('vdui.widget.thumbnail', ['complexObsService'])
 
       restrict: 'E',
       scope: {
-      	obs: '=obs',
-				config: '=config'
+      	obs: '=',
+				config: '='
       },
 
       templateUrl: 'templates/thumbnail.page',
 
-    	controller : function($scope) {
+    	controller : function($scope, $rootScope) {
     		$scope.editMode = false;
+
+    		$scope.src = "";
 
     		$scope.toggleEditMode = function(editMode) {
 		      $scope.newCaption = $scope.obs.comment;
 		      $scope.editMode = editMode;
 		      if ($scope.editMode) {
-		      	$scope.editModeCss = "vdui_editMode";
+		      	$scope.editModeCss = "vdui_thumbnailEditMode";
 		      }
 		      else {
 		      	$scope.editModeCss = "";
@@ -47,6 +49,16 @@ angular.module('vdui.widget.thumbnail', ['complexObsService'])
 		      	console.log("Obs deletion error");
 		      });
 		    }
+
+		    $scope.show = function() {
+		    	if (!$scope.editMode) {
+			    	var cfg = {};
+			    	cfg.url = $scope.config.afterUrl + $scope.obs.uuid;
+			    	cfg.caption = $scope.obs.comment;
+			    	$scope.$emit('vdui_event_diplayComplexObs', cfg);
+			    }
+		    }
+
     	}
 
     };

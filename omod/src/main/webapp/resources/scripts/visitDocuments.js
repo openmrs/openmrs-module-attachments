@@ -23,7 +23,7 @@ angular.module('vdui.widget.dropzone', []).directive('dropzoneDirective',
     };
   });
 
-angular.module('vdui.page.main', ['vdui.widget.dropzone', 'obsService', 'session', 'vdui.widget.thumbnail']);
+angular.module('vdui.page.main', ['vdui.widget.dropzone', 'obsService', 'session', 'vdui.widget.thumbnail', 'vdui.widget.modalImage']);
 
 angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$window', 'SessionInfo',
   function ($scope, $window, SessionInfo) {
@@ -63,7 +63,7 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$windo
           formData.append('fileCaption', $scope.fileCaption);
         },
         'success': function (file, response) {
-          $scope.$broadcast('newObsEvent', response);
+          $scope.$broadcast('vdui_event_newComplexObs', response);
           $scope.clearForms();
         }
       }
@@ -91,7 +91,7 @@ angular.module('vdui.page.main').controller('ListObsCtrl', ['$scope', '$window',
       $scope.obsArray = obs;
     })
 
-    $scope.$on('newObsEvent', function(event, obs) {
+    $scope.$on('vdui_event_newComplexObs', function(event, obs) {
       $scope.obsArray.unshift(obs);
       $scope.$apply();
     });
