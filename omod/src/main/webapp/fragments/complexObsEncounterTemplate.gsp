@@ -1,8 +1,22 @@
 <%	
-	ui.includeJavascript("patientimages", "fragments/dashboardEncounterTemplate.js")
+	ui.includeJavascript("uicommons", "angular.min.js")
+  ui.includeJavascript("uicommons", "angular-resource.min.js")
+  ui.includeJavascript("uicommons", "angular-common.js")
+  ui.includeJavascript("uicommons", "angular-app.js")
+
+  ui.includeJavascript("visitdocumentsui", "directives/thumbnail.js")
+  ui.includeJavascript("visitdocumentsui", "services/complexObsService.js")
+
+  ui.includeJavascript("visitdocumentsui", "directives/modalImage.js")
+
+  ui.includeJavascript("visitdocumentsui", "directives/complexObsEncounterDirective.js")
+
+  ui.includeJavascript("visitdocumentsui", "fragments/complexObsEncounterTemplate.js")
 %>
 
-<script type="text/template" id="dashboardEncounterTemplate">
+<div ng-app="vdui.fragment.encounterTemplate" ng-controller="EncounterTemplateCtrl" ng-init="init()">
+
+<script type="text/template" id="complexObsEncounterTemplate">
 <li>
 	<div class="encounter-date">
 	    <i class="icon-time"></i>
@@ -32,7 +46,8 @@
 	    </li>
 	    <li>
 	        <div class="details-action">
-	            <a class="view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-display-with-html-form="{{- config.displayWithHtmlForm }}" data-target="#encounter-summary{{- encounter.encounterId }}" data-toggle="collapse" data-target="#encounter-summary{{- encounter.encounterId }}">
+	            <a class="view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-display-with-html-form="{{- config.displayWithHtmlForm }}" data-target="#encounter-summary{{- encounter.encounterId }}" data-toggle="collapse"
+	            	data-encounter-type-uuid="{{- encounter.encounterType.uuid }}">
 	                <span class="show-details">${ ui.message("coreapps.patientDashBoard.showDetails")}</span>
 	                <span class="hide-details">${ ui.message("coreapps.patientDashBoard.hideDetails")}</span>
 	                <i class="icon-caret-right"></i>
@@ -50,30 +65,11 @@
         {{  } }}
 	</span>
 
-	<div id="encounter-summary{{- encounter.encounterId }}" class="collapse">
-	    <div class="encounter-summary-container"></div>
+	<div id="encounter-summary{{- encounter.encounterId }}">
+			<div class="encounter-summary-container"></div>
 	</div>
+
 </li>
 </script>
 
-<script type="text/template" id="defaultEncounterDetailsTemplate">
-    {{ _.each(_.filter(diagnoses, function(d) { return d.answer }), function(d) { }}
-        <p><small>{{- d.question}}</small><span>{{- d.answer}}</span></p>
-    {{ }); }}
-
-    {{ _.each(observations, function(observation) { }}
-        {{ if(observation.answer != null) {}}
-            <p><small>{{- observation.question}}</small>
-            <span><a target="_blank" href="/openmrs/complexObsServlet?obsId={{- observation.obsId}}&view=complexdata.view.original">Open in new tab.</a></span></p>
-        {{}}}
-    {{ }); }}
-
-    {{ _.each(orders, function(order) { }}
-        <p>
-            <small>${ ui.message("coreapps.patientDashBoard.orderNumber")}</small><span>{{- order.orderNumber }}</span>
-        </p>
-        <p>
-            <small>${ ui.message("coreapps.patientDashBoard.order")}</small><span>{{- order.concept }}</span>
-        </p>
-    {{ }); }}
-</script>
+</div>

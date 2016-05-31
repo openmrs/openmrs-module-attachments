@@ -1,12 +1,12 @@
 [
     {
-        "id": "patientimages.encounterTemplate",
+        "id": "visitdocumentsui.encounterTemplate",
         "extensionPointId": "org.openmrs.referenceapplication.encounterTemplate",
         "type": "fragment",
         "extensionParams": {
-            "templateId": "dashboardEncounterTemplate",
-            "templateFragmentProviderName": "patientimages",
-            "templateFragmentId": "dashboardEncounterTemplate",
+            "templateId": "complexObsEncounterTemplate",
+            "templateFragmentProviderName": "visitdocumentsui",
+            "templateFragmentId": "complexObsEncounterTemplate",
             "supportedEncounterTypes": {
                 "5021b1a1-e7f6-44b4-ba02-da2f2bcf8718": { // Visit Document Upload
                     "icon": "icon-paper-clip"
