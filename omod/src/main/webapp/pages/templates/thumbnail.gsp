@@ -28,7 +28,7 @@
 		float: left;
 
 		width: 16%;	/* Example for 5 thumbnails: 100/5 - the left and right margins below */
-	 	margin:  2% 2% 50px 2%; 
+	 	margin:  2% 2% 50px 2%;
 
 	 	height: 130px; /* Controls the height of the whole thumbnail */
 	}
@@ -38,7 +38,6 @@
 	}
 
 	.vdui_thumbnailContainer p:hover {
-		/*background-color: #e0e0e0;*/
 		background-color: #F5F5F5;
 
 		font-style: italic;
@@ -107,7 +106,6 @@
 <div class="vdui_thumbnailContainer" ng-class="editModeCss">
 
 	<div class="vdui_thumbnailImageSection">
-	  <!-- <a target="_blank" href="{{config.afterUrl}}{{obs.uuid}}"><img ng-src="{{config.url}}{{obs.uuid}}" alt=""></img></a> -->
 	  <img ng-click="show()" ng-src="{{config.url}}{{obs.uuid}}" alt=""></img>
 	  <i ng-show="editMode" class="icon-trash" ng-click="delete()"></i>
 	</div>

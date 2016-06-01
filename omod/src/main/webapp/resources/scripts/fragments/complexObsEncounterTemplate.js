@@ -59,14 +59,12 @@ angular.module('vdui.fragment.encounterTemplate').controller('EncounterTemplateC
 	          emr.fragmentActionLink("coreapps", "visit/visitDetails", "getEncounterDetails", { encounterId: id })
 	      ).success(function(data)
 		      {
-		          var cfg = {};
-		          cfg.obs = data.observations;
-		          cfgStr = JSON.stringify(cfg);
-		          cfgStr = cfgStr.replace(/\"([^(\")"]+)\":/g,"$1:");
+	          obsAsStr = JSON.stringify(data.observations);
+	          obsAsStr = obsAsStr.replace(/\"([^(\")"]+)\":/g,"$1:");
 
-		          var htmlContent = "<vdui-complex-obs-encounter cfg='" + cfgStr + "'></vdui-complex-obs-encounter>";
-		          encounterDetailsSection.html( $compile(htmlContent)($scope) );
-		          $scope.$apply();
+	          var htmlContent = "<vdui-complex-obs-encounter obs='" + obsAsStr + "'></vdui-complex-obs-encounter>";
+	          encounterDetailsSection.html( $compile(htmlContent)($scope) );
+	          $scope.$apply();
 		      }
 	      ).error(function(err){
 	          emr.errorAlert(err);

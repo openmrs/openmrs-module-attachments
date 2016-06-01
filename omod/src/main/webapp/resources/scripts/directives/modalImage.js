@@ -1,13 +1,10 @@
 angular.module('vdui.widget.modalImage', [])
-
   .directive('vduiModalImage', function() {
-
     return {
 
       restrict: 'E',
-      scope: {
-      },
-      templateUrl: 'templates/modalImage.page',
+      scope: {},
+      templateUrl: '/' + module.getPath(OPENMRS_CONTEXT_PATH) + '/templates/modalImage.page',
 
     	controller : function($scope, $rootScope) {
   			$scope.cfg = {};
@@ -20,6 +17,6 @@ angular.module('vdui.widget.modalImage', [])
 		      $scope.cfg = cfg;
 		    });
     	}
-
+      
     };
   });

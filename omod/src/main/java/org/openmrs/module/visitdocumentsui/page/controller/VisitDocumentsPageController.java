@@ -1,14 +1,12 @@
 package org.openmrs.module.visitdocumentsui.page.controller;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.module.appui.UiSessionContext;
-import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsContext;
-import org.openmrs.module.visitdocumentsui.obs.PatientImageHandler;
+import org.openmrs.module.visitdocumentsui.fragment.controller.ClientConfigFragmentController;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.ui.framework.UiUtils;
@@ -26,29 +24,12 @@ public class VisitDocumentsPageController {
 			@InjectBeans VisitDocumentsContext context,
 			PageModel model)
 	{
-
-		Map<String, Object> jsonConfig = new LinkedHashMap<String, Object>();
-		
+		Map<String, Object> jsonConfig = ClientConfigFragmentController.getClientConfig(context, ui);
 		jsonConfig.put("patient", convertToFull(patient));
-		
 		jsonConfig.put("visit", convertToFull(visit));
 		
-		jsonConfig.put("uploadUrl", "/ws" + VisitDocumentsConstants.UPLOAD_DOCUMENT_URL);
-		jsonConfig.put("downloadUrl", "/ws" + VisitDocumentsConstants.DOWNLOAD_IMAGE_URL);
-		jsonConfig.put("originalView", VisitDocumentsConstants.DOC_VIEW_ORIGINAL);
-		jsonConfig.put("thumbView", VisitDocumentsConstants.DOC_VIEW_THUMBNAIL);
-		
-		jsonConfig.put("conceptComplexUuid", context.getConceptComplex().getUuid());
-		
-		jsonConfig.put("thumbSize", PatientImageHandler.THUMBNAIL_HEIGHT);
-		jsonConfig.put("maxFileSize", context.getMaxUploadFileSize());
-		
-		jsonConfig.put("obsRep", "custom:" + VisitDocumentsConstants.REPRESENTATION_OBS);
-		
 		model.put("jsonConfig", ui.toJson(jsonConfig));
-		
-		// For Core Apps's patient header.
-		model.put("patient", patient);
+		model.put("patient", patient); // For Core Apps's patient header.
 	}
 	
     private Object convertToFull(Object object) {

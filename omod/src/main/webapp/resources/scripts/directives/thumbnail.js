@@ -1,5 +1,4 @@
 angular.module('vdui.widget.thumbnail', ['complexObsService'])
-
   .directive('vduiThumbnail', [ 'ComplexObs', function(Obs) {
 
     return {
@@ -9,8 +8,7 @@ angular.module('vdui.widget.thumbnail', ['complexObsService'])
       	obs: '=',
 				config: '='
       },
-
-      templateUrl: 'templates/thumbnail.page',
+      templateUrl: '/' + module.getPath(OPENMRS_CONTEXT_PATH) + '/templates/thumbnail.page',
 
     	controller : function($scope, $rootScope) {
     		$scope.editMode = false;
@@ -58,7 +56,6 @@ angular.module('vdui.widget.thumbnail', ['complexObsService'])
 			    	$scope.$emit('vdui_event_diplayComplexObs', cfg);
 			    }
 		    }
-
     	}
 
     };

@@ -31,12 +31,10 @@
   window.OpenMRS = window.OpenMRS || {};
 
   var config = ${jsonConfig}; // Getting the config from the Spring Java controller.
-  config.downloadUrl = '/' + OPENMRS_CONTEXT_PATH + config.downloadUrl;
-
-  config.uploadUrl = '/' + OPENMRS_CONTEXT_PATH + config.uploadUrl;
   config.uploadUrl += '?' + 'patient=' + config.patient.uuid + '&' + 'visit=' + config.visit.uuid;
 
-  Dropzone.options.visitDocumentsDropzone = false; // We turn off auto-discover for our DropzoneJS element because our directive adds it programmatically.
+  // We turn off auto-discover for our DropzoneJS element because our directive adds it programmatically.
+  Dropzone.options.visitDocumentsDropzone = false; 
 
 </script>
 
@@ -112,14 +110,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <div ng-app="vdui.page.main">
 
-  <!-- The overlay image, hidden at first -->
-  <vdui-modal-image></vdui-modal-image>
-
-  <!-- Looping through the thumbnails -->
-  <div class="vdui_mainSection vdui_thumbnailsContainer" ng-controller="ListObsCtrl">
-    <vdui-thumbnail ng-repeat="obs in obsArray" obs="obs" config="cfg"></vdui-thumbnail>
-  </div>
-
+  <!-- The form input with upload widget -->
   <div class="vdui_mainSection vdui_fileUploadContainer" ng-controller="FileUploadCtrl">
     
     <div class="upload-container">
@@ -142,6 +133,14 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
     </div>
     
   </div>  
+
+  <!-- The overlay image, hidden when untriggered -->
+  <vdui-modal-image></vdui-modal-image>
+
+  <!-- Looping through the thumbnails -->
+  <div class="vdui_mainSection vdui_thumbnailsContainer" ng-controller="ListComplexObsCtrl">
+    <vdui-thumbnail ng-repeat="obs in obsArray" obs="obs" config="thumbnailCfg"></vdui-thumbnail>
+  </div>
 
 </div>
 

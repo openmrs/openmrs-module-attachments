@@ -34,8 +34,6 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$windo
       providerUuid = info.currentProvider.uuid;
     });
 
-    var provider = SessionInfo.get().currentProvider;
-
     $scope.dropzoneConfig = {
       
       'options': // passed into the Dropzone constructor
@@ -80,7 +78,7 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$windo
 
   }]);
 
-angular.module('vdui.page.main').controller('ListObsCtrl', ['$scope', '$window', 'ObsService', 'Obs',
+angular.module('vdui.page.main').controller('ListComplexObsCtrl', ['$scope', '$window', 'ObsService', 'Obs',
   function($scope, $window, ObsService, Obs) {
 
     ObsService.getObs({
@@ -97,11 +95,11 @@ angular.module('vdui.page.main').controller('ListObsCtrl', ['$scope', '$window',
     });
 
     // Setting the config for the thumbnail directive
-    $scope.cfg = {};
-    $scope.cfg.url = $window.config.downloadUrl + '?'
+    $scope.thumbnailCfg = {};
+    $scope.thumbnailCfg.url = $window.config.downloadUrl + '?'
         + 'view=' + $window.config.thumbView + '&'
         + 'obs=';
-    $scope.cfg.afterUrl = $window.config.downloadUrl + '?'
+    $scope.thumbnailCfg.afterUrl = $window.config.downloadUrl + '?'
         + 'view=' + $window.config.originalView + '&'
         + 'obs=';
 

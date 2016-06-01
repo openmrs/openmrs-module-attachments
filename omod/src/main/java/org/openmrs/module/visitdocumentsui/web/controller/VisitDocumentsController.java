@@ -147,7 +147,7 @@ public class VisitDocumentsController {
       return encounterService.saveEncounter(encounter);
    }
 
-   @RequestMapping(value = VisitDocumentsConstants.DOWNLOAD_IMAGE_URL, method = RequestMethod.GET)
+   @RequestMapping(value = VisitDocumentsConstants.DOWNLOAD_DOCUMENT_URL, method = RequestMethod.GET)
    public void downloadDocument(@RequestParam("obs") String obsUuid, @RequestParam(value="view", required=false) String view,
          HttpServletResponse response)
    {

@@ -31,5 +31,18 @@
 	</bean>
 	
 	<context:component-scan base-package="org.openmrs.module.visitdocumentsui.web.controller" />
+
+  <bean class="org.openmrs.ui.framework.page.GlobalResourceIncluder">
+    <property name="resources">
+      <list>
+        <bean class="org.openmrs.ui.framework.resource.Resource">
+          <property name="category" value="js" />
+          <property name="providerName" value="${project.parent.artifactId}" />
+          <property name="resourcePath" value="scripts/globals.js" />
+          <property name="priority" value="-200" />
+        </bean>
+      </list>
+    </property>
+  </bean>
   		
 </beans>

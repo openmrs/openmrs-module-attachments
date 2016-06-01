@@ -19,8 +19,6 @@ public class VisitDocumentsConstants {
 	
 	public static final String DOWNLOAD_DOCUMENT_URL = MODULE_BASE_URL + "/download";
 	
-	public static final String DOWNLOAD_IMAGE_URL = DOWNLOAD_DOCUMENT_URL + "/image";
-	
 	public static final String DOC_VIEW_ORIGINAL = "complexdata.view.original";
 	
    public static final String DOC_VIEW_THUMBNAIL = "complexdata.view.thumbnail";
