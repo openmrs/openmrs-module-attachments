@@ -25,6 +25,8 @@
 
   var breadcrumbs = [
     { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
+    { label: "${ ui.escapeJs(ui.format(patient)) }" ,
+            link: '${ ui.urlBind("/" + contextPath + dashboardUrl, [ patientId: patient.uuid ] ) }'},
     { label: "${ui.message("visitdocumentsui.breadcrumbs.label")}"}
   ];
 

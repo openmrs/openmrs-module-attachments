@@ -23,6 +23,9 @@
     <require_module version="${appuiVersion}">
 			org.openmrs.module.appui
     </require_module>
+    <require_module version="${coreappsVersion}">
+			org.openmrs.module.coreapps
+    </require_module>
 	</require_modules>
 
 	

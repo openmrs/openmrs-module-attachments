@@ -30,6 +30,7 @@ public class VisitDocumentsPageController {
 		
 		model.put("jsonConfig", ui.toJson(jsonConfig));
 		model.put("patient", patient); // For Core Apps's patient header.
+		model.put("dashboardUrl", context.getDashboardUrl());
 	}
 	
     private Object convertToFull(Object object) {
