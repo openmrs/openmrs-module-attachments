@@ -17,7 +17,7 @@ angular.module('vdui.widget.dropzone', []).directive('dropzoneDirective',
       };
 
       // bind the given event handlers
-      angular.forEach(config.eventHandlers, function (handler, event) {
+      angular.forEach(config.eventHandlers, function(handler, event) {
         dropzone.on(event, handler);
       });
     };
@@ -28,11 +28,13 @@ angular.module('vdui.page.main', ['vdui.widget.dropzone', 'obsService', 'session
 angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$window', 'SessionInfo',
   function ($scope, $window, SessionInfo) {
 
-    // This happens on page load, by the time any file is dropped in, the provider would have been fetched.
     var providerUuid = "";
-    SessionInfo.get().$promise.then(function(info) {
-      providerUuid = info.currentProvider.uuid;
-    });
+    $scope.init = function() {
+      // This happens on page load, by the time any file is dropped in, the provider would have been fetched.
+      SessionInfo.get().$promise.then(function(info) {
+        providerUuid = info.currentProvider.uuid;
+      });
+    }
 
     $scope.dropzoneConfig = {
       
@@ -78,8 +80,8 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$windo
 
   }]);
 
-angular.module('vdui.page.main').controller('ListComplexObsCtrl', ['$scope', '$window', 'ObsService', 'Obs',
-  function($scope, $window, ObsService, Obs) {
+angular.module('vdui.page.main').controller('ListComplexObsCtrl', ['$scope', '$window', 'ObsService',
+  function($scope, $window, ObsService) {
 
     ObsService.getObs({
       patient: $window.config.patient.uuid,

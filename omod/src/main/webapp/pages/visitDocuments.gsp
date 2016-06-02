@@ -111,7 +111,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 <div ng-app="vdui.page.main">
 
   <!-- The form input with upload widget -->
-  <div class="vdui_mainSection vdui_fileUploadContainer" ng-controller="FileUploadCtrl">
+  <div class="vdui_mainSection vdui_fileUploadContainer" ng-controller="FileUploadCtrl" ng-init="init()">
     
     <div class="upload-container">
       <div class="upload-element dropzone-element">
