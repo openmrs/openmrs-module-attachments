@@ -31,10 +31,8 @@
   ];
 
   window.OpenMRS = window.OpenMRS || {};
-
   var config = ${jsonConfig}; // Getting the config from the Spring Java controller.
-  config.uploadUrl += '?' + 'patient=' + config.patient.uuid + '&' + 'visit=' + config.visit.uuid;
-
+  
   // We turn off auto-discover for our DropzoneJS element because our directive adds it programmatically.
   Dropzone.options.visitDocumentsDropzone = false; 
 
@@ -43,47 +41,42 @@
 <style>
 
   .vdui_mainSection {
-    position: relative;
     border: 1px solid #EEE;
     background-color: #F9F9F9;
+    margin: 15px 0 10px 0;
   }
 
   .vdui_fileUploadContainer {
-    margin-top: 20px;
-    margin-bottom: 20px;
     padding-left: 20px;
+    height: 200px;
   }
 
   .vdui_thumbnailsContainer {
     width: 100%;
-    margin: 0px auto;
     overflow: hidden;
   }
 
-  textarea {
+  .vdui_captionElement textarea {
     width: 100%;
-    /*height: 50%;*/
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
     box-sizing: border-box;         /* Opera/IE 8+ */
   }
 
-  .upload-container {
-    display: block;
+  .vdui_uploadContainer {
     height: 180px;
   }
 
-  .upload-element {
-    float: left;  
-    display: inline;
+  .vdui_uploadElement {
+    float: left;
   }
 
-  .upload-element.dropzone-element {
+  .vdui_uploadElement.vdui_dropzoneElement {
     width: 30%;
     height: 75%;
   }
 
-  .upload-element.caption-element {
+  .vdui_uploadElement.vdui_captionElement {
     width: 55%;
     margin-left: 2%;
   }
@@ -112,18 +105,16 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <div ng-app="vdui.page.main">
 
-  <!-- The form input with upload widget -->
-  <div class="vdui_mainSection vdui_fileUploadContainer" ng-controller="FileUploadCtrl" ng-init="init()">
-    
-    <div class="upload-container">
-      <div class="upload-element dropzone-element">
+  <div ng-show="visitUuid" class="vdui_mainSection vdui_fileUploadContainer" ng-controller="FileUploadCtrl" ng-init="init()">
+    <div class="vdui_uploadContainer">
+      <div class="vdui_uploadElement vdui_dropzoneElement">
         <h3>${ui.message("visitdocumentsui.visitdocumentspage.fileTitle")}</h3>
         <form action="" dropzone-directive="dropzoneConfig" class="dropzone" id="visit-documents-dropzone">
           <div class="dz-error-message"><span data-dz-errormessage></span></div>
           <div class="dz-default dz-message">${ui.message("visitdocumentsui.dropzone.innerlabel")}</div>
         </form>
       </div>
-      <div class="upload-element caption-element" style="">
+      <div class="vdui_uploadElement vdui_captionElement">
         <h3>${ui.message("visitdocumentsui.visitdocumentspage.commentTitle")}</h3>
         <textarea ng-model="fileCaption"></textarea>
         <span class="right" style="margin-top: 4%;">
@@ -131,17 +122,17 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
           <button class="" ng-click="clearForms()">${ui.message("visitdocumentsui.visitdocumentspage.clearFormsButton")}</button>
         </span>
       </div>
-      <div style="clear:both;"/>
     </div>
-    
-  </div>  
+  </div>
 
-  <!-- The overlay image, hidden when untriggered -->
-  <vdui-modal-image></vdui-modal-image>
-
-  <!-- Looping through the thumbnails -->
-  <div class="vdui_mainSection vdui_thumbnailsContainer" ng-controller="ListComplexObsCtrl">
-    <vdui-thumbnail ng-repeat="obs in obsArray" obs="obs" config="thumbnailCfg"></vdui-thumbnail>
+  <div ng-controller="ListComplexObsCtrl">
+    <div ng-show="obsArray.length" class="vdui_mainSection vdui_thumbnailsContainer">
+      <vdui-modal-image></vdui-modal-image>
+      <vdui-thumbnail ng-repeat="obs in obsArray" obs="obs" config="thumbnailCfg"></vdui-thumbnail>
+    </div>
+    <div ng-show="!obsArray.length">
+      ${ui.message("visitdocumentsui.visitdocumentspage.noDocuments")}
+    </div>
   </div>
 
 </div>

@@ -22,19 +22,19 @@
     overflow: auto;
   }
 
-  #encountersList .encounter-details .vdui-view-details {
+  #encountersList .encounter-details .vdui_view-details {
     background: #f9f9f9;
   }
-  #encountersList .encounter-details .vdui-view-details .hide-details {
+  #encountersList .encounter-details .vdui_view-details .hide-details {
     display: none;
   }
-  #encountersList .encounter-details .vdui-view-details:not(.collapsed) .hide-details {
+  #encountersList .encounter-details .vdui_view-details:not(.collapsed) .hide-details {
     display: inline;
   }
-  #encountersList .encounter-details .vdui-view-details:not(.collapsed) .show-details {
+  #encountersList .encounter-details .vdui_view-details:not(.collapsed) .show-details {
     display: none;
   }
-  #encountersList .encounter-details .vdui-view-details:not(.collapsed) .icon-caret-right {
+  #encountersList .encounter-details .vdui_view-details:not(.collapsed) .icon-caret-right {
     -moz-transform: rotate(90deg);
     -webkit-transform: rotate(90deg);
     -o-transform: rotate(90deg);
@@ -53,14 +53,14 @@
     -o-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
   }
-  #encountersList .encounter-details .vdui-view-details i {
+  #encountersList .encounter-details .vdui_view-details i {
     font-size: 1.2em;
     padding: 0;
     position: relative;
     top: 1px;
     left: -3px;
   }
-  #encountersList .encounter-details .vdui-view-details:hover {
+  #encountersList .encounter-details .vdui_view-details:hover {
     text-decoration: none;
   }
 </style>
@@ -97,7 +97,7 @@
       </li>
       <li>
         <div class="details-action">
-          <a class="vdui-view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-display-with-html-form="{{- config.displayWithHtmlForm }}" data-target="#encounter-summary{{- encounter.encounterId }}" data-toggle="collapse"
+          <a class="vdui_view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-display-with-html-form="{{- config.displayWithHtmlForm }}" data-target="#encounter-summary{{- encounter.encounterId }}" data-toggle="collapse"
             data-encounter-uuid="{{- encounter.uuid }}"
             data-encounter-type-uuid="{{- encounter.encounterType.uuid }}">
               <span class="show-details">${ ui.message("coreapps.patientDashBoard.showDetails")}</span>

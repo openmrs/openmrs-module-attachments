@@ -2,9 +2,11 @@ package org.openmrs.module.visitdocumentsui.page.controller;
 
 import java.util.Map;
 
+import org.openmrs.Location;
 import org.openmrs.Patient;
-import org.openmrs.Visit;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.emrapi.adt.AdtService;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsContext;
 import org.openmrs.module.visitdocumentsui.fragment.controller.ClientConfigFragmentController;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
@@ -18,22 +20,28 @@ public class VisitDocumentsPageController {
 
 	public void controller(
 			@RequestParam("patient") Patient patient,
-			@RequestParam("visit") Visit visit,
 			UiSessionContext sessionContext,
 			UiUtils ui,
 			@InjectBeans VisitDocumentsContext context,
 			PageModel model)
 	{
 		Map<String, Object> jsonConfig = ClientConfigFragmentController.getClientConfig(context, ui);
-		jsonConfig.put("patient", convertToFull(patient));
-		jsonConfig.put("visit", convertToFull(visit));
+		jsonConfig.put("patient", convertToRef(patient));
+
+		// Fetching the active visit, if any.
+		VisitDomainWrapper visitWrapper = null;
+	   AdtService adtService = context.getAdtService();
+	   Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+	   visitWrapper = adtService.getActiveVisit(patient, visitLocation);
+		jsonConfig.put("visit", visitWrapper == null ? "" : convertToRef(visitWrapper.getVisit()));
 		
 		model.put("jsonConfig", ui.toJson(jsonConfig));
+		
 		model.put("patient", patient); // For Core Apps's patient header.
 		model.put("dashboardUrl", context.getDashboardUrl());
 	}
 	
-    private Object convertToFull(Object object) {
-        return object == null ? null : ConversionUtil.convertToRepresentation(object, Representation.FULL);
+    private Object convertToRef(Object object) {
+        return object == null ? null : ConversionUtil.convertToRepresentation(object, Representation.REF);
     }
 }

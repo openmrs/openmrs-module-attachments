@@ -25,15 +25,19 @@ angular.module('vdui.widget.dropzone', []).directive('dropzoneDirective',
 
 angular.module('vdui.page.main', ['vdui.widget.dropzone', 'obsService', 'session', 'vdui.widget.thumbnail', 'vdui.widget.modalImage']);
 
-angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$window', 'SessionInfo',
-  function ($scope, $window, SessionInfo) {
+angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$rootScope', '$window', 'SessionInfo',
+  function ($scope, $rootScope, $window, SessionInfo) {
 
     var providerUuid = "";
+    $scope.visitUuid = "";
+
     $scope.init = function() {
-      // This happens on page load, by the time any file is dropped in, the provider would have been fetched.
       SessionInfo.get().$promise.then(function(info) {
         providerUuid = info.currentProvider.uuid;
       });
+      if ($window.config.visit) {
+        $scope.visitUuid = $window.config.visit.uuid;
+      }
     }
 
     $scope.dropzoneConfig = {
@@ -59,11 +63,13 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$windo
           });
         },
         'sending': function (file, xhr, formData) {
+          formData.append('patient', $window.config.patient.uuid);
+          formData.append('visit', $scope.visitUuid);
           formData.append('provider', providerUuid);
           formData.append('fileCaption', $scope.fileCaption);
         },
         'success': function (file, response) {
-          $scope.$broadcast('vdui_event_newComplexObs', response);
+          $rootScope.$emit('vdui_event_newComplexObs', response);
           $scope.clearForms();
         }
       }
@@ -76,12 +82,13 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$windo
     $scope.clearForms = function() {
       $scope.removeAllFiles();
       $scope.fileCaption = "";
+      $scope.$apply();
     }
 
   }]);
 
-angular.module('vdui.page.main').controller('ListComplexObsCtrl', ['$scope', '$window', 'ObsService',
-  function($scope, $window, ObsService) {
+angular.module('vdui.page.main').controller('ListComplexObsCtrl', ['$scope', '$rootScope', '$window', 'ObsService',
+  function($scope, $rootScope, $window, ObsService) {
 
     ObsService.getObs({
       patient: $window.config.patient.uuid,
@@ -91,7 +98,7 @@ angular.module('vdui.page.main').controller('ListComplexObsCtrl', ['$scope', '$w
       $scope.obsArray = obs;
     })
 
-    $scope.$on('vdui_event_newComplexObs', function(event, obs) {
+    $rootScope.$on('vdui_event_newComplexObs', function(event, obs) {
       $scope.obsArray.unshift(obs);
       $scope.$apply();
     });

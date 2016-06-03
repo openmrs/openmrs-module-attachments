@@ -5,7 +5,7 @@ angular.module('vdui.fragment.encounterTemplate').controller('EncounterTemplateC
   	
   	$scope.init = function() {
 
-			$(document).on('click','.vdui-view-details.collapsed', function(event) {
+			$(document).on('click','.vdui_view-details.collapsed', function(event) {
 				var jqTarget = $(event.currentTarget);
         var uuid = jqTarget.data("encounter-uuid");
         var displayWithHtmlForm = jqTarget.data("encounter-form") && jqTarget.data("display-with-html-form");

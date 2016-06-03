@@ -29,90 +29,90 @@ import org.openmrs.module.ModuleActivator;
  * This class contains the logic that is run every time this module is either started or stopped.
  */
 public class VisitDocumentsActivator implements ModuleActivator {
-	
-	protected Log log = LogFactory.getLog(getClass());
-		
-	/**
-	 * @see ModuleActivator${symbol_pound}willRefreshContext()
-	 */
-	public void willRefreshContext() {
-		log.info("Refreshing Patient Images Module");
-	}
-	
-	/**
-	 * @see ModuleActivator${symbol_pound}contextRefreshed()
-	 */
-	public void contextRefreshed() {
-		log.info("Patient Images Module refreshed");
-	}
-	
-	/**
-	 * @see ModuleActivator${symbol_pound}willStart()
-	 */
-	public void willStart() {
-		log.info("Starting Patient Images Module");
-	}
-	
-	/**
-	 * @see ModuleActivator${symbol_pound}started()
-	 */
-	public void started() {
-		
-	   // Concept Complex
-		{
-			final String name = "PATIENT IMAGE";
-			final String desc = "Concept complex used as a question for 'patient images with thumbnails' complex obs.";
-			final String uuid = "7cac8397-53cd-4f00-a6fe-028e8d743f8e";	// this is also the default GP value set in config.xml
-			
-			ConceptService conceptService = Context.getConceptService();
-			
-			if(null == conceptService.getConceptByUuid(uuid)) {
-				
-				ConceptComplex conceptComplex = new ConceptComplex();
-				conceptComplex.setUuid(uuid);
-				conceptComplex.setHandler("PatientImageHandler");
-				ConceptName conceptName = new ConceptName(name, Locale.ENGLISH);
-				conceptComplex.setFullySpecifiedName(conceptName);
-				conceptComplex.setPreferredName(conceptName);
-				conceptComplex.setConceptClass( conceptService.getConceptClassByUuid(ConceptClass.QUESTION_UUID) );
-				conceptComplex.setDatatype( conceptService.getConceptDatatypeByUuid(ConceptDatatype.COMPLEX_UUID) );
-				conceptComplex.addDescription(new ConceptDescription(desc, Locale.ENGLISH));
-				
-				conceptService.saveConcept(conceptComplex);
-			}
-		}
+   
+   protected Log log = LogFactory.getLog(getClass());
+      
+   /**
+    * @see ModuleActivator${symbol_pound}willRefreshContext()
+    */
+   public void willRefreshContext() {
+      log.info("Refreshing Visit Documents UI Module");
+   }
+   
+   /**
+    * @see ModuleActivator${symbol_pound}contextRefreshed()
+    */
+   public void contextRefreshed() {
+      log.info("Visit Documents UI Module refreshed");
+   }
+   
+   /**
+    * @see ModuleActivator${symbol_pound}willStart()
+    */
+   public void willStart() {
+      log.info("Starting Visit Documents UI Module");
+   }
+   
+   /**
+    * @see ModuleActivator${symbol_pound}started()
+    */
+   public void started() {
+      
+      // Concept Complex
+      {
+         final String name = "PATIENT IMAGE";
+         final String desc = "Concept complex used as a question for 'patient images with thumbnails' complex obs.";
+         final String uuid = "7cac8397-53cd-4f00-a6fe-028e8d743f8e"; // this is also the default GP value set in config.xml
+         
+         ConceptService conceptService = Context.getConceptService();
+         
+         if(null == conceptService.getConceptByUuid(uuid)) {
+            
+            ConceptComplex conceptComplex = new ConceptComplex();
+            conceptComplex.setUuid(uuid);
+            conceptComplex.setHandler("PatientImageHandler");
+            ConceptName conceptName = new ConceptName(name, Locale.ENGLISH);
+            conceptComplex.setFullySpecifiedName(conceptName);
+            conceptComplex.setPreferredName(conceptName);
+            conceptComplex.setConceptClass( conceptService.getConceptClassByUuid(ConceptClass.QUESTION_UUID) );
+            conceptComplex.setDatatype( conceptService.getConceptDatatypeByUuid(ConceptDatatype.COMPLEX_UUID) );
+            conceptComplex.addDescription(new ConceptDescription(desc, Locale.ENGLISH));
+            
+            conceptService.saveConcept(conceptComplex);
+         }
+      }
 
-		// Encounter Type
-		{
-			final String name = "Visit Document Upload";
-			final String desc = "Encounters used to record visit documents complex obs.";
-			final String uuid = "5021b1a1-e7f6-44b4-ba02-da2f2bcf8718";	// this is also the default GP value set in config.xml
-			
-			EncounterService es = Context.getEncounterService();
-			EncounterType encounterType = es.getEncounterTypeByUuid(uuid);
+      // Encounter Type
+      {
+         final String name = "Visit Document Upload";
+         final String desc = "Encounters used to record visit documents complex obs.";
+         final String uuid = "5021b1a1-e7f6-44b4-ba02-da2f2bcf8718"; // this is also the default GP value set in config.xml
+         
+         EncounterService es = Context.getEncounterService();
+         EncounterType encounterType = es.getEncounterTypeByUuid(uuid);
 
-			if(encounterType == null) {
-				encounterType = new EncounterType(name, desc);
-				encounterType.setUuid(uuid);
-				es.saveEncounterType(encounterType);
-			}
-		}
-		
-		log.info("Patient Images Module started");
-	}
-	
-	/**
-	 * @see ModuleActivator${symbol_pound}willStop()
-	 */
-	public void willStop() {
-		log.info("Stopping Patient Images Module");
-	}
-	
-	/**
-	 * @see ModuleActivator${symbol_pound}stopped()
-	 */
-	public void stopped() {
-		log.info("Patient Images Module stopped");
-	}
-		
+         if(encounterType == null) {
+            encounterType = new EncounterType(name, desc);
+            encounterType.setUuid(uuid);
+            es.saveEncounterType(encounterType);
+         }
+      }
+      
+      log.info("Visit Documents UI Module started");
+   }
+   
+   /**
+    * @see ModuleActivator${symbol_pound}willStop()
+    */
+   public void willStop() {
+      log.info("Stopping Visit Documents UI Module");
+   }
+   
+   /**
+    * @see ModuleActivator${symbol_pound}stopped()
+    */
+   public void stopped() {
+      log.info("Visit Documents UI Module stopped");
+   }
+      
 }

@@ -24,6 +24,7 @@ import org.openmrs.api.ObsService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.coreapps.CoreAppsProperties;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.utils.ModuleProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,6 +41,10 @@ public class VisitDocumentsContext extends ModuleProperties
 	@Autowired
    @Qualifier("obsService")
    protected ObsService obsService;
+	
+	@Autowired
+   @Qualifier("adtService")
+   protected AdtService adtService;
 	
 	@Autowired
    @Qualifier("coreAppsProperties")
@@ -68,6 +73,10 @@ public class VisitDocumentsContext extends ModuleProperties
 	public EncounterService getEncounterService() {
 		return encounterService;
 	}
+	
+	public AdtService getAdtService() {
+      return adtService;
+   }
 	
 	public String getDashboardUrl() {
       return coreAppsProperties.getDashboardUrl();
