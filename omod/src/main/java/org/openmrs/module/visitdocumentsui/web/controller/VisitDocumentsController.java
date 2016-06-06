@@ -3,6 +3,7 @@ package org.openmrs.module.visitdocumentsui.web.controller;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -85,7 +86,7 @@ public class VisitDocumentsController {
             switch (getContentFamily(uploadedFile.getContentType())) {
                case IMAGES:
                   
-                  Encounter encounter = saveImageUploadEncounter(patient, visit, context.getEncounterType(), provider, context.getEncounterRole(), context.getEncounterService());
+                  Encounter encounter = saveVisitDocumentEncounter(patient, visit, context.getEncounterType(), provider, context.getEncounterRole(), context.getEncounterService());
                   ConceptComplex conceptComplex = context.getConceptComplex();
                   obs = saveUploadedImageObs(patient.getPerson(), encounter, uploadedFile, fileCaption, conceptComplex, instructions, context.getObsService());
                   break;
@@ -136,17 +137,27 @@ public class VisitDocumentsController {
       return compressionRatio;
    }
 
-   protected Encounter saveImageUploadEncounter(Patient patient, Visit visit, EncounterType encounterType, Provider provider, EncounterRole encounterRole, EncounterService encounterService) {
+   protected Encounter saveVisitDocumentEncounter(Patient patient, Visit visit, EncounterType encounterType, Provider provider, EncounterRole encounterRole, EncounterService encounterService) {
+
       Encounter encounter = new Encounter();
       encounter.setVisit(visit);
-      encounter.setProvider(encounterRole, provider);
       encounter.setEncounterType(encounterType);
-      encounter.setEncounterDatetime(new Date());
       encounter.setPatient(visit.getPatient());
       encounter.setLocation(visit.getLocation());
+      if (context.isOneEncounterPerVisit()) {
+         List<Encounter> encounters = visit.getNonVoidedEncounters();
+         for (Encounter e : encounters) {
+            if (e.getEncounterType().getUuid() == encounterType.getUuid()) {
+               encounter = e;
+               break;
+            }
+         }
+      }
+      encounter.setProvider(encounterRole, provider);
+      encounter.setEncounterDatetime(new Date());
       return encounterService.saveEncounter(encounter);
    }
-
+   
    @RequestMapping(value = VisitDocumentsConstants.DOWNLOAD_DOCUMENT_URL, method = RequestMethod.GET)
    public void downloadDocument(@RequestParam("obs") String obsUuid, @RequestParam(value="view", required=false) String view,
          HttpServletResponse response)

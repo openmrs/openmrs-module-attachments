@@ -33,5 +33,7 @@ public class VisitDocumentsConstants {
 	
 	public static final String GP_MAX_STORAGE_FILE_SIZE = "visitdocumentsui.maxStorageFileSize";
 	
+	public static final String GP_ENCOUNTER_SAVING_FLOW = "visitdocumentsui.encounterSavingFlow";
+	
 	public static final String REPRESENTATION_OBS = "(uuid:ref,obsId:ref,comment:ref,obsDatetime:ref)";
 }

@@ -12,6 +12,7 @@ package org.openmrs.module.visitdocumentsui;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -37,7 +38,7 @@ import org.springframework.stereotype.Component;
 public class VisitDocumentsContext extends ModuleProperties
 {
 	protected final Log log = LogFactory.getLog(getClass());
-
+	
 	@Autowired
    @Qualifier("obsService")
    protected ObsService obsService;
@@ -81,6 +82,11 @@ public class VisitDocumentsContext extends ModuleProperties
 	public String getDashboardUrl() {
       return coreAppsProperties.getDashboardUrl();
    }
+	
+	public boolean isOneEncounterPerVisit() {
+	   String flowStr = administrationService.getGlobalProperty(VisitDocumentsConstants.GP_ENCOUNTER_SAVING_FLOW);
+	   return StringUtils.equalsIgnoreCase(flowStr, "unique");
+	}
 	
 	/*
 	 * See super#getIntegerByGlobalProperty(String globalPropertyName)

@@ -6,6 +6,7 @@
         "label": "visitdocumentsui.visitactions.label",
         "url": "visitdocumentsui/visitDocuments.page?patient={{patient.uuid}}&patientId={{patient.patientId}}",
         "icon": "icon-paper-clip",
-        "order": 200
+        "order": 200,
+        "requiredPrivilege": "visitdocumentsui.visitdocuments.page"
     }
 ]

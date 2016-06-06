@@ -2,7 +2,7 @@
 <style>
 
 	/* The Modal (background) */
-	.vdui_modalImageBackground {
+	.vdui_modal-image-background {
     /*display: none;  Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
@@ -17,14 +17,14 @@
 	}
 
 	/* Modal Content (Image) */
-	.vdui_modalImageContent {
+	.vdui_modal-image-content {
     margin: auto;
     display: block;
     max-height: 80%;
 	}
 
 	/* Caption of Modal Image (Image Text) - Same Width as the Image */
-	#vdui_modalImageCaption {
+	#vdui_modal-image-caption {
     margin: auto;
     display: block;
     width: 80%;
@@ -36,7 +36,7 @@
 	}
 
 	/* Add Animation - Zoom in the Modal */
-	.vdui_modalImageContent, #vdui_modalImageCaption { 
+	.vdui_modal-image-content, #vdui_modal-image-caption { 
     -webkit-animation-name: zoom;
     -webkit-animation-duration: 0.6s;
     animation-name: zoom;
@@ -54,7 +54,7 @@
 	}
 
 	/* The Close Button */
-	.vdui_modalImageClose {
+	.vdui_modal-image-close {
     position: absolute;
     top: 15px;
     right: 35px;
@@ -64,8 +64,8 @@
     transition: 0.3s;
 	}
 
-	.vdui_modalImageClose:hover,
-	.vdui_modalImageClose:focus {
+	.vdui_modal-image-close:hover,
+	.vdui_modal-image-close:focus {
     color: #bbb;
     text-decoration: none;
     cursor: pointer;
@@ -74,14 +74,14 @@
 </style>
 
 <!-- The Modal -->
-<div ng-show="cfg.url" class="vdui_modalImageBackground">
+<div ng-show="cfg.url" class="vdui_modal-image-background">
 
   <!-- The Close Button -->
-  <span class="vdui_modalImageClose" ng-click="hide()">&times;</span>
+  <span class="vdui_modal-image-close" ng-click="hide()">&times;</span>
 
   <!-- Modal Content (The Image) -->
-  <img class="vdui_modalImageContent" src="{{cfg.url}}">
+  <img class="vdui_modal-image-content" src="{{cfg.url}}">
 
   <!-- Modal Caption (Image Text) -->
-  <div id="vdui_modalImageCaption">{{cfg.caption}}</div>
+  <div id="vdui_modal-image-caption">{{cfg.caption}}</div>
 </div>

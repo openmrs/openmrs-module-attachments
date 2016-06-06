@@ -19,7 +19,7 @@ angular.module('vdui.widget.thumbnail', ['complexObsService'])
 		      $scope.newCaption = $scope.obs.comment;
 		      $scope.editMode = editMode;
 		      if ($scope.editMode) {
-		      	$scope.editModeCss = "vdui_thumbnailEditMode";
+		      	$scope.editModeCss = "vdui_thumbnail-edit-mode";
 		      }
 		      else {
 		      	$scope.editModeCss = "";

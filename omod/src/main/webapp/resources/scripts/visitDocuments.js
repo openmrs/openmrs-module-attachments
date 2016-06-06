@@ -38,6 +38,7 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$rootS
       if ($window.config.visit) {
         $scope.visitUuid = $window.config.visit.uuid;
       }
+      $scope.clearForms();
     }
 
     $scope.dropzoneConfig = {
@@ -82,7 +83,7 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$rootS
     $scope.clearForms = function() {
       $scope.removeAllFiles();
       $scope.fileCaption = "";
-      $scope.$apply();
+      $scope.$apply();  // Not sure why we need this?
     }
 
   }]);

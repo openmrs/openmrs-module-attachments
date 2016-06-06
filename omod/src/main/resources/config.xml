@@ -89,6 +89,14 @@
     </description>
   </globalProperty>
 
+  <globalProperty>
+    <property>visitdocumentsui.encounterSavingFlow</property>
+    <defaultValue></defaultValue>
+    <description>
+        Set this property to 'unique' to have only one encounter per visit.
+    </description>
+  </globalProperty>
+
   <!-- Privileges -->
 	<privilege>
 		<name>App: visitdocumentsui.visitdocuments.page</name>

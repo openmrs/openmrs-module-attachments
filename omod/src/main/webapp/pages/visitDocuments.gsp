@@ -40,43 +40,43 @@
 
 <style>
 
-  .vdui_mainSection {
+  .vdui_main-section {
     border: 1px solid #EEE;
     background-color: #F9F9F9;
     margin: 15px 0 10px 0;
   }
 
-  .vdui_fileUploadContainer {
+  .vdui_file-upload-container {
     padding-left: 20px;
     height: 200px;
   }
 
-  .vdui_thumbnailsContainer {
+  .vdui_thumbnails-container {
     width: 100%;
     overflow: hidden;
   }
 
-  .vdui_captionElement textarea {
+  .vdui_caption-element textarea {
     width: 100%;
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
     box-sizing: border-box;         /* Opera/IE 8+ */
   }
 
-  .vdui_uploadContainer {
+  .vdui_upload-container {
     height: 180px;
   }
 
-  .vdui_uploadElement {
+  .vdui_upload-element {
     float: left;
   }
 
-  .vdui_uploadElement.vdui_dropzoneElement {
+  .vdui_upload-element.vdui_dropzone-element {
     width: 30%;
     height: 75%;
   }
 
-  .vdui_uploadElement.vdui_captionElement {
+  .vdui_upload-element.vdui_caption-element {
     width: 55%;
     margin-left: 2%;
   }
@@ -105,28 +105,28 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <div ng-app="vdui.page.main">
 
-  <div ng-show="visitUuid" class="vdui_mainSection vdui_fileUploadContainer" ng-controller="FileUploadCtrl" ng-init="init()">
-    <div class="vdui_uploadContainer">
-      <div class="vdui_uploadElement vdui_dropzoneElement">
+  <div ng-show="visitUuid" class="vdui_main-section vdui_file-upload-container" ng-controller="FileUploadCtrl" ng-init="init()">
+    <div class="vdui_upload-container">
+      <div class="vdui_upload-element vdui_dropzone-element">
         <h3>${ui.message("visitdocumentsui.visitdocumentspage.fileTitle")}</h3>
         <form action="" dropzone-directive="dropzoneConfig" class="dropzone" id="visit-documents-dropzone">
           <div class="dz-error-message"><span data-dz-errormessage></span></div>
           <div class="dz-default dz-message">${ui.message("visitdocumentsui.dropzone.innerlabel")}</div>
         </form>
       </div>
-      <div class="vdui_uploadElement vdui_captionElement">
+      <div class="vdui_upload-element vdui_caption-element">
         <h3>${ui.message("visitdocumentsui.visitdocumentspage.commentTitle")}</h3>
         <textarea ng-model="fileCaption"></textarea>
         <span class="right" style="margin-top: 4%;">
-          <button class="confirm" ng-click="uploadFile()">${ui.message("visitdocumentsui.visitdocumentspage.uploadButton")}</button>
-          <button class="" ng-click="clearForms()">${ui.message("visitdocumentsui.visitdocumentspage.clearFormsButton")}</button>
+          <button class="confirm" ng-click="uploadFile()" ng-disabled="!fileCaption">${ui.message("visitdocumentsui.visitdocumentspage.uploadButton")}</button>
+          <button ng-click="clearForms()">${ui.message("visitdocumentsui.visitdocumentspage.clearFormsButton")}</button>
         </span>
       </div>
     </div>
   </div>
 
   <div ng-controller="ListComplexObsCtrl">
-    <div ng-show="obsArray.length" class="vdui_mainSection vdui_thumbnailsContainer">
+    <div ng-show="obsArray.length" class="vdui_main-section vdui_thumbnails-container">
       <vdui-modal-image></vdui-modal-image>
       <vdui-thumbnail ng-repeat="obs in obsArray" obs="obs" config="thumbnailCfg"></vdui-thumbnail>
     </div>
