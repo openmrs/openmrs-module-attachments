@@ -12,6 +12,7 @@ package org.openmrs.module.visitdocumentsui;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,6 +84,10 @@ public class VisitDocumentsContext extends ModuleProperties
       return coreAppsProperties.getDashboardUrl();
    }
 	
+	public boolean doAllowEmptyCaption() {
+	   return this.getBooleanByGlobalProperty(VisitDocumentsConstants.GP_ALLOW_NO_CAPTION);
+   }
+	
 	public boolean isOneEncounterPerVisit() {
 	   String flowStr = administrationService.getGlobalProperty(VisitDocumentsConstants.GP_ENCOUNTER_SAVING_FLOW);
 	   return StringUtils.equalsIgnoreCase(flowStr, "unique");
@@ -92,13 +97,21 @@ public class VisitDocumentsContext extends ModuleProperties
 	 * See super#getIntegerByGlobalProperty(String globalPropertyName)
 	 */
 	protected Double getDoubleByGlobalProperty(String globalPropertyName) {
-		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
-        try {
-            return Double.valueOf(globalProperty);
-        }
-        catch (Exception e) {
-            throw new IllegalStateException("Global property " + globalPropertyName + " value of " + globalProperty + " is not parsable as a Double");
-        }
+	   String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
+	   try {
+	      return Double.valueOf(globalProperty);
+	   }
+	   catch (Exception e) {
+	      throw new IllegalStateException("Global property " + globalPropertyName + " value of " + globalProperty + " is not parsable as a Double");
+	   }
+    }
+	
+	/*
+    * See super#getIntegerByGlobalProperty(String globalPropertyName)
+    */
+   protected Boolean getBooleanByGlobalProperty(String globalPropertyName) {
+      String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
+      return BooleanUtils.toBoolean(globalProperty);
     }
 	
 	/**
@@ -109,8 +122,8 @@ public class VisitDocumentsContext extends ModuleProperties
 		Concept concept = getConceptByGlobalProperty(globalPropertyName);
 		ConceptComplex conceptComplex = getConceptService().getConceptComplex(concept.getConceptId());
 		if (conceptComplex == null) {
-            throw new IllegalStateException("Configuration required: " + globalPropertyName);
-        }
+		   throw new IllegalStateException("Configuration required: " + globalPropertyName);
+		}
 		return conceptComplex;
 	}
 	
@@ -160,6 +173,14 @@ public class VisitDocumentsContext extends ModuleProperties
 	public String getCRUDDocumentView() {
 	   return VisitDocumentsConstants.DOC_VIEW_ORIGINAL;
 	}
+	
+	public static double getCompressionRatio(double fileByteSize, double maxByteSize) {
+      double compressionRatio = 1;
+      if (fileByteSize > 0) {
+         compressionRatio = Math.min(1, maxByteSize / fileByteSize);
+      }
+      return compressionRatio;
+   }
 	
 	private static final Map<String, String> mimeTypes;
     static

@@ -113,7 +113,7 @@ public class VisitDocumentsController {
    {
       Object image = file.getInputStream();
 
-      double compressionRatio = getCompressionRatio(file.getSize(), 1000000 * context.getMaxStorageFileSize());
+      double compressionRatio = VisitDocumentsContext.getCompressionRatio(file.getSize(), 1000000 * context.getMaxStorageFileSize());
       if (compressionRatio < 1) {
          image = Thumbnails.of(file.getInputStream()).scale(compressionRatio).asBufferedImage();
       }
@@ -126,15 +126,6 @@ public class VisitDocumentsController {
       }
       obs.setComplexData( new PatientImageComplexData(instructions, file.getOriginalFilename(), image, file.getContentType()) );
       return obsService.saveObs(obs, getClass().toString());
-   }
-
-   protected static double getCompressionRatio(double fileByteSize, double maxByteSize) {
-      double compressionRatio = 1;
-      if (fileByteSize > 0) {
-         // Compression required
-         compressionRatio = Math.min(1, maxByteSize / fileByteSize);
-      }
-      return compressionRatio;
    }
 
    protected Encounter saveVisitDocumentEncounter(Patient patient, Visit visit, EncounterType encounterType, Provider provider, EncounterRole encounterRole, EncounterService encounterService) {

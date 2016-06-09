@@ -93,7 +93,15 @@
     <property>visitdocumentsui.encounterSavingFlow</property>
     <defaultValue></defaultValue>
     <description>
-        Set this property to 'unique' to have only one encounter per visit.
+        Set this property to 'unique' to have only one encounter per visit
+    </description>
+  </globalProperty>
+
+  <globalProperty>
+    <property>visitdocumentsui.allowNoCaption</property>
+    <defaultValue>false</defaultValue>
+    <description>
+        Set this property to 'true' to allow empty documents captions
     </description>
   </globalProperty>
 

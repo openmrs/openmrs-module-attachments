@@ -35,5 +35,7 @@ public class VisitDocumentsConstants {
 	
 	public static final String GP_ENCOUNTER_SAVING_FLOW = "visitdocumentsui.encounterSavingFlow";
 	
-	public static final String REPRESENTATION_OBS = "(uuid:ref,obsId:ref,comment:ref,obsDatetime:ref)";
+	public static final String GP_ALLOW_NO_CAPTION = "visitdocumentsui.allowNoCaption";
+	
+	public static final String REPRESENTATION_OBS = "(uuid:ref,comment:ref,obsDatetime:ref)";
 }

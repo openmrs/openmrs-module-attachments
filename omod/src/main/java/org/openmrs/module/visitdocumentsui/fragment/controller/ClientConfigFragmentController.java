@@ -30,6 +30,7 @@ public class ClientConfigFragmentController {
       
       jsonConfig.put("thumbSize", PatientImageHandler.THUMBNAIL_HEIGHT);
       jsonConfig.put("maxFileSize", context.getMaxUploadFileSize());
+      jsonConfig.put("allowNoCaption", context.doAllowEmptyCaption());
       
       jsonConfig.put("obsRep", "custom:" + VisitDocumentsConstants.REPRESENTATION_OBS);
       

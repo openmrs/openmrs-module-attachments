@@ -101,6 +101,10 @@
 		cursor: pointer;
 	}
 
+	.vdui_side {
+		display: inline-block;
+	}
+
 </style>
 
 <div class="vdui_thumbnail-container" ng-class="editModeCss">
@@ -111,7 +115,10 @@
 	</div>
 
 	<div class="vdui_thumbnail-caption-section">
-		<p ng-show="!editMode" ng-click="toggleEditMode(true)">{{obs.comment}}</p>
+		<div ng-show="!editMode" ng-click="toggleEditMode(true)">
+			<i ng-show="!obs.comment" class="icon-tag vdui_side"></i>
+			<p ng-show="obs.comment" class="vdui_side">{{obs.comment}}</p>
+		</div>
 		<div ng-show="editMode">
 	    <input ng-model="newCaption" class="left" type="text"/>
 	    <span class="right">

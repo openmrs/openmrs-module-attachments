@@ -29,7 +29,7 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$rootS
   function ($scope, $rootScope, $window, SessionInfo) {
 
     var providerUuid = "";
-    $scope.visitUuid = "";
+    $scope.visitUuid = "";  // In scope for toggling DOM elements
 
     $scope.init = function() {
       SessionInfo.get().$promise.then(function(info) {
@@ -38,7 +38,6 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$rootS
       if ($window.config.visit) {
         $scope.visitUuid = $window.config.visit.uuid;
       }
-      $scope.clearForms();
     }
 
     $scope.dropzoneConfig = {
@@ -67,7 +66,7 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$rootS
           formData.append('patient', $window.config.patient.uuid);
           formData.append('visit', $scope.visitUuid);
           formData.append('provider', providerUuid);
-          formData.append('fileCaption', $scope.fileCaption);
+          formData.append('fileCaption', ($scope.fileCaption == null) ? "" : $scope.fileCaption );
         },
         'success': function (file, response) {
           $rootScope.$emit('vdui_event_newComplexObs', response);
@@ -84,6 +83,10 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$rootS
       $scope.removeAllFiles();
       $scope.fileCaption = "";
       $scope.$apply();  // Not sure why we need this?
+    }
+
+    $scope.isUploadBtnDisabled = function() {
+      return !($scope.fileCaption || $window.config.allowNoCaption);
     }
 
   }]);

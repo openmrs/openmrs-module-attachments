@@ -31,7 +31,7 @@
   ];
 
   window.OpenMRS = window.OpenMRS || {};
-  var config = ${jsonConfig}; // Getting the config from the Spring Java controller.
+  window.config = ${jsonConfig}; // Getting the config from the Spring Java controller.
   
   // We turn off auto-discover for our DropzoneJS element because our directive adds it programmatically.
   Dropzone.options.visitDocumentsDropzone = false; 
@@ -118,7 +118,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
         <h3>${ui.message("visitdocumentsui.visitdocumentspage.commentTitle")}</h3>
         <textarea ng-model="fileCaption"></textarea>
         <span class="right" style="margin-top: 4%;">
-          <button class="confirm" ng-click="uploadFile()" ng-disabled="!fileCaption">${ui.message("visitdocumentsui.visitdocumentspage.uploadButton")}</button>
+          <button class="confirm" ng-click="uploadFile()" ng-disabled="isUploadBtnDisabled()">${ui.message("visitdocumentsui.visitdocumentspage.uploadButton")}</button>
           <button ng-click="clearForms()">${ui.message("visitdocumentsui.visitdocumentspage.clearFormsButton")}</button>
         </span>
       </div>
