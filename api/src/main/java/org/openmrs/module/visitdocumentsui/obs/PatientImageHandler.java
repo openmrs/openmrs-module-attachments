@@ -129,9 +129,15 @@ public class PatientImageHandler extends ImageHandler implements ComplexObsHandl
 	public boolean purgeComplexData(Obs obs) {
 		
 		PatientImageComplexData patientImageData = fetchPatientImageComplexData(obs.getComplexData());
-		if (patientImageData == null) {	// not our implementation
-			return super.purgeComplexData(obs);
-		}
+		if (patientImageData == null) {   // not our implementation
+         if (obs.getComplexData() == null) {
+            log.error("Complex data was null and hence was not purged for OBS_ID='" + obs.getObsId() + "'.");
+            return false;
+         }
+         else {
+            return super.purgeComplexData(obs);
+         }
+      }
 
 		switch (patientImageData.getInstructions()) {
 		default:
@@ -150,7 +156,13 @@ public class PatientImageHandler extends ImageHandler implements ComplexObsHandl
 		
 		PatientImageComplexData patientImageData = fetchPatientImageComplexData(obs.getComplexData());
 		if (patientImageData == null) {	// not our implementation
-			return super.saveObs(obs);
+		   if (obs.getComplexData() == null) {
+		      log.error("Complex data was null and hence was not saved for OBS_ID='" + obs.getObsId() + "'.");
+	         return obs;
+		   }
+		   else {
+		      return super.saveObs(obs);
+		   }
 		}
 
 		switch (patientImageData.getInstructions()) {
@@ -178,20 +190,18 @@ public class PatientImageHandler extends ImageHandler implements ComplexObsHandl
 		return new PatientImageComplexData(instructions, complexData.getTitle(), complexData.getData(), mimeType);
 	}
 	
-	public boolean purgeComplexData_Default(Obs obs, PatientImageComplexData patientImageData) {
+	protected boolean purgeComplexData_Default(Obs obs, PatientImageComplexData patientImageData) {
 		
-		// We use a temp obs whose complex data points to the thumbnail file.
-		String thumbnailFileName = buildThumbnailFileName(patientImageData.getTitle());
+		// We use a temp obs whose complex data points to the file names
+	   String fileName = patientImageData.getTitle();
+		String thumbnailFileName = buildThumbnailFileName(fileName);
+		
 		Obs tmpObs = new Obs();
+		
 		tmpObs.setValueComplex(thumbnailFileName);
-		
 		boolean isThumbNailPurged = super.purgeComplexData(tmpObs);
-		if (isThumbNailPurged == false) {
-			log.warn("Could not delete thumbnail image '" + thumbnailFileName + "'.");
-		}
-		
-		// After purging our custom data, we invoke the parent.
-		boolean isImagePurged = super.purgeComplexData(obs);
+		tmpObs.setValueComplex(fileName);
+		boolean isImagePurged = super.purgeComplexData(tmpObs);
 		
 		return isThumbNailPurged && isImagePurged;
 	}

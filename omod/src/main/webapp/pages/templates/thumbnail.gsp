@@ -107,7 +107,7 @@
 
 </style>
 
-<div class="vdui_thumbnail-container" ng-class="editModeCss">
+<div ng-show="active" class="vdui_thumbnail-container" ng-class="editModeCss">
 
 	<div class="vdui_thumbnail-image-section">
 	  <img ng-click="show()" ng-src="{{config.url}}{{obs.uuid}}" alt=""></img>

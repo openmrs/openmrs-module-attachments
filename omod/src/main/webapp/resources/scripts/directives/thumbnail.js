@@ -11,7 +11,8 @@ angular.module('vdui.widget.thumbnail', ['complexObsService'])
       templateUrl: '/' + module.getPath(OPENMRS_CONTEXT_PATH) + '/templates/thumbnail.page',
 
     	controller : function($scope, $rootScope) {
-    		$scope.editMode = false;
+    		$scope.active = true;
+        $scope.editMode = false;
 
     		$scope.src = "";
 
@@ -38,14 +39,13 @@ angular.module('vdui.widget.thumbnail', ['complexObsService'])
 		      });
 		    }
 
-		    $scope.delete = function() {	// Work in progress, see backend
-		      var saved = Obs.purge($scope.obs);
-		      
-		      saved.$promise.then(function(obs) {
-		      	console.log("Obs deleted");
-		      }, function(reason) {
-		      	console.log("Obs deletion error");
-		      });
+		    $scope.delete = function() {
+		      Obs.delete({
+            uuid: $scope.obs.uuid
+          })
+          .$promise.then(function(res) {
+            $scope.active = false;
+          });
 		    }
 
 		    $scope.show = function() {
