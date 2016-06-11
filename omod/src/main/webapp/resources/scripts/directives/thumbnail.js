@@ -41,7 +41,8 @@ angular.module('vdui.widget.thumbnail', ['complexObsService'])
 
 		    $scope.delete = function() {
 		      Obs.delete({
-            uuid: $scope.obs.uuid
+            uuid: $scope.obs.uuid,
+            purge: true
           })
           .$promise.then(function(res) {
             $scope.active = false;
