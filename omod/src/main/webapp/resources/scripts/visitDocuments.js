@@ -32,6 +32,10 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$rootS
     $scope.visitUuid = "";  // In scope for toggling DOM elements
 
     $scope.init = function() {
+      Dropzone.options.visitDocumentsDropzone = false;
+
+      emr.loadMessages("visitdocumentsui.visitdocumentspage.upload.success,visitdocumentsui.visitdocumentspage.upload.error");
+
       SessionInfo.get().$promise.then(function(info) {
         providerUuid = info.currentProvider.uuid;
       });
@@ -45,6 +49,8 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$rootS
       'options': // passed into the Dropzone constructor
       { 
         'url': $window.config.uploadUrl,
+        'thumbnailHeight': 100,
+        'thumbnailWidth': 100,
         'paramName': 'visit_document_file',
         'maxFiles': 1,
         'maxFilesize': $window.config.maxFileSize,
@@ -70,7 +76,12 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$rootS
         },
         'success': function (file, response) {
           $rootScope.$emit('vdui_event_newComplexObs', response);
+          $().toastmessage('showToast', { type: 'success', position: 'top-right', text: emr.message("visitdocumentsui.visitdocumentspage.upload.success") });
           $scope.clearForms();
+        },
+        'error': function (file, response, xhr) {
+          $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message("visitdocumentsui.visitdocumentspage.upload.error") });
+          console.log(response);
         }
       }
     };
@@ -94,6 +105,18 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$rootS
 angular.module('vdui.page.main').controller('ListComplexObsCtrl', ['$scope', '$rootScope', '$window', 'ObsService',
   function($scope, $rootScope, $window, ObsService) {
 
+    $scope.obsArray = null;
+
+    // Setting the config for the thumbnail directive
+    $scope.thumbnailCfg = {};
+    $scope.thumbnailCfg.canEdit = true; // This should be obtained from privileges
+    $scope.thumbnailCfg.url = $window.config.downloadUrl + '?'
+        + 'view=' + $window.config.thumbView + '&'
+        + 'obs=';
+    $scope.thumbnailCfg.afterUrl = $window.config.downloadUrl + '?'
+        + 'view=' + $window.config.originalView + '&'
+        + 'obs=';
+
     ObsService.getObs({
       patient: $window.config.patient.uuid,
       concept: $window.config.conceptComplexUuid,
@@ -106,14 +129,5 @@ angular.module('vdui.page.main').controller('ListComplexObsCtrl', ['$scope', '$r
       $scope.obsArray.unshift(obs);
       $scope.$apply();
     });
-
-    // Setting the config for the thumbnail directive
-    $scope.thumbnailCfg = {};
-    $scope.thumbnailCfg.url = $window.config.downloadUrl + '?'
-        + 'view=' + $window.config.thumbView + '&'
-        + 'obs=';
-    $scope.thumbnailCfg.afterUrl = $window.config.downloadUrl + '?'
-        + 'view=' + $window.config.originalView + '&'
-        + 'obs=';
 
   }]);

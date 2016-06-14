@@ -28,7 +28,7 @@
 		float: left;
 
 		width: 16%;	/* Example for 5 thumbnails: 100/5 - the left and right margins below */
-	 	margin:  2% 2% 50px 2%;
+	 	margin:  2% 2% 30px 2%;
 
 	 	height: 130px; /* Controls the height of the whole thumbnail */
 	}
@@ -128,20 +128,21 @@
     </div>
 </script>
 
-<div ng-show="active" class="vdui_thumbnail-container" ng-class="editModeCss">
+<div ng-show="active" class="vdui_thumbnail-container" ng-class="getEditModeCss()">
 
 	<div class="vdui_thumbnail-image-section">
 	  <img ng-click="showOriginal()" ng-src="{{config.url}}{{obs.uuid}}" alt=""></img>
-	  <i ng-show="editMode" class="icon-trash" ng-click="delete()"></i>
+	  <i ng-show="editMode" class="icon-trash" ng-click="confirmDelete()"></i>
 	</div>
 
 	<div class="vdui_thumbnail-caption-section">
-		<div ng-show="!editMode" ng-click="toggleEditMode(true)">
-			<i ng-show="!obs.comment" class="icon-tag vdui_side"></i>
+		<div ng-hide="editMode" ng-click="toggleEditMode(true)">
+			<i ng-hide="obs.comment" class="icon-tag vdui_side"></i>
 			<p ng-show="obs.comment" class="vdui_side">{{obs.comment}}</p>
 		</div>
-		<div ng-show="editMode">
-	    <input ng-model="newCaption" class="left" type="text"/>
+		<div ng-show="editMode" vdui-escape-key-down="toggleEditMode(false)">
+	    <!-- <input vdui-focus-on="vdui_event_editMode" ng-model="newCaption" class="left" type="text" vdui-enter-key-down="saveCaption()"/> -->
+	    <input ng-model="newCaption" class="left" type="text" vdui-enter-key-down="saveCaption()"/>
 	    <span class="right">
 	      <i class="icon-ok" ng-click="saveCaption()"></i>
 	      <i class="icon-remove" ng-click="toggleEditMode(false)"></i>

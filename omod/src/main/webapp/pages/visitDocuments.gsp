@@ -32,12 +32,8 @@
     { label: "${ui.message("visitdocumentsui.breadcrumbs.label")}"}
   ];
 
-  window.OpenMRS = window.OpenMRS || {};
   window.config = ${jsonConfig}; // Getting the config from the Spring Java controller.
   
-  // We turn off auto-discover for our DropzoneJS element because our directive adds it programmatically.
-  Dropzone.options.visitDocumentsDropzone = false; 
-
 </script>
 
 <style>
@@ -92,11 +88,20 @@
     text-align: center;
   }
 
-  .dropzone.in {
-    width: 600px;
-    height: 200px;
-    line-height: 200px;
-    font-size: larger;
+  .dropzone .dz-preview {
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right:0;
+    bottom: 0;
+  }
+
+  .dropzone .dz-preview .dz-image {
+    z-index: 0;
+  }
+
+  .dropzone .dz-preview .dz-progress {
+    z-index: 0;
   }
 
 </style>
@@ -128,12 +133,15 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
   </div>
 
   <div ng-controller="ListComplexObsCtrl">
-    <div ng-show="obsArray.length" class="vdui_main-section vdui_thumbnails-container">
-      <vdui-modal-image></vdui-modal-image>
-      <vdui-thumbnail ng-repeat="obs in obsArray" obs="obs" config="thumbnailCfg"></vdui-thumbnail>
-    </div>
-    <div ng-show="!obsArray.length">
-      ${ui.message("visitdocumentsui.visitdocumentspage.noDocuments")}
+    <i ng-hide="obsArray" class="icon-spinner icon-spin icon-2x" style="margin-left: 10px;"></i>
+    <div ng-show="obsArray">
+      <div ng-show="obsArray.length" class="vdui_main-section vdui_thumbnails-container">
+        <vdui-modal-image></vdui-modal-image>
+        <vdui-thumbnail ng-repeat="obs in obsArray" obs="obs" config="thumbnailCfg"></vdui-thumbnail>
+      </div>
+      <div ng-hide="obsArray.length">
+        ${ui.message("visitdocumentsui.visitdocumentspage.noDocuments")}
+      </div>
     </div>
   </div>
 

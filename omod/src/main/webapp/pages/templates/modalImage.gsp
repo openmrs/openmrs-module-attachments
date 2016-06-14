@@ -3,9 +3,8 @@
 
 	/* The Modal (background) */
 	.vdui_modal-image-background {
-    /*display: none;  Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    z-index: 1; /* Sit on top, in particular of DropzoneJS's thumbnail */
     padding-top: 100px; /* Location of the box */
     left: 0;
     top: 0;
