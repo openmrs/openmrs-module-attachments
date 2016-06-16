@@ -5,6 +5,6 @@ import org.junit.Test;
 public class VisitDocumentsControllerTest {
 	
 	@Test
-	public void should() {	   
+	public void should() {
 	}
 }

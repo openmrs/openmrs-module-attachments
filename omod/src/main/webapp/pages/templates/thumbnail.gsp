@@ -128,10 +128,12 @@
     </div>
 </script>
 
+<vdui-modal-image></vdui-modal-image>
+
 <div ng-show="active" class="vdui_thumbnail-container" ng-class="getEditModeCss()">
 
 	<div class="vdui_thumbnail-image-section">
-	  <img ng-click="showOriginal()" ng-src="{{config.url}}{{obs.uuid}}" alt=""></img>
+	  <img ng-click="!editMode && display()" ng-src="{{config.url}}{{obs.uuid}}" alt=""></img>
 	  <i ng-show="editMode" class="icon-trash" ng-click="confirmDelete()"></i>
 	</div>
 
@@ -148,6 +150,7 @@
 	      <i class="icon-remove" ng-click="toggleEditMode(false)"></i>
 	    </span>
 	  </div>
+	  <i ng-show="loading" class="icon-spinner icon-spin" style="margin-left: 10px;"></i>
   </div>
 
 </div>

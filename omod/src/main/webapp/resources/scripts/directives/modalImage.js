@@ -7,16 +7,24 @@ angular.module('vdui.widget.modalImage', [])
       templateUrl: '/' + module.getPath(OPENMRS_CONTEXT_PATH) + '/templates/modalImage.page',
 
     	controller : function($scope, $rootScope) {
-  			$scope.cfg = {};
-  			
-  			$scope.hide = function() {
-  				$scope.cfg = {};
-  			}
+        /* Storing the current displayed obs globally */
+        module.modalImageObs = null;
+        $scope.setObs = function(obs) {
+          if (obs !== module.modalImageObs) {
+            module.modalImageObs = obs;
+            $scope.obs = obs;
+          }
+        }
 
-  			$rootScope.$on('vdui_event_diplayComplexObs', function(event, cfg) {
-		      $scope.cfg = cfg;
-		    });
+  			$scope.obs = null;
+  			
+        $scope.hide = function() {
+          $scope.setObs(null);
+        }
+
+        $rootScope.$on('vdui_event_diplayComplexObs', function(event, obs) {
+          $scope.setObs(obs);
+        });
     	}
-      
     };
   });

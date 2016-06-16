@@ -13,11 +13,13 @@ public class VisitDocumentsConstants {
 
    public static final String MODULE_CONTEXT_QUALIFIER = "visitDocumentsContext";
    
-	public static final String MODULE_BASE_URL = "/visitdocumentsui";
+   public static final String MODULE_BASE_URL = "/visitdocumentsui";
 	
 	public static final String UPLOAD_DOCUMENT_URL = MODULE_BASE_URL + "/upload";
 	
 	public static final String DOWNLOAD_DOCUMENT_URL = MODULE_BASE_URL + "/download";
+	
+	public static final String UNKNOWN_MIME_TYPE = "application/octet-stream";
 	
 	public static final String DOC_VIEW_ORIGINAL = "complexdata.view.original";
 	

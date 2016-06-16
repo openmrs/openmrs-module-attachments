@@ -1,4 +1,4 @@
-angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog'])
+angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.widget.modalImage'])
 
   // .directive('vduiFocusOn', function() {
   //  return function(scope, elem, attr) {
@@ -34,7 +34,7 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog'])
     };
   })
 
-  .directive('vduiThumbnail', [ 'ComplexObs', 'ngDialog', function(Obs, ngDialog) {
+  .directive('vduiThumbnail', [ 'ComplexObs', 'ngDialog', '$http', function(Obs, ngDialog, $http) {
     return {
       restrict: 'E',
       scope: {
@@ -77,6 +77,7 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog'])
         $scope.toggleEditMode(false);
     		$scope.toggleVisible(true);
     		$scope.src = "";
+        $scope.loading = false;
 
         $scope.getEditModeCss = function() {
           return $scope.editModeCss;
@@ -84,7 +85,7 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog'])
 
         $scope.saveCaption = function() {
           var caption = $scope.obs.comment;
-          if (caption == $scope.newCaption) {
+          if ((caption == $scope.newCaption) || ($scope.newCaption == "" && !$scope.config.allowNoCaption)) {
             $scope.toggleEditMode(false);
             return;
           }
@@ -136,13 +137,30 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog'])
           }); 
         }
 
-        $scope.showOriginal = function() {
-          if (!$scope.editMode) {
-          	var cfg = {};
-          	cfg.url = $scope.config.afterUrl + $scope.obs.uuid;
-          	cfg.caption = $scope.obs.comment;
-          	$scope.$emit('vdui_event_diplayComplexObs', cfg);
+        $scope.display = function() {
+
+          if ($scope.obs.uuid in module.obsCache) {
+            $scope.$emit('vdui_event_diplayComplexObs', module.obsCache[$scope.obs.uuid]);
+            return;
           }
+
+          $scope.loading = true;
+          $http.get($scope.config.contentUrl + $scope.obs.uuid, {responseType: "arraybuffer"})
+            .success(function (data, status, headers) {
+              var obs = {};
+              obs = $scope.obs;
+              obs.mimeType = headers('Content-Type');
+              obs.complexData = module.arrayBufferToBase64(data);
+
+              module.obsCache[$scope.obs.uuid] = obs;
+              $scope.$emit('vdui_event_diplayComplexObs', module.obsCache[$scope.obs.uuid]);
+              $scope.loading = false;
+            })
+            .error(function (data, status) {
+              $scope.loading = false;
+              console.log(status);
+            });
+
         }
       }
 

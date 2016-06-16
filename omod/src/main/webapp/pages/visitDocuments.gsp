@@ -19,7 +19,6 @@
   ui.includeJavascript("visitdocumentsui", "services/complexObsService.js")
   ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
   ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
-
   ui.includeJavascript("visitdocumentsui", "directives/modalImage.js")
 %>
 
@@ -52,6 +51,7 @@
   .vdui_thumbnails-container {
     width: 100%;
     overflow: hidden;
+    padding: 0 0 20px 0;
   }
 
   .vdui_caption-element textarea {
@@ -132,12 +132,11 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
     </div>
   </div>
 
-  <div ng-controller="ListComplexObsCtrl">
+  <div ng-controller="ListComplexObsCtrl" class="vdui_main-section vdui_thumbnails-container">
     <i ng-hide="obsArray" class="icon-spinner icon-spin icon-2x" style="margin-left: 10px;"></i>
     <div ng-show="obsArray">
-      <div ng-show="obsArray.length" class="vdui_main-section vdui_thumbnails-container">
-        <vdui-modal-image></vdui-modal-image>
-        <vdui-thumbnail ng-repeat="obs in obsArray" obs="obs" config="thumbnailCfg"></vdui-thumbnail>
+      <div ng-show="obsArray.length">
+        <vdui-thumbnail ng-repeat="obs in obsArray" obs="obs" config="thumbConfig"></vdui-thumbnail>
       </div>
       <div ng-hide="obsArray.length">
         ${ui.message("visitdocumentsui.visitdocumentspage.noDocuments")}

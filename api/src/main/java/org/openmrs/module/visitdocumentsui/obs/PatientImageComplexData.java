@@ -9,33 +9,20 @@
  */
 package org.openmrs.module.visitdocumentsui.obs;
 
-import java.awt.image.RenderedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageOutputStream;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.obs.ComplexData;
-import org.openmrs.web.servlet.ComplexObsServlet;
+import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 
-public class PatientImageComplexData extends ComplexData {
+public class PatientImageComplexData extends ComplexData_2_0 {
 
 	protected final Log log = LogFactory.getLog(getClass());
 	private static final long serialVersionUID = 1L;
 	
 	public static final String INSTRUCTIONS_NONE = "instructions.none";
 	public static final String INSTRUCTIONS_DEFAULT = "instructions.default";
-	public static final String UNKNOWN_MIME_TYPE = "application/unknown";
 
 	private String instructions = INSTRUCTIONS_NONE;
-	private String mimeType = UNKNOWN_MIME_TYPE;
 	
 	/** 
 	 * @param instructions Custom instructions to be processed by {@link PatientImageHandler#PatientImageHandler() PatientImageHandler}
@@ -43,10 +30,14 @@ public class PatientImageComplexData extends ComplexData {
 	 */
 	public PatientImageComplexData(String instructions, String title, Object data, String mimeType) {
 		super(title, data);
+		if (!StringUtils.isEmpty(mimeType)) {
+         this.setMimeType(mimeType);
+		}
+		else {
+		   this.setMimeType(VisitDocumentsConstants.UNKNOWN_MIME_TYPE);
+		}
 		if (!StringUtils.isEmpty(instructions))
 			this.instructions = instructions;
-		if (!StringUtils.isEmpty(mimeType))
-			this.mimeType = mimeType;
 	}
 	
 	/**
@@ -54,58 +45,10 @@ public class PatientImageComplexData extends ComplexData {
 	 * @param stream The parent's data argument.
 	 */
 	public PatientImageComplexData(String title, Object data) {
-		this("", title, data, UNKNOWN_MIME_TYPE);
+		this("", title, data, null);
 	}
 
 	public String getInstructions() {
 		return instructions;
-	}
-
-	public String getMimeType() {
-		return mimeType;
-	}
-	
-	/**
-	 * This returns the image's byte array out of the complex data's inner data.
-	 * This is borrowed from {@link ComplexObsServlet} and would therefore work outside of our implementation.
-	 * @return The image's byte array, or an empty array if an error occurred.
-	 * @throws IOException 
-	 */
-	public static byte[] getByteArray(ComplexData complexData)
-	{
-		Object data = complexData.getData();
-		
-		if (data == null) {
-			return new byte[0];
-		}
-		if (data instanceof byte[]) {
-			return (byte[]) data;			
-		}
-		else if (RenderedImage.class.isAssignableFrom(data.getClass())) {
-			RenderedImage image = (RenderedImage) data;
-
-			ByteArrayOutputStream bytesOutStream = new ByteArrayOutputStream();
-			try {
-			ImageOutputStream imgOutStream = ImageIO.createImageOutputStream(bytesOutStream);
-			String extension = FilenameUtils.getExtension(complexData.getTitle());
-			ImageIO.write(image, extension, imgOutStream);
-			imgOutStream.close();
-			}
-			catch (IOException e) {
-				return new byte[0];
-			}
-			
-			return bytesOutStream.toByteArray();
-		}
-		else if (InputStream.class.isAssignableFrom(data.getClass())) {
-			try {
-				return IOUtils.toByteArray((InputStream) data);
-			} catch (IOException e) {
-				return new byte[0];
-			}
-		}
-		else {
-			return new byte[0];
-		}
 	}
 }

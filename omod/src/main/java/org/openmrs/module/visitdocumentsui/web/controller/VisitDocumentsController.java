@@ -1,14 +1,25 @@
 package org.openmrs.module.visitdocumentsui.web.controller;
 
+import java.awt.image.RenderedImage;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import net.coobird.thumbnailator.Thumbnails;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,10 +36,12 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsContext;
+import org.openmrs.module.visitdocumentsui.obs.ComplexData_2_0;
 import org.openmrs.module.visitdocumentsui.obs.PatientImageComplexData;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.representation.CustomRepresentation;
 import org.openmrs.obs.ComplexData;
+import org.openmrs.web.servlet.ComplexObsServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -48,7 +61,7 @@ public class VisitDocumentsController {
 
    protected final Log log = LogFactory.getLog(getClass());
    
-   public enum ContentFamily {
+   public static enum ContentFamily {
       IMAGES,
       OTHER
    }
@@ -153,24 +166,98 @@ public class VisitDocumentsController {
    public void downloadDocument(@RequestParam("obs") String obsUuid, @RequestParam(value="view", required=false) String view,
          HttpServletResponse response)
    {
-      Obs obs = context.getObsService().getObsByUuid(obsUuid);
-      if (StringUtils.isEmpty(view)) {
+      if (StringUtils.isEmpty(view))
          view = VisitDocumentsConstants.DOC_VIEW_ORIGINAL;
-      }
 
+      Obs obs = context.getObsService().getObsByUuid(obsUuid);
       Obs complexObs = context.getObsService().getComplexObs(obs.getObsId(), view);
       ComplexData complexData = complexObs.getComplexData();
-
-      try {
-         
-         response.getOutputStream().write(PatientImageComplexData.getByteArray(complexData));
       
-      } catch (IOException e) {
-         //TODO: Get a toast message to the client-side.
-         log.error("There was an error extracting the byte array for obs with "
-               + "VALUE_COMPLEX='" + complexObs.getValueComplex() + "'"
-               + "OBS_ID='" + complexObs.getId() + "'"
+      String mimeType = getContentType(complexData);
+      try {
+         response.setContentType(mimeType);
+         switch (getContentFamily(mimeType)) {
+            case IMAGES:
+               response.getOutputStream().write( getByteArray(complexData) );
+               break;
+               
+            case OTHER:
+            default:
+               break;
+         }
+      }
+      catch (IOException e) {
+         response.setStatus(500);
+         log.error("Could not write to HTTP response for when fetching obs with"
+               + " VALUE_COMPLEX='" + complexObs.getValueComplex() + "',"
+               + " OBS_ID='" + complexObs.getId() + "',"
+               + " OBS_UUID='" + complexObs.getUuid() + "'"
                , e);
+      }
+   }
+   
+   /**
+    * Extracts the MIME type of a {@link ComplexData} instance.
+    * @param complexData
+    * @return The MIME type (or content type).
+    */
+   public static String getContentType(ComplexData complexData) {
+      
+      if (complexData instanceof ComplexData_2_0)
+         return ((ComplexData_2_0) complexData).getMimeType();
+      
+      byte[] bytes = getByteArray(complexData);
+      if (ArrayUtils.isEmpty(bytes))
+         return VisitDocumentsConstants.UNKNOWN_MIME_TYPE;
+      
+      InputStream stream = new BufferedInputStream(new ByteArrayInputStream(bytes));
+      try {
+         return URLConnection.guessContentTypeFromStream(stream);
+      } catch (IOException e) {
+         return VisitDocumentsConstants.UNKNOWN_MIME_TYPE;
+      }
+   }
+   
+   /**
+    * This returns the byte array out of the complex data's inner data.
+    * This is borrowed from {@link ComplexObsServlet}.
+    * @return The byte array, or an empty array if an error occurred.
+    */
+   public static byte[] getByteArray(ComplexData complexData)
+   {
+      Object data = (complexData != null) ? complexData.getData() : new byte[0];
+      
+      if (data == null) {
+         return new byte[0];
+      }
+      if (data instanceof byte[]) {
+         return (byte[]) data;         
+      }
+      else if (RenderedImage.class.isAssignableFrom(data.getClass())) {
+         RenderedImage image = (RenderedImage) data;
+
+         ByteArrayOutputStream bytesOutStream = new ByteArrayOutputStream();
+         try {
+            ImageOutputStream imgOutStream = ImageIO.createImageOutputStream(bytesOutStream);
+            String extension = FilenameUtils.getExtension(complexData.getTitle());
+            ImageIO.write(image, extension, imgOutStream);
+            imgOutStream.close();
+         }
+         catch (IOException e) {
+            return new byte[0];
+         }
+         
+         return bytesOutStream.toByteArray();
+      }
+      else if (InputStream.class.isAssignableFrom(data.getClass())) {
+         try {
+            return IOUtils.toByteArray((InputStream) data);
+         } catch (IOException e) {
+            return new byte[0];
+         }
+      }
+      else {
+         return new byte[0];
       }
    }
 }

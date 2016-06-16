@@ -108,12 +108,13 @@ angular.module('vdui.page.main').controller('ListComplexObsCtrl', ['$scope', '$r
     $scope.obsArray = null;
 
     // Setting the config for the thumbnail directive
-    $scope.thumbnailCfg = {};
-    $scope.thumbnailCfg.canEdit = true; // This should be obtained from privileges
-    $scope.thumbnailCfg.url = $window.config.downloadUrl + '?'
+    $scope.thumbConfig = {};
+    $scope.thumbConfig.canEdit = true; // This should be obtained from privileges
+    $scope.thumbConfig.allowNoCaption = $window.config.allowNoCaption;
+    $scope.thumbConfig.url = $window.config.downloadUrl + '?'
         + 'view=' + $window.config.thumbView + '&'
         + 'obs=';
-    $scope.thumbnailCfg.afterUrl = $window.config.downloadUrl + '?'
+    $scope.thumbConfig.contentUrl = $window.config.downloadUrl + '?'
         + 'view=' + $window.config.originalView + '&'
         + 'obs=';
 

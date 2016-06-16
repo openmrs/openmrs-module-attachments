@@ -11,7 +11,7 @@ angular.module('vdui.widget.complexObsEncounter', ['obsService', 'vdui.widget.th
 
     	controller : function($scope, ObsService) {
 
-        $scope.thumbnailCfg = null;
+        $scope.thumbConfig = null;
 
         emr.getFragmentActionWithCallback(module.getProvider(), "clientConfig", "get", {}, function(response) {
           
@@ -20,11 +20,11 @@ angular.module('vdui.widget.complexObsEncounter', ['obsService', 'vdui.widget.th
             v: response.obsRep
           }).then(function(obs) {
             $scope.allObs = obs;
-            $scope.thumbnailCfg = {};
-            $scope.thumbnailCfg.url = response.downloadUrl + '?'
+            $scope.thumbConfig = {};
+            $scope.thumbConfig.url = response.downloadUrl + '?'
                 + 'view=' + response.thumbView + '&'
                 + 'obs=';
-            $scope.thumbnailCfg.afterUrl = response.downloadUrl + '?'
+            $scope.thumbConfig.contentUrl = response.downloadUrl + '?'
                 + 'view=' + response.originalView + '&'
                 + 'obs=';
           })
