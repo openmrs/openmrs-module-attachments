@@ -77,7 +77,7 @@
 <div ng-show="obs" class="vdui_modal-image-background" ng-click="hide()">
 
   <!-- The Close Button -->
-  <span class="vdui_modal-image-close" ng-click="hide()">&times;</span>
+  <i class="icon-remove vdui_modal-image-close" ng-click="hide()"></i>
 
   <!-- Modal Content (The Image) -->
   <img class="vdui_modal-image-content" ng-src="data:{{obs.mimeType}};base64,{{obs.complexData}}">

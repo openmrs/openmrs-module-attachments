@@ -7,7 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsContext;
-import org.openmrs.module.visitdocumentsui.obs.PatientImageHandler;
+import org.openmrs.module.visitdocumentsui.obs.ImageDocumentHandler;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 
@@ -26,9 +26,9 @@ public class ClientConfigFragmentController {
       jsonConfig.put("originalView", VisitDocumentsConstants.DOC_VIEW_ORIGINAL);
       jsonConfig.put("thumbView", VisitDocumentsConstants.DOC_VIEW_THUMBNAIL);
       
-      jsonConfig.put("conceptComplexUuid", context.getConceptComplex().getUuid());
+      jsonConfig.put("conceptComplexUuidList", context.getConceptComplexList());
       
-      jsonConfig.put("thumbSize", PatientImageHandler.THUMBNAIL_HEIGHT);
+      jsonConfig.put("thumbSize", ImageDocumentHandler.THUMBNAIL_HEIGHT);
       jsonConfig.put("maxFileSize", context.getMaxUploadFileSize());
       jsonConfig.put("allowNoCaption", context.doAllowEmptyCaption());
       

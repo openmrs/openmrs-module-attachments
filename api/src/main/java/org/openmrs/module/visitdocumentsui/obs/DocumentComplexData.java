@@ -14,21 +14,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 
-public class PatientImageComplexData extends ComplexData_2_0 {
+public class DocumentComplexData extends ComplexData_2_0 {
 
 	protected final Log log = LogFactory.getLog(getClass());
 	private static final long serialVersionUID = 1L;
 	
-	public static final String INSTRUCTIONS_NONE = "instructions.none";
-	public static final String INSTRUCTIONS_DEFAULT = "instructions.default";
-
-	private String instructions = INSTRUCTIONS_NONE;
+	private String instructions = ValueComplex.INSTRUCTIONS_NONE;
 	
 	/** 
-	 * @param instructions Custom instructions to be processed by {@link PatientImageHandler#PatientImageHandler() PatientImageHandler}
+	 * @param instructions Custom instructions to be processed by {@link DefaultDocumentHandler#DefaultDocumentHandler() DefaultDocumentHandler}
 	 * @param mimeType Same as HTTP content type, @see <a href="http://www.sitepoint.com/web-foundations/mime-types-complete-list/"/>
 	 */
-	public PatientImageComplexData(String instructions, String title, Object data, String mimeType) {
+	public DocumentComplexData(String instructions, String title, Object data, String mimeType) {
 		super(title, data);
 		if (!StringUtils.isEmpty(mimeType)) {
          this.setMimeType(mimeType);
@@ -44,8 +41,8 @@ public class PatientImageComplexData extends ComplexData_2_0 {
 	 * Constructor defaulting to parent's behaviour.
 	 * @param stream The parent's data argument.
 	 */
-	public PatientImageComplexData(String title, Object data) {
-		this("", title, data, null);
+	public DocumentComplexData(String title, Object data) {
+		this("", title, data, "");
 	}
 
 	public String getInstructions() {

@@ -35,9 +35,11 @@ import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
+import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants.ContentFamily;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsContext;
 import org.openmrs.module.visitdocumentsui.obs.ComplexData_2_0;
-import org.openmrs.module.visitdocumentsui.obs.PatientImageComplexData;
+import org.openmrs.module.visitdocumentsui.obs.DocumentComplexData;
+import org.openmrs.module.visitdocumentsui.obs.ValueComplex;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.representation.CustomRepresentation;
 import org.openmrs.obs.ComplexData;
@@ -61,11 +63,6 @@ public class VisitDocumentsController {
 
    protected final Log log = LogFactory.getLog(getClass());
    
-   public static enum ContentFamily {
-      IMAGES,
-      OTHER
-   }
-   
    /**
     * @param mimeType The MIME type of the uploaded content.
     * @return The type/family of uploaded content based on the MIME type.
@@ -73,7 +70,7 @@ public class VisitDocumentsController {
    public static ContentFamily getContentFamily(String mimeType) {
       ContentFamily contentFamily = ContentFamily.OTHER;
       if (StringUtils.startsWith(mimeType, "image/")) {
-         contentFamily = ContentFamily.IMAGES;
+         contentFamily = ContentFamily.IMAGE;
       }
       return contentFamily;
    }
@@ -89,23 +86,31 @@ public class VisitDocumentsController {
          MultipartHttpServletRequest request) 
    {
       Obs obs = new Obs();
-      try {
+      try
+      {
          Iterator<String> fileNameIterator = request.getFileNames();	// Looping through the uploaded file names.
 
          while (fileNameIterator.hasNext()) {
             String uploadedFileName = fileNameIterator.next();
             MultipartFile uploadedFile = request.getFile(uploadedFileName);
             
+            Encounter encounter = saveVisitDocumentEncounter(patient, visit, context.getEncounterType(), provider, context.getEncounterRole(), context.getEncounterService());
+            ConceptComplex conceptComplex = null;
+            if (StringUtils.isEmpty(instructions))
+               instructions = ValueComplex.INSTRUCTIONS_DEFAULT;
+            
             switch (getContentFamily(uploadedFile.getContentType())) {
-               case IMAGES:
-                  
-                  Encounter encounter = saveVisitDocumentEncounter(patient, visit, context.getEncounterType(), provider, context.getEncounterRole(), context.getEncounterService());
-                  ConceptComplex conceptComplex = context.getConceptComplex();
-                  obs = saveUploadedImageObs(patient.getPerson(), encounter, uploadedFile, fileCaption, conceptComplex, instructions, context.getObsService());
+               case IMAGE:
+                  conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
+                  obs = prepareComplexObs(patient.getPerson(), encounter, fileCaption, conceptComplex);
+                  obs = saveImageDocument(obs, uploadedFile, instructions, context.getObsService());
                   break;
                   
                case OTHER:
                default:
+                  conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
+                  obs = prepareComplexObs(patient.getPerson(), encounter, fileCaption, conceptComplex);
+                  obs = saveOtherDocument(obs, uploadedFile, instructions, context.getObsService());
                   break;
             }
          }
@@ -117,32 +122,35 @@ public class VisitDocumentsController {
 
       return ConversionUtil.convertToRepresentation(obs, new CustomRepresentation(VisitDocumentsConstants.REPRESENTATION_OBS));
    }
+   
+   protected Obs prepareComplexObs(Person person, Encounter encounter, String fileCaption, ConceptComplex conceptComplex) {
+      Obs obs = new Obs(person, conceptComplex, new Date(), encounter.getLocation());
+      obs.setEncounter(encounter);
+      obs.setComment(fileCaption);
+      return obs;
+   }
 
-   /*
-    * @see https://wiki.openmrs.org/display/docs/Complex+Obs+Support
-    */
-   protected Obs saveUploadedImageObs(Person person, Encounter encounter, MultipartFile file, String fileCaption, ConceptComplex conceptComplex, String instructions, ObsService obsService)
+   protected Obs saveImageDocument(Obs obs, MultipartFile file, String instructions, ObsService obsService)
          throws IOException
    {
       Object image = file.getInputStream();
-
       double compressionRatio = VisitDocumentsContext.getCompressionRatio(file.getSize(), 1000000 * context.getMaxStorageFileSize());
       if (compressionRatio < 1) {
          image = Thumbnails.of(file.getInputStream()).scale(compressionRatio).asBufferedImage();
       }
-
-      Obs obs = new Obs(person, conceptComplex, encounter.getEncounterDatetime(), encounter.getLocation());
-      obs.setEncounter(encounter);
-      obs.setComment(fileCaption);
-      if (StringUtils.isEmpty(instructions)) {
-         instructions = PatientImageComplexData.INSTRUCTIONS_DEFAULT;
-      }
-      obs.setComplexData( new PatientImageComplexData(instructions, file.getOriginalFilename(), image, file.getContentType()) );
+      obs.setComplexData( new DocumentComplexData(instructions, file.getOriginalFilename(), image, file.getContentType()) );
+      return obsService.saveObs(obs, getClass().toString());
+   }
+   
+   protected Obs saveOtherDocument(Obs obs, MultipartFile file, String instructions, ObsService obsService)
+         throws IOException
+   {
+      obs.setComplexData( new DocumentComplexData(instructions, file.getOriginalFilename(), file.getBytes(), file.getContentType()) );
       return obsService.saveObs(obs, getClass().toString());
    }
 
-   protected Encounter saveVisitDocumentEncounter(Patient patient, Visit visit, EncounterType encounterType, Provider provider, EncounterRole encounterRole, EncounterService encounterService) {
-
+   protected Encounter saveVisitDocumentEncounter(Patient patient, Visit visit, EncounterType encounterType, Provider provider, EncounterRole encounterRole, EncounterService encounterService)
+   {
       Encounter encounter = new Encounter();
       encounter.setVisit(visit);
       encounter.setEncounterType(encounterType);
@@ -175,14 +183,16 @@ public class VisitDocumentsController {
       
       String mimeType = getContentType(complexData);
       try {
+         // The document meta data is sent as HTTP headers.
          response.setContentType(mimeType);
+         response.addHeader("Content-Family", getContentFamily(mimeType).name());   // custom header
+         response.addHeader("File-Name", complexData.getTitle());   // custom header
+         response.addHeader("File-Ext", context.getExtension(mimeType));   // custom header
          switch (getContentFamily(mimeType)) {
-            case IMAGES:
-               response.getOutputStream().write( getByteArray(complexData) );
-               break;
-               
+            case IMAGE:
             case OTHER:
             default:
+               response.getOutputStream().write(getByteArray(complexData));
                break;
          }
       }
@@ -212,7 +222,8 @@ public class VisitDocumentsController {
       
       InputStream stream = new BufferedInputStream(new ByteArrayInputStream(bytes));
       try {
-         return URLConnection.guessContentTypeFromStream(stream);
+         String mimeType = URLConnection.guessContentTypeFromStream(stream); 
+         return mimeType == null ? VisitDocumentsConstants.UNKNOWN_MIME_TYPE : mimeType;
       } catch (IOException e) {
          return VisitDocumentsConstants.UNKNOWN_MIME_TYPE;
       }
@@ -225,10 +236,12 @@ public class VisitDocumentsController {
     */
    public static byte[] getByteArray(ComplexData complexData)
    {
-      Object data = (complexData != null) ? complexData.getData() : new byte[0];
+      final byte[] emptyContent = new byte[0];
+      
+      Object data = (complexData != null) ? complexData.getData() : emptyContent;
       
       if (data == null) {
-         return new byte[0];
+         return emptyContent;
       }
       if (data instanceof byte[]) {
          return (byte[]) data;         
@@ -244,7 +257,7 @@ public class VisitDocumentsController {
             imgOutStream.close();
          }
          catch (IOException e) {
-            return new byte[0];
+            return emptyContent;
          }
          
          return bytesOutStream.toByteArray();
@@ -253,11 +266,11 @@ public class VisitDocumentsController {
          try {
             return IOUtils.toByteArray((InputStream) data);
          } catch (IOException e) {
-            return new byte[0];
+            return emptyContent;
          }
       }
       else {
-         return new byte[0];
+         return emptyContent;
       }
    }
 }

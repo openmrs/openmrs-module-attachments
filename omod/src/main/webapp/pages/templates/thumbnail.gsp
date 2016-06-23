@@ -22,6 +22,7 @@
 	only screen and (max-device-width : 320px){
 		.vdui_thumbnail-container {width: 96%;}
 		.vdui_thumbnail-container img {width: 96%;}
+		.vdui_thumbnail-container object {width: 96%;}
 	}
 
 	.vdui_thumbnail-container {
@@ -37,20 +38,42 @@
 		font-size: smaller;
 	}
 
-	.vdui_thumbnail-container p:hover {
+	.vdui_thumbnail-container.vdui_editable p:hover {
 		background-color: #F5F5F5;
-
-		font-style: italic;
+		color: #F26522;
+		font-weight: bold;
 		
 		-webkit-border-radius: 3px;
 		-moz-border-radius: 3px;
 		border-radius: 3px;
 		padding: 5px;
+		cursor: pointer;
 	}
 
 	.vdui_thumbnail-image-section {
 		position: relative;
 		height: 110px; /* Controls the height of the image */
+	}
+
+	.vdui_generic-thumbnail {
+		height: 110px; /* Controls the height */
+
+		border: 3px solid #F4F4F4;
+
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+		padding: 5px;
+	}
+
+	.vdui_generic-thumbnail span {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+
+		font-size: 75%;
+		padding: 10%;
+		text-align: center;
 	}
 
 	.vdui_thumbnail-container img {
@@ -67,27 +90,19 @@
 	}
 
 	.vdui_thumbnail-caption-section {
-		margin-top: 10px;
+		margin-top: 20px;
 		position: relative;
 	}
 
-	.vdui_thumbnail-image-section a {
-		position: absolute;
-		width: 80%;
-		height: auto;
-    left: 0;
-    top: 0;	/* Controls how low is placed the clickable image */
-	}
-
-	.vdui_thumbnail-image-section i {
+	.vdui_icon-trash {
 		position: absolute;
     left: 0;
     top: 0;
 
-    font-size: 300%
+    font-size: 250%
 	}
 
-	.vdui_thumbnail-edit-mode img {
+	.vdui_thumbnail-edit-mode .vdui_opacity-changeable {
 		-moz-opacity: 0.20;
 		opacity:.20;
 		filter: alpha(opacity=20);
@@ -97,12 +112,12 @@
 		cursor: auto;
 	}
 
-	.vdui_thumbnail-container i {
-		cursor: pointer;
-	}
-
 	.vdui_side {
 		display: inline-block;
+	}
+
+	.vdui_click-pointer {
+		cursor: pointer;
 	}
 
 </style>
@@ -130,11 +145,19 @@
 
 <vdui-modal-image></vdui-modal-image>
 
-<div ng-show="active" class="vdui_thumbnail-container" ng-class="getEditModeCss()">
+<div ng-show="active" class="vdui_thumbnail-container" ng-class="[getEditModeCss(), canEdit() ? 'vdui_editable' : '']">
 
-	<div class="vdui_thumbnail-image-section">
-	  <img ng-click="!editMode && display()" ng-src="{{config.url}}{{obs.uuid}}" alt=""></img>
-	  <i ng-show="editMode" class="icon-trash" ng-click="confirmDelete()"></i>
+	<div class="vdui_thumbnail-image-section vdui_click-pointer" ng-click="!editMode && displayContent()">
+		<div class="vdui_opacity-changeable">
+			<div ng-hide="obs.complexData" class="vdui_generic-thumbnail">
+				<i class="icon-file icon-4x left"></i>
+				<span ng-show="obs.contentFamily && obs.fileExt">{{obs.contentFamily.toLowerCase()}}, {{obs.fileExt}}<span>
+			</div>
+			<div ng-show="obs.complexData" class="vdui_generic-thumbnail">
+				<img ng-src="data:{{obs.mimeType}};base64,{{obs.complexData}}"></img>
+			</div>
+		</div>
+		<i ng-show="editMode" class="icon-trash vdui_icon-trash vdui_click-pointer" ng-click="confirmDelete()"></i>
 	</div>
 
 	<div class="vdui_thumbnail-caption-section">
@@ -143,11 +166,10 @@
 			<p ng-show="obs.comment" class="vdui_side">{{obs.comment}}</p>
 		</div>
 		<div ng-show="editMode" vdui-escape-key-down="toggleEditMode(false)">
-	    <!-- <input vdui-focus-on="vdui_event_editMode" ng-model="newCaption" class="left" type="text" vdui-enter-key-down="saveCaption()"/> -->
 	    <input ng-model="newCaption" class="left" type="text" vdui-enter-key-down="saveCaption()"/>
 	    <span class="right">
-	      <i class="icon-ok" ng-click="saveCaption()"></i>
-	      <i class="icon-remove" ng-click="toggleEditMode(false)"></i>
+	      <i class="icon-ok vdui_click-pointer" ng-click="saveCaption()"></i>
+	      <i class="icon-remove vdui_click-pointer" ng-click="toggleEditMode(false)"></i>
 	    </span>
 	  </div>
 	  <i ng-show="loading" class="icon-spinner icon-spin" style="margin-left: 10px;"></i>

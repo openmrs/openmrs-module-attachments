@@ -22,7 +22,7 @@ angular.module('vdui.widget.modalImage', [])
           $scope.setObs(null);
         }
 
-        $rootScope.$on('vdui_event_diplayComplexObs', function(event, obs) {
+        $rootScope.$on('vdui_event_displayImageComplexObs', function(event, obs) {
           $scope.setObs(obs);
         });
     	}

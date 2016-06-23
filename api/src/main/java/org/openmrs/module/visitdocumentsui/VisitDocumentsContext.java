@@ -9,13 +9,19 @@
  */
 package org.openmrs.module.visitdocumentsui;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.openmrs.Concept;
 import org.openmrs.ConceptComplex;
 import org.openmrs.EncounterRole;
@@ -27,6 +33,7 @@ import org.openmrs.api.ProviderService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.utils.ModuleProperties;
+import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants.ContentFamily;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -108,14 +115,61 @@ public class VisitDocumentsContext extends ModuleProperties
 	/**
 	 * @return The concept complex used to save uploaded image-obs.
 	 */
-	public ConceptComplex getConceptComplex() {
-		String globalPropertyName = VisitDocumentsConstants.GP_CONCEPT_COMPLEX_UUID;
+	public ConceptComplex getDefaultConceptComplex() {
+		String globalPropertyName = VisitDocumentsConstants.GP_DEFAULT_CONCEPT_COMPLEX_UUID;
 		Concept concept = getConceptByGlobalProperty(globalPropertyName);
 		ConceptComplex conceptComplex = getConceptService().getConceptComplex(concept.getConceptId());
 		if (conceptComplex == null) {
 		   throw new IllegalStateException("Configuration required: " + globalPropertyName);
 		}
 		return conceptComplex;
+	}
+	
+	/**
+	 * Returns a simple String-String map from its JSON representation saved as a global property.
+	 */
+	protected Map<String, String> getMapByGlobalProperty(String globalPropertyName) {
+	   Map<String, String> map = Collections.<String,String>emptyMap();
+	   String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
+
+	   ObjectMapper mapper = new ObjectMapper();
+	   mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+	   TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {};
+	   try {
+	      map = mapper.readValue(globalProperty, typeRef);
+      } catch (Exception e) {
+         log.error("Could not parse global property '" + globalPropertyName + "' into a Map<String, String>.", e);
+      }
+	   return map;
+	}
+	
+	/**
+	 * @param contentFamily The content family ('IMAGE', 'PDF', 'OTHER', ... etc).
+	 * @return The concept complex configured to save files belonging to the content family,
+	 * and if none is found the default concept complex is returned.
+	 */
+	public ConceptComplex getConceptComplex(ContentFamily contentFamily) {
+	   Map<String, String> map = getMapByGlobalProperty(VisitDocumentsConstants.GP_CONCEPT_COMPLEX_UUID_MAP);
+      Concept concept = getConceptService().getConceptByUuid(map.get(contentFamily.toString()));
+      if (concept != null) {
+         return getConceptService().getConceptComplex(concept.getConceptId());
+      }
+	   return getDefaultConceptComplex();
+	}
+	
+	public List<String> getConceptComplexList() {
+	   List<String> list = Collections.<String>emptyList();
+	   final String globalPropertyName = VisitDocumentsConstants.GP_CONCEPT_COMPLEX_UUID_LIST;
+      String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
+
+      ObjectMapper mapper = new ObjectMapper();
+      TypeReference<ArrayList<String>> typeRef = new TypeReference<ArrayList<String>>() {};
+      try {
+         list = mapper.readValue(globalProperty, typeRef);
+      } catch (Exception e) {
+         log.error("Could not parse global property '" + globalPropertyName + "' into a List<String>.", e);
+      }
+      return list;  
 	}
 	
 	/**
@@ -151,7 +205,7 @@ public class VisitDocumentsContext extends ModuleProperties
 	}
 	
 	public String getExtension(String mimeType) {
-		String ext = "";
+		String ext = "bin";
 		if (mimeTypes.containsKey(mimeType)) {
 			ext = mimeTypes.get(mimeType);
 		}

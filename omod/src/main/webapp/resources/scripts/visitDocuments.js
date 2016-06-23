@@ -23,7 +23,7 @@ angular.module('vdui.widget.dropzone', []).directive('dropzoneDirective',
     };
   });
 
-angular.module('vdui.page.main', ['vdui.widget.dropzone', 'obsService', 'session', 'vdui.widget.thumbnail', 'vdui.widget.modalImage']);
+angular.module('vdui.page.main', ['vdui.widget.dropzone', 'obsService', 'session', 'vdui.widget.thumbnail']);
 
 angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$rootScope', '$window', 'SessionInfo',
   function ($scope, $rootScope, $window, SessionInfo) {
@@ -54,7 +54,6 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$rootS
         'paramName': 'visit_document_file',
         'maxFiles': 1,
         'maxFilesize': $window.config.maxFileSize,
-        'acceptedFiles': 'image/*', 
         'autoProcessQueue': false
       },
       'eventHandlers':
@@ -120,7 +119,7 @@ angular.module('vdui.page.main').controller('ListComplexObsCtrl', ['$scope', '$r
 
     ObsService.getObs({
       patient: $window.config.patient.uuid,
-      concept: $window.config.conceptComplexUuid,
+      concept: $window.config.conceptComplexUuidList,
       v: $window.config.obsRep
     }).then(function(obs) {
       $scope.obsArray = obs;

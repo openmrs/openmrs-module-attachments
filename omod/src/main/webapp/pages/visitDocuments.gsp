@@ -28,7 +28,7 @@
     { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
     { label: "${ ui.escapeJs(ui.format(patient)) }" ,
       link: '${ ui.pageLink( "coreapps", "clinicianfacing/patient", [patientId: patient.id] ) }'},
-    { label: "${ui.message("visitdocumentsui.breadcrumbs.label")}"}
+    { label: "${ ui.message("visitdocumentsui.breadcrumbs.label") }"}
   ];
 
   window.config = ${jsonConfig}; // Getting the config from the Spring Java controller.
@@ -82,6 +82,8 @@
   .dropzone {
     position: center;
     border: 2px dotted #888;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
     border-radius: 10px;
     min-height: 0px;
     height: 100%;

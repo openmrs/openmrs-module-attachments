@@ -25,8 +25,12 @@
     <property name="handlers">
       <map>
         <entry>
-          <key><value>PatientImageHandler</value></key>
-          <bean class="org.openmrs.module.visitdocumentsui.obs.PatientImageHandler"/>
+          <key><value>DefaultDocumentHandler</value></key>
+          <bean class="org.openmrs.module.visitdocumentsui.obs.DefaultDocumentHandler"/>
+        </entry>
+        <entry>
+          <key><value>ImageDocumentHandler</value></key>
+          <bean class="org.openmrs.module.visitdocumentsui.obs.ImageDocumentHandler"/>
         </entry>
       </map>
     </property>

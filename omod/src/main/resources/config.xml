@@ -55,10 +55,26 @@
 
 	<!-- Global Properties -->
   <globalProperty>
-    <property>visitdocumentsui.conceptComplexUuid</property>
-    <defaultValue>7cac8397-53cd-4f00-a6fe-028e8d743f8e</defaultValue>
+    <property>visitdocumentsui.defaultConceptComplexUuid</property>
+    <defaultValue>42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00</defaultValue>
     <description>
-        UUID of the (question) concept complex representing a patient image
+        UUID of the (question) concept complex for 'other' patient files, this is used as the default when the MIME type is not matched
+    </description>
+  </globalProperty>
+
+  <globalProperty>
+    <property>visitdocumentsui.conceptComplexUuidList</property>
+    <defaultValue>["7cac8397-53cd-4f00-a6fe-028e8d743f8e","42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00"]</defaultValue>
+    <description>
+        List of concept complex UUIDs that are used in queries for viewing documents
+    </description>
+  </globalProperty>
+
+  <globalProperty>
+    <property>visitdocumentsui.conceptComplexUuidMap</property>
+    <defaultValue>{"IMAGE":"7cac8397-53cd-4f00-a6fe-028e8d743f8e","OTHER":"42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00"}</defaultValue>
+    <description>
+        Mapping between content families and concept complex UUIDs, this is used for saving files based on their MIME type
     </description>
   </globalProperty>
 

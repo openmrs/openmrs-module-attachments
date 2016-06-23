@@ -1,19 +1,11 @@
 angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.widget.modalImage'])
 
-  // .directive('vduiFocusOn', function() {
-  //  return function(scope, elem, attr) {
-  //     scope.$on(attr.vduiFocusOn, function(e) {
-  //       elem[0].focus();
-  //     });
-  //   };
-  // })
-
   .directive('vduiEnterKeyDown', function() {
     return function(scope, element, attrs) {
       element.bind("keydown keypress", function(event) {
         if(event.which === 13) {
           scope.$apply(function() {
-              scope.$eval(attrs.vduiEnterKeyDown, {'event': event});
+            scope.$eval(attrs.vduiEnterKeyDown, {'event': event});
           });
           event.preventDefault();
         }
@@ -26,7 +18,7 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
       element.bind("keydown keypress", function(event) {
         if(event.which === 27) {
           scope.$apply(function() {
-              scope.$eval(attrs.vduiEscapeKeyDown, {'event': event});
+            scope.$eval(attrs.vduiEscapeKeyDown, {'event': event});
           });
           event.preventDefault();
         }
@@ -34,7 +26,7 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
     };
   })
 
-  .directive('vduiThumbnail', [ 'ComplexObs', 'ngDialog', '$http', function(Obs, ngDialog, $http) {
+  .directive('vduiThumbnail', [ 'ComplexObs', 'ngDialog', '$http', '$window', function(Obs, ngDialog, $http, $window) {
     return {
       restrict: 'E',
       scope: {
@@ -45,7 +37,7 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
 
       controller : function($scope, $rootScope) {
 
-        emr.loadMessages("visitdocumentsui.thumbail.save.success,visitdocumentsui.thumbail.save.error,visitdocumentsui.thumbail.delete.error");
+        emr.loadMessages("visitdocumentsui.thumbail.get.error,visitdocumentsui.thumbail.save.success,visitdocumentsui.thumbail.save.error,visitdocumentsui.thumbail.delete.error");
 
         $scope.canEdit = function() {
           if($scope.config.canEdit) {
@@ -65,7 +57,6 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
             $scope.newCaption = $scope.obs.comment;
             $scope.editMode = editMode;
             if ($scope.editMode) {
-              $scope.$broadcast('vdui_event_editMode');
               $scope.editModeCss = "vdui_thumbnail-edit-mode";
             }
             else {
@@ -75,8 +66,8 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
         }
 
         $scope.toggleEditMode(false);
-    		$scope.toggleVisible(true);
-    		$scope.src = "";
+        $scope.toggleVisible(true);
+        $scope.src = "";
         $scope.loading = false;
 
         $scope.getEditModeCss = function() {
@@ -89,16 +80,20 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
             $scope.toggleEditMode(false);
             return;
           }
-            
+
           $scope.obs.comment = $scope.newCaption;
           
-          var saved = Obs.save($scope.obs);
+          var saved = Obs.save({
+            uuid: $scope.obs.uuid,
+            comment: $scope.obs.comment
+          });
           saved.$promise.then(function(obs) {
             $scope.toggleEditMode(false);
             $().toastmessage('showToast', { type: 'success', position: 'top-right', text: emr.message("visitdocumentsui.thumbail.save.success") });
-		      }, function(reason) {
+          }, function(reason) {
             $scope.obs.comment = caption;
             $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message("visitdocumentsui.thumbail.save.error") });
+            console.log(err);
           });
         }
 
@@ -127,7 +122,7 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
             scope.closeThisDialog();
           }, function(err) {
             scope.closeThisDialog();
-            if (purge === true) { // We should only do this error 500 is the cause: https://github.com/openmrs/openmrs-core/blob/1.11.x/api/src/main/java/org/openmrs/api/impl/ObsServiceImpl.java#L213
+            if (purge === true) { // We should only do this if error 500 is the cause: https://github.com/openmrs/openmrs-core/blob/1.11.x/api/src/main/java/org/openmrs/api/impl/ObsServiceImpl.java#L213
               scope.purge(null, scope);
             }
             else {
@@ -137,31 +132,80 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
           }); 
         }
 
-        $scope.display = function() {
+        $scope.displayThumbnail = function() {
+          $http.get($scope.config.url + $scope.obs.uuid, {responseType: "arraybuffer"})
+            .success(function (data, status, headers) {
+              $scope.obs.mimeType = headers('Content-Type');
+              $scope.obs.contentFamily = headers('Content-Family');  // Custom header
+              $scope.obs.fileName = headers('File-Name');  // Custom header
+              $scope.obs.fileExt = headers('File-Ext');  // Custom header
+              
+              switch ($scope.obs.contentFamily) {
+                case "IMAGE":
+                  $scope.obs.complexData = module.arrayBufferToBase64(data);
+                  break;
+                case "OTHER":
+                  break;
+              }
+            })
+            .error(function (data, status) {
+              $scope.loading = false;
+              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message("visitdocumentsui.thumbail.get.error") });
+              console.log(err);
+            });
+        }
+        $scope.displayThumbnail();
+
+        $scope.displayContent = function() {
 
           if ($scope.obs.uuid in module.obsCache) {
-            $scope.$emit('vdui_event_diplayComplexObs', module.obsCache[$scope.obs.uuid]);
+            var obs = module.obsCache[$scope.obs.uuid];
+            $scope.$emit(obs.displayEventName, obs);
             return;
           }
 
           $scope.loading = true;
+
           $http.get($scope.config.contentUrl + $scope.obs.uuid, {responseType: "arraybuffer"})
             .success(function (data, status, headers) {
               var obs = {};
-              obs = $scope.obs;
+              angular.copy($scope.obs, obs);  // deep copy
               obs.mimeType = headers('Content-Type');
-              obs.complexData = module.arrayBufferToBase64(data);
-
+              obs.contentFamily = headers('Content-Family');  // Custom header
+              obs.fileName = headers('File-Name');  // Custom header
+              
+              switch (obs.contentFamily) {
+                case "IMAGE":
+                  obs.complexData = module.arrayBufferToBase64(data);
+                  obs.displayEventName = 'vdui_event_displayImageComplexObs';
+                  break;
+                case "OTHER":
+                  obs.complexData = data;
+                  $scope.triggerFileDownload(obs);
+                  break;
+              }
               module.obsCache[$scope.obs.uuid] = obs;
-              $scope.$emit('vdui_event_diplayComplexObs', module.obsCache[$scope.obs.uuid]);
+              if (obs.displayEventName)
+                $scope.$emit(obs.displayEventName, obs);
               $scope.loading = false;
             })
             .error(function (data, status) {
               $scope.loading = false;
-              console.log(status);
+              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message("visitdocumentsui.thumbail.get.error") });
+              console.log(err);
             });
 
         }
+
+        // http://stackoverflow.com/a/28541187/321797
+        $scope.triggerFileDownload = function(complexObs) {
+          var blob = new Blob([complexObs.complexData], { type: complexObs.mimeType });     
+          var downloadLink = angular.element('<a></a>');
+          downloadLink.attr('href', $window.URL.createObjectURL(blob));
+          downloadLink.attr('download', complexObs.fileName);
+          downloadLink[0].click();
+        }
+
       }
 
     };
