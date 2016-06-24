@@ -2,6 +2,8 @@ package org.openmrs.module.visitdocumentsui.web.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -86,6 +88,13 @@ public class ObservationsByConceptListSearchHandler implements SearchHandler {
 			}
 
 			if (obsList.size() != 0) {
+				// Sorting obs by descending obsDatetime
+				Collections.sort(obsList, new Comparator<Obs>() {
+					  public int compare(Obs obs1, Obs obs2) {
+					      return obs2.getObsDatetime().compareTo(obs1.getObsDatetime());
+					  }
+				});
+				
 				return new NeedsPaging<Obs>(obsList, requestContext);
 			}
 		}
