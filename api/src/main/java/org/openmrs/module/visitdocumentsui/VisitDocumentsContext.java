@@ -29,6 +29,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -72,6 +73,10 @@ public class VisitDocumentsContext extends ModuleProperties
 	
 	public ProviderService getProviderService() {
 		return providerService;
+	}
+
+	public PatientService getPatientService() {
+		return patientService;
 	}
 	
 	public EncounterService getEncounterService() {
