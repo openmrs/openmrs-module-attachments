@@ -110,7 +110,7 @@ public class ObservationsByConceptListSearchHandler implements SearchHandler {
 	 * @param conceptService
 	 * @return a list of concepts
 	 */
-	public List<Concept> parseConceptList(String conceptListStr, ConceptService conceptService) {
+	protected List<Concept> parseConceptList(String conceptListStr, ConceptService conceptService) {
 
 		List<String> conceptUuidsList = Arrays.asList(conceptListStr.split("\\s*,\\s*"));
 
