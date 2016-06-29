@@ -5,28 +5,27 @@ angular.module('vdui.fragment.encounterTemplate').controller('EncounterTemplateC
   	
   	$scope.init = function() {
 
-			$(document).on('click','.vdui_view-details.collapsed', function(event) {
-				var jqTarget = $(event.currentTarget);
+      $(document).on('click','.vdui_view-details.collapsed', function(event) {
+        var jqTarget = $(event.currentTarget);
         var uuid = jqTarget.data("encounter-uuid");
         var displayWithHtmlForm = jqTarget.data("encounter-form") && jqTarget.data("display-with-html-form");
         var dataTarget = jqTarget.data("target");
         var encounterTypeUuid = jqTarget.data("encounter-type-uuid");
         getEncounterDetails(uuid, dataTarget, "complexObsEncounterTemplate");
-		  });
-			    
-			//We cannot assign it here due to Jasmine failure: 
-			//net.sourceforge.htmlunit.corejs.javascript.EcmaError: TypeError: Cannot call method "replace" of undefined
-			var detailsTemplates = {};
+      });
 
-			function getEncounterDetails(uuid, dataTarget, displayTemplateId) {
+      //We cannot assign it here due to Jasmine failure: 
+      //net.sourceforge.htmlunit.corejs.javascript.EcmaError: TypeError: Cannot call method "replace" of undefined
+      var detailsTemplates = {};
 
-				if (!detailsTemplates[displayTemplateId]) {
-					detailsTemplates[displayTemplateId] = _.template($('#' + displayTemplateId).html());
+      function getEncounterDetails(uuid, dataTarget, displayTemplateId) {
+        if (!detailsTemplates[displayTemplateId]) {
+          detailsTemplates[displayTemplateId] = _.template($('#' + displayTemplateId).html());
         }
         var displayTemplate = detailsTemplates[displayTemplateId];
-		    var encounterDetailsSection = $(dataTarget + ' .encounter-summary-container');
+        var encounterDetailsSection = $(dataTarget + ' .encounter-summary-container');
 
-	  		var encounter = {};
+        var encounter = {};
         encounter.uuid = uuid;
         encounterStringified = JSON.stringify(encounter);
         encounterStringified = encounterStringified.replace(/\"([^(\")"]+)\":/g,"$1:");
@@ -35,7 +34,7 @@ angular.module('vdui.fragment.encounterTemplate').controller('EncounterTemplateC
         var htmlContent = "<vdui-complex-obs-encounter encounter='" + encounterStringified + "'></vdui-complex-obs-encounter>";
         encounterDetailsSection.html( $compile(htmlContent)($scope) );
         $scope.$apply();
-	    }
+      }
 
   	}	// init()
   }]);

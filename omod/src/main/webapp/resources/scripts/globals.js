@@ -2,6 +2,10 @@ var module = new function() {
 
 	var artifactId = "visitdocumentsui";
 
+  this.eventNewFile = "vdui_event_newComplexObs";
+  this.eventDisplayImage = "vdui_event_displayImageComplexObs";
+  this.eventDownloadFile = "vdui_event_downloadOtherComplexObs";
+
   this.obsCache = {};
 
 	this.getProvider = function() {

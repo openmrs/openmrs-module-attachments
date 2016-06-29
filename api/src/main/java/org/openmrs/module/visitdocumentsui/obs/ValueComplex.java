@@ -1,20 +1,29 @@
 package org.openmrs.module.visitdocumentsui.obs;
 
+import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.isMimeTypeHandled;
+
+import java.util.Arrays;
+import java.util.regex.Pattern;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
+import org.openmrs.module.visitdocumentsui.VisitDocumentsContext;
 
 public class ValueComplex {
    
-   public static final String INSTRUCTIONS_NONE = "instructions.none";
-   public static final String INSTRUCTIONS_DEFAULT = "instructions.default";
+   public static final String INSTRUCTIONS_NONE = VisitDocumentsConstants.INSTRUCTIONS_PREFIX + ".none";
+   public static final String INSTRUCTIONS_DEFAULT = VisitDocumentsConstants.INSTRUCTIONS_PREFIX + ".default";
+   
+   protected static final String FILENAME_DEFAULT = VisitDocumentsConstants.MODULE_SHORT_ID.toLowerCase() + "_file";
    
    protected String instructions = INSTRUCTIONS_NONE;
    protected String mimeType = VisitDocumentsConstants.UNKNOWN_MIME_TYPE;
-   protected String fileName = "";
+   protected String fileName = VisitDocumentsConstants.MODULE_SHORT_ID.toLowerCase() + "_file.dat";
 
    protected final static String UNIQUE_PREFIX = "m3ks";   // This is used to identify our implementation from saved valueComplex.
    protected final static String SEP = " | ";
-   protected final static int METADATA_PARTS_COUNT = 3;  // To avoid being out of bounds on metaParts[]
+   protected final static int METADATA_PARTS_COUNT = StringUtils.countMatches(buildValueComplex("", "", ""), SEP);
    
    public ValueComplex(String valueComplex) {
       
@@ -24,17 +33,35 @@ public class ValueComplex {
       }
       
       String metaData = StringUtils.substringAfter(valueComplex, SEP);
-      String[] metaParts = StringUtils.split(metaData, SEP);
-      int partCount = StringUtils.countMatches(buildValueComplex("", "", ""), SEP);
-      if (METADATA_PARTS_COUNT != partCount || metaParts.length != partCount) {
-         // Somehow the metadata is malformed.
-         this.instructions = INSTRUCTIONS_NONE;
-         return;
-      }
+      String[] metaParts = metaData.split(Pattern.quote(SEP));
       
-      instructions = metaParts[0];
-      mimeType = metaParts[1];
-      fileName = metaParts[2];
+      if (metaParts.length > 0) {
+         instructions = metaParts[0];
+         if (!isValidInstructions(instructions)) {
+            instructions = INSTRUCTIONS_NONE; 
+         }
+      }
+      if (metaParts.length > 1) {
+         mimeType = metaParts[1];
+         if (!isValidMimeType(mimeType)) {
+            mimeType = VisitDocumentsConstants.UNKNOWN_MIME_TYPE; 
+         }
+      }
+      if (metaParts.length > 2) {
+         String[] fileNameParts = Arrays.copyOfRange(metaParts, 2, metaParts.length);
+         fileName = StringUtils.join(fileNameParts, SEP);
+      }
+      else {
+         int sepCount = StringUtils.countMatches(valueComplex, SEP);
+         if (sepCount >= METADATA_PARTS_COUNT) {
+            int pos = StringUtils.ordinalIndexOf(valueComplex, SEP, METADATA_PARTS_COUNT);
+            pos += SEP.length();
+            fileName = StringUtils.substring(valueComplex, pos);
+         }
+         else {   // That'd be a case where the file name is not even part of the valueComplex String, anything else looking valid.
+            fileName = FilenameUtils.removeExtension(fileName) + "." + VisitDocumentsContext.getExtension(mimeType);
+         }
+      }
    }
    
    public ValueComplex(String instructions, String mimeType, String fileName) {
@@ -63,5 +90,13 @@ public class ValueComplex {
 
    public static String buildValueComplex(String instructions, String mimeType, String savedFileName) {
       return UNIQUE_PREFIX + SEP + instructions + SEP + mimeType + SEP + savedFileName;
+   }
+   
+   protected static boolean isValidInstructions(String str) {
+      return StringUtils.startsWith(str, VisitDocumentsConstants.INSTRUCTIONS_PREFIX + ".");
+   }
+   
+   protected static boolean isValidMimeType(String str) {
+      return isMimeTypeHandled(str);
    }
 }

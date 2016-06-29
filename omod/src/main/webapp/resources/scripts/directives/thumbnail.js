@@ -1,4 +1,4 @@
-angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.widget.modalImage'])
+angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'ngDialog', 'vdui.widget.modalImage'])
 
   .directive('vduiEnterKeyDown', function() {
     return function(scope, element, attrs) {
@@ -35,9 +35,16 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
       },
       templateUrl: '/' + module.getPath(OPENMRS_CONTEXT_PATH) + '/templates/thumbnail.page',
 
-      controller : function($scope, $rootScope) {
+      controller: function($scope) {
 
-        emr.loadMessages("visitdocumentsui.thumbail.get.error,visitdocumentsui.thumbail.save.success,visitdocumentsui.thumbail.save.error,visitdocumentsui.thumbail.delete.error");
+        var msgs = [
+          "visitdocumentsui.thumbail.get.error",
+          "visitdocumentsui.thumbail.save.success",
+          "visitdocumentsui.thumbail.save.error",
+          "visitdocumentsui.thumbail.delete.success",
+          "visitdocumentsui.thumbail.delete.error"
+        ]
+        emr.loadMessages(msgs.toString());
 
         $scope.canEdit = function() {
           if($scope.config.canEdit) {
@@ -72,6 +79,19 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
 
         $scope.getEditModeCss = function() {
           return $scope.editModeCss;
+        }
+
+        $scope.getPrettyDate = function() {
+          var timeFormat = "dd mmm yy";
+          if ((new Date($scope.obs.obsDatetime)).toDateString() === (new Date()).toDateString()) {
+            timeFormat = "H:MM";
+          }
+          else {
+            if ((new Date($scope.obs.obsDatetime)).getYear() === (new Date()).getYear()) {
+              timeFormat = "dd mmm";
+            }
+          }
+          return dateFormat($scope.obs.obsDatetime, timeFormat);
         }
 
         $scope.saveCaption = function() {
@@ -120,6 +140,7 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
           .$promise.then(function(res) {
             scope.toggleVisible(false);
             scope.closeThisDialog();
+            $().toastmessage('showToast', { type: 'success', position: 'top-right', text: emr.message("visitdocumentsui.thumbail.delete.success") });
           }, function(err) {
             scope.closeThisDialog();
             if (purge === true) { // We should only do this if error 500 is the cause: https://github.com/openmrs/openmrs-core/blob/1.11.x/api/src/main/java/org/openmrs/api/impl/ObsServiceImpl.java#L213
@@ -133,7 +154,12 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
         }
 
         $scope.displayThumbnail = function() {
-          $http.get($scope.config.url + $scope.obs.uuid, {responseType: "arraybuffer"})
+
+          var url = $scope.config.downloadUrl + '?'
+            + 'view=' + $scope.config.thumbView + '&'
+            + 'obs=' + $scope.obs.uuid;
+
+          $http.get(url, {responseType: "arraybuffer"})
             .success(function (data, status, headers) {
               $scope.obs.mimeType = headers('Content-Type');
               $scope.obs.contentFamily = headers('Content-Family');  // Custom header
@@ -166,7 +192,11 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
 
           $scope.loading = true;
 
-          $http.get($scope.config.contentUrl + $scope.obs.uuid, {responseType: "arraybuffer"})
+          var url = $scope.config.downloadUrl + '?'
+            + 'view=' + $scope.config.originalView + '&'
+            + 'obs=' + $scope.obs.uuid;
+
+          $http.get(url, {responseType: "arraybuffer"})
             .success(function (data, status, headers) {
               var obs = {};
               angular.copy($scope.obs, obs);  // deep copy
@@ -177,16 +207,17 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
               switch (obs.contentFamily) {
                 case "IMAGE":
                   obs.complexData = module.arrayBufferToBase64(data);
-                  obs.displayEventName = 'vdui_event_displayImageComplexObs';
+                  obs.displayEventName = module.eventDisplayImage;
                   break;
                 case "OTHER":
                   obs.complexData = data;
-                  $scope.triggerFileDownload(obs);
+                  obs.displayEventName = module.eventDownloadFile;
                   break;
               }
               module.obsCache[$scope.obs.uuid] = obs;
-              if (obs.displayEventName)
+              if (obs.displayEventName) {
                 $scope.$emit(obs.displayEventName, obs);
+              }
               $scope.loading = false;
             })
             .error(function (data, status) {
@@ -205,6 +236,10 @@ angular.module('vdui.widget.thumbnail', ['complexObsService', 'ngDialog', 'vdui.
           downloadLink.attr('download', complexObs.fileName);
           downloadLink[0].click();
         }
+
+        $scope.$on(module.eventDownloadFile, function(event, obs) {
+          $scope.triggerFileDownload(obs);
+        });
 
       }
 

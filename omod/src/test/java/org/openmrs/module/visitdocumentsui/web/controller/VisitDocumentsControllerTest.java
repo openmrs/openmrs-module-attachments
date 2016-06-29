@@ -1,4 +1,4 @@
-package org.openmrs.module.patientimages.web.controller;
+package org.openmrs.module.visitdocumentsui.web.controller;
 
 import org.junit.Test;
 

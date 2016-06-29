@@ -209,7 +209,7 @@ public class VisitDocumentsContext extends ModuleProperties
 		return unknownRole;
 	}
 	
-	public String getExtension(String mimeType) {
+	public static String getExtension(String mimeType) {
 		String ext = "bin";
 		if (mimeTypes.containsKey(mimeType)) {
 			ext = mimeTypes.get(mimeType);
@@ -231,6 +231,10 @@ public class VisitDocumentsContext extends ModuleProperties
       }
       return compressionRatio;
    }
+	
+	public static boolean isMimeTypeHandled(String mimeType) {
+	   return mimeTypes.containsKey(mimeType);
+	}
 	
 	private static final Map<String, String> mimeTypes;
     static

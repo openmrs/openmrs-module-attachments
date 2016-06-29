@@ -94,7 +94,7 @@ public class VisitDocumentsController {
             String uploadedFileName = fileNameIterator.next();
             MultipartFile uploadedFile = request.getFile(uploadedFileName);
             
-            Encounter encounter = saveVisitDocumentEncounter(patient, visit, context.getEncounterType(), provider, context.getEncounterRole(), context.getEncounterService());
+            Encounter encounter = getVisitDocumentEncounter(patient, visit, context.getEncounterType(), provider, context.getEncounterRole(), context.getEncounterService());
             ConceptComplex conceptComplex = null;
             if (StringUtils.isEmpty(instructions))
                instructions = ValueComplex.INSTRUCTIONS_DEFAULT;
@@ -149,25 +149,30 @@ public class VisitDocumentsController {
       return obsService.saveObs(obs, getClass().toString());
    }
 
-   protected Encounter saveVisitDocumentEncounter(Patient patient, Visit visit, EncounterType encounterType, Provider provider, EncounterRole encounterRole, EncounterService encounterService)
+   protected Encounter getVisitDocumentEncounter(Patient patient, Visit visit, EncounterType encounterType, Provider provider, EncounterRole encounterRole, EncounterService encounterService)
    {
       Encounter encounter = new Encounter();
       encounter.setVisit(visit);
       encounter.setEncounterType(encounterType);
       encounter.setPatient(visit.getPatient());
       encounter.setLocation(visit.getLocation());
+      boolean saveEncounter = true;
       if (context.isOneEncounterPerVisit()) {
          List<Encounter> encounters = visit.getNonVoidedEncounters();
          for (Encounter e : encounters) {
             if (e.getEncounterType().getUuid() == encounterType.getUuid()) {
                encounter = e;
+               saveEncounter = false;
                break;
             }
          }
       }
       encounter.setProvider(encounterRole, provider);
       encounter.setEncounterDatetime(new Date());
-      return encounterService.saveEncounter(encounter);
+      if (saveEncounter) {
+         encounter = encounterService.saveEncounter(encounter);
+      }
+      return encounter;
    }
    
    @RequestMapping(value = VisitDocumentsConstants.DOWNLOAD_DOCUMENT_URL, method = RequestMethod.GET)
@@ -187,7 +192,7 @@ public class VisitDocumentsController {
          response.setContentType(mimeType);
          response.addHeader("Content-Family", getContentFamily(mimeType).name());   // custom header
          response.addHeader("File-Name", complexData.getTitle());   // custom header
-         response.addHeader("File-Ext", context.getExtension(mimeType));   // custom header
+         response.addHeader("File-Ext", getExtension(complexData.getTitle(), mimeType));   // custom header
          switch (getContentFamily(mimeType)) {
             case IMAGE:
             case OTHER:
@@ -207,19 +212,42 @@ public class VisitDocumentsController {
    }
    
    /**
+    * @param fileName
+    * @param mimeType
+    * @return The best guess extension for the file, preferring it coming out from the original file name if possible.
+    */
+   public static String getExtension(String fileName, String mimeType) {
+      String ext = FilenameUtils.getExtension(fileName);
+      String extFromMimeType = VisitDocumentsContext.getExtension(mimeType);
+      if (!StringUtils.isEmpty(ext)) {
+         if (ext.length() > 6) {  // this is a bit arbitrary, just to discriminate funny named files such as "uiohdz.iuhezuidhuih"
+            ext = extFromMimeType;
+         }
+      }
+      else {
+         ext = extFromMimeType;
+      }
+      return ext;
+   }
+   
+   /**
     * Extracts the MIME type of a {@link ComplexData} instance.
     * @param complexData
     * @return The MIME type (or content type).
     */
    public static String getContentType(ComplexData complexData) {
       
-      if (complexData instanceof ComplexData_2_0)
-         return ((ComplexData_2_0) complexData).getMimeType();
+      if (complexData instanceof ComplexData_2_0) {
+         ComplexData_2_0 complexData_2_0 = (ComplexData_2_0) complexData;
+         if (VisitDocumentsContext.isMimeTypeHandled(complexData_2_0.getMimeType()))   // Perhaps too restrictive
+            return complexData_2_0.getMimeType();
+      }
       
       byte[] bytes = getByteArray(complexData);
       if (ArrayUtils.isEmpty(bytes))
          return VisitDocumentsConstants.UNKNOWN_MIME_TYPE;
       
+      // guessing the content type
       InputStream stream = new BufferedInputStream(new ByteArrayInputStream(bytes));
       try {
          String mimeType = URLConnection.guessContentTypeFromStream(stream); 

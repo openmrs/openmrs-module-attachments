@@ -36,6 +36,8 @@ public class VisitDocumentsConstants {
    /*
     * Docs config
     */
+   public static final String INSTRUCTIONS_PREFIX = "instructions";
+   
    public static final String UNKNOWN_MIME_TYPE = "application/octet-stream";
 
    public static final String DOC_VIEW_ORIGINAL = "complexdata.view.original";

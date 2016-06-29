@@ -44,7 +44,6 @@
 			<type>test-jar</type>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>emrapi-api</artifactId>
@@ -99,6 +98,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>webservices.rest-omod</artifactId>
+			<version>2.14</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- End OpenMRS modules -->
 		
