@@ -64,6 +64,8 @@ public class VisitDocumentsConstants {
    public static final String GP_ENCOUNTER_SAVING_FLOW = MODULE_ARTIFACT_ID + ".encounterSavingFlow";
 
    public static final String GP_ALLOW_NO_CAPTION = MODULE_ARTIFACT_ID + ".allowNoCaption";
+   
+   public static final String GP_DASHBOARD_THUMBNAIL_COUNT = MODULE_ARTIFACT_ID + ".dashboardThumbnailCount";
 
    /*
     * REST

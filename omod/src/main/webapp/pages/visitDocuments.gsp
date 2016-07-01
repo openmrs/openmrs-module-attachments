@@ -23,6 +23,7 @@
 <%
   ui.includeJavascript("visitdocumentsui", "directives/thumbnail.js")
   ui.includeJavascript("visitdocumentsui", "services/complexObsService.js")
+  ui.includeJavascript("visitdocumentsui", "services/obsCacheService.js")
   ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
   ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
   ui.includeJavascript("visitdocumentsui", "directives/modalImage.js")
@@ -31,6 +32,7 @@
 
 <!-- Gallery directive dependencies -->
 <%
+  ui.includeJavascript("uicommons", "services/obsService.js")
   ui.includeJavascript("visitdocumentsui", "services/configService.js")
   ui.includeJavascript("visitdocumentsui", "directives/gallery.js")
 %>
@@ -69,7 +71,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
   </div>
 
   <div ng-controller="GalleryCtrl" class="vdui_main-section">
-    <vdui-gallery obs-query="obsQuery" config="galleryConfig"></vdui-gallery>
+    <vdui-gallery obs-query="obsQuery" config="{canEdit: true}"></vdui-gallery>
   </div>
 
 </div>

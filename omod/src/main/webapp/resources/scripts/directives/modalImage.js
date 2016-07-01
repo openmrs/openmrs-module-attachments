@@ -1,12 +1,11 @@
 angular.module('vdui.widget.modalImage', [])
   .directive('vduiModalImage', function() {
     return {
-
       restrict: 'E',
       scope: {},
       templateUrl: '/' + module.getPath(OPENMRS_CONTEXT_PATH) + '/templates/modalImage.page',
 
-    	controller : function($scope, $rootScope) {
+    	controller: function($scope, $rootScope) {
         /* Storing the current displayed obs globally */
         module.modalImageObs = null;
         $scope.setObs = function(obs) {

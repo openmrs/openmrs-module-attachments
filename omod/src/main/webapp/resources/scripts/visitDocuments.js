@@ -7,8 +7,6 @@ angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$windo
 
 angular.module('vdui.page.main').controller('GalleryCtrl', ['$scope', '$window',
   function($scope, $window) {
-    $scope.galleryConfig = {};
-    $scope.galleryConfig.canEdit = true;  // This should be obtained from privileges
     $scope.obsQuery = {
       patient: $window.config.patient.uuid,
       conceptList: $window.config.conceptComplexUuidList.toString()  // http://stackoverflow.com/a/202247/321797

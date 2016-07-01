@@ -4,7 +4,7 @@
 /* The Modal (background) */
 .vdui_modal-image-background {
   position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top, in particular of DropzoneJS's thumbnail */
+  z-index: 10; /* Sit on top, in particular of DropzoneJS's thumbnail */
   padding-top: 100px; /* Location of the box */
   left: 0;
   top: 0;
@@ -20,7 +20,6 @@
   margin: auto;
   display: block;
   max-height: 80%;
-  z-index: 2;
 }
 
 /* Caption of Modal Image (Image Text) - Same Width as the Image */
@@ -53,32 +52,11 @@
   to {transform:scale(1)}
 }
 
-/* The Close Button */
-.vdui_modal-image-close {
-  position: absolute;
-  top: 15px;
-  right: 35px;
-  color: #f1f1f1;
-  font-size: 40px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.vdui_modal-image-close:hover,
-.vdui_modal-image-close:focus {
-  color: #bbb;
-  text-decoration: none;
-  cursor: pointer;
-}
-
 </style>
 
 <!-- The Modal -->
 <div ng-show="obs" class="vdui_modal-image-background" ng-click="hide()">
-
-  <!-- The Close Button -->
-  <i class="icon-remove vdui_modal-image-close" ng-click="hide()"></i>
-
+  
   <!-- Modal Content (The Image) -->
   <img class="vdui_modal-image-content" ng-src="data:{{obs.mimeType}};base64,{{obs.complexData}}">
 

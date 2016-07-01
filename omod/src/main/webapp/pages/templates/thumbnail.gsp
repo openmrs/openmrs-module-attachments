@@ -3,7 +3,7 @@
 	/* Credits to: https://designshack.net/articles/css/how-to-build-a-responsive-thumbnail-gallery/ */
 
 	/* MEDIA QUERIES*/
-	@media only screen and (max-width : 940px),
+	/*@media only screen and (max-width : 940px),
 	only screen and (max-device-width : 940px){
 		.vdui_thumbnail-container {width: 21%;}
 	}
@@ -23,20 +23,20 @@
 		.vdui_thumbnail-container {width: 96%;}
 		.vdui_thumbnail-container img {width: 96%;}
 		.vdui_thumbnail-container object {width: 96%;}
-	}
+	}*/
 
 	.vdui_header {
 		position: relative;
-		height: 15px;
+		height: 20px;
 	}
 
 	.vdui_thumbnail-container {
 		float: left;
 
-		width: 16%;	/* Example for 5 thumbnails: 100/5 - the left and right margins below */
-	 	margin:  2% 2% 30px 2%;
+		width: 130px;	/* Example for 5 thumbnails: 100/5 - the left and right margins below */
+		margin:  2% 2% 30px 2%;
 
-	 	height: 150px; /* Controls the height of the whole thumbnail */
+		height: 160px; /* Controls the height of the whole thumbnail */
 	}
 
 	.vdui_date-time {
@@ -66,7 +66,7 @@
 		height: 110px; /* Controls the height of the image */
 	}
 
-	.vdui_generic-thumbnail {
+	.vdui_thumbnail-frame {
 		height: 110px; /* Controls the height */
 
 		border: 3px solid #F4F4F4;
@@ -77,7 +77,11 @@
 		padding: 5px;
 	}
 
-	.vdui_generic-thumbnail span {
+	.vdui_thumbnail-frame i {
+		font-size: 4em !important;
+	}
+
+	.vdui_thumbnail-frame span {
 		position: absolute;
 		bottom: 10%;
 		left: 10%;
@@ -105,10 +109,10 @@
 
 	.vdui_icon-trash {
 		position: absolute;
-    left: 0;
-    top: 0;
+		left: 0;
+		top: 0;
 
-    font-size: 250%
+		font-size: 250%
 	}
 
 	.vdui_thumbnail-edit-mode .vdui_opacity-changeable {
@@ -157,11 +161,11 @@
 	</div>
 	<div class="vdui_thumbnail-image-section vdui_click-pointer" ng-click="!editMode && displayContent()">
 		<div class="vdui_opacity-changeable">
-			<div ng-hide="obs.complexData" class="vdui_generic-thumbnail">
-				<i class="icon-file icon-4x left"></i>
+			<div ng-hide="obs.complexData" class="vdui_thumbnail-frame">
+				<i class="icon-file left"></i>
 				<span ng-show="obs.contentFamily && obs.fileExt">{{obs.contentFamily.toLowerCase()}} / .{{obs.fileExt}}<span>
 			</div>
-			<div ng-show="obs.complexData" class="vdui_generic-thumbnail">
+			<div ng-show="obs.complexData" class="vdui_thumbnail-frame">
 				<img ng-src="data:{{obs.mimeType}};base64,{{obs.complexData}}"></img>
 			</div>
 		</div>

@@ -1,0 +1,10 @@
+[
+  {
+    "id": "${project.parent.groupId}.${project.parent.artifactId}.patientDashboard.secondColumnFragments.vdui",
+    "extensionPointId": "patientDashboard.secondColumnFragments",
+    "extensionParams": {
+      "provider": "${project.parent.artifactId}",
+      "fragment": "dashboardWidget"
+    }
+  }
+]

@@ -1,5 +1,9 @@
 package org.openmrs.module.visitdocumentsui.web.controller;
 
+import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getCompressionRatio;
+import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getContentFamily;
+import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.isMimeTypeHandled;
+
 import java.awt.image.RenderedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -62,18 +66,6 @@ public class VisitDocumentsController {
    protected VisitDocumentsContext context;
 
    protected final Log log = LogFactory.getLog(getClass());
-   
-   /**
-    * @param mimeType The MIME type of the uploaded content.
-    * @return The type/family of uploaded content based on the MIME type.
-    */
-   public static ContentFamily getContentFamily(String mimeType) {
-      ContentFamily contentFamily = ContentFamily.OTHER;
-      if (StringUtils.startsWith(mimeType, "image/")) {
-         contentFamily = ContentFamily.IMAGE;
-      }
-      return contentFamily;
-   }
 
    @RequestMapping(value = VisitDocumentsConstants.UPLOAD_DOCUMENT_URL, method = RequestMethod.POST)
    @ResponseBody
@@ -134,7 +126,7 @@ public class VisitDocumentsController {
          throws IOException
    {
       Object image = file.getInputStream();
-      double compressionRatio = VisitDocumentsContext.getCompressionRatio(file.getSize(), 1000000 * context.getMaxStorageFileSize());
+      double compressionRatio = getCompressionRatio(file.getSize(), 1000000 * context.getMaxStorageFileSize());
       if (compressionRatio < 1) {
          image = Thumbnails.of(file.getInputStream()).scale(compressionRatio).asBufferedImage();
       }
@@ -239,7 +231,7 @@ public class VisitDocumentsController {
       
       if (complexData instanceof ComplexData_2_0) {
          ComplexData_2_0 complexData_2_0 = (ComplexData_2_0) complexData;
-         if (VisitDocumentsContext.isMimeTypeHandled(complexData_2_0.getMimeType()))   // Perhaps too restrictive
+         if (isMimeTypeHandled(complexData_2_0.getMimeType()))   // Perhaps too restrictive
             return complexData_2_0.getMimeType();
       }
       

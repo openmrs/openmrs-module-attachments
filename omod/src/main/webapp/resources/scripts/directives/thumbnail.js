@@ -1,4 +1,4 @@
-angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'ngDialog', 'vdui.widget.modalImage'])
+angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui.service.obsCacheService', 'ngDialog', 'vdui.widget.modalImage'])
 
   .directive('vduiEnterKeyDown', function() {
     return function(scope, element, attrs) {
@@ -26,7 +26,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'ngDi
     };
   })
 
-  .directive('vduiThumbnail', [ 'ComplexObs', 'ngDialog', '$http', '$window', function(Obs, ngDialog, $http, $window) {
+  .directive('vduiThumbnail', [ 'ComplexObs', 'ObsCacheService', 'ngDialog', '$http', '$window', function(Obs, obsCache, ngDialog, $http, $window) {
     return {
       restrict: 'E',
       scope: {
@@ -38,11 +38,11 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'ngDi
       controller: function($scope) {
 
         var msgs = [
-          "visitdocumentsui.thumbail.get.error",
-          "visitdocumentsui.thumbail.save.success",
-          "visitdocumentsui.thumbail.save.error",
-          "visitdocumentsui.thumbail.delete.success",
-          "visitdocumentsui.thumbail.delete.error"
+          module.getProvider() + ".thumbail.get.error",
+          module.getProvider() + ".thumbail.save.success",
+          module.getProvider() + ".thumbail.save.error",
+          module.getProvider() + ".thumbail.delete.success",
+          module.getProvider() + ".thumbail.delete.error"
         ]
         emr.loadMessages(msgs.toString());
 
@@ -109,10 +109,10 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'ngDi
           });
           saved.$promise.then(function(obs) {
             $scope.toggleEditMode(false);
-            $().toastmessage('showToast', { type: 'success', position: 'top-right', text: emr.message("visitdocumentsui.thumbail.save.success") });
+            $().toastmessage('showToast', { type: 'success', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.save.success") });
           }, function(reason) {
             $scope.obs.comment = caption;
-            $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message("visitdocumentsui.thumbail.save.error") });
+            $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.save.error") });
             console.log(err);
           });
         }
@@ -140,14 +140,14 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'ngDi
           .$promise.then(function(res) {
             scope.toggleVisible(false);
             scope.closeThisDialog();
-            $().toastmessage('showToast', { type: 'success', position: 'top-right', text: emr.message("visitdocumentsui.thumbail.delete.success") });
+            $().toastmessage('showToast', { type: 'success', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.delete.success") });
           }, function(err) {
             scope.closeThisDialog();
             if (purge === true) { // We should only do this if error 500 is the cause: https://github.com/openmrs/openmrs-core/blob/1.11.x/api/src/main/java/org/openmrs/api/impl/ObsServiceImpl.java#L213
               scope.purge(null, scope);
             }
             else {
-              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message("visitdocumentsui.thumbail.delete.error") });  
+              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.delete.error") });  
               console.log(err);
             }
           }); 
@@ -167,16 +167,17 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'ngDi
               $scope.obs.fileExt = headers('File-Ext');  // Custom header
               
               switch ($scope.obs.contentFamily) {
-                case "IMAGE":
+                case module.family.IMAGE:
                   $scope.obs.complexData = module.arrayBufferToBase64(data);
                   break;
-                case "OTHER":
+
+                default:
                   break;
               }
             })
             .error(function (data, status) {
               $scope.loading = false;
-              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message("visitdocumentsui.thumbail.get.error") });
+              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.get.error") });
               console.log(err);
             });
         }
@@ -184,8 +185,8 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'ngDi
 
         $scope.displayContent = function() {
 
-          if ($scope.obs.uuid in module.obsCache) {
-            var obs = module.obsCache[$scope.obs.uuid];
+          var obs = obsCache.get($scope.obs.uuid);
+          if (obs) {
             $scope.$emit(obs.displayEventName, obs);
             return;
           }
@@ -205,16 +206,17 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'ngDi
               obs.fileName = headers('File-Name');  // Custom header
               
               switch (obs.contentFamily) {
-                case "IMAGE":
+                case module.family.IMAGE:
                   obs.complexData = module.arrayBufferToBase64(data);
                   obs.displayEventName = module.eventDisplayImage;
                   break;
-                case "OTHER":
+
+                default:
                   obs.complexData = data;
                   obs.displayEventName = module.eventDownloadFile;
                   break;
               }
-              module.obsCache[$scope.obs.uuid] = obs;
+              obsCache.set(obs);
               if (obs.displayEventName) {
                 $scope.$emit(obs.displayEventName, obs);
               }
@@ -222,7 +224,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'ngDi
             })
             .error(function (data, status) {
               $scope.loading = false;
-              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message("visitdocumentsui.thumbail.get.error") });
+              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.get.error") });
               console.log(err);
             });
 

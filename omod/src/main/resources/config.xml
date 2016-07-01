@@ -55,7 +55,7 @@
 
 	<!-- Global Properties -->
   <globalProperty>
-    <property>visitdocumentsui.defaultConceptComplexUuid</property>
+    <property>${project.parent.artifactId}.defaultConceptComplexUuid</property>
     <defaultValue>42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00</defaultValue>
     <description>
         UUID of the (question) concept complex for 'other' patient files, this is used as the default when the MIME type is not matched
@@ -63,7 +63,7 @@
   </globalProperty>
 
   <globalProperty>
-    <property>visitdocumentsui.conceptComplexUuidList</property>
+    <property>${project.parent.artifactId}.conceptComplexUuidList</property>
     <defaultValue>["7cac8397-53cd-4f00-a6fe-028e8d743f8e","42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00"]</defaultValue>
     <description>
         List of concept complex UUIDs that are used in queries for viewing documents
@@ -71,7 +71,7 @@
   </globalProperty>
 
   <globalProperty>
-    <property>visitdocumentsui.conceptComplexUuidMap</property>
+    <property>${project.parent.artifactId}.conceptComplexUuidMap</property>
     <defaultValue>{"IMAGE":"7cac8397-53cd-4f00-a6fe-028e8d743f8e","OTHER":"42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00"}</defaultValue>
     <description>
         Mapping between content families and concept complex UUIDs, this is used for saving files based on their MIME type
@@ -79,7 +79,7 @@
   </globalProperty>
 
   <globalProperty>
-    <property>visitdocumentsui.encounterTypeUuid</property>
+    <property>${project.parent.artifactId}.encounterTypeUuid</property>
     <defaultValue>5021b1a1-e7f6-44b4-ba02-da2f2bcf8718</defaultValue>
     <description>
         UUID of the encounter type used to upload visit documents
@@ -87,7 +87,7 @@
   </globalProperty>
 
   <globalProperty>
-    <property>visitdocumentsui.maxUploadFileSize</property>
+    <property>${project.parent.artifactId}.maxUploadFileSize</property>
     <defaultValue>5.0</defaultValue>
     <description>
         Maximum size (in Megabytes) allowed for a visit document file upload 
@@ -95,7 +95,7 @@
   </globalProperty>
 
   <globalProperty>
-    <property>visitdocumentsui.maxStorageFileSize</property>
+    <property>${project.parent.artifactId}.maxStorageFileSize</property>
     <defaultValue>1.2</defaultValue>
     <description>
         Maximum size (in Megabytes) allowed for the storage of a visit document file
@@ -103,7 +103,7 @@
   </globalProperty>
 
   <globalProperty>
-    <property>visitdocumentsui.encounterSavingFlow</property>
+    <property>${project.parent.artifactId}.encounterSavingFlow</property>
     <defaultValue></defaultValue>
     <description>
         Set this property to 'unique' to have only one encounter per visit
@@ -111,16 +111,24 @@
   </globalProperty>
 
   <globalProperty>
-    <property>visitdocumentsui.allowNoCaption</property>
+    <property>${project.parent.artifactId}.allowNoCaption</property>
     <defaultValue>false</defaultValue>
     <description>
         Set this property to 'true' to allow empty documents captions
     </description>
   </globalProperty>
 
+  <globalProperty>
+    <property>${project.parent.artifactId}.dashboardThumbnailCount</property>
+    <defaultValue>4</defaultValue>
+    <description>
+        Number of thumbnails to display on the dashboard widget
+    </description>
+  </globalProperty>
+
   <!-- Privileges -->
 	<privilege>
-		<name>App: visitdocumentsui.visitdocuments.page</name>
+		<name>App: ${project.parent.artifactId}.visitdocuments.page</name>
 		<description>Allowed to access the Visit Documents page</description>
 	</privilege>
 

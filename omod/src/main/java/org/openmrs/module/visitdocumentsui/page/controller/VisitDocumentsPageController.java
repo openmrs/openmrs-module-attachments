@@ -1,5 +1,7 @@
 package org.openmrs.module.visitdocumentsui.page.controller;
 
+import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getContentFamilyMap;
+
 import java.util.Map;
 
 import org.openmrs.Location;
@@ -25,6 +27,9 @@ public class VisitDocumentsPageController {
 			@InjectBeans VisitDocumentsContext context,
 			PageModel model)
 	{
+	   //
+	   // The client-side config specific to the page
+	   //
 		Map<String, Object> jsonConfig = ClientConfigFragmentController.getClientConfig(context, ui);
 		jsonConfig.put("patient", convertToRef(patient));
 
@@ -35,9 +40,13 @@ public class VisitDocumentsPageController {
 	   visitWrapper = adtService.getActiveVisit(patient, visitLocation);
 		jsonConfig.put("visit", visitWrapper == null ? "" : convertToRef(visitWrapper.getVisit()));
 		
+		jsonConfig.put("contentFamilyMap", getContentFamilyMap());
+		
 		model.put("jsonConfig", ui.toJson(jsonConfig));
 		
-		model.put("patient", patient); // For Core Apps's patient header.
+		
+		// For Core Apps's patient header.
+		model.put("patient", patient);
 	}
 	
     private Object convertToRef(Object object) {

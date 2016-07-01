@@ -199,6 +199,19 @@ public class VisitDocumentsContext extends ModuleProperties
 		return getDoubleByGlobalProperty(VisitDocumentsConstants.GP_MAX_STORAGE_FILE_SIZE);
 	}
 	
+	public double getMaxCompressionRatio() {
+	   double maxStorageSize = getMaxStorageFileSize();
+	   double maxUploadSize = getMaxUploadFileSize();
+	   if (maxStorageSize > 0)
+	      return Math.max(maxStorageSize, maxUploadSize) / maxStorageSize;
+	   else
+	      return 1;
+	}
+	
+	public Integer getDashboardThumbnailCount() {
+	   return getIntegerByGlobalProperty(VisitDocumentsConstants.GP_DASHBOARD_THUMBNAIL_COUNT);
+   }
+	
 	// TODO: Figure out if this is good enough
 	public EncounterRole getEncounterRole() {
 		EncounterRole unknownRole = getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
@@ -230,6 +243,26 @@ public class VisitDocumentsContext extends ModuleProperties
          compressionRatio = Math.min(1, maxByteSize / fileByteSize);
       }
       return compressionRatio;
+   }
+	
+	/**
+    * @param mimeType The MIME type of the uploaded content.
+    * @return The type/family of uploaded content based on the MIME type.
+    */
+   public static ContentFamily getContentFamily(String mimeType) {
+      ContentFamily contentFamily = ContentFamily.OTHER;
+      if (StringUtils.startsWith(mimeType, "image/")) {
+         contentFamily = ContentFamily.IMAGE;
+      }
+      return contentFamily;
+   }
+   
+   public static Map<String, ContentFamily> getContentFamilyMap() {
+      Map<String, ContentFamily> map = new HashMap<String, ContentFamily>();
+      for (String mimeType : mimeTypes.keySet()) {
+         map.put(mimeType, getContentFamily(mimeType));
+      }
+      return map;
    }
 	
 	public static boolean isMimeTypeHandled(String mimeType) {

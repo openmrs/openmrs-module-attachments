@@ -18,6 +18,10 @@ angular.module('vdui.widget.fileUpload', [])
           dropzone.removeAllFiles();
         };
 
+        scope.setMaxFilesize = function(maxFilesize) {
+          dropzone.options.maxFilesize = maxFilesize;
+        };
+
         // bind the given event handlers
         angular.forEach(config.eventHandlers, function(handler, event) {
           dropzone.on(event, handler);
@@ -37,13 +41,13 @@ angular.module('vdui.widget.fileUpload', [])
       controller: function($scope, $rootScope) {
 
         var msgs = [
-          "visitdocumentsui.fileUpload.success",
-          "visitdocumentsui.fileUpload.error"
+          module.getProvider() + ".fileUpload.success",
+          module.getProvider() + ".fileUpload.error"
         ]
         emr.loadMessages(msgs.toString());
 
         var providerUuid = "";
-        $scope.visitUuid = "";  // In scope for toggling DOM elements
+        $scope.visitUuid = "";  // In scope for toggling ng-show
 
         $scope.init = function() {
           Dropzone.options.visitDocumentsDropzone = false;
@@ -63,15 +67,14 @@ angular.module('vdui.widget.fileUpload', [])
             'url': config.uploadUrl,
             'thumbnailHeight': 100,
             'thumbnailWidth': 100,
-            'paramName': 'visit_document_file',
             'maxFiles': 1,
-            'maxFilesize': config.maxFileSize,
             'autoProcessQueue': false
           },
           'eventHandlers':
           {
             'addedfile': function(file) {
               $scope.file = file;
+              $scope.setMaxFileSizeOption(file.type); // Setting the max upload file size depending on whether the file can be compressed on the backend.
               if (this.files[1] != null) {
                 this.removeFile(this.files[0]);
               }
@@ -87,13 +90,31 @@ angular.module('vdui.widget.fileUpload', [])
             },
             'success': function (file, response) {
               $rootScope.$emit(module.eventNewFile, response);
-              $().toastmessage('showToast', { type: 'success', position: 'top-right', text: emr.message("visitdocumentsui.fileUpload.success") });
+              $().toastmessage('showToast', { type: 'success', position: 'top-right', text: emr.message(module.getProvider() + ".fileUpload.success") });
               $scope.clearForms();
             },
             'error': function (file, response, xhr) {
-              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message("visitdocumentsui.fileUpload.error") });
+              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".fileUpload.error") });
               console.log(response);
             }
+          }
+        };
+
+        $scope.setMaxFileSizeOption = function(mimeType) {
+          if (!mimeType) {
+            $scope.setMaxFilesize(config.maxFileSize);
+            return;
+          }
+          
+          var contentFamily = config.contentFamilyMap[mimeType];
+          switch (contentFamily) {
+            case module.family.IMAGE:
+              $scope.setMaxFilesize(config.maxFileSize * config.maxCompression);
+              break;
+
+            default:
+              $scope.setMaxFilesize(config.maxFileSize);
+              break;
           }
         };
 
