@@ -9,7 +9,8 @@
             "templateFragmentId": "complexObsEncounterTemplate",
             "supportedEncounterTypes": {
                 "5021b1a1-e7f6-44b4-ba02-da2f2bcf8718": { // Visit Document Upload
-                    "icon": "icon-paper-clip"
+                    "icon": "icon-paper-clip",
+                    "deletable": "false"
                 }
             }
         }
