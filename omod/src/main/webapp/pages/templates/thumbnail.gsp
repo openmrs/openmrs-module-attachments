@@ -1,30 +1,5 @@
 <style>
 
-	/* Credits to: https://designshack.net/articles/css/how-to-build-a-responsive-thumbnail-gallery/ */
-
-	/* MEDIA QUERIES*/
-	/*@media only screen and (max-width : 940px),
-	only screen and (max-device-width : 940px){
-		.vdui_thumbnail-container {width: 21%;}
-	}
-
-	@media only screen and (max-width : 720px),
-	only screen and (max-device-width : 720px){
-		.vdui_thumbnail-container {width: 29.33333%;}
-	}
-
-	@media only screen and (max-width : 530px),
-	only screen and (max-device-width : 530px){
-		.vdui_thumbnail-container {width: 46%;}
-	}
-
-	@media only screen and (max-width : 320px),
-	only screen and (max-device-width : 320px){
-		.vdui_thumbnail-container {width: 96%;}
-		.vdui_thumbnail-container img {width: 96%;}
-		.vdui_thumbnail-container object {width: 96%;}
-	}*/
-
 	.vdui_header {
 		position: relative;
 		height: 20px;
@@ -33,7 +8,7 @@
 	.vdui_thumbnail-container {
 		float: left;
 
-		width: 130px;	/* Example for 5 thumbnails: 100/5 - the left and right margins below */
+		width: 130px;
 		margin:  2% 2% 30px 2%;
 
 		height: 160px; /* Controls the height of the whole thumbnail */
@@ -67,6 +42,7 @@
 	}
 
 	.vdui_thumbnail-frame {
+		position: relative;
 		height: 110px; /* Controls the height */
 
 		border: 3px solid #F4F4F4;
@@ -78,7 +54,10 @@
 	}
 
 	.vdui_thumbnail-frame i {
-		font-size: 4em !important;
+		position: absolute;
+		top: -2px;
+		left: -2px;
+		font-size: 5em !important; /* because of the CF dashboard */
 	}
 
 	.vdui_thumbnail-frame span {
@@ -152,21 +131,21 @@
     </div>
 </script>
 
-<vdui-modal-image></vdui-modal-image>
+<vdui-modal-image config="imageConfig"></vdui-modal-image>
 
-<div ng-show="active" class="vdui_thumbnail-container" ng-class="getEditModeCss()">
+<div ng-if="active" class="vdui_thumbnail-container" ng-class="getEditModeCss()" ng-init="init()">
 
 	<div class="vdui_header">
 		<p class="vdui_date-time left"><time datetime="{{obs.obsDatetime}}">{{getPrettyDate()}}</time></p>
 	</div>
 	<div class="vdui_thumbnail-image-section vdui_click-pointer" ng-click="!editMode && displayContent()">
 		<div class="vdui_opacity-changeable">
-			<div ng-hide="obs.complexData" class="vdui_thumbnail-frame">
-				<i class="icon-file left"></i>
+			<div ng-hide="iconSrc" class="vdui_thumbnail-frame">
+				<i class="icon-file"></i>
 				<span ng-show="obs.contentFamily && obs.fileExt">{{obs.contentFamily.toLowerCase()}} / .{{obs.fileExt}}<span>
 			</div>
-			<div ng-show="obs.complexData" class="vdui_thumbnail-frame">
-				<img ng-src="data:{{obs.mimeType}};base64,{{obs.complexData}}"></img>
+			<div ng-show="iconSrc" class="vdui_thumbnail-frame">
+				<img src="{{iconSrc}}"></img>
 			</div>
 		</div>
 		<i ng-show="editMode" class="icon-trash vdui_icon-trash vdui_click-pointer" ng-click="confirmDelete()"></i>

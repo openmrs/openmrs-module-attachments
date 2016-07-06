@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -17,13 +18,16 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openmrs.Obs;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.obs.ComplexData;
 import org.openmrs.obs.ComplexObsHandler;
+import org.openmrs.obs.handler.ImageHandler;
 import org.openmrs.test.Verifies;
 import org.openmrs.util.OpenmrsConstants;
 import org.powermock.api.mockito.PowerMockito;
@@ -34,37 +38,58 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest(Context.class)
 public class ImageDocumentHandlerTest {
 
-   @Test
-   @Verifies(value = "ImageDocumentHandler should behave as core's ImageHandler when no additional input are provided.", method = "saveObs(obs)")
-   public void imageDocumentHandler_shouldDefaultOnImageHandler() throws IOException, URISyntaxException {
-
-      // Setup
-      ComplexObsHandler imageDocumentHandler = new ImageDocumentHandler();
-
-      String imgFileName = "OpenMRS_logo.png";
-      String imgExt = FilenameUtils.getExtension(imgFileName);
-      URL url = getClass().getClassLoader().getResource(imgFileName);
-      BufferedImage originalBufferedImg = ImageIO.read(url);
-      File imageFile = new File(imgFileName);
+   // Various facets of the test input image resource
+   private String imgFileName = "OpenMRS_logo.png";
+   private String imgExt = FilenameUtils.getExtension(imgFileName);
+   private URL imageUrl = getClass().getClassLoader().getResource(imgFileName);
+   private BufferedImage originalBufferedImg;
+   private File imageFile = new File(imgFileName);
+   
+   private final String randomView = RandomStringUtils.random(10);
+   
+   private ComplexObsHandler imageHandler = new ImageHandler();
+   private ComplexObsHandler imageDocumentHandler = new ImageDocumentHandler();
+   
+   @Before
+   public void setUp() throws IOException, APIException, URISyntaxException {
+      originalBufferedImg = ImageIO.read(imageUrl);
       ImageIO.write(originalBufferedImg, imgExt, imageFile);
-
+      
       AdministrationService adminService = mock(AdministrationService.class);
-      when(adminService.getGlobalProperty(eq(OpenmrsConstants.GLOBAL_PROPERTY_COMPLEX_OBS_DIR))).thenReturn( url.toURI().resolve(".").getPath() );
+      when(adminService.getGlobalProperty(eq(OpenmrsConstants.GLOBAL_PROPERTY_COMPLEX_OBS_DIR))).thenReturn( imageUrl.toURI().resolve(".").getPath() );
       PowerMockito.mockStatic(Context.class);
       when(Context.getAdministrationService()).thenReturn(adminService);
+   }
 
+   @Test
+   @Verifies(value = "Images saved with ImageDocumentHandler with no additional valueComplex metadata should be fetchable by ImageHandler.", method = "saveObs(obs)")
+   public void imageDocumentHandler_shouldSaveLikeImageHandler() throws FileNotFoundException {
 
       // Replay
       Obs savedObs = new Obs();
       savedObs.setComplexData( new DocumentComplexData(imgFileName, new FileInputStream(imageFile)) );
       imageDocumentHandler.saveObs(savedObs);
-
-
-      // Verification
-      final String VIEW = RandomStringUtils.random(10);
-      Obs fetchedObs = imageDocumentHandler.getObs(savedObs, VIEW);
+      Obs fetchedObs = imageHandler.getObs(savedObs, randomView);
       ComplexData complexData = fetchedObs.getComplexData();
 
+      // Verification
+      byte[] expectedByteArray = ((DataBufferByte) originalBufferedImg.getData().getDataBuffer()).getData();
+      byte[] actualByteArray = ((DataBufferByte) ((BufferedImage) complexData.getData()).getData().getDataBuffer()).getData();
+      assertArrayEquals(expectedByteArray, actualByteArray);
+   }
+   
+   @Test
+   @Verifies(value = "Images saved with ImageHandler should be fetchable by ImageDocumentHandler.", method = "getObs(obs, view)")
+   public void imageDocumentHandler_shouldFetchLikeImageHandler() throws FileNotFoundException {
+
+      // Replay
+      Obs savedObs = new Obs();
+      savedObs.setComplexData( new ComplexData(imgFileName, new FileInputStream(imageFile)) );
+      imageHandler.saveObs(savedObs);   // Saving with core's handler
+      Obs fetchedObs = imageDocumentHandler.getObs(savedObs, randomView);
+      ComplexData complexData = fetchedObs.getComplexData();   // Fetching with our handler
+
+      // Verification
       byte[] expectedByteArray = ((DataBufferByte) originalBufferedImg.getData().getDataBuffer()).getData();
       byte[] actualByteArray = ((DataBufferByte) ((BufferedImage) complexData.getData()).getData().getDataBuffer()).getData();
       assertArrayEquals(expectedByteArray, actualByteArray);

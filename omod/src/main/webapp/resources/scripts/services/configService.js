@@ -9,7 +9,7 @@ angular.module('vdui.service.configService', [])
         emr.getFragmentActionWithCallback(module.getProvider(), "clientConfig", "get", {}, function(response) {
           deferred.resolve(response);
           module.clientConfig = response;
-        });  
+        });
       }
       return deferred.promise;
     };

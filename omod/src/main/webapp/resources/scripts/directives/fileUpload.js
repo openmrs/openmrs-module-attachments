@@ -74,7 +74,7 @@ angular.module('vdui.widget.fileUpload', [])
           {
             'addedfile': function(file) {
               $scope.file = file;
-              $scope.setMaxFileSizeOption(file.type); // Setting the max upload file size depending on whether the file can be compressed on the backend.
+              setMaxFileSizeOption(file.type); // Setting the max upload file size depending on whether the file can be compressed on the backend.
               if (this.files[1] != null) {
                 this.removeFile(this.files[0]);
               }
@@ -100,7 +100,7 @@ angular.module('vdui.widget.fileUpload', [])
           }
         };
 
-        $scope.setMaxFileSizeOption = function(mimeType) {
+        var setMaxFileSizeOption = function(mimeType) {
           if (!mimeType) {
             $scope.setMaxFilesize(config.maxFileSize);
             return;

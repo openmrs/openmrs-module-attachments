@@ -13,6 +13,7 @@ public class VisitDocumentsConstants {
    
    public static enum ContentFamily {
       IMAGE,
+      PDF,
       OTHER
    }
 

@@ -1,4 +1,4 @@
-angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui.service.obsCacheService', 'ngDialog', 'vdui.widget.modalImage'])
+angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui.service.complexObsCacheService', 'ngDialog', 'vdui.widget.modalImage'])
 
   .directive('vduiEnterKeyDown', function() {
     return function(scope, element, attrs) {
@@ -26,7 +26,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
     };
   })
 
-  .directive('vduiThumbnail', [ 'ComplexObs', 'ObsCacheService', 'ngDialog', '$http', '$window', function(Obs, obsCache, ngDialog, $http, $window) {
+  .directive('vduiThumbnail', ['ComplexObs', 'ComplexObsCacheService', 'ngDialog', '$http', '$window', function(Obs, obsCache, ngDialog, $http, $window) {
     return {
       restrict: 'E',
       scope: {
@@ -153,97 +153,88 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
           }); 
         }
 
-        $scope.displayThumbnail = function() {
-
-          var url = $scope.config.downloadUrl + '?'
-            + 'view=' + $scope.config.thumbView + '&'
-            + 'obs=' + $scope.obs.uuid;
-
-          $http.get(url, {responseType: "arraybuffer"})
-            .success(function (data, status, headers) {
-              $scope.obs.mimeType = headers('Content-Type');
-              $scope.obs.contentFamily = headers('Content-Family');  // Custom header
-              $scope.obs.fileName = headers('File-Name');  // Custom header
-              $scope.obs.fileExt = headers('File-Ext');  // Custom header
-              
+        $scope.init = function() {
+          obsCache.getComplexObs($scope.obs, $scope.config.downloadUrl, $scope.config.thumbView)
+            .then(function(res) {
+              $scope.loading = false;
               switch ($scope.obs.contentFamily) {
                 case module.family.IMAGE:
-                  $scope.obs.complexData = module.arrayBufferToBase64(data);
+                  $scope.iconSrc = "data:" + $scope.obs.mimeType + ";base64," + module.arrayBufferToBase64(res.complexData);
                   break;
 
+                case module.family.PDF:
+                  $scope.iconSrc = "/" + OPENMRS_CONTEXT_PATH + "/ms/uiframework/resource/" + module.getProvider() + "/images/icon-pdf.png";
+                  break;
+
+                case module.family.OTHER:
                 default:
+                  $scope.iconSrc = null;  // To remain on the default icon, see the view.
                   break;
               }
-            })
-            .error(function (data, status) {
+            }, function() {
               $scope.loading = false;
               $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.get.error") });
               console.log(err);
             });
         }
-        $scope.displayThumbnail();
 
         $scope.displayContent = function() {
-
-          var obs = obsCache.get($scope.obs.uuid);
-          if (obs) {
-            $scope.$emit(obs.displayEventName, obs);
-            return;
-          }
+          var win = getWindow($scope.obs.contentFamily);
 
           $scope.loading = true;
-
-          var url = $scope.config.downloadUrl + '?'
-            + 'view=' + $scope.config.originalView + '&'
-            + 'obs=' + $scope.obs.uuid;
-
-          $http.get(url, {responseType: "arraybuffer"})
-            .success(function (data, status, headers) {
-              var obs = {};
-              angular.copy($scope.obs, obs);  // deep copy
-              obs.mimeType = headers('Content-Type');
-              obs.contentFamily = headers('Content-Family');  // Custom header
-              obs.fileName = headers('File-Name');  // Custom header
-              
-              switch (obs.contentFamily) {
-                case module.family.IMAGE:
-                  obs.complexData = module.arrayBufferToBase64(data);
-                  obs.displayEventName = module.eventDisplayImage;
-                  break;
-
-                default:
-                  obs.complexData = data;
-                  obs.displayEventName = module.eventDownloadFile;
-                  break;
-              }
-              obsCache.set(obs);
-              if (obs.displayEventName) {
-                $scope.$emit(obs.displayEventName, obs);
-              }
+          obsCache.getComplexObs($scope.obs, $scope.config.downloadUrl, $scope.config.originalView)
+            .then(function(res) {
               $scope.loading = false;
-            })
-            .error(function (data, status) {
+              switch ($scope.obs.contentFamily) {
+                case module.family.IMAGE:
+                  displayImage($scope.obs, res.complexData);
+                  break;
+
+                case module.family.PDF:
+                  displayPdf($scope.obs, res.complexData, win);
+                  break;                  
+
+                case module.family.OTHER:
+                default:
+                  displayOther($scope.obs, res.complexData);
+                  break;
+              }
+            }, function() {
               $scope.loading = false;
               $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.get.error") });
               console.log(err);
             });
-
         }
 
-        // http://stackoverflow.com/a/28541187/321797
-        $scope.triggerFileDownload = function(complexObs) {
-          var blob = new Blob([complexObs.complexData], { type: complexObs.mimeType });     
+        var displayImage = function(obs, data) {
+          $scope.imageConfig = {};
+          $scope.imageConfig.bytes = module.arrayBufferToBase64(data);
+          $scope.imageConfig.mimeType = obs.mimeType;
+          $scope.imageConfig.caption = obs.comment;
+        }
+
+        var displayPdf = function(obs, data, win) {
+          var blob = new Blob([data], {type: obs.mimeType});
+          var blobUrl = URL.createObjectURL(blob);
+          win.location.href = blobUrl;
+        }
+
+        var displayOther = function(obs, data) { // http://stackoverflow.com/a/28541187/321797
+          var blob = new Blob([data], {type: obs.mimeType});
           var downloadLink = angular.element('<a></a>');
           downloadLink.attr('href', $window.URL.createObjectURL(blob));
-          downloadLink.attr('download', complexObs.fileName);
+          downloadLink.attr('download', obs.fileName);
           downloadLink[0].click();
         }
 
-        $scope.$on(module.eventDownloadFile, function(event, obs) {
-          $scope.triggerFileDownload(obs);
-        });
-
+        var getWindow = function(contentFamily) {
+          switch ($scope.obs.contentFamily) {
+            case module.family.PDF:
+              return $window.open('');
+            default:
+              return {};
+          }
+        }
       }
-
     };
   }]);

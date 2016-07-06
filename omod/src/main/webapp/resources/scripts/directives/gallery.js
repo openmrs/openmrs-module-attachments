@@ -13,7 +13,7 @@ angular.module('vdui.widget.gallery', ['vdui.service.configService'])
 
         configService.getConfig().then(function(config) {
           $scope.config = angular.extend({}, config, $scope.config);
-          $scope.init($scope.config);
+          init($scope.config);
         });
 
         $rootScope.$on(module.eventNewFile, function(event, obs) {
@@ -21,7 +21,7 @@ angular.module('vdui.widget.gallery', ['vdui.service.configService'])
           $scope.$apply();
         });
 
-        $scope.init = function(config) {
+        var init = function(config) {
           $scope.obsQuery.v = config.obsRep;
           obsService.getObs($scope.obsQuery)
           .then(function(obs) {

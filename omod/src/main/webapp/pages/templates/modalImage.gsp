@@ -55,11 +55,11 @@
 </style>
 
 <!-- The Modal -->
-<div ng-show="obs" class="vdui_modal-image-background" ng-click="hide()">
+<div ng-if="config" class="vdui_modal-image-background" ng-click="hide()">
   
   <!-- Modal Content (The Image) -->
-  <img class="vdui_modal-image-content" ng-src="data:{{obs.mimeType}};base64,{{obs.complexData}}">
+  <img class="vdui_modal-image-content" ng-src="data:{{config.mimeType}};base64,{{config.bytes}}">
 
   <!-- Modal Caption (Image Text) -->
-  <div id="vdui_modal-image-caption">{{obs.comment}}</div>
+  <div id="vdui_modal-image-caption">{{config.caption}}</div>
 </div>

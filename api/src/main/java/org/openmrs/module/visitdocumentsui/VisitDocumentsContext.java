@@ -251,6 +251,9 @@ public class VisitDocumentsContext extends ModuleProperties
     */
    public static ContentFamily getContentFamily(String mimeType) {
       ContentFamily contentFamily = ContentFamily.OTHER;
+      if (StringUtils.equals(mimeType, "application/pdf")) {
+         contentFamily = ContentFamily.PDF;
+      }
       if (StringUtils.startsWith(mimeType, "image/")) {
          contentFamily = ContentFamily.IMAGE;
       }

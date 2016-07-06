@@ -1,18 +1,14 @@
 var module = new function() {
 
-	var artifactId = "visitdocumentsui";
-
-  this.family = {};
+	this.family = {};
   this.family.IMAGE = "IMAGE";
   this.family.PDF = "PDF";
   this.family.OTHER = "OTHER";
 
   this.eventNewFile = "vdui_event_newComplexObs";
-  this.eventDisplayImage = "vdui_event_displayImageComplexObs";
-  this.eventDownloadFile = "vdui_event_downloadOtherComplexObs";
 
   this.getProvider = function() {
-    return artifactId;
+    return "visitdocumentsui";
   }
 
   this.getPath = function(openmrsContextPath) {

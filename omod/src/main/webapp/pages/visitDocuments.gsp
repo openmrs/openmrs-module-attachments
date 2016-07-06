@@ -9,32 +9,11 @@
   ui.includeJavascript("visitdocumentsui", "visitDocuments.js")
 %>
 
-<!-- File Upload directive dependencies -->
+<!-- Angular widgets -->
 <%
-  ui.includeJavascript("uicommons", "services/obsService.js")
-  ui.includeJavascript("uicommons", "services/session.js")
-  ui.includeJavascript("visitdocumentsui", "dropzone/dropzone.js")
-  ui.includeCss("visitdocumentsui", "dropzone/basic.css")
-  ui.includeCss("visitdocumentsui", "dropzone/dropzone.css")
-  ui.includeJavascript("visitdocumentsui", "directives/fileUpload.js")
-%>
-
-<!-- Thumbnail directive dependencies -->
-<%
-  ui.includeJavascript("visitdocumentsui", "directives/thumbnail.js")
-  ui.includeJavascript("visitdocumentsui", "services/complexObsService.js")
-  ui.includeJavascript("visitdocumentsui", "services/obsCacheService.js")
-  ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
-  ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
-  ui.includeJavascript("visitdocumentsui", "directives/modalImage.js")
-  ui.includeJavascript("visitdocumentsui", "date/dateformat.js")
-%>
-
-<!-- Gallery directive dependencies -->
-<%
-  ui.includeJavascript("uicommons", "services/obsService.js")
-  ui.includeJavascript("visitdocumentsui", "services/configService.js")
-  ui.includeJavascript("visitdocumentsui", "directives/gallery.js")
+  ui.includeFragment("visitdocumentsui", "dependenciesFileUpload")
+  ui.includeFragment("visitdocumentsui", "dependenciesThumbnail")
+  ui.includeFragment("visitdocumentsui", "dependenciesGallery")
 %>
 
 <script type="text/javascript">
