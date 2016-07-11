@@ -25,6 +25,7 @@
 	}
 
 	.vdui_editable p:hover {
+		max-width: 130px;
 		background-color: #F5F5F5;
 		color: #F26522;
 		font-weight: bold;
@@ -85,6 +86,12 @@
 		margin-top: 20px;
 		position: relative;
 	}
+
+	.vdui_thumbnail-caption-section input  {
+		position: relative;
+		max-width: 130px
+	}
+
 
 	.vdui_icon-trash {
 		position: absolute;
@@ -174,7 +181,7 @@
 			<p ng-show="obs.comment">{{obs.comment}}</p>
 		</div>
 		<div ng-show="editMode" vdui-escape-key-down="toggleEditMode(false)">
-			<input ng-model="newCaption" class="left" type="text" vdui-enter-key-down="saveCaption()"/>
+			<input ng-model="typedText.newCaption" class="left" type="text" placeholder="Enter a caption" vdui-enter-key-down="saveCaption()"/>
 			<span class="right">
 				<i class="icon-ok vdui_click-pointer" ng-click="saveCaption()"></i>
 				<i class="icon-remove vdui_click-pointer" ng-click="toggleEditMode(false)"></i>

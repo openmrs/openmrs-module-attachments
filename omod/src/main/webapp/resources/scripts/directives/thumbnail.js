@@ -65,8 +65,9 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
     }
 
     $scope.toggleEditMode = function(editMode) {
+      $scope.typedText = {};
       if ($scope.canEdit()) {
-        $scope.newCaption = $scope.obs.comment;
+        $scope.typedText.newCaption = $scope.obs.comment;
         $scope.editMode = editMode;
         if ($scope.editMode) {
           $scope.editModeCss = "vdui_thumbnail-edit-mode";
@@ -101,12 +102,12 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
 
     $scope.saveCaption = function() {
       var caption = $scope.obs.comment;
-      if ((caption == $scope.newCaption) || ($scope.newCaption == "" && !$scope.config.allowNoCaption)) {
+      if ((caption == $scope.typedText.newCaption) || ($scope.typedText.newCaption == "" && !$scope.config.allowNoCaption)) {
         $scope.toggleEditMode(false);
         return;
       }
 
-      $scope.obs.comment = $scope.newCaption;
+      $scope.obs.comment = $scope.typedText.newCaption;
 
       var saved = Obs.save({
         uuid: $scope.obs.uuid,
@@ -203,7 +204,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
 
     $scope.getImageThumbnailSrc = function (obs) {
       return 'data:' + obs.mimeType + ';base64,' + module.arrayBufferToBase64(obs.complexData);
-    }
+    } 
 
     var displayImage = function(obs, data) {
       $scope.imageConfig = {};
