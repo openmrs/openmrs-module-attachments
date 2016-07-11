@@ -108,62 +108,78 @@
 		cursor: pointer;
 	}
 
+	.vdui_thumbnail-extension {
+		font-weight:bold;
+		font-family: OpenSansBold;
+		text-align: -webkit-center;
+		width: 45%;
+	}
+
 </style>
-
 <script type="text/ng-template" id="vdui_thumbnail-confirm-dialog">
-    <div>
-      <div class="dialog-header">
-        <h3>${ ui.message("visitdocumentsui.visitdocumentspage.delete.title") }</h3>
-	    </div>
-	    <div class="dialog-content">
-        <input type="hidden" id="encounterId" value=""/>
-        <ul>
-          <li class="info">
-						<span>${ ui.message("visitdocumentsui.visitdocumentspage.delete.confirm") }</span>
-          </li>
-        </ul>
-
-        <button class="confirm right" ng-click="confirm()">${ ui.message("coreapps.yes") }
-        	<i ng-show="showSpinner" class="icon-spinner icon-spin icon-2x" style="margin-left: 10px;"></i>
-        </button>
-        <button class="cancel" ng-click="closeThisDialog()">${ ui.message("coreapps.no") }</button>
-	    </div>
-    </div>
+	<div>
+		<div class="dialog-header">
+			<h3>${ ui.message("visitdocumentsui.visitdocumentspage.delete.title") }</h3>
+		</div>
+		<div class="dialog-content">
+			<input type="hidden" id="encounterId" value=""/>
+			<ul>
+				<li class="info">
+					<span>${ ui.message("visitdocumentsui.visitdocumentspage.delete.confirm") }</span>
+				</li>
+			</ul>
+			<button class="confirm right" ng-click="confirm()">${ ui.message("coreapps.yes") }
+				
+				<i ng-show="showSpinner" class="icon-spinner icon-spin icon-2x" style="margin-left: 10px;"></i>
+			</button>
+			<button class="cancel" ng-click="closeThisDialog()">${ ui.message("coreapps.no") }</button>
+		</div>
+	</div>
 </script>
-
 <vdui-modal-image config="imageConfig"></vdui-modal-image>
-
 <div ng-if="active" class="vdui_thumbnail-container" ng-class="getEditModeCss()" ng-init="init()">
-
 	<div class="vdui_header">
-		<p class="vdui_date-time left"><time datetime="{{obs.obsDatetime}}">{{getPrettyDate()}}</time></p>
+		<p class="vdui_date-time left">
+			<time datetime="{{obs.obsDatetime}}">{{getPrettyDate()}}</time>
+		</p>
 	</div>
 	<div class="vdui_thumbnail-image-section vdui_click-pointer" ng-click="!editMode && displayContent()">
-		<div class="vdui_opacity-changeable">
-			<div ng-hide="iconSrc" class="vdui_thumbnail-frame">
+		<div class="vdui_opacity-changeable vdui_thumbnail-frame">
+
+			<!-- If obs.contentFamily == OTHER or undefined or null-->
+			<div ng-if="obs.contentFamily == contentFamilyList.OTHER || obs.contentFamily == 'undefined' || obs.contentFamily == null">
 				<i class="icon-file"></i>
-				<span ng-show="obs.contentFamily && obs.fileExt">{{obs.contentFamily.toLowerCase()}} / .{{obs.fileExt}}<span>
+				<span ng-show="obs.contentFamily && obs.fileExt" class="vdui_thumbnail-extension">{{"." + obs.fileExt}}
+				</span>
 			</div>
-			<div ng-show="iconSrc" class="vdui_thumbnail-frame">
-				<img src="{{iconSrc}}"></img>
+
+			<!-- If obs.contentFamily == IMAGE -->
+			<div ng-if="obs.contentFamily == contentFamilyList.IMAGE && obs.mimeType">
+				<img src="{{getImageThumbnailSrc(obs)}}"></img>
 			</div>
+
+			<!-- If obs.contentFamily == PDF -->
+			<div ng-if="obs.contentFamily == contentFamilyList.PDF">
+				<i class="icon-file-pdf-o"></i>
+				<span ng-show="obs.contentFamily && obs.fileExt" class="vdui_thumbnail-extension">{{obs.contentFamily.toUpperCase()}}
+				</span>
+			</div>
+
 		</div>
 		<i ng-show="editMode" class="icon-trash vdui_icon-trash vdui_click-pointer" ng-click="confirmDelete()"></i>
 	</div>
-
 	<div class="vdui_thumbnail-caption-section" ng-class="canEdit() ? 'vdui_editable' : ''">
 		<div ng-hide="editMode" ng-click="toggleEditMode(true)">
 			<i ng-hide="obs.comment" class="icon-tag vdui_side"></i>
 			<p ng-show="obs.comment">{{obs.comment}}</p>
 		</div>
 		<div ng-show="editMode" vdui-escape-key-down="toggleEditMode(false)">
-	    <input ng-model="newCaption" class="left" type="text" vdui-enter-key-down="saveCaption()"/>
-	    <span class="right">
-	      <i class="icon-ok vdui_click-pointer" ng-click="saveCaption()"></i>
-	      <i class="icon-remove vdui_click-pointer" ng-click="toggleEditMode(false)"></i>
-	    </span>
-	  </div>
-	  <i ng-show="loading" class="icon-spinner icon-spin" style="margin-left: 10px;"></i>
-  </div>
-
+			<input ng-model="newCaption" class="left" type="text" vdui-enter-key-down="saveCaption()"/>
+			<span class="right">
+				<i class="icon-ok vdui_click-pointer" ng-click="saveCaption()"></i>
+				<i class="icon-remove vdui_click-pointer" ng-click="toggleEditMode(false)"></i>
+			</span>
+		</div>
+		<i ng-show="loading" class="icon-spinner icon-spin" style="margin-left: 10px;"></i>
+	</div>
 </div>
