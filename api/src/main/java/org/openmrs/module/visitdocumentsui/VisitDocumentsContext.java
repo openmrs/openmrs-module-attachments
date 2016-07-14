@@ -199,6 +199,10 @@ public class VisitDocumentsContext extends ModuleProperties
 		return getDoubleByGlobalProperty(VisitDocumentsConstants.GP_MAX_STORAGE_FILE_SIZE);
 	}
 	
+	public boolean isWebcamAllowed() {
+	   return getBooleanByGlobalProperty(VisitDocumentsConstants.GP_WEBCAM_ALLOWED);
+   }
+	
 	public double getMaxCompressionRatio() {
 	   double maxStorageSize = getMaxStorageFileSize();
 	   double maxUploadSize = getMaxUploadFileSize();

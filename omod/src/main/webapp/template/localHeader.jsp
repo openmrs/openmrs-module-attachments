@@ -10,7 +10,7 @@
 		href="${pageContext.request.contextPath}/module/patientimages/manage.form"><spring:message
 				code="patientimages.manage" /></a>
 	</li>
-	
+
 	<!-- Add further links here -->
 </ul>
 <h2>

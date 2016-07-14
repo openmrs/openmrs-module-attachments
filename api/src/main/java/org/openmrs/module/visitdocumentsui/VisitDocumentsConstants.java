@@ -46,6 +46,8 @@ public class VisitDocumentsConstants {
    public static final String DOC_VIEW_THUMBNAIL = "complexdata.view.thumbnail";
 
    public static final String DOC_VIEW_CRUD = DOC_VIEW_ORIGINAL;  // Use this view for CRUD operations where a view must be provided.
+   
+   public static final String DOC_VIEW_RANDOM = "complexdata.view.random:m3k0m";
 
    /*
     * Global properties
@@ -61,6 +63,8 @@ public class VisitDocumentsConstants {
    public static final String GP_MAX_UPLOAD_FILE_SIZE = MODULE_ARTIFACT_ID + ".maxUploadFileSize";
 
    public static final String GP_MAX_STORAGE_FILE_SIZE = MODULE_ARTIFACT_ID + ".maxStorageFileSize";
+   
+   public static final String GP_WEBCAM_ALLOWED = MODULE_ARTIFACT_ID + ".allowWebcam";
 
    public static final String GP_ENCOUNTER_SAVING_FLOW = MODULE_ARTIFACT_ID + ".encounterSavingFlow";
 

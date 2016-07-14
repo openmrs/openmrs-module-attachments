@@ -32,6 +32,7 @@ public class ClientConfigFragmentController {
       jsonConfig.put("maxFileSize", context.getMaxStorageFileSize());
       jsonConfig.put("maxCompression", context.getMaxCompressionRatio());
       jsonConfig.put("allowNoCaption", context.doAllowEmptyCaption());
+      jsonConfig.put("allowWebcam", context.isWebcamAllowed());
       
       jsonConfig.put("obsRep", "custom:" + VisitDocumentsConstants.REPRESENTATION_OBS);
       

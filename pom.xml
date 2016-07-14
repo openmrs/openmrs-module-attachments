@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openmrs.module</groupId>
@@ -8,13 +9,13 @@
 	<packaging>pom</packaging>
 	<name>Visit Documents UI</name>
 	<description>Adds UI components and backend web services to upload, view and manage visit documents within the OpenMRS Reference Application.</description>
-	
+
 	<developers>
 		<developer>
 			<name>Mekom Solutions</name>
 		</developer>
 	</developers>
-	
+
 	<organization>
 		<name>Mekom Solutions</name>
 		<url>http://www.mekomsolutions.com</url>
@@ -23,7 +24,7 @@
 	<scm>
 		<url>https://github.com/mekomsolutions/openmrs-module-visitdocumentsui</url>
 	</scm>
-	
+
 	<properties>
 		<openMRSVersion>1.11.4</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -96,9 +97,9 @@
 		</dependency>
 
 		<dependency>
-		  <groupId>net.coobird</groupId>
-		  <artifactId>thumbnailator</artifactId>
-		  <version>[0.4, 0.5)</version>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>[0.4, 0.5)</version>
 		</dependency>
 
 	</dependencies>

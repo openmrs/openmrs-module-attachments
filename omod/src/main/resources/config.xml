@@ -19,17 +19,17 @@
 		</require_module>
 		<require_module version="${emrapiVersion}">
 			org.openmrs.module.emrapi
-    </require_module>
-    <require_module version="${appuiVersion}">
+		</require_module>
+		<require_module version="${appuiVersion}">
 			org.openmrs.module.appui
-    </require_module>
+		</require_module>
 	</require_modules>
 
-	
+
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.VisitDocumentsActivator</activator>
-	
-	
+
+
 	<!-- Adds link to admin page -->
 	<extension>
 		<point>org.openmrs.admin.list</point>
@@ -54,79 +54,100 @@
 
 
 	<!-- Global Properties -->
-  <globalProperty>
-    <property>${project.parent.artifactId}.defaultConceptComplexUuid</property>
-    <defaultValue>42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00</defaultValue>
-    <description>
-        UUID of the (question) concept complex for 'other' patient files, this is used as the default when the MIME type is not matched
-    </description>
-  </globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.defaultConceptComplexUuid</property>
+		<defaultValue>42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00</defaultValue>
+		<description>
+			UUID of the (question) concept complex for 'other'
+			patient files, this is
+			used as the default when the MIME type is not
+			matched
+		</description>
+	</globalProperty>
 
-  <globalProperty>
-    <property>${project.parent.artifactId}.conceptComplexUuidList</property>
-    <defaultValue>["7cac8397-53cd-4f00-a6fe-028e8d743f8e","42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00"]</defaultValue>
-    <description>
-        List of concept complex UUIDs that are used in queries for viewing documents
-    </description>
-  </globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.conceptComplexUuidList</property>
+		<defaultValue>["7cac8397-53cd-4f00-a6fe-028e8d743f8e","42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00"]</defaultValue>
+		<description>
+			List of concept complex UUIDs that are used in queries
+			for viewing
+			documents
+		</description>
+	</globalProperty>
 
-  <globalProperty>
-    <property>${project.parent.artifactId}.conceptComplexUuidMap</property>
-    <defaultValue>{"IMAGE":"7cac8397-53cd-4f00-a6fe-028e8d743f8e","OTHER":"42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00"}</defaultValue>
-    <description>
-        Mapping between content families and concept complex UUIDs, this is used for saving files based on their MIME type
-    </description>
-  </globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.conceptComplexUuidMap</property>
+		<defaultValue>{"IMAGE":"7cac8397-53cd-4f00-a6fe-028e8d743f8e","OTHER":"42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00"}</defaultValue>
+		<description>
+			Mapping between content families and concept complex
+			UUIDs, this is used for
+			saving files based on their MIME type
+		</description>
+	</globalProperty>
 
-  <globalProperty>
-    <property>${project.parent.artifactId}.encounterTypeUuid</property>
-    <defaultValue>5021b1a1-e7f6-44b4-ba02-da2f2bcf8718</defaultValue>
-    <description>
-        UUID of the encounter type used to upload visit documents
-    </description>
-  </globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.encounterTypeUuid</property>
+		<defaultValue>5021b1a1-e7f6-44b4-ba02-da2f2bcf8718</defaultValue>
+		<description>
+			UUID of the encounter type used to upload visit documents
+		</description>
+	</globalProperty>
 
-  <globalProperty>
-    <property>${project.parent.artifactId}.maxUploadFileSize</property>
-    <defaultValue>5.0</defaultValue>
-    <description>
-        Maximum size (in Megabytes) allowed for a visit document file upload 
-    </description>
-  </globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.maxUploadFileSize</property>
+		<defaultValue>5.0</defaultValue>
+		<description>
+			Maximum size (in Megabytes) allowed for a visit document
+			file upload
+		</description>
+	</globalProperty>
 
-  <globalProperty>
-    <property>${project.parent.artifactId}.maxStorageFileSize</property>
-    <defaultValue>1.2</defaultValue>
-    <description>
-        Maximum size (in Megabytes) allowed for the storage of a visit document file
-    </description>
-  </globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.maxStorageFileSize</property>
+		<defaultValue>1.2</defaultValue>
+		<description>
+			Maximum size (in Megabytes) allowed for the storage of a
+			visit document file
+		</description>
+	</globalProperty>
 
-  <globalProperty>
-    <property>${project.parent.artifactId}.encounterSavingFlow</property>
-    <defaultValue></defaultValue>
-    <description>
-        Set this property to 'unique' to have only one encounter per visit
-    </description>
-  </globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.encounterSavingFlow</property>
+		<defaultValue></defaultValue>
+		<description>
+			Set this property to 'unique' to have only one encounter
+			per visit
+		</description>
+	</globalProperty>
 
-  <globalProperty>
-    <property>${project.parent.artifactId}.allowNoCaption</property>
-    <defaultValue>false</defaultValue>
-    <description>
-        Set this property to 'true' to allow empty documents captions
-    </description>
-  </globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.allowNoCaption</property>
+		<defaultValue>false</defaultValue>
+		<description>
+			Set this property to 'true' to allow empty documents
+			captions
+		</description>
+	</globalProperty>
 
-  <globalProperty>
-    <property>${project.parent.artifactId}.dashboardThumbnailCount</property>
-    <defaultValue>4</defaultValue>
-    <description>
-        Number of thumbnails to display on the dashboard widget
-    </description>
-  </globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.allowWebcam</property>
+		<defaultValue>true</defaultValue>
+		<description>
+			Set this property to 'true' to allow the use of the
+			webcam for file
+			uploads
+		</description>
+	</globalProperty>
 
-  <!-- Privileges -->
+	<globalProperty>
+		<property>${project.parent.artifactId}.dashboardThumbnailCount</property>
+		<defaultValue>4</defaultValue>
+		<description>
+			Number of thumbnails to display on the dashboard widget
+		</description>
+	</globalProperty>
+
+	<!-- Privileges -->
 	<privilege>
 		<name>App: ${project.parent.artifactId}.visitdocuments.page</name>
 		<description>Allowed to access the Visit Documents page</description>

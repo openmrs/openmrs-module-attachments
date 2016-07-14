@@ -19,21 +19,27 @@
 
 	<!-- Add here beans related to the API context -->
 
-	
+
 	<!-- Handlers that can be set to complex concepts -->
-	<bean parent="obsServiceTarget" >
-    <property name="handlers">
-      <map>
-        <entry>
-          <key><value>DefaultDocumentHandler</value></key>
-          <bean class="org.openmrs.module.visitdocumentsui.obs.DefaultDocumentHandler"/>
-        </entry>
-        <entry>
-          <key><value>ImageDocumentHandler</value></key>
-          <bean class="org.openmrs.module.visitdocumentsui.obs.ImageDocumentHandler"/>
-        </entry>
-      </map>
-    </property>
+	<bean parent="obsServiceTarget">
+		<property name="handlers">
+			<map>
+				<entry>
+					<key>
+						<value>DefaultDocumentHandler</value>
+					</key>
+					<bean
+						class="org.openmrs.module.visitdocumentsui.obs.DefaultDocumentHandler" />
+				</entry>
+				<entry>
+					<key>
+						<value>ImageDocumentHandler</value>
+					</key>
+					<bean
+						class="org.openmrs.module.visitdocumentsui.obs.ImageDocumentHandler" />
+				</entry>
+			</map>
+		</property>
 	</bean>
-	
+
 </beans>

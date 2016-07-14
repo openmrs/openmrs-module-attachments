@@ -186,8 +186,6 @@ public class VisitDocumentsController {
          response.addHeader("File-Name", complexData.getTitle());   // custom header
          response.addHeader("File-Ext", getExtension(complexData.getTitle(), mimeType));   // custom header
          switch (getContentFamily(mimeType)) {
-            case IMAGE:
-            case OTHER:
             default:
                response.getOutputStream().write(getByteArray(complexData));
                break;

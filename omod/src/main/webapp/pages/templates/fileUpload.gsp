@@ -12,6 +12,16 @@
     box-sizing: border-box;         /* Opera/IE 8+ */
   }
 
+  .vdui_caption-element textarea::-webkit-input-placeholder{
+    font-size: 1.2em;
+    color: LightGrey;
+  }
+
+  .vdui_caption-element textarea::-moz-placeholder{
+    font-size: 1.2em;
+    color: LightGrey;
+  }
+
   .vdui_upload-container {
     height: 180px;
   }
@@ -59,6 +69,9 @@
 
 </style>
 
+
+<vdui-modal-webcam visible="showWebcam" disabled="isWebcamDisabled()"></vdui-modal-webcam>
+
 <div ng-show="visitUuid" class="vdui_file-upload-container" ng-init="init()">
   <div class="vdui_upload-container">
     <div class="vdui_upload-element vdui_dropzone-element">
@@ -70,8 +83,9 @@
     </div>
     <div class="vdui_upload-element vdui_caption-element">
       <h3>${ui.message("visitdocumentsui.visitdocumentspage.commentTitle")}</h3>
-      <textarea ng-model="fileCaption"></textarea>
-      <span class="right" style="margin-top: 4%;">
+      <textarea ng-model="typedText.fileCaption" placeholder="${ui.message('visitdocumentsui.misc.label.enterCaption')}"></textarea>
+      <a class="button left" ng-hide="isWebcamDisabled()" ng-click="showWebcam = true" style="margin-top: 4%"><i class="icon-camera"></i></a>
+      <span class="right" style="margin-top: 4%">
         <button class="confirm" ng-click="uploadFile()" ng-disabled="isUploadBtnDisabled()">${ui.message("visitdocumentsui.visitdocumentspage.uploadButton")}</button>
         <button ng-click="clearForms()">${ui.message("visitdocumentsui.visitdocumentspage.clearFormsButton")}</button>
       </span>

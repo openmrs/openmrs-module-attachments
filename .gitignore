@@ -35,3 +35,6 @@ omod/.rubygems-provided
 
 # Bower resources #
 bower_components
+
+# This test resource kept coming up
+api/OpenMRS_logo.png

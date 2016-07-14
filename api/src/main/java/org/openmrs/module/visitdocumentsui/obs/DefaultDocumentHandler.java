@@ -20,14 +20,17 @@ public class DefaultDocumentHandler extends AbstractDocumentHandler {
 	
    protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view) {
       // We invoke the parent to inherit from the file reading routines.
-      obs.setValueComplex(valueComplex.getFileName());
+      Obs tmpObs = new Obs();
+      tmpObs.setValueComplex(valueComplex.getFileName());   // Temp obs used as a safety
+      
       ComplexData complexData;
       if (view.equals(VisitDocumentsConstants.DOC_VIEW_THUMBNAIL)) {
+         // This handler doesn't have data for thumbnails, we return a null content
          complexData = new ComplexData(valueComplex.getFileName(), null);
       }
       else {
-         obs = getParent().getObs(obs, "whatever_view"); // BinaryDataHandler doesn't in fact handle several views
-         complexData = obs.getComplexData();
+         tmpObs = getParent().getObs(tmpObs, VisitDocumentsConstants.DOC_VIEW_RANDOM); // BinaryDataHandler doesn't handle several views
+         complexData = tmpObs.getComplexData();
       }
       
       // Then we build our own custom complex data
@@ -37,7 +40,7 @@ public class DefaultDocumentHandler extends AbstractDocumentHandler {
    protected boolean deleteComplexData(Obs obs, DocumentComplexData docComplexData) {
       // We use a temp obs whose value complex points to the file name
       Obs tmpObs = new Obs();
-      tmpObs.setValueComplex(docComplexData.getTitle());
+      tmpObs.setValueComplex(docComplexData.getTitle());   // Temp obs used as a safety
       return getParent().purgeComplexData(tmpObs);
    }
    

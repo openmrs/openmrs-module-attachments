@@ -35,9 +35,10 @@ public class ImageDocumentHandler extends AbstractDocumentHandler {
       }
       
       // We invoke the parent to inherit from the file reading routines.
-      obs.setValueComplex(fileName);
-      obs = getParent().getObs(obs, "whatever_view"); // ImageHandler doesn't in fact handle several views
-      ComplexData complexData = obs.getComplexData();
+      Obs tmpObs = new Obs();
+      tmpObs.setValueComplex(fileName);   // Temp obs used as a safety
+      tmpObs = getParent().getObs(tmpObs, VisitDocumentsConstants.DOC_VIEW_RANDOM); // ImageHandler doesn't handle several views
+      ComplexData complexData = tmpObs.getComplexData();
       
       // Then we build our own custom complex data
       return new DocumentComplexData(valueComplex.getInstructions(), complexData.getTitle(), complexData.getData(), valueComplex.getMimeType());
@@ -51,7 +52,6 @@ public class ImageDocumentHandler extends AbstractDocumentHandler {
       String thumbnailFileName = buildThumbnailFileName(fileName);
       
       Obs tmpObs = new Obs();
-      
       tmpObs.setValueComplex(thumbnailFileName);
       boolean isThumbNailPurged = getParent().purgeComplexData(tmpObs);
       tmpObs.setValueComplex(fileName);
@@ -75,9 +75,10 @@ public class ImageDocumentHandler extends AbstractDocumentHandler {
       try {
          Thumbnails.of(savedFile.getAbsolutePath()).size(THUMBNAIL_HEIGHT, THUMBNAIL_WIDTH).toFile( new File(dir, thumbnailFileName) );
       } catch (IOException e) {
+         getParent().purgeComplexData(obs);
          throw new APIException("A thumbnail file could not be saved for obs with"
                + "OBS_ID='" + obs.getObsId() + "', "
-               + "FILE='" + savedFile.getPath() + "'.", e);
+               + "FILE='" + docComplexData.getTitle() + "'.", e);
       }
       
       return new ValueComplex(docComplexData.getInstructions(), docComplexData.getMimeType(), savedFileName);

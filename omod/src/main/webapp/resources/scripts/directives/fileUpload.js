@@ -1,4 +1,4 @@
-angular.module('vdui.widget.fileUpload', [])
+angular.module('vdui.widget.fileUpload', ['vdui.widget.modalWebcam'])
   
   .directive('dropzoneDirective',
     function () {
@@ -16,6 +16,10 @@ angular.module('vdui.widget.fileUpload', [])
 
         scope.removeAllFiles = function() {
           dropzone.removeAllFiles();
+        };
+
+        scope.addFile = function(file) {
+          dropzone.addFile(file);
         };
 
         scope.setMaxFilesize = function(maxFilesize) {
@@ -49,7 +53,19 @@ angular.module('vdui.widget.fileUpload', [])
         var providerUuid = "";
         $scope.visitUuid = "";  // In scope for toggling ng-show
 
+        $rootScope.$on(module.webcamCaptureForUpload, function(event, webcamFile) {
+          addFileToDropzone(webcamFile);
+        });
+
+        $scope.isWebcamDisabled = function() {
+          // http://stackoverflow.com/a/24600597/321797
+          return !(config.allowWebcam === true) || (/Mobi/.test(navigator.userAgent));
+        }
+
         $scope.init = function() {
+          $scope.typedText = {};
+          $scope.allowWebcam = config.allowWebcam;
+          $scope.showWebcam = false;
           Dropzone.options.visitDocumentsDropzone = false;
 
           sessionInfo.get().$promise.then(function(info) {
@@ -73,7 +89,6 @@ angular.module('vdui.widget.fileUpload', [])
           'eventHandlers':
           {
             'addedfile': function(file) {
-              $scope.file = file;
               setMaxFileSizeOption(file.type); // Setting the max upload file size depending on whether the file can be compressed on the backend.
               if (this.files[1] != null) {
                 this.removeFile(this.files[0]);
@@ -86,7 +101,7 @@ angular.module('vdui.widget.fileUpload', [])
               formData.append('patient', config.patient.uuid);
               formData.append('visit', $scope.visitUuid);
               formData.append('provider', providerUuid);
-              formData.append('fileCaption', ($scope.fileCaption == null) ? "" : $scope.fileCaption );
+              formData.append('fileCaption', ($scope.typedText.fileCaption == null) ? "" : $scope.typedText.fileCaption );
             },
             'success': function (file, response) {
               $rootScope.$emit(module.eventNewFile, response);
@@ -118,20 +133,22 @@ angular.module('vdui.widget.fileUpload', [])
           }
         };
 
+        var addFileToDropzone = function(file) {
+          $scope.addFile(file);
+        };
+
         $scope.uploadFile = function() {
           $scope.processDropzone();
         };
 
         $scope.clearForms = function() {
           $scope.removeAllFiles();
-          $scope.fileCaption = "";
-          $scope.$apply();  // Not sure why we need this?
+          $scope.typedText.fileCaption = "";
         }
 
         $scope.isUploadBtnDisabled = function() {
-          return !($scope.fileCaption || config.allowNoCaption);
-        }        
-
+          return !($scope.typedText.fileCaption || config.allowNoCaption);
+        }  
       }
     };
   }]);

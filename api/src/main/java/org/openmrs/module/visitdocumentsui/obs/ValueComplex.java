@@ -68,6 +68,11 @@ public class ValueComplex {
       this(buildValueComplex(instructions, mimeType, fileName));
    }
    
+   @Override
+   public String toString() {
+      return buildValueComplex(instructions, mimeType, fileName);
+   }
+   
    public boolean isOwnImplementation() {
       return instructions != INSTRUCTIONS_NONE;
    }
