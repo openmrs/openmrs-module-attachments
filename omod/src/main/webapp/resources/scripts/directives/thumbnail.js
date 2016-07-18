@@ -160,13 +160,13 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
     }
 
     $scope.init = function() {
+      $scope.displayDefaultContentFamily = true;
+
       obsCache.getComplexObs($scope.obs, $scope.config.downloadUrl, $scope.config.thumbView)
       .then(function(res) {
         $scope.loading = false;
-
         $scope.obs.complexData = res.complexData;
         $scope.contentFamilyList = module.family;
-
       }, function() {
         $scope.loading = false;
         $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.get.error") });
@@ -206,6 +206,14 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
       return 'data:' + obs.mimeType + ';base64,' + module.arrayBufferToBase64(obs.complexData);
     } 
 
+    $scope.isOfFamily = function (contentFamily) {
+      if ($scope.obs.contentFamily && $scope.obs.contentFamily == contentFamily) {
+        $scope.displayDefaultContentFamily = false;
+        return true;
+      }
+      return false;
+    } 
+
     var displayImage = function(obs, data) {
       $scope.imageConfig = {};
       $scope.imageConfig.bytes = module.arrayBufferToBase64(data);
@@ -219,22 +227,22 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
       win.location.href = blobUrl;
     }
 
-        var displayOther = function(obs, data) { // http://stackoverflow.com/a/28541187/321797
-          var blob = new Blob([data], {type: obs.mimeType});
-          var downloadLink = angular.element('<a></a>');
-          downloadLink.attr('href', $window.URL.createObjectURL(blob));
-          downloadLink.attr('download', obs.fileName);
-          downloadLink[0].click();
-        }
+    var displayOther = function(obs, data) {   // http://stackoverflow.com/a/28541187/321797
+      var blob = new Blob([data], {type: obs.mimeType});
+      var downloadLink = angular.element('<a></a>');
+      downloadLink.attr('href', $window.URL.createObjectURL(blob));
+      downloadLink.attr('download', obs.fileName);
+      downloadLink[0].click();
+    }
 
-        var getWindow = function(contentFamily) {
-          switch ($scope.obs.contentFamily) {
-            case module.family.PDF:
-            return $window.open('');
-            default:
-            return {};
-          }
-        }
+    var getWindow = function(contentFamily) {
+      switch ($scope.obs.contentFamily) {
+        case module.family.PDF:
+        return $window.open('');
+        default:
+        return {};
       }
-    };
-  }]);
+    }
+  }
+};
+}]);

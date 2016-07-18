@@ -22,7 +22,7 @@
 
 	.vdui_thumbnail-caption-section p {
 		font-size: 90%;
-	}
+	} 
 
 	.vdui_editable p:hover {
 		max-width: 130px;
@@ -153,23 +153,21 @@
 	<div class="vdui_thumbnail-image-section vdui_click-pointer" ng-click="!editMode && displayContent()">
 		<div class="vdui_opacity-changeable vdui_thumbnail-frame">
 
-			<!-- If obs.contentFamily == OTHER or undefined or null-->
-			<div ng-if="obs.contentFamily == contentFamilyList.OTHER || obs.contentFamily == 'undefined' || obs.contentFamily == null">
-				<i class="icon-file"></i>
-				<span ng-show="obs.contentFamily && obs.fileExt" class="vdui_thumbnail-extension">{{"." + obs.fileExt}}
-				</span>
-			</div>
-
-			<!-- If obs.contentFamily == IMAGE -->
-			<div ng-if="obs.contentFamily == contentFamilyList.IMAGE && obs.mimeType">
+			<div ng-if="isOfFamily(contentFamilyList.IMAGE)">
 				<img src="{{getImageThumbnailSrc(obs)}}"></img>
 			</div>
-
-			<!-- If obs.contentFamily == PDF -->
-			<div ng-if="obs.contentFamily == contentFamilyList.PDF">
+			<div ng-if="isOfFamily(contentFamilyList.PDF)">
 				<i class="icon-file-pdf-o"></i>
-				<span ng-show="obs.contentFamily && obs.fileExt" class="vdui_thumbnail-extension">{{obs.contentFamily.toUpperCase()}}
+				<span class="vdui_thumbnail-extension">{{obs.contentFamily.toUpperCase()}}</span>
+			</div>
+			<div ng-if="isOfFamily(contentFamilyList.OTHER)">
+				<i class="icon-file"></i>
+				<span class="vdui_thumbnail-extension">{{"." + obs.fileExt}}
 				</span>
+			</div>
+			<!-- default behavior -->
+			<div ng-if="displayDefaultContentFamily">
+				<i class="icon-file"></i>
 			</div>
 
 		</div>
