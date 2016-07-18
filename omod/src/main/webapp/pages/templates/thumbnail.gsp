@@ -179,7 +179,7 @@
 			<p ng-show="obs.comment">{{obs.comment}}</p>
 		</div>
 		<div ng-show="editMode" vdui-escape-key-down="toggleEditMode(false)">
-			<input ng-model="typedText.newCaption" class="left" type="text" placeholder="Enter a caption" vdui-enter-key-down="saveCaption()"/>
+			<input ng-model="typedText.newCaption" class="left" type="text" placeholder="${ ui.message('visitdocumentsui.thumbail.enterCaption') }" vdui-enter-key-down="saveCaption()"/>
 			<span class="right">
 				<i class="icon-ok vdui_click-pointer" ng-click="saveCaption()"></i>
 				<i class="icon-remove vdui_click-pointer" ng-click="toggleEditMode(false)"></i>
