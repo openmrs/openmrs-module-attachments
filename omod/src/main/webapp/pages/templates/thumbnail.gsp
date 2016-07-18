@@ -9,7 +9,7 @@
 		float: left;
 
 		width: 130px;
-		margin:  2% 2% 30px 2%;
+		margin: 2% 2% 30px 2%;
 
 		height: 160px; /* Controls the height of the whole thumbnail */
 	}
@@ -89,9 +89,9 @@
 
 	.vdui_thumbnail-caption-section input  {
 		position: relative;
-		max-width: 130px
+		max-width: 130px;
+		font-size: 90%;
 	}
-
 
 	.vdui_icon-trash {
 		position: absolute;
@@ -116,7 +116,7 @@
 	}
 
 	.vdui_thumbnail-extension {
-		font-weight:bold;
+		font-weight: bold;
 		font-family: OpenSansBold;
 		text-align: -webkit-center;
 		width: 45%;
@@ -143,36 +143,26 @@
 		</div>
 	</div>
 </script>
+
 <vdui-modal-image config="imageConfig"></vdui-modal-image>
+
 <div ng-if="active" class="vdui_thumbnail-container" ng-class="getEditModeCss()" ng-init="init()">
 	<div class="vdui_header">
 		<p class="vdui_date-time left">
 			<time datetime="{{obs.obsDatetime}}">{{getPrettyDate()}}</time>
 		</p>
 	</div>
+
 	<div class="vdui_thumbnail-image-section vdui_click-pointer" ng-click="!editMode && displayContent()">
 		<div class="vdui_opacity-changeable vdui_thumbnail-frame">
-
-			<div ng-if="isOfFamily(contentFamilyList.IMAGE)">
-				<img src="{{getImageThumbnailSrc(obs)}}"></img>
+			<i ng-hide="::obs.contentFamily" class="icon-file"></i>
+			<div ng-show="::obs.contentFamily">
+			  <div ng-bind-html="::iconHtml"></div>
 			</div>
-			<div ng-if="isOfFamily(contentFamilyList.PDF)">
-				<i class="icon-file-pdf-o"></i>
-				<span class="vdui_thumbnail-extension">{{obs.contentFamily.toUpperCase()}}</span>
-			</div>
-			<div ng-if="isOfFamily(contentFamilyList.OTHER)">
-				<i class="icon-file"></i>
-				<span class="vdui_thumbnail-extension">{{"." + obs.fileExt}}
-				</span>
-			</div>
-			<!-- default behavior -->
-			<div ng-if="displayDefaultContentFamily">
-				<i class="icon-file"></i>
-			</div>
-
 		</div>
 		<i ng-show="editMode" class="icon-trash vdui_icon-trash vdui_click-pointer" ng-click="confirmDelete()"></i>
 	</div>
+
 	<div class="vdui_thumbnail-caption-section" ng-class="canEdit() ? 'vdui_editable' : ''">
 		<div ng-hide="editMode" ng-click="toggleEditMode(true)">
 			<i ng-hide="obs.comment" class="icon-tag vdui_side"></i>

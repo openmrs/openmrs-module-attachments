@@ -31,7 +31,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
   };
 })
 
-.directive('vduiThumbnail', ['ComplexObs', 'ComplexObsCacheService', 'ngDialog', '$http', '$window', function(Obs, obsCache, ngDialog, $http, $window) {
+.directive('vduiThumbnail', ['ComplexObs', 'ComplexObsCacheService', 'ngDialog', '$http', '$window', '$sce', function(Obs, obsCache, ngDialog, $http, $window, $sce) {
   return {
     restrict: 'E',
     scope: {
@@ -43,11 +43,11 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
    controller: function($scope) {
 
     var msgs = [
-    module.getProvider() + ".thumbail.get.error",
-    module.getProvider() + ".thumbail.save.success",
-    module.getProvider() + ".thumbail.save.error",
-    module.getProvider() + ".thumbail.delete.success",
-    module.getProvider() + ".thumbail.delete.error"
+      module.getProvider() + ".thumbail.get.error",
+      module.getProvider() + ".thumbail.save.success",
+      module.getProvider() + ".thumbail.save.error",
+      module.getProvider() + ".thumbail.delete.success",
+      module.getProvider() + ".thumbail.delete.error"
     ]
     emr.loadMessages(msgs.toString());
 
@@ -149,14 +149,40 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
         $().toastmessage('showToast', { type: 'success', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.delete.success") });
       }, function(err) {
         scope.closeThisDialog();
-            if (purge === true) { // We should only do this if error 500 is the cause: https://github.com/openmrs/openmrs-core/blob/1.11.x/api/src/main/java/org/openmrs/api/impl/ObsServiceImpl.java#L213
-              scope.purge(null, scope);
-            }
-            else {
-              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.delete.error") });  
-              console.log(err);
-            }
-          }); 
+        if (purge === true) { // We should only do this if error 500 is the cause: https://github.com/openmrs/openmrs-core/blob/1.11.x/api/src/main/java/org/openmrs/api/impl/ObsServiceImpl.java#L213
+          scope.purge(null, scope);
+        }
+        else {
+          $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.delete.error") });  
+          console.log(err);
+        }
+      }); 
+    }
+
+    /*
+      Injects the icon's HTML into the DOM. We had to avoid an in-DOM ng-if (or ng-switch) due to performance issues.
+    */
+    var setIconHtml = function(complexObs) {
+      var html = "";
+      switch (complexObs.contentFamily) {
+        case module.family.IMAGE:
+          html =  '<img src="' +
+                  'data:' + complexObs.mimeType + ';base64,' + module.arrayBufferToBase64(complexObs.complexData) +
+                  '"/>';
+          break;
+
+        case module.family.PDF:
+          html =  '<i class="icon-file-pdf-o"></i>' +
+                  '<span class="vdui_thumbnail-extension">' + complexObs.contentFamily.toUpperCase() + '</span>';
+          break;
+
+        case module.family.OTHER:
+        default:
+          html =  '<i class="icon-file"></i>' +
+                  '<span class="vdui_thumbnail-extension">.' + complexObs.fileExt + '</span>';
+          break;
+      }
+      $scope.iconHtml = $sce.trustAsHtml(html);
     }
 
     $scope.init = function() {
@@ -165,8 +191,8 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
       obsCache.getComplexObs($scope.obs, $scope.config.downloadUrl, $scope.config.thumbView)
       .then(function(res) {
         $scope.loading = false;
-        $scope.obs.complexData = res.complexData;
-        $scope.contentFamilyList = module.family;
+        $scope.obs.complexData = res.complexData; // Turning the obs into a complex obs.
+        setIconHtml($scope.obs);
       }, function() {
         $scope.loading = false;
         $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.get.error") });
@@ -183,17 +209,17 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
         $scope.loading = false;
         switch ($scope.obs.contentFamily) {
           case module.family.IMAGE:
-          displayImage($scope.obs, res.complexData);
-          break;
+            displayImage($scope.obs, res.complexData);
+            break;
 
           case module.family.PDF:
-          displayPdf($scope.obs, res.complexData, win);
-          break;                  
+            displayPdf($scope.obs, res.complexData, win);
+            break;
 
           case module.family.OTHER:
           default:
-          displayOther($scope.obs, res.complexData);
-          break;
+            displayOther($scope.obs, res.complexData);
+            break;
         }
       }, function() {
         $scope.loading = false;
@@ -201,18 +227,6 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
         console.log(err);
       });
     }
-
-    $scope.getImageThumbnailSrc = function (obs) {
-      return 'data:' + obs.mimeType + ';base64,' + module.arrayBufferToBase64(obs.complexData);
-    } 
-
-    $scope.isOfFamily = function (contentFamily) {
-      if ($scope.obs.contentFamily && $scope.obs.contentFamily == contentFamily) {
-        $scope.displayDefaultContentFamily = false;
-        return true;
-      }
-      return false;
-    } 
 
     var displayImage = function(obs, data) {
       $scope.imageConfig = {};
