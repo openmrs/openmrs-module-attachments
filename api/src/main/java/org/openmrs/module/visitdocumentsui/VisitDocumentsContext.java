@@ -35,6 +35,7 @@ import org.openmrs.api.VisitService;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.utils.ModuleProperties;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants.ContentFamily;
+import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -215,6 +216,10 @@ public class VisitDocumentsContext extends ModuleProperties
 	public Integer getDashboardThumbnailCount() {
 	   return getIntegerByGlobalProperty(VisitDocumentsConstants.GP_DASHBOARD_THUMBNAIL_COUNT);
    }
+	
+	public Integer getMaxRestResultsCount() {
+	   return getIntegerByGlobalProperty(RestConstants.MAX_RESULTS_DEFAULT_GLOBAL_PROPERTY_NAME);
+	}
 	
 	// TODO: Figure out if this is good enough
 	public EncounterRole getEncounterRole() {

@@ -136,7 +136,6 @@
         </li>
       </ul>
       <button class="confirm right" ng-click="confirm()">${ ui.message("coreapps.yes") }
-        
         <i ng-show="showSpinner" class="icon-spinner icon-spin icon-2x" style="margin-left: 10px;"></i>
       </button>
       <button class="cancel" ng-click="closeThisDialog()">${ ui.message("coreapps.no") }</button>

@@ -6,6 +6,10 @@
   padding: 0 0 20px 0;
 }
 
+.vdui_load-more-button {
+  margin: 2% 0 0 2%;
+}
+
 </style>
 
 <div class="vdui_thumbnails-container">
@@ -14,8 +18,13 @@
     <div ng-show="obsArray.length">
       <vdui-thumbnail ng-repeat="obs in obsArray" obs="obs" config="config"></vdui-thumbnail>
     </div>
-    <div ng-hide="obsArray.length">
-      ${ui.message("visitdocumentsui.visitdocumentspage.noDocuments")}
+    <div style="clear:both;"></div>
+    <button ng-show="startIndex > 0" class="vdui_load-more-button" ng-click="load(config, startIndex)">
+      ${ui.message("visitdocumentsui.gallery.loadMore")}
+      <i ng-show="showSpinner" class="icon-spinner icon-spin icon-1x" style="margin-left: 10px;"></i>
+    </button>
+    <div ng-hide="obsArray.length > 0">
+      ${ui.message("visitdocumentsui.gallery.noDocuments")}
     </div>
   </div>
 </div>
