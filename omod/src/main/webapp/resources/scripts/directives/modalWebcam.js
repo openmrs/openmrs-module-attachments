@@ -24,6 +24,8 @@ angular.module('vdui.widget.modalWebcam', [])
     controller: function($scope, $rootScope, $window) {
       $scope.imgWidth = 640;
       $scope.imgHeight = 480;
+      var forceFlash = $window.chrome && $window.location.protocol != "https:";
+      forceFlash = !($window.chrome && $window.location.hostname === "localhost");  // When debugging with Chrome on localhost Flash can be avoided
       
       $scope.setWebcam = function() {
         Webcam.set({
@@ -31,7 +33,7 @@ angular.module('vdui.widget.modalWebcam', [])
           height: $scope.imgHeight,
           dest_width: $scope.imgWidth,
           dest_height: $scope.imgHeight,
-          force_flash: $window.chrome && $window.location.protocol != "https:"
+          force_flash: forceFlash
         });
         Webcam.attach('#vdui_webcam-id');
       }
@@ -56,6 +58,8 @@ angular.module('vdui.widget.modalWebcam', [])
       $scope.snap = function() {
         Webcam.snap( function(dataUri) {
           $scope.dataUri = dataUri;
+          if (forceFlash === true)
+            $scope.$apply();  // This is needed when Flash is being used... To be investigated.
         });
       }
 
