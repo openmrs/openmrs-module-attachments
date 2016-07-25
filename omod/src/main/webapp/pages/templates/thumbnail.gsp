@@ -93,6 +93,12 @@
     font-size: 90%;
   }
 
+  .vdui_file-name {
+    overflow: hidden;
+    color: lightgrey;
+    font-size: 0.7em !important;
+  }
+
   .vdui_icon-trash {
     position: absolute;
     left: 0;
@@ -164,7 +170,10 @@
 
   <div class="vdui_thumbnail-caption-section" ng-class="canEdit() ? 'vdui_editable' : ''">
     <div ng-hide="editMode" ng-click="toggleEditMode(true)">
-      <i ng-hide="obs.comment" class="icon-tag vdui_click-pointer vdui_side"></i>
+      <!-- <i ng-hide="obs.comment" class="icon-tag vdui_click-pointer vdui_side"></i> -->
+      <div ng-hide="obs.comment" class="vdui_file-name">
+        <p>{{obs.fileName}}</p>
+      </div>
       <p ng-show="obs.comment">{{obs.comment}}</p>
     </div>
     <div ng-show="editMode" vdui-escape-key-down="toggleEditMode(false)">
