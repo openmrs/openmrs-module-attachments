@@ -5,7 +5,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>visitdocumentsui</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>pom</packaging>
 	<name>Visit Documents UI</name>
 	<description>Adds UI components and backend web services to upload, view and manage visit documents within the OpenMRS Reference Application.</description>
