@@ -26,11 +26,12 @@
 	</scm>
 
 	<properties>
-		<openMRSVersion>1.11.4</openMRSVersion>
+		<openMRSVersion>1.10.4</openMRSVersion>
+		<serializationxstreamVersion>0.2.11</serializationxstreamVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<distro.groupId>org.openmrs.distro</distro.groupId>
 		<distro.artifactId>referenceapplication</distro.artifactId>
-		<distro.version>2.4-SNAPSHOT</distro.version>
+		<distro.version>2.5-SNAPSHOT</distro.version>
 	</properties>
 
 
@@ -62,29 +63,34 @@
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
 			<type>jar</type>
+			<version>${openMRSVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
 			<type>jar</type>
+			<version>${openMRSVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>
+			<version>${openMRSVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>
+			<version>${openMRSVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openmrs.test</groupId>
 			<artifactId>openmrs-test</artifactId>
 			<type>pom</type>
 			<scope>test</scope>
+			<version>${openMRSVersion}</version>
 		</dependency>
 
 		<dependency>

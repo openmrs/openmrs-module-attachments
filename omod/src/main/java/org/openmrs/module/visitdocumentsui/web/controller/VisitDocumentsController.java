@@ -11,9 +11,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
@@ -94,14 +96,14 @@ public class VisitDocumentsController {
             switch (getContentFamily(uploadedFile.getContentType())) {
                case IMAGE:
                   conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
-                  obs = prepareComplexObs(patient.getPerson(), encounter, fileCaption, conceptComplex);
+                  obs = prepareComplexObs(patient, encounter, fileCaption, conceptComplex);
                   obs = saveImageDocument(obs, uploadedFile, instructions, context.getObsService());
                   break;
                   
                case OTHER:
                default:
                   conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
-                  obs = prepareComplexObs(patient.getPerson(), encounter, fileCaption, conceptComplex);
+                  obs = prepareComplexObs(patient, encounter, fileCaption, conceptComplex);
                   obs = saveOtherDocument(obs, uploadedFile, instructions, context.getObsService());
                   break;
             }
@@ -150,7 +152,7 @@ public class VisitDocumentsController {
       encounter.setLocation(visit.getLocation());
       boolean saveEncounter = true;
       if (context.isOneEncounterPerVisit()) {
-         List<Encounter> encounters = visit.getNonVoidedEncounters();
+         List<Encounter> encounters = getNonVoidedEncounters(visit.getEncounters());
          for (Encounter e : encounters) {
             if (e.getEncounterType().getUuid() == encounterType.getUuid()) {
                encounter = e;
@@ -290,5 +292,18 @@ public class VisitDocumentsController {
       else {
          return emptyContent;
       }
+   }
+
+   // this is (more or less) a copy of a utility method added in core 1.11 that we provide here for compatibility with 1.10
+   private List<Encounter> getNonVoidedEncounters(Set<Encounter> allEncounters) {
+      List<Encounter> nonVoidedEncounters = new ArrayList<Encounter>();
+      if (allEncounters != null) {
+         for (Encounter encounter : allEncounters) {
+            if (!encounter.isVoided()) {
+               nonVoidedEncounters.add(encounter);
+            }
+         }
+      }
+      return nonVoidedEncounters;
    }
 }
