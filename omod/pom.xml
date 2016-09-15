@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>visitdocumentsui</artifactId>
-		<version>1.0</version>
+		<version>1.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>visitdocumentsui-omod</artifactId>
@@ -16,117 +16,32 @@
 
 	<dependencies>
 
-		<!-- Begin OpenMRS modules -->
-
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>${project.parent.artifactId}-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>appui-omod</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>uicommons-omod</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>webservices.rest-omod</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>webservices.rest-omod-common</artifactId>
-			<type>test-jar</type>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>emrapi-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>emrapi-api-1.11</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>providermanagement-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>reporting-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>calculation-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>serialization.xstream-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>reporting-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>calculation-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>serialization.xstream-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>webservices.rest-omod</artifactId>
-			<version>2.14</version>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- End OpenMRS modules -->
-
-
 		<!-- Begin OpenMRS core -->
 
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
+			<version>${openMRSVersion}</version>
 			<type>jar</type>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
+			<version>${openMRSVersion}</version>
 			<type>jar</type>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
+			<version>${openMRSVersion}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -134,6 +49,7 @@
 		<dependency>
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
+			<version>${openMRSVersion}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -141,16 +57,88 @@
 		<dependency>
 			<groupId>org.openmrs.test</groupId>
 			<artifactId>openmrs-test</artifactId>
+			<version>${openMRSVersion}</version>
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>
 
 		<!-- End OpenMRS core -->
 
+		<!-- Begin OpenMRS modules -->
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>appui-omod</artifactId>
+			<version>${appuiVersion}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>uicommons-omod</artifactId>
+			<version>${uicommonsVersion}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>webservices.rest-omod</artifactId>
+			<version>${webservices.restVersion}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>webservices.rest-omod-common</artifactId>
+			<version>${webservices.restVersion}</version>
+			<type>test-jar</type>
+		</dependency>
+
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>emrapi-api</artifactId>
+			<version>${emrapiVersion}</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>emrapi-api-1.11</artifactId>
+			<version>${emrapiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>providermanagement-api</artifactId>
+			<version>${providermanagementVersion}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>reporting-api</artifactId>
+			<version>${reportingVersion}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>calculation-api</artifactId>
+			<version>${calculationVersion}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>serialization.xstream-api</artifactId>
+			<version>${serialization.xstreamVersion}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>webservices.rest-omod</artifactId>
+			<version>${webservices.restVersion}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -159,6 +147,8 @@
 			<version>0.11.7</version>
 			<type>gem</type>
 		</dependency>
+
+		<!-- End OpenMRS modules -->
 
 	</dependencies>
 
