@@ -46,7 +46,7 @@ public class ImageDocumentHandlerTest {
    private File imageFile = new File(imgFileName);
    
    private final String randomView = RandomStringUtils.random(10);
-   
+
    private ComplexObsHandler imageHandler = new ImageHandler();
    private ComplexObsHandler imageDocumentHandler = new ImageDocumentHandler();
    
@@ -57,6 +57,7 @@ public class ImageDocumentHandlerTest {
       
       AdministrationService adminService = mock(AdministrationService.class);
       when(adminService.getGlobalProperty(eq(OpenmrsConstants.GLOBAL_PROPERTY_COMPLEX_OBS_DIR))).thenReturn( imageUrl.toURI().resolve(".").getPath() );
+      
       PowerMockito.mockStatic(Context.class);
       when(Context.getAdministrationService()).thenReturn(adminService);
    }
@@ -67,7 +68,7 @@ public class ImageDocumentHandlerTest {
 
       // Replay
       Obs savedObs = new Obs();
-      savedObs.setComplexData( new DocumentComplexData(imgFileName, new FileInputStream(imageFile)) );
+      savedObs.setComplexData( (new DocumentComplexData1_11(imgFileName, new FileInputStream(imageFile))).asComplexData() );
       imageDocumentHandler.saveObs(savedObs);
       Obs fetchedObs = imageHandler.getObs(savedObs, randomView);
       ComplexData complexData = fetchedObs.getComplexData();

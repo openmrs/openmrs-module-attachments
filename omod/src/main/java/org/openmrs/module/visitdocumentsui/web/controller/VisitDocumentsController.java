@@ -2,28 +2,17 @@ package org.openmrs.module.visitdocumentsui.web.controller;
 
 import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getCompressionRatio;
 import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getContentFamily;
-import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.isMimeTypeHandled;
 
-import java.awt.image.RenderedImage;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLConnection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import net.coobird.thumbnailator.Thumbnails;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,13 +30,12 @@ import org.openmrs.api.ObsService;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants.ContentFamily;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsContext;
-import org.openmrs.module.visitdocumentsui.obs.ComplexData_2_0;
+import org.openmrs.module.visitdocumentsui.obs.ComplexDataHelper;
 import org.openmrs.module.visitdocumentsui.obs.DocumentComplexData;
 import org.openmrs.module.visitdocumentsui.obs.ValueComplex;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.representation.CustomRepresentation;
 import org.openmrs.obs.ComplexData;
-import org.openmrs.web.servlet.ComplexObsServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -62,7 +50,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 public class VisitDocumentsController {
 
    @Autowired
-   @Qualifier(VisitDocumentsConstants.MODULE_CONTEXT_QUALIFIER)
+   @Qualifier(VisitDocumentsConstants.COMPONENT_VDUI_CONTEXT)
    protected VisitDocumentsContext context;
 
    protected final Log log = LogFactory.getLog(getClass());
@@ -95,14 +83,14 @@ public class VisitDocumentsController {
                case IMAGE:
                   conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
                   obs = prepareComplexObs(patient.getPerson(), encounter, fileCaption, conceptComplex);
-                  obs = saveImageDocument(obs, uploadedFile, instructions, context.getObsService());
+                  obs = saveImageDocument(obs, uploadedFile, instructions, context.getObsService(), context.getComplexDataHelper());
                   break;
                   
                case OTHER:
                default:
                   conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
                   obs = prepareComplexObs(patient.getPerson(), encounter, fileCaption, conceptComplex);
-                  obs = saveOtherDocument(obs, uploadedFile, instructions, context.getObsService());
+                  obs = saveOtherDocument(obs, uploadedFile, instructions, context.getObsService(), context.getComplexDataHelper());
                   break;
             }
          }
@@ -122,7 +110,7 @@ public class VisitDocumentsController {
       return obs;
    }
 
-   protected Obs saveImageDocument(Obs obs, MultipartFile file, String instructions, ObsService obsService)
+   protected Obs saveImageDocument(Obs obs, MultipartFile file, String instructions, ObsService obsService, ComplexDataHelper complexDataHelper)
          throws IOException
    {
       Object image = file.getInputStream();
@@ -130,14 +118,14 @@ public class VisitDocumentsController {
       if (compressionRatio < 1) {
          image = Thumbnails.of(file.getInputStream()).scale(compressionRatio).asBufferedImage();
       }
-      obs.setComplexData( new DocumentComplexData(instructions, file.getOriginalFilename(), image, file.getContentType()) );
+      obs.setComplexData( complexDataHelper.build(instructions, file.getOriginalFilename(), image, file.getContentType()).asComplexData() );
       return obsService.saveObs(obs, getClass().toString());
    }
    
-   protected Obs saveOtherDocument(Obs obs, MultipartFile file, String instructions, ObsService obsService)
+   protected Obs saveOtherDocument(Obs obs, MultipartFile file, String instructions, ObsService obsService, ComplexDataHelper complexDataHelper)
          throws IOException
    {
-      obs.setComplexData( new DocumentComplexData(instructions, file.getOriginalFilename(), file.getBytes(), file.getContentType()) );
+      obs.setComplexData( complexDataHelper.build(instructions, file.getOriginalFilename(), file.getBytes(), file.getContentType()).asComplexData() );
       return obsService.saveObs(obs, getClass().toString());
    }
 
@@ -168,26 +156,30 @@ public class VisitDocumentsController {
    }
    
    @RequestMapping(value = VisitDocumentsConstants.DOWNLOAD_DOCUMENT_URL, method = RequestMethod.GET)
-   public void downloadDocument(@RequestParam("obs") String obsUuid, @RequestParam(value="view", required=false) String view,
-         HttpServletResponse response)
+   public void downloadDocument(@RequestParam("obs") String obsUuid, @RequestParam(value="view", required=false) String view, HttpServletResponse response)
    {
       if (StringUtils.isEmpty(view))
          view = VisitDocumentsConstants.DOC_VIEW_ORIGINAL;
 
+      // Getting the Core/Platform complex data object
       Obs obs = context.getObsService().getObsByUuid(obsUuid);
       Obs complexObs = context.getObsService().getComplexObs(obs.getObsId(), view);
       ComplexData complexData = complexObs.getComplexData();
       
-      String mimeType = getContentType(complexData);
+      // Switching to our complex data object
+      ValueComplex valueComplex = new ValueComplex(obs.getValueComplex());
+      DocumentComplexData docComplexData = context.getComplexDataHelper().build(valueComplex.getInstructions(), complexData);
+      
+      String mimeType = docComplexData.getMimeType();
       try {
          // The document meta data is sent as HTTP headers.
          response.setContentType(mimeType);
          response.addHeader("Content-Family", getContentFamily(mimeType).name());   // custom header
-         response.addHeader("File-Name", complexData.getTitle());   // custom header
-         response.addHeader("File-Ext", getExtension(complexData.getTitle(), mimeType));   // custom header
+         response.addHeader("File-Name", docComplexData.getTitle());   // custom header
+         response.addHeader("File-Ext", getExtension(docComplexData.getTitle(), mimeType));   // custom header
          switch (getContentFamily(mimeType)) {
             default:
-               response.getOutputStream().write(getByteArray(complexData));
+               response.getOutputStream().write(docComplexData.asByteArray());
                break;
          }
       }
@@ -218,77 +210,5 @@ public class VisitDocumentsController {
          ext = extFromMimeType;
       }
       return ext;
-   }
-   
-   /**
-    * Extracts the MIME type of a {@link ComplexData} instance.
-    * @param complexData
-    * @return The MIME type (or content type).
-    */
-   public static String getContentType(ComplexData complexData) {
-      
-      if (complexData instanceof ComplexData_2_0) {
-         ComplexData_2_0 complexData_2_0 = (ComplexData_2_0) complexData;
-         if (isMimeTypeHandled(complexData_2_0.getMimeType()))   // Perhaps too restrictive
-            return complexData_2_0.getMimeType();
-      }
-      
-      byte[] bytes = getByteArray(complexData);
-      if (ArrayUtils.isEmpty(bytes))
-         return VisitDocumentsConstants.UNKNOWN_MIME_TYPE;
-      
-      // guessing the content type
-      InputStream stream = new BufferedInputStream(new ByteArrayInputStream(bytes));
-      try {
-         String mimeType = URLConnection.guessContentTypeFromStream(stream); 
-         return mimeType == null ? VisitDocumentsConstants.UNKNOWN_MIME_TYPE : mimeType;
-      } catch (IOException e) {
-         return VisitDocumentsConstants.UNKNOWN_MIME_TYPE;
-      }
-   }
-   
-   /**
-    * This returns the byte array out of the complex data's inner data.
-    * This is borrowed from {@link ComplexObsServlet}.
-    * @return The byte array, or an empty array if an error occurred.
-    */
-   public static byte[] getByteArray(ComplexData complexData)
-   {
-      final byte[] emptyContent = new byte[0];
-      
-      Object data = (complexData != null) ? complexData.getData() : emptyContent;
-      
-      if (data == null) {
-         return emptyContent;
-      }
-      if (data instanceof byte[]) {
-         return (byte[]) data;         
-      }
-      else if (RenderedImage.class.isAssignableFrom(data.getClass())) {
-         RenderedImage image = (RenderedImage) data;
-
-         ByteArrayOutputStream bytesOutStream = new ByteArrayOutputStream();
-         try {
-            ImageOutputStream imgOutStream = ImageIO.createImageOutputStream(bytesOutStream);
-            String extension = FilenameUtils.getExtension(complexData.getTitle());
-            ImageIO.write(image, extension, imgOutStream);
-            imgOutStream.close();
-         }
-         catch (IOException e) {
-            return emptyContent;
-         }
-         
-         return bytesOutStream.toByteArray();
-      }
-      else if (InputStream.class.isAssignableFrom(data.getClass())) {
-         try {
-            return IOUtils.toByteArray((InputStream) data);
-         } catch (IOException e) {
-            return emptyContent;
-         }
-      }
-      else {
-         return emptyContent;
-      }
    }
 }

@@ -22,12 +22,12 @@ import org.openmrs.EncounterType;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.BaseModuleActivator;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
  */
-public class VisitDocumentsActivator implements ModuleActivator {
+public class VisitDocumentsActivator extends BaseModuleActivator {
    
    protected Log log = LogFactory.getLog(getClass());
       

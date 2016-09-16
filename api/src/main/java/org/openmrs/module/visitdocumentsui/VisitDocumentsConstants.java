@@ -25,14 +25,19 @@ public class VisitDocumentsConstants {
    public static final String MODULE_ARTIFACT_ID = "visitdocumentsui";
 
    public static final String MODULE_SHORT_ID = "VDUI";
-
-   public static final String MODULE_CONTEXT_QUALIFIER = "visitDocumentsContext";
-
+   
    public static final String MODULE_BASE_URL = "/" + MODULE_ARTIFACT_ID;
 
    public static final String UPLOAD_DOCUMENT_URL = MODULE_BASE_URL + "/upload";
 
    public static final String DOWNLOAD_DOCUMENT_URL = MODULE_BASE_URL + "/download";
+   
+   /*
+    * Spring components qualifiers
+    */
+   public static final String COMPONENT_VDUI_CONTEXT = MODULE_ARTIFACT_ID + ".VisitDocumentsContext";
+   
+   public static final String COMPONENT_COMPLEXDATA_HELPER = MODULE_ARTIFACT_ID + ".ComplexDataHelper";
 
    /*
     * Docs config

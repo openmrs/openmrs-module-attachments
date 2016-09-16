@@ -27,7 +27,7 @@ public class ImageDocumentHandler extends AbstractDocumentHandler {
    }
    
    @Override
-   protected DocumentComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view) {
+   protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view) {
       
       String fileName = valueComplex.getFileName();
       if (view.equals(VisitDocumentsConstants.DOC_VIEW_THUMBNAIL)) {
@@ -41,7 +41,8 @@ public class ImageDocumentHandler extends AbstractDocumentHandler {
       ComplexData complexData = tmpObs.getComplexData();
       
       // Then we build our own custom complex data
-      return new DocumentComplexData(valueComplex.getInstructions(), complexData.getTitle(), complexData.getData(), valueComplex.getMimeType());
+      return getComplexDataHelper().build(valueComplex.getInstructions(), complexData.getTitle(), complexData.getData(), valueComplex.getMimeType())
+            .asComplexData();
    }
    
    @Override

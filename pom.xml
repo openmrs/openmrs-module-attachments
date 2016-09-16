@@ -60,12 +60,14 @@
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
 			<version>${openMRSVersion}</version>
+			<scope>provided</scope>
 			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
 			<version>${openMRSVersion}</version>
+			<scope>provided</scope>
 			<type>jar</type>
 		</dependency>
 		<dependency>
@@ -94,11 +96,13 @@
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>appframework-api</artifactId>
 			<version>${appframeworkVersion}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>uiframework-api</artifactId>
 			<version>${uiframeworkVersion}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -155,6 +159,7 @@
 
 	<modules>
 		<module>api</module>
+		<module>api-2.0</module>
 		<module>omod</module>
 	</modules>
 </project>

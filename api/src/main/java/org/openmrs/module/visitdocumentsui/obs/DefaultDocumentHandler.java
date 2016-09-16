@@ -34,13 +34,14 @@ public class DefaultDocumentHandler extends AbstractDocumentHandler {
       }
       
       // Then we build our own custom complex data
-      return new DocumentComplexData(valueComplex.getInstructions(), complexData.getTitle(), complexData.getData(), valueComplex.getMimeType());
+      return getComplexDataHelper().build(valueComplex.getInstructions(), complexData.getTitle(), complexData.getData(), valueComplex.getMimeType())
+         .asComplexData();
    }
    
    protected boolean deleteComplexData(Obs obs, DocumentComplexData docComplexData) {
       // We use a temp obs whose value complex points to the file name
       Obs tmpObs = new Obs();
-      tmpObs.setValueComplex(docComplexData.getTitle());   // Temp obs used as a safety
+      tmpObs.setValueComplex(docComplexData.asComplexData().getTitle());   // Temp obs used as a safety
       return getParent().purgeComplexData(tmpObs);
    }
    

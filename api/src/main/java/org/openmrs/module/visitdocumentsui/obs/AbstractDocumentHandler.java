@@ -7,6 +7,8 @@ import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.obs.ComplexData;
 import org.openmrs.obs.ComplexObsHandler;
 import org.openmrs.obs.handler.AbstractHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Double inheritance class.
@@ -15,10 +17,18 @@ import org.openmrs.obs.handler.AbstractHandler;
 public abstract class AbstractDocumentHandler extends AbstractHandler implements ComplexObsHandler {
 
   private ComplexObsHandler parent;
-
+  
+  @Autowired
+  @Qualifier(VisitDocumentsConstants.COMPONENT_COMPLEXDATA_HELPER)
+  private ComplexDataHelper complexDataHelper;
+  
   public AbstractDocumentHandler() {
     super();
     setParentComplexObsHandler();
+  }
+  
+  protected ComplexDataHelper getComplexDataHelper() {
+     return complexDataHelper;
   }
 
   /*
@@ -55,7 +65,7 @@ public abstract class AbstractDocumentHandler extends AbstractHandler implements
 
   /**
   * @param complexData An obs's complex data.
-  * @return null if this is not our implementation, the custom {@link DocumentComplexData} otherwise.
+  * @return null if this is not our implementation, the custom {@link DocumentComplexData_old} otherwise.
   */
   public static DocumentComplexData fetchDocumentComplexData(ComplexData complexData) {
 

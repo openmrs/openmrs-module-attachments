@@ -35,6 +35,7 @@ import org.openmrs.api.VisitService;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.utils.ModuleProperties;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants.ContentFamily;
+import org.openmrs.module.visitdocumentsui.obs.ComplexDataHelper;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,7 +44,7 @@ import org.springframework.stereotype.Component;
 /**
  * Inject this class to access services and global properties.
  */
-@Component(VisitDocumentsConstants.MODULE_CONTEXT_QUALIFIER)
+@Component(VisitDocumentsConstants.COMPONENT_VDUI_CONTEXT)
 public class VisitDocumentsContext extends ModuleProperties
 {
 	protected final Log log = LogFactory.getLog(getClass());
@@ -55,6 +56,10 @@ public class VisitDocumentsContext extends ModuleProperties
 	@Autowired
    @Qualifier("adtService")
    protected AdtService adtService;
+	
+	@Autowired
+   @Qualifier(VisitDocumentsConstants.COMPONENT_COMPLEXDATA_HELPER)
+	protected ComplexDataHelper complexDataHelper;
 	
 	/*
 	 * Exposing all needed services through OUR context
@@ -87,6 +92,10 @@ public class VisitDocumentsContext extends ModuleProperties
 	public AdtService getAdtService() {
       return adtService;
    }
+	
+	public ComplexDataHelper getComplexDataHelper() {
+	   return complexDataHelper;
+	}
 	
 	public boolean doAllowEmptyCaption() {
 	   return this.getBooleanByGlobalProperty(VisitDocumentsConstants.GP_ALLOW_NO_CAPTION);

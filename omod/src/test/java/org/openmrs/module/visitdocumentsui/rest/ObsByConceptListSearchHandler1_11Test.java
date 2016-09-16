@@ -1,4 +1,4 @@
-package org.openmrs.module.visitdocumentsui.web.controller;
+package org.openmrs.module.visitdocumentsui.rest;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -14,6 +14,7 @@ import org.openmrs.Obs;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsContext;
+import org.openmrs.module.visitdocumentsui.rest.ObsByConceptListSearchHandler1_11;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
@@ -22,7 +23,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @SuppressWarnings("unchecked")
-public class ObservationsByConceptListSearchHandlerTest extends MainResourceControllerTest {
+public class ObsByConceptListSearchHandler1_11Test extends MainResourceControllerTest {
 
 	private String PATIENT_UUID = "5946f880-b197-400b-9caa-a3c661d23041";
 	private String CONCEPT_1_UUID = "a09ab2c5-878e-4905-b25d-5784167d0216";
@@ -118,7 +119,7 @@ public class ObservationsByConceptListSearchHandlerTest extends MainResourceCont
 		when(conceptServiceMock.getConceptByUuid(CONCEPT_1_UUID)).thenReturn(conceptService.getConceptByUuid(CONCEPT_1_UUID));
 		when(conceptServiceMock.getConceptByUuid(CONCEPT_3_UUID)).thenReturn(conceptService.getConceptByUuid(CONCEPT_3_UUID));
 		
-		ObservationsByConceptListSearchHandler searchHandler =  new ObservationsByConceptListSearchHandler();
+		ObsByConceptListSearchHandler1_11 searchHandler =  new ObsByConceptListSearchHandler1_11();
 		List<Concept> conceptList = searchHandler.parseConceptList(conceptListStr, conceptServiceMock);
 		
 		Assert.assertEquals(3, conceptList.size());
