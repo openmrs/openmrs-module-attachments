@@ -53,7 +53,7 @@
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
-			<artifactId>emrapi-api-1.11</artifactId>
+			<artifactId>emrapi-api-1.10</artifactId>
 			<scope>provided</scope>
 		</dependency>
 
@@ -78,6 +78,14 @@
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>serialization.xstream-api</artifactId>
+			<version>${serializationxstreamVersion}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>serialization.xstream-api-1.10</artifactId>
+			<version>${serializationxstreamVersion}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -116,12 +124,14 @@
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
 			<type>jar</type>
+			<version>${openMRSVersion}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
 			<type>jar</type>
+			<version>${openMRSVersion}</version>
 		</dependency>
 
 		<dependency>
@@ -129,6 +139,7 @@
 			<artifactId>openmrs-api</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>
+			<version>${openMRSVersion}</version>
 		</dependency>
 
 		<dependency>
@@ -136,6 +147,7 @@
 			<artifactId>openmrs-web</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>
+			<version>${openMRSVersion}</version>
 		</dependency>
 
 		<dependency>
@@ -143,6 +155,7 @@
 			<artifactId>openmrs-test</artifactId>
 			<type>pom</type>
 			<scope>test</scope>
+			<version>${openMRSVersion}</version>
 		</dependency>
 
 		<!-- End OpenMRS core -->
