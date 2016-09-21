@@ -7,26 +7,19 @@
         <version>1.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>visitdocumentsui-api-2.0</artifactId>
+    <artifactId>visitdocumentsui-api-1.11</artifactId>
     <packaging>jar</packaging>
-    <name>Visit Documents UI API 2.0</name>
-    <description>API 2.0 project for Visit Documents UI</description>
+    <name>Visit Documents UI API 1.11</name>
+    <description>API 1.11 project for Visit Documents UI</description>
 
     <properties>
-        <openMRSVersion>2.0.0</openMRSVersion>
+        <openMRSVersion>1.11.4</openMRSVersion>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>${project.parent.artifactId}-api</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.parent.groupId}</groupId>
-            <artifactId>${project.parent.artifactId}-api-1.11</artifactId>
             <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>

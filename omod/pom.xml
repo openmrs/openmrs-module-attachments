@@ -24,6 +24,12 @@
 
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>${project.parent.artifactId}-api-1.11</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>${project.parent.artifactId}-api-2.0</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
@@ -112,7 +118,7 @@
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
-			<artifactId>emrapi-api-1.11</artifactId>
+			<artifactId>emrapi-api-1.10</artifactId>
 			<version>${emrapiVersion}</version>
 			<scope>provided</scope>
 		</dependency>
@@ -141,6 +147,13 @@
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>serialization.xstream-api</artifactId>
+			<version>${serialization.xstreamVersion}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>serialization.xstream-api-1.10</artifactId>
 			<version>${serialization.xstreamVersion}</version>
 			<scope>test</scope>
 		</dependency>

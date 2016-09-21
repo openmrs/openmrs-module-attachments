@@ -40,7 +40,7 @@ import org.springframework.stereotype.Component;
  * Copyright (C) OpenMRS, LLC. All Rights Reserved.
  */
 @Component
-public class ObsByConceptListSearchHandler1_11 implements SearchHandler {
+public class ObsByConceptListSearchHandler1_10 implements SearchHandler {
 
 	protected final Log log = LogFactory.getLog(getClass());
 
@@ -49,7 +49,7 @@ public class ObsByConceptListSearchHandler1_11 implements SearchHandler {
 	protected VisitDocumentsContext context;
 
 	private final SearchConfig searchConfig = new SearchConfig("obsByConceptList", RestConstants.VERSION_1 + "/obs",
-			Arrays.asList("1.11.*", "1.12.*", "2.0.*"),
+			Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*"),
 			Arrays.asList(new SearchQuery.Builder("Allows you to retrieve Observations for a patient and a for list of concepts")
 					.withRequiredParameters("patient", "conceptList").build()));
 

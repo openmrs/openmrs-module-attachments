@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.obs.ComplexData;
 
-public class DocumentComplexData1_11 extends BaseComplexData implements DocumentComplexData {
+public class DocumentComplexData1_10 extends BaseComplexData implements DocumentComplexData {
    
    private static final long serialVersionUID = 1L;
 
@@ -15,7 +15,7 @@ public class DocumentComplexData1_11 extends BaseComplexData implements Document
     * @param instructions Custom instructions to be processed by {@link DefaultDocumentHandler#DefaultDocumentHandler() DefaultDocumentHandler}
     * @param mimeType Same as HTTP content type, @see <a href="http://www.sitepoint.com/web-foundations/mime-types-complete-list/"/>
     */
-   public DocumentComplexData1_11(String instructions, String title, Object data, String mimeType) {
+   public DocumentComplexData1_10(String instructions, String title, Object data, String mimeType) {
       super(title, data);
       if (!StringUtils.isEmpty(mimeType)) {
          this.setMimeType(mimeType);
@@ -27,7 +27,7 @@ public class DocumentComplexData1_11 extends BaseComplexData implements Document
          this.instructions = instructions;
    }
    
-   public DocumentComplexData1_11(String title, Object data) {
+   public DocumentComplexData1_10(String title, Object data) {
       this("", title, data, "");
    }
 

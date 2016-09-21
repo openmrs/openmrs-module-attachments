@@ -38,6 +38,8 @@ public class VisitDocumentsConstants {
    public static final String COMPONENT_VDUI_CONTEXT = MODULE_ARTIFACT_ID + ".VisitDocumentsContext";
    
    public static final String COMPONENT_COMPLEXDATA_HELPER = MODULE_ARTIFACT_ID + ".ComplexDataHelper";
+   
+   public static final String COMPONENT_VISIT_COMPATIBILITY = MODULE_ARTIFACT_ID + ".VisitCompatibility";
 
    /*
     * Docs config

@@ -15,12 +15,12 @@ import org.openmrs.obs.ComplexData;
 import org.springframework.stereotype.Component;
 
 @Component(VisitDocumentsConstants.COMPONENT_COMPLEXDATA_HELPER)
-@OpenmrsProfile(openmrsPlatformVersion = "1.11.4 - 1.12.*")
-public class ComplexDataHelper1_11 implements ComplexDataHelper {
+@OpenmrsProfile(openmrsPlatformVersion = "1.10.2 - 1.12.*")
+public class ComplexDataHelper1_10 implements ComplexDataHelper {
    
    @Override
    public DocumentComplexData build(String instructions, String title, Object data, String mimeType) {
-      return new DocumentComplexData1_11(instructions, title, data, mimeType);
+      return new DocumentComplexData1_10(instructions, title, data, mimeType);
    }
    
    @Override

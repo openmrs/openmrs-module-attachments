@@ -68,7 +68,7 @@ public class ImageDocumentHandlerTest {
 
       // Replay
       Obs savedObs = new Obs();
-      savedObs.setComplexData( (new DocumentComplexData1_11(imgFileName, new FileInputStream(imageFile))).asComplexData() );
+      savedObs.setComplexData( (new DocumentComplexData1_10(imgFileName, new FileInputStream(imageFile))).asComplexData() );
       imageDocumentHandler.saveObs(savedObs);
       Obs fetchedObs = imageHandler.getObs(savedObs, randomView);
       ComplexData complexData = fetchedObs.getComplexData();

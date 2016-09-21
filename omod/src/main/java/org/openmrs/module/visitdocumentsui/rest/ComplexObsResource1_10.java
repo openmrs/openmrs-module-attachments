@@ -9,11 +9,11 @@ import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
-import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_11.ObsResource1_11;
+import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.ObsResource1_9;
 
 @Resource(name = RestConstants.VERSION_1 + "/complexobs", order = 1, supportedClass = Obs.class,
-supportedOpenmrsVersions = {"1.11.*", "1.12.*", "2.0.*"})
-public class ComplexObsResource1_11 extends ObsResource1_11 {
+supportedOpenmrsVersions = {"1.10.*", "1.11.*", "1.12.*", "2.0.*"})
+public class ComplexObsResource1_10 extends ObsResource1_9 {
 
 	@Override
 	public Obs save(Obs delegate) {

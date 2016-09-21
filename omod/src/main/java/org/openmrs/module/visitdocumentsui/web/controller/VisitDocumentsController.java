@@ -27,6 +27,7 @@ import org.openmrs.Provider;
 import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
+import org.openmrs.module.visitdocumentsui.VisitCompatibility;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants.ContentFamily;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsContext;
@@ -52,6 +53,10 @@ public class VisitDocumentsController {
    @Autowired
    @Qualifier(VisitDocumentsConstants.COMPONENT_VDUI_CONTEXT)
    protected VisitDocumentsContext context;
+   
+   @Autowired
+   @Qualifier(VisitDocumentsConstants.COMPONENT_VISIT_COMPATIBILITY)
+   protected VisitCompatibility visitCompatibility;
 
    protected final Log log = LogFactory.getLog(getClass());
 
@@ -82,14 +87,14 @@ public class VisitDocumentsController {
             switch (getContentFamily(uploadedFile.getContentType())) {
                case IMAGE:
                   conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
-                  obs = prepareComplexObs(patient.getPerson(), encounter, fileCaption, conceptComplex);
+                  obs = prepareComplexObs(patient, encounter, fileCaption, conceptComplex);
                   obs = saveImageDocument(obs, uploadedFile, instructions, context.getObsService(), context.getComplexDataHelper());
                   break;
                   
                case OTHER:
                default:
                   conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
-                  obs = prepareComplexObs(patient.getPerson(), encounter, fileCaption, conceptComplex);
+                  obs = prepareComplexObs(patient, encounter, fileCaption, conceptComplex);
                   obs = saveOtherDocument(obs, uploadedFile, instructions, context.getObsService(), context.getComplexDataHelper());
                   break;
             }
@@ -138,7 +143,7 @@ public class VisitDocumentsController {
       encounter.setLocation(visit.getLocation());
       boolean saveEncounter = true;
       if (context.isOneEncounterPerVisit()) {
-         List<Encounter> encounters = visit.getNonVoidedEncounters();
+         List<Encounter> encounters = visitCompatibility.getNonVoidedEncounters(visit);
          for (Encounter e : encounters) {
             if (e.getEncounterType().getUuid() == encounterType.getUuid()) {
                encounter = e;
