@@ -20,7 +20,7 @@ angular.module('vdui.widget.modalWebcam', [])
       visible: '=',
       disabled: '=?'
     },
-    templateUrl: '/' + module.getPath(OPENMRS_CONTEXT_PATH) + '/templates/modalWebcam.page',
+    templateUrl: '/' + module.getPartialsPath(OPENMRS_CONTEXT_PATH) + '/modalWebcam.html',
     controller: function($scope, $rootScope, $window) {
       $scope.imgWidth = 640;
       $scope.imgHeight = 480;

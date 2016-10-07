@@ -40,7 +40,7 @@ angular.module('vdui.widget.fileUpload', ['vdui.widget.modalWebcam'])
       scope: {
         config: '='
       },
-      templateUrl: '/' + module.getPath(OPENMRS_CONTEXT_PATH) + '/templates/fileUpload.page',
+      templateUrl: '/' + module.getPartialsPath(OPENMRS_CONTEXT_PATH) + '/fileUpload.html',
 
       controller: function($scope, $rootScope) {
 

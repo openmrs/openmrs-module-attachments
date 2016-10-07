@@ -7,7 +7,7 @@ angular.module('vdui.widget.gallery', ['vdui.service.configService'])
         config: '=?',
         obsQuery: '='
       },
-      templateUrl: '/' + module.getPath(OPENMRS_CONTEXT_PATH) + '/templates/gallery.page',
+      templateUrl: '/' + module.getPartialsPath(OPENMRS_CONTEXT_PATH) + '/gallery.html',
 
       controller: function($scope, $rootScope) {
 

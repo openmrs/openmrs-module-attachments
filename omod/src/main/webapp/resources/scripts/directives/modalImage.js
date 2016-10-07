@@ -5,7 +5,7 @@ angular.module('vdui.widget.modalImage', [])
       scope: {
         config: '='
       },
-      templateUrl: '/' + module.getPath(OPENMRS_CONTEXT_PATH) + '/templates/modalImage.page',
+      templateUrl: '/' + module.getPartialsPath(OPENMRS_CONTEXT_PATH) + '/modalImage.html',
       controller: function($scope) {
         $scope.hide = function() {
           $scope.config = null;

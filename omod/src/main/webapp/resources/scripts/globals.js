@@ -16,6 +16,10 @@ var module = new function() {
     return openmrsContextPath + '/' + this.getProvider();
   }
 
+  this.getPartialsPath = function(openmrsContextPath) {
+    return openmrsContextPath + '/ms/uiframework/resource/' + this.getProvider() + '/partials';
+  }
+
   /**
   * Turns a byte array into a Base64 encoded String.
   * See http://stackoverflow.com/a/9458996/321797

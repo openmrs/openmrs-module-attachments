@@ -153,13 +153,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>rubygems</groupId>
-			<artifactId>compass</artifactId>
-			<version>0.11.7</version>
-			<type>gem</type>
-		</dependency>
-
 		<!-- End OpenMRS modules -->
 
 	</dependencies>

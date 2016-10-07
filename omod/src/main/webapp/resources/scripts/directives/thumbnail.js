@@ -38,7 +38,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
       obs: '=',
       config: '='
     },
-    templateUrl: '/' + module.getPath(OPENMRS_CONTEXT_PATH) + '/templates/thumbnail.page',
+    templateUrl: '/' + module.getPartialsPath(OPENMRS_CONTEXT_PATH) + '/thumbnail.html',
 
     controller: function($scope) {
 

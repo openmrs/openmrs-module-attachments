@@ -2,11 +2,12 @@ package org.openmrs.module.visitdocumentsui.obs;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Obs;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.obs.ComplexData;
 import org.openmrs.obs.ComplexObsHandler;
-import org.openmrs.obs.handler.AbstractHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -14,8 +15,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * Double inheritance class.
  * The actual implementation parent must be set through {@link #setParentComplexObsHandler()}.
  */
-public abstract class AbstractDocumentHandler extends AbstractHandler implements ComplexObsHandler {
+public abstract class AbstractDocumentHandler implements ComplexObsHandler {
 
+  protected final Log log = LogFactory.getLog(getClass());
+   
   private ComplexObsHandler parent;
   
   @Autowired
