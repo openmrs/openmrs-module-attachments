@@ -129,25 +129,6 @@
   }
 
 </style>
-<script type="text/ng-template" id="vdui_thumbnail-confirm-dialog">
-  <div>
-    <div class="dialog-header">
-      <h3>${ ui.message("visitdocumentsui.visitdocumentspage.delete.title") }</h3>
-    </div>
-    <div class="dialog-content">
-      <input type="hidden" id="encounterId" value=""/>
-      <ul>
-        <li class="info">
-          <span>${ ui.message("visitdocumentsui.visitdocumentspage.delete.confirm") }</span>
-        </li>
-      </ul>
-      <button class="confirm right" ng-click="confirm()">${ ui.message("coreapps.yes") }
-        <i ng-show="showSpinner" class="icon-spinner icon-spin icon-2x" style="margin-left: 10px;"></i>
-      </button>
-      <button class="cancel" ng-click="closeThisDialog()">${ ui.message("coreapps.no") }</button>
-    </div>
-  </div>
-</script>
 
 <vdui-modal-image config="imageConfig"></vdui-modal-image>
 

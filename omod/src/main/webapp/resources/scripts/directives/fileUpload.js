@@ -44,11 +44,20 @@ angular.module('vdui.widget.fileUpload', ['vdui.widget.modalWebcam'])
 
       controller: function($scope, $rootScope) {
 
-        var msgs = [
+        // Loading i18n messages
+        var msgCodes = [
           module.getProvider() + ".fileUpload.success",
-          module.getProvider() + ".fileUpload.error"
+          module.getProvider() + ".fileUpload.error",
+          module.getProvider() + ".visitdocumentspage.fileTitle",
+          module.getProvider() + ".dropzone.innerlabel",
+          module.getProvider() + ".visitdocumentspage.commentTitle",
+          module.getProvider() + ".misc.label.enterCaption",
+          module.getProvider() + ".visitdocumentspage.uploadButton",
+          module.getProvider() + ".visitdocumentspage.clearFormsButton"
         ]
-        emr.loadMessages(msgs.toString());
+        emr.loadMessages(msgCodes.toString(), function(msgs) {
+          $scope.msgs = msgs;
+        });
 
         var providerUuid = "";
         $scope.visitUuid = "";  // In scope for toggling ng-show

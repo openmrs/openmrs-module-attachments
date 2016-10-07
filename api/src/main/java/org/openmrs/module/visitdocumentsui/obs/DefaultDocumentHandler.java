@@ -29,7 +29,7 @@ public class DefaultDocumentHandler extends AbstractDocumentHandler {
          complexData = new ComplexData(valueComplex.getFileName(), null);
       }
       else {
-         tmpObs = getParent().getObs(tmpObs, VisitDocumentsConstants.DOC_VIEW_RANDOM); // BinaryDataHandler doesn't handle several views
+         tmpObs = getParent().getObs(tmpObs, VisitDocumentsConstants.BINARYDATA_HANDLER_VIEW); // BinaryDataHandler doesn't handle several views
          complexData = tmpObs.getComplexData();
       }
       

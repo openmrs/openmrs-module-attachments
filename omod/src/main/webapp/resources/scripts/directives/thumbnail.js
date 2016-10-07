@@ -42,14 +42,20 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
 
     controller: function($scope) {
 
-      var msgs = [
+      var msgCodes = [
         module.getProvider() + ".thumbail.get.error",
         module.getProvider() + ".thumbail.save.success",
         module.getProvider() + ".thumbail.save.error",
         module.getProvider() + ".thumbail.delete.success",
-        module.getProvider() + ".thumbail.delete.error"
+        module.getProvider() + ".thumbail.delete.error",
+        module.getProvider() + ".visitdocumentspage.delete.title",
+        module.getProvider() + ".visitdocumentspage.delete.confirm",
+        "coreapps.yes",
+        "coreapps.no"
       ]
-      emr.loadMessages(msgs.toString());
+      emr.loadMessages(msgCodes.toString(), function(msgs) {
+        $scope.msgs = msgs;
+      });
 
       $scope.canEdit = function() {
         if($scope.config.canEdit) {
@@ -128,7 +134,8 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
       $scope.confirmDelete = function() {
         // https://github.com/likeastore/ngDialog/blob/master/README.md
         ngDialog.open({
-          template: 'vdui_thumbnail-confirm-dialog',
+          // template: 'vdui_thumbnail-confirm-dialog',
+          template: '/' + module.getPartialsPath(OPENMRS_CONTEXT_PATH) + '/deleteDialog.html',
           scope: $scope,
           controller: ['$scope', function($scope) {
             $scope.showSpinner = false;

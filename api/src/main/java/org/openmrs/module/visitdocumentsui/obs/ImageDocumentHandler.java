@@ -37,7 +37,7 @@ public class ImageDocumentHandler extends AbstractDocumentHandler {
       // We invoke the parent to inherit from the file reading routines.
       Obs tmpObs = new Obs();
       tmpObs.setValueComplex(fileName);   // Temp obs used as a safety
-      tmpObs = getParent().getObs(tmpObs, VisitDocumentsConstants.DOC_VIEW_RANDOM); // ImageHandler doesn't handle several views
+      tmpObs = getParent().getObs(tmpObs, VisitDocumentsConstants.IMAGE_HANDLER_VIEW); // ImageHandler doesn't handle several views
       ComplexData complexData = tmpObs.getComplexData();
       
       // Then we build our own custom complex data

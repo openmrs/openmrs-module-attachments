@@ -55,6 +55,10 @@ public class VisitDocumentsConstants {
    public static final String DOC_VIEW_CRUD = DOC_VIEW_ORIGINAL;  // Use this view for CRUD operations where a view must be provided.
    
    public static final String DOC_VIEW_RANDOM = "complexdata.view.random:m3k0m";
+   
+   public static final String IMAGE_HANDLER_VIEW = "RAW_VIEW"; // Default/unique view handled by Core's ImageHandler
+   
+   public static final String BINARYDATA_HANDLER_VIEW = "RAW_VIEW"; // Default/unique view handled by Core's BinaryDataHandler
 
    /*
     * Global properties
