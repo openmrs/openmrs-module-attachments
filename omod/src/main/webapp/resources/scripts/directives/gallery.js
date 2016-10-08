@@ -11,6 +11,15 @@ angular.module('vdui.widget.gallery', ['vdui.service.configService'])
 
       controller: function($scope, $rootScope) {
 
+        // Loading i18n messages
+        var msgCodes = [
+          module.getProvider() + ".gallery.loadMore",
+          module.getProvider() + ".gallery.noDocuments"
+        ]
+        emr.loadMessages(msgCodes.toString(), function(msgs) {
+          $scope.msgs = msgs;
+        });
+
         var fetch = function(query) {
           query.startIndex = $scope.startIndex;
           $scope.showSpinner = true;

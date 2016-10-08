@@ -20,11 +20,11 @@
     </div>
     <div style="clear:both;"></div>
     <button ng-show="startIndex > 0" class="vdui_load-more-button" ng-click="load(config, startIndex)">
-      ${ui.message("visitdocumentsui.gallery.loadMore")}
+      {{msgs["visitdocumentsui.gallery.loadMore"]}}
       <i ng-show="showSpinner" class="icon-spinner icon-spin icon-1x" style="margin-left: 10px;"></i>
     </button>
     <div ng-hide="obsArray.length > 0">
-      ${ui.message("visitdocumentsui.gallery.noDocuments")}
+      {{msgs["visitdocumentsui.gallery.noDocuments"]}}
     </div>
   </div>
 </div>

@@ -43,11 +43,12 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
     controller: function($scope) {
 
       var msgCodes = [
-        module.getProvider() + ".thumbail.get.error",
-        module.getProvider() + ".thumbail.save.success",
-        module.getProvider() + ".thumbail.save.error",
+        module.getProvider() + ".misc.label.enterCaption",
+        // module.getProvider() + ".thumbail.get.error",
+        // module.getProvider() + ".thumbail.save.success",
+        // module.getProvider() + ".thumbail.save.error",
         module.getProvider() + ".thumbail.delete.success",
-        module.getProvider() + ".thumbail.delete.error",
+        // module.getProvider() + ".thumbail.delete.error",
         module.getProvider() + ".visitdocumentspage.delete.title",
         module.getProvider() + ".visitdocumentspage.delete.confirm",
         "coreapps.yes",
@@ -122,11 +123,11 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
           comment: $scope.obs.comment
         });
         saved.$promise.then(function(obs) {
-          $scope.toggleEditMode(false);
-          $().toastmessage('showToast', { type: 'success', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.save.success") });
+          // $scope.toggleEditMode(false);
+          emr.successMessage(module.getProvider() + ".thumbail.save.success");
         }, function(reason) {
           $scope.obs.comment = caption;
-          $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.save.error") });
+          emr.errorMessage(module.getProvider() + ".thumbail.save.error");
           console.log(err);
         });
       }
@@ -134,7 +135,6 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
       $scope.confirmDelete = function() {
         // https://github.com/likeastore/ngDialog/blob/master/README.md
         ngDialog.open({
-          // template: 'vdui_thumbnail-confirm-dialog',
           template: '/' + module.getPartialsPath(OPENMRS_CONTEXT_PATH) + '/deleteDialog.html',
           scope: $scope,
           controller: ['$scope', function($scope) {
@@ -155,14 +155,14 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
         .$promise.then(function(res) {
           scope.toggleVisible(false);
           scope.closeThisDialog();
-          $().toastmessage('showToast', { type: 'success', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.delete.success") });
+          emr.successMessage(module.getProvider() + ".thumbail.delete.success");
         }, function(err) {
           scope.closeThisDialog();
           if (purge === true) { // We should only do this if error 500 is the cause: https://github.com/openmrs/openmrs-core/blob/1.11.x/api/src/main/java/org/openmrs/api/impl/ObsServiceImpl.java#L213
             scope.purge(null, scope);
           }
           else {
-            $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.delete.error") });  
+            emr.errorMessage(module.getProvider() + ".thumbail.delete.error");
             console.log(err);
           }
         }); 
@@ -204,7 +204,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
           setIconHtml($scope.obs);
         }, function() {
           $scope.loading = false;
-          $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.get.error") });
+          emr.errorMessage(module.getProvider() + ".thumbail.get.error");
           console.log(err);
         });
       }
@@ -232,7 +232,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
           }
         }, function() {
           $scope.loading = false;
-          $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".thumbail.get.error") });
+          emr.errorMessage(module.getProvider() + ".thumbail.get.error");
           console.log(err);
         });
       }
