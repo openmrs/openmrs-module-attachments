@@ -17,7 +17,7 @@
 	<dependencies>
 
 		<!-- Add other dependencies from parent's pom: <dependency> <groupId>org.other.library</groupId> 
-			<artifactId>library-name</artifactId> </dependency> -->
+		<artifactId>library-name</artifactId> </dependency> -->
 
 		<!-- Begin OpenMRS core -->
 
@@ -27,6 +27,12 @@
 			<version>${openMRSVersion}</version>
 			<scope>provided</scope>
 			<type>jar</type>
+			<exclusions>
+				<exclusion>
+					<groupId>javassist</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -43,6 +49,12 @@
 			<version>${openMRSVersion}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javassist</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>

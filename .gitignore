@@ -5,6 +5,7 @@
 .project
 *.sass-cache
 target
+.java-version
 
 # Package Files #
 *.jar

@@ -44,11 +44,11 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
 
       var msgCodes = [
         module.getProvider() + ".misc.label.enterCaption",
-        // module.getProvider() + ".thumbail.get.error",
-        // module.getProvider() + ".thumbail.save.success",
-        // module.getProvider() + ".thumbail.save.error",
+        module.getProvider() + ".thumbail.get.error",
+        module.getProvider() + ".thumbail.save.success",
+        module.getProvider() + ".thumbail.save.error",
         module.getProvider() + ".thumbail.delete.success",
-        // module.getProvider() + ".thumbail.delete.error",
+        module.getProvider() + ".thumbail.delete.error",
         module.getProvider() + ".visitdocumentspage.delete.title",
         module.getProvider() + ".visitdocumentspage.delete.confirm",
         "coreapps.yes",

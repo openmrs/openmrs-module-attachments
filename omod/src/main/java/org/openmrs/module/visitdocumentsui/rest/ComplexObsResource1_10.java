@@ -12,7 +12,7 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.ObsResource1_9;
 
 @Resource(name = RestConstants.VERSION_1 + "/complexobs", order = 1, supportedClass = Obs.class,
-supportedOpenmrsVersions = {"1.10.*", "1.11.*", "1.12.*", "2.0.*"})
+supportedOpenmrsVersions = {"1.10.*", "1.11.*", "1.12.*"})
 public class ComplexObsResource1_10 extends ObsResource1_9 {
 
 	@Override
@@ -22,20 +22,18 @@ public class ComplexObsResource1_10 extends ObsResource1_9 {
 
 	@Override
 	public void purge(Obs delegate, RequestContext context) throws ResponseException {
-
 		Obs obs = complexify(delegate);
 		String encounterUuid = obs.getEncounter().getUuid();
-
 		super.purge(obs, context);
-
+		
 		purgeEncounterIfEmpty(Context.getEncounterService(), encounterUuid);
 	}
 
 	public static Obs complexify(Obs delegate) {
 		if (isComplex(delegate) && null == delegate.getComplexData()) {
-			String valueComplex = delegate.getValueComplex();
+//			String valueComplex = delegate.getValueComplex();
 			delegate = Context.getObsService().getComplexObs(delegate.getId(), VisitDocumentsConstants.DOC_VIEW_CRUD);
-			delegate.setValueComplex(valueComplex);
+//			delegate.setValueComplex(valueComplex);
 		}
 		return delegate;
 	}
@@ -50,7 +48,7 @@ public class ComplexObsResource1_10 extends ObsResource1_9 {
 	 * @param encounterService
 	 * @param encounterUuid
 	 */
-	protected void purgeEncounterIfEmpty(EncounterService encounterService, String encounterUuid) {
+	public static void purgeEncounterIfEmpty(EncounterService encounterService, String encounterUuid) {
 		Encounter encounter = encounterService.getEncounterByUuid(encounterUuid);
 		if (encounter.getAllObs().size() == 0) {
 			encounterService.purgeEncounter(encounter);
