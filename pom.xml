@@ -147,5 +147,6 @@
 		<module>api-1.11</module>
 		<module>api-2.0</module>
 		<module>omod</module>
+		<module>omod-2.0</module>
 	</modules>
 </project>

@@ -31,6 +31,10 @@ omod/.classpath
 omod/.project
 omod/.settings/*
 omod/target/*
+omod-2.0/.classpath
+omod-2.0/.project
+omod-2.0/.settings/*
+omod-2.0/target/*
 /.settings
 
 # OS X auto-generated files #
@@ -38,6 +42,7 @@ omod/target/*
 
  *.css
 omod/src/main/compass/sass-external/*
+omod-2.0/src/main/compass/sass-external/*
 
 # Rubygems build directories #
 omod/.rubygems

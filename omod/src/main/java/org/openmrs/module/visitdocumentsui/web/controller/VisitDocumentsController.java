@@ -77,25 +77,25 @@ public class VisitDocumentsController {
 
          while (fileNameIterator.hasNext()) {
             String uploadedFileName = fileNameIterator.next();
-            MultipartFile uploadedFile = request.getFile(uploadedFileName);
+            MultipartFile multipartFile = request.getFile(uploadedFileName);
             
             Encounter encounter = getVisitDocumentEncounter(patient, visit, context.getEncounterType(), provider, context.getEncounterRole(), context.getEncounterService());
             ConceptComplex conceptComplex = null;
             if (StringUtils.isEmpty(instructions))
                instructions = ValueComplex.INSTRUCTIONS_DEFAULT;
             
-            switch (getContentFamily(uploadedFile.getContentType())) {
+            switch (getContentFamily(multipartFile.getContentType())) {
                case IMAGE:
                   conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
                   obs = prepareComplexObs(patient, encounter, fileCaption, conceptComplex);
-                  obs = saveImageDocument(obs, uploadedFile, instructions, context.getObsService(), context.getComplexDataHelper());
+                  obs = saveImageDocument(obs, multipartFile, instructions, context.getObsService(), context.getComplexDataHelper());
                   break;
                   
                case OTHER:
                default:
                   conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
                   obs = prepareComplexObs(patient, encounter, fileCaption, conceptComplex);
-                  obs = saveOtherDocument(obs, uploadedFile, instructions, context.getObsService(), context.getComplexDataHelper());
+                  obs = saveOtherDocument(obs, multipartFile, instructions, context.getObsService(), context.getComplexDataHelper());
                   break;
             }
          }
@@ -108,33 +108,33 @@ public class VisitDocumentsController {
       return ConversionUtil.convertToRepresentation(obs, new CustomRepresentation(VisitDocumentsConstants.REPRESENTATION_OBS));
    }
    
-   protected Obs prepareComplexObs(Person person, Encounter encounter, String fileCaption, ConceptComplex conceptComplex) {
+   public Obs prepareComplexObs(Person person, Encounter encounter, String fileCaption, ConceptComplex conceptComplex) {
       Obs obs = new Obs(person, conceptComplex, new Date(), encounter.getLocation());
       obs.setEncounter(encounter);
       obs.setComment(fileCaption);
       return obs;
    }
 
-   protected Obs saveImageDocument(Obs obs, MultipartFile file, String instructions, ObsService obsService, ComplexDataHelper complexDataHelper)
+   public Obs saveImageDocument(Obs obs, MultipartFile multipartFile, String instructions, ObsService obsService, ComplexDataHelper complexDataHelper)
          throws IOException
    {
-      Object image = file.getInputStream();
-      double compressionRatio = getCompressionRatio(file.getSize(), 1000000 * context.getMaxStorageFileSize());
+      Object image = multipartFile.getInputStream();
+      double compressionRatio = getCompressionRatio(multipartFile.getSize(), 1000000 * context.getMaxStorageFileSize());
       if (compressionRatio < 1) {
-         image = Thumbnails.of(file.getInputStream()).scale(compressionRatio).asBufferedImage();
+         image = Thumbnails.of(multipartFile.getInputStream()).scale(compressionRatio).asBufferedImage();
       }
-      obs.setComplexData( complexDataHelper.build(instructions, file.getOriginalFilename(), image, file.getContentType()).asComplexData() );
+      obs.setComplexData( complexDataHelper.build(instructions, multipartFile.getOriginalFilename(), image, multipartFile.getContentType()).asComplexData() );
       return obsService.saveObs(obs, getClass().toString());
    }
    
-   protected Obs saveOtherDocument(Obs obs, MultipartFile file, String instructions, ObsService obsService, ComplexDataHelper complexDataHelper)
+   public Obs saveOtherDocument(Obs obs, MultipartFile multipartFile, String instructions, ObsService obsService, ComplexDataHelper complexDataHelper)
          throws IOException
    {
-      obs.setComplexData( complexDataHelper.build(instructions, file.getOriginalFilename(), file.getBytes(), file.getContentType()).asComplexData() );
+      obs.setComplexData( complexDataHelper.build(instructions, multipartFile.getOriginalFilename(), multipartFile.getBytes(), multipartFile.getContentType()).asComplexData() );
       return obsService.saveObs(obs, getClass().toString());
    }
 
-   protected Encounter getVisitDocumentEncounter(Patient patient, Visit visit, EncounterType encounterType, Provider provider, EncounterRole encounterRole, EncounterService encounterService)
+   public Encounter getVisitDocumentEncounter(Patient patient, Visit visit, EncounterType encounterType, Provider provider, EncounterRole encounterRole, EncounterService encounterService)
    {
       Encounter encounter = new Encounter();
       encounter.setVisit(visit);

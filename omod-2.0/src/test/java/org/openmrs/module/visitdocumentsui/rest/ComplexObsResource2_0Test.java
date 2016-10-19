@@ -31,10 +31,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockMultipartFile;
 
-public class ComplexObsResource1_10Test extends BaseDelegatingResourceTest<ComplexObsResource1_10, Obs> {
+public class ComplexObsResource2_0Test extends BaseDelegatingResourceTest<ComplexObsResource2_0, Obs> {
    
    @Autowired
-   VisitDocumentsActivator activator;
+   protected VisitDocumentsActivator activator;
    
    @Autowired
    protected VisitDocumentsController controller;
@@ -87,7 +87,7 @@ public class ComplexObsResource1_10Test extends BaseDelegatingResourceTest<Compl
    
    @Test
    public void postComplexObs_shouldCommentBeSaved() {
-      ComplexObsResource1_10 resource = getResource();
+      ComplexObsResource2_0 resource = getResource();
       String newComment = "Hello world!"; 
       obs.setComment(newComment);
       obs = resource.save(obs);

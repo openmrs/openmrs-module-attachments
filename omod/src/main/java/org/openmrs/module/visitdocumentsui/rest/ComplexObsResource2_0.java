@@ -11,7 +11,7 @@ import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_11.ObsResource1_11;
 
-@Resource(name = RestConstants.VERSION_1 + "/complexobs", order = 1, supportedClass = Obs.class,
+@Resource(name = RestConstants.VERSION_1 + "/obs", order = 0, supportedClass = Obs.class,
 supportedOpenmrsVersions = {"2.0.*"})
 public class ComplexObsResource2_0 extends ObsResource1_11 {
 

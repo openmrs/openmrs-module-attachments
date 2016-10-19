@@ -1,4 +1,4 @@
-angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui.service.complexObsCacheService', 'ngDialog', 'vdui.widget.modalImage'])
+angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui.service.visitDocumentService', 'vdui.service.complexObsCacheService', 'ngDialog', 'vdui.widget.modalImage'])
 
 .config(['$compileProvider', function ($compileProvider) {
   /* Prevent Angular from throwing error when querying images using 'data' protocol */
@@ -31,7 +31,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
   };
 })
 
-.directive('vduiThumbnail', ['ComplexObs', 'ComplexObsCacheService', 'ngDialog', '$http', '$window', '$sce', function(Obs, obsCache, ngDialog, $http, $window, $sce) {
+.directive('vduiThumbnail', ['ComplexObs', 'VisitDocument', 'ComplexObsCacheService', 'ngDialog', '$http', '$window', '$sce', function(Obs, VisitDocument, obsCache, ngDialog, $http, $window, $sce) {
   return {
     restrict: 'E',
     scope: {
@@ -110,6 +110,12 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
       }
 
       $scope.saveCaption = function() {
+
+        // VisitDocument.save({
+        //   uuid: $scope.obs.uuid,
+        //   comment: $scope.typedText.newCaption
+        // });
+
         var caption = $scope.obs.comment;
         if ((caption == $scope.typedText.newCaption) || ($scope.typedText.newCaption == "" && !$scope.config.allowNoCaption)) {
           $scope.toggleEditMode(false);
@@ -123,7 +129,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.complexObsService', 'vdui
           comment: $scope.obs.comment
         });
         saved.$promise.then(function(obs) {
-          // $scope.toggleEditMode(false);
+          $scope.toggleEditMode(false);
           emr.successMessage(module.getProvider() + ".thumbail.save.success");
         }, function(reason) {
           $scope.obs.comment = caption;

@@ -23,10 +23,12 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
+import org.springframework.stereotype.Component;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
  */
+@Component(VisitDocumentsConstants.COMPONENT_VDUI_ACTIVATOR)
 public class VisitDocumentsActivator extends BaseModuleActivator {
    
    protected Log log = LogFactory.getLog(getClass());
@@ -61,7 +63,7 @@ public class VisitDocumentsActivator extends BaseModuleActivator {
       {
          final String name = VisitDocumentsConstants.MODULE_SHORT_ID + " PATIENT DOCUMENT";
          final String desc = "Concept complex for 'default patient document' complex obs.";
-         final String uuid = "42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00"; // Also used in global prop. in config.xml
+         final String uuid = VisitDocumentsConstants.CONCEPT_DEFAULT_UUID;
          
          ConceptService conceptService = Context.getConceptService();
          
@@ -83,7 +85,7 @@ public class VisitDocumentsActivator extends BaseModuleActivator {
       {
          final String name = VisitDocumentsConstants.MODULE_SHORT_ID + " PATIENT IMAGE";
          final String desc = "Concept complex for 'patient images with thumbnails' complex obs.";
-         final String uuid = "7cac8397-53cd-4f00-a6fe-028e8d743f8e"; // Also used in global prop. in config.xml
+         final String uuid = VisitDocumentsConstants.CONCEPT_IMAGE_UUID;
          
          ConceptService conceptService = Context.getConceptService();
          

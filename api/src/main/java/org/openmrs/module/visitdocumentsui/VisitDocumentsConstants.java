@@ -32,14 +32,25 @@ public class VisitDocumentsConstants {
 
    public static final String DOWNLOAD_DOCUMENT_URL = MODULE_BASE_URL + "/download";
    
+   public static final String VISIT_DOCUMENT_URI = "visitdocument";
+   
    /*
     * Spring components qualifiers
     */
    public static final String COMPONENT_VDUI_CONTEXT = MODULE_ARTIFACT_ID + ".VisitDocumentsContext";
    
+   public static final String COMPONENT_VDUI_ACTIVATOR = MODULE_ARTIFACT_ID + ".VisitDocumentsActivator";
+   
    public static final String COMPONENT_COMPLEXDATA_HELPER = MODULE_ARTIFACT_ID + ".ComplexDataHelper";
    
    public static final String COMPONENT_VISIT_COMPATIBILITY = MODULE_ARTIFACT_ID + ".VisitCompatibility";
+   
+   /*
+    * Concepts (also used in global prop. in config.xml)
+    */
+   public static final String CONCEPT_DEFAULT_UUID = "42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00";
+   
+   public static final String CONCEPT_IMAGE_UUID = "7cac8397-53cd-4f00-a6fe-028e8d743f8e";
 
    /*
     * Docs config

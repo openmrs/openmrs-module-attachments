@@ -11,7 +11,7 @@ import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.ObsResource1_9;
 
-@Resource(name = RestConstants.VERSION_1 + "/complexobs", order = 1, supportedClass = Obs.class,
+@Resource(name = RestConstants.VERSION_1 + "/obs", order = 1, supportedClass = Obs.class,
 supportedOpenmrsVersions = {"1.10.*", "1.11.*", "1.12.*"})
 public class ComplexObsResource1_10 extends ObsResource1_9 {
 
@@ -31,9 +31,7 @@ public class ComplexObsResource1_10 extends ObsResource1_9 {
 
 	public static Obs complexify(Obs delegate) {
 		if (isComplex(delegate) && null == delegate.getComplexData()) {
-//			String valueComplex = delegate.getValueComplex();
 			delegate = Context.getObsService().getComplexObs(delegate.getId(), VisitDocumentsConstants.DOC_VIEW_CRUD);
-//			delegate.setValueComplex(valueComplex);
 		}
 		return delegate;
 	}
