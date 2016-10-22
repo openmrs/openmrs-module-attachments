@@ -147,6 +147,19 @@
 		<module>api-1.11</module>
 		<module>api-2.0</module>
 		<module>omod</module>
-		<module>omod-2.0</module>
 	</modules>
+
+	<profiles>
+	  <profile>
+	    <id>2.0</id>
+				<modules>
+					<module>api</module>
+					<module>api-1.11</module>
+					<module>api-2.0</module>
+					<module>omod</module>
+					<module>omod-2.0</module>
+				</modules>
+	  </profile>
+	</profiles>
+
 </project>

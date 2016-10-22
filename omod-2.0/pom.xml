@@ -16,7 +16,8 @@
 
   <properties>
     <openMRSVersion>2.0.0</openMRSVersion>
-    <emrapiVersion>1.13</emrapiVersion>
+    <!-- <emrapiVersion>1.18</emrapiVersion> -->
+    <emrapiVersion>1.19-SNAPSHOT</emrapiVersion>
     <webservices.restVersion>2.16</webservices.restVersion>
     <reportingVersion>0.10.4</reportingVersion>
     <serialization.xstreamVersion>0.2.12</serialization.xstreamVersion>
@@ -29,6 +30,14 @@
       <artifactId>${project.parent.artifactId}-api</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
+    
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>${project.parent.artifactId}-api</artifactId>
+      <version>${project.parent.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
@@ -39,12 +48,6 @@
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
       <artifactId>${project.parent.artifactId}-api-2.0</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>${project.parent.artifactId}-omod</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
 
@@ -239,7 +242,7 @@
           </configuration>
         </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings 
-          only. It has no influence on the Maven build itself. -->
+        only. It has no influence on the Maven build itself. -->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>
@@ -372,35 +375,35 @@
         </goals> <phase>generate-resources</phase> </execution> </executions> <configuration> 
         <jrubyVersion>1.7.10</jrubyVersion> <execArgs>${project.build.directory}/rubygems/bin/compass 
         compile ${basedir}/src/main/compass</execArgs> </configuration> </plugin> -->
-    </plugins>
-  </build>
+      </plugins>
+    </build>
 
-  <profiles>
-    <profile>
-      <id>watch-sass</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>de.saumya.mojo</groupId>
-            <artifactId>gem-maven-plugin</artifactId>
-            <extensions>true</extensions>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <phase>generate-resources</phase>
-              </execution>
-            </executions>
-            <configuration>
-              <jrubyVersion>1.7.10</jrubyVersion>
-              <execArgs>${project.build.directory}/rubygems/bin/compass watch
-                ${basedir}/src/main/compass</execArgs>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
+    <profiles>
+      <profile>
+        <id>watch-sass</id>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>de.saumya.mojo</groupId>
+              <artifactId>gem-maven-plugin</artifactId>
+              <extensions>true</extensions>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>exec</goal>
+                  </goals>
+                  <phase>generate-resources</phase>
+                </execution>
+              </executions>
+              <configuration>
+                <jrubyVersion>1.7.10</jrubyVersion>
+                <execArgs>${project.build.directory}/rubygems/bin/compass watch
+                  ${basedir}/src/main/compass</execArgs>
+                </configuration>
+              </plugin>
+            </plugins>
+          </build>
+        </profile>
+      </profiles>
 
-</project>
+    </project>

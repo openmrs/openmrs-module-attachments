@@ -45,6 +45,8 @@ public class VisitDocumentsConstants {
    
    public static final String COMPONENT_VISIT_COMPATIBILITY = MODULE_ARTIFACT_ID + ".VisitCompatibility";
    
+   public static final String COMPONENT_COMPLEXOBS_SAVER = MODULE_ARTIFACT_ID + ".ComplexObsSaver";
+   
    /*
     * Concepts (also used in global prop. in config.xml)
     */

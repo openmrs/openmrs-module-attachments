@@ -16,8 +16,8 @@ import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 @Resource(name = RestConstants.VERSION_1 + "/visitdocument", supportedClass = VisitDocument.class,
-supportedOpenmrsVersions = {"1.10.*", "1.11.*", "1.12.*"})
-public class VisitDocumentResource1_10 extends DataDelegatingCrudResource<VisitDocument> {
+supportedOpenmrsVersions = {"2.0.*"})
+public class VisitDocumentResource2_0 extends DataDelegatingCrudResource<VisitDocument> {
 
    protected static final String REASON = "REST web service";
    

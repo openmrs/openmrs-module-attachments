@@ -1,27 +1,19 @@
 package org.openmrs.module.visitdocumentsui.rest;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Obs;
-import org.openmrs.api.ObsService;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.module.visitdocumentsui.obs.TestHelper;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class VisitDocumentController1_10Test extends MainResourceControllerTest {
-   
-   @Autowired
-   protected ObsService obsService;
+public class VisitDocumentController2_0Test extends MainResourceControllerTest {
    
    @Autowired
    protected TestHelper testHelper;
@@ -65,19 +57,5 @@ public class VisitDocumentController1_10Test extends MainResourceControllerTest 
       // Verif
       String comment = (String) PropertyUtils.getProperty(doc, "comment");
       assertEquals(editedComment, comment);
-   }
-   
-   @Test
-   public void deleteVisitDocument_shouldPurgeObs() throws Exception {
-      // Setup
-      File file = new File(testHelper.getLastSavedFilePath());
-      assertTrue(file.exists());
-      
-      // Replay
-      handle( newDeleteRequest(getURI(), new Parameter("purge", "")) );
-      
-      // Verif
-      assertNull(obsService.getObsByUuid(getUuid()));
-      assertFalse(file.exists());
    }
 }

@@ -11,6 +11,7 @@ package org.openmrs.module.visitdocumentsui;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +25,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.openmrs.Concept;
 import org.openmrs.ConceptComplex;
+import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
+import org.openmrs.Patient;
+import org.openmrs.Provider;
+import org.openmrs.Visit;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
@@ -60,6 +66,10 @@ public class VisitDocumentsContext extends ModuleProperties
 	@Autowired
    @Qualifier(VisitDocumentsConstants.COMPONENT_COMPLEXDATA_HELPER)
 	protected ComplexDataHelper complexDataHelper;
+	
+	@Autowired
+   @Qualifier(VisitDocumentsConstants.COMPONENT_VISIT_COMPATIBILITY)
+   protected VisitCompatibility visitCompatibility;
 	
 	/*
 	 * Exposing all needed services through OUR context
@@ -97,14 +107,44 @@ public class VisitDocumentsContext extends ModuleProperties
 	   return complexDataHelper;
 	}
 	
+	public AdministrationService getAdministrationService() {
+	   return administrationService;
+	}
+	
 	public boolean doAllowEmptyCaption() {
 	   return this.getBooleanByGlobalProperty(VisitDocumentsConstants.GP_ALLOW_NO_CAPTION);
    }
 	
 	public boolean isOneEncounterPerVisit() {
-	   String flowStr = administrationService.getGlobalProperty(VisitDocumentsConstants.GP_ENCOUNTER_SAVING_FLOW);
+	   String flowStr = getAdministrationService().getGlobalProperty(VisitDocumentsConstants.GP_ENCOUNTER_SAVING_FLOW);
 	   return StringUtils.equalsIgnoreCase(flowStr, "unique");
 	}
+	
+	public Encounter getVisitDocumentEncounter(Patient patient, Visit visit, Provider provider)
+   {
+      Encounter encounter = new Encounter();
+      encounter.setVisit(visit);
+      encounter.setEncounterType(getEncounterType());
+      encounter.setPatient(visit.getPatient());
+      encounter.setLocation(visit.getLocation());
+      boolean saveEncounter = true;
+      if (isOneEncounterPerVisit()) {
+         List<Encounter> encounters = visitCompatibility.getNonVoidedEncounters(visit);
+         for (Encounter e : encounters) {
+            if (e.getEncounterType().getUuid() == getEncounterType().getUuid()) {
+               encounter = e;
+               saveEncounter = false;
+               break;
+            }
+         }
+      }
+      encounter.setProvider(getEncounterRole(), provider);
+      encounter.setEncounterDatetime(new Date());
+      if (saveEncounter) {
+         encounter = getEncounterService().saveEncounter(encounter);
+      }
+      return encounter;
+   }
 	
 	/*
 	 * See super#getIntegerByGlobalProperty(String globalPropertyName)

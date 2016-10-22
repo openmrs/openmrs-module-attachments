@@ -1,37 +1,25 @@
 package org.openmrs.module.visitdocumentsui.web.controller;
 
-import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getCompressionRatio;
 import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getContentFamily;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
-
-import net.coobird.thumbnailator.Thumbnails;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.ConceptComplex;
 import org.openmrs.Encounter;
-import org.openmrs.EncounterRole;
-import org.openmrs.EncounterType;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.ObsService;
+import org.openmrs.module.visitdocumentsui.ComplexObsSaver;
 import org.openmrs.module.visitdocumentsui.VisitCompatibility;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
-import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants.ContentFamily;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsContext;
-import org.openmrs.module.visitdocumentsui.obs.ComplexDataHelper;
 import org.openmrs.module.visitdocumentsui.obs.DocumentComplexData;
 import org.openmrs.module.visitdocumentsui.obs.ValueComplex;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
@@ -57,6 +45,10 @@ public class VisitDocumentsController {
    @Autowired
    @Qualifier(VisitDocumentsConstants.COMPONENT_VISIT_COMPATIBILITY)
    protected VisitCompatibility visitCompatibility;
+   
+   @Autowired
+   @Qualifier(VisitDocumentsConstants.COMPONENT_COMPLEXOBS_SAVER)
+   protected ComplexObsSaver obsSaver; 
 
    protected final Log log = LogFactory.getLog(getClass());
 
@@ -70,7 +62,6 @@ public class VisitDocumentsController {
          @RequestParam(value="instructions", required=false) String instructions,
          MultipartHttpServletRequest request) 
    {
-      Obs obs = new Obs();
       try
       {
          Iterator<String> fileNameIterator = request.getFileNames();	// Looping through the uploaded file names.
@@ -79,23 +70,18 @@ public class VisitDocumentsController {
             String uploadedFileName = fileNameIterator.next();
             MultipartFile multipartFile = request.getFile(uploadedFileName);
             
-            Encounter encounter = getVisitDocumentEncounter(patient, visit, context.getEncounterType(), provider, context.getEncounterRole(), context.getEncounterService());
-            ConceptComplex conceptComplex = null;
+            final Encounter encounter = context.getVisitDocumentEncounter(patient, visit, provider);
             if (StringUtils.isEmpty(instructions))
                instructions = ValueComplex.INSTRUCTIONS_DEFAULT;
             
             switch (getContentFamily(multipartFile.getContentType())) {
                case IMAGE:
-                  conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
-                  obs = prepareComplexObs(patient, encounter, fileCaption, conceptComplex);
-                  obs = saveImageDocument(obs, multipartFile, instructions, context.getObsService(), context.getComplexDataHelper());
+                  obsSaver.saveImageDocument(patient, encounter, fileCaption, multipartFile, instructions);
                   break;
                   
                case OTHER:
                default:
-                  conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
-                  obs = prepareComplexObs(patient, encounter, fileCaption, conceptComplex);
-                  obs = saveOtherDocument(obs, multipartFile, instructions, context.getObsService(), context.getComplexDataHelper());
+                  obsSaver.saveOtherDocument(patient, encounter, fileCaption, multipartFile, instructions);
                   break;
             }
          }
@@ -105,63 +91,14 @@ public class VisitDocumentsController {
          log.error(e.getMessage(), e);
       }
 
-      return ConversionUtil.convertToRepresentation(obs, new CustomRepresentation(VisitDocumentsConstants.REPRESENTATION_OBS));
-   }
-   
-   public Obs prepareComplexObs(Person person, Encounter encounter, String fileCaption, ConceptComplex conceptComplex) {
-      Obs obs = new Obs(person, conceptComplex, new Date(), encounter.getLocation());
-      obs.setEncounter(encounter);
-      obs.setComment(fileCaption);
-      return obs;
-   }
-
-   public Obs saveImageDocument(Obs obs, MultipartFile multipartFile, String instructions, ObsService obsService, ComplexDataHelper complexDataHelper)
-         throws IOException
-   {
-      Object image = multipartFile.getInputStream();
-      double compressionRatio = getCompressionRatio(multipartFile.getSize(), 1000000 * context.getMaxStorageFileSize());
-      if (compressionRatio < 1) {
-         image = Thumbnails.of(multipartFile.getInputStream()).scale(compressionRatio).asBufferedImage();
-      }
-      obs.setComplexData( complexDataHelper.build(instructions, multipartFile.getOriginalFilename(), image, multipartFile.getContentType()).asComplexData() );
-      return obsService.saveObs(obs, getClass().toString());
-   }
-   
-   public Obs saveOtherDocument(Obs obs, MultipartFile multipartFile, String instructions, ObsService obsService, ComplexDataHelper complexDataHelper)
-         throws IOException
-   {
-      obs.setComplexData( complexDataHelper.build(instructions, multipartFile.getOriginalFilename(), multipartFile.getBytes(), multipartFile.getContentType()).asComplexData() );
-      return obsService.saveObs(obs, getClass().toString());
-   }
-
-   public Encounter getVisitDocumentEncounter(Patient patient, Visit visit, EncounterType encounterType, Provider provider, EncounterRole encounterRole, EncounterService encounterService)
-   {
-      Encounter encounter = new Encounter();
-      encounter.setVisit(visit);
-      encounter.setEncounterType(encounterType);
-      encounter.setPatient(visit.getPatient());
-      encounter.setLocation(visit.getLocation());
-      boolean saveEncounter = true;
-      if (context.isOneEncounterPerVisit()) {
-         List<Encounter> encounters = visitCompatibility.getNonVoidedEncounters(visit);
-         for (Encounter e : encounters) {
-            if (e.getEncounterType().getUuid() == encounterType.getUuid()) {
-               encounter = e;
-               saveEncounter = false;
-               break;
-            }
-         }
-      }
-      encounter.setProvider(encounterRole, provider);
-      encounter.setEncounterDatetime(new Date());
-      if (saveEncounter) {
-         encounter = encounterService.saveEncounter(encounter);
-      }
-      return encounter;
+      return ConversionUtil.convertToRepresentation(obsSaver.getObs(), new CustomRepresentation(VisitDocumentsConstants.REPRESENTATION_OBS));
    }
    
    @RequestMapping(value = VisitDocumentsConstants.DOWNLOAD_DOCUMENT_URL, method = RequestMethod.GET)
-   public void downloadDocument(@RequestParam("obs") String obsUuid, @RequestParam(value="view", required=false) String view, HttpServletResponse response)
+   public void downloadDocument(
+         @RequestParam("obs") String obsUuid,
+         @RequestParam(value="view", required=false) String view,
+         HttpServletResponse response)
    {
       if (StringUtils.isEmpty(view))
          view = VisitDocumentsConstants.DOC_VIEW_ORIGINAL;
