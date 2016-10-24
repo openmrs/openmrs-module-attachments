@@ -1,9 +1,11 @@
 package org.openmrs.module.visitdocumentsui.rest;
 
+import org.hibernate.FlushMode;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.emrapi.db.DbSessionUtil;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.module.visitdocumentsui.obs.VisitDocument;
 import org.openmrs.module.webservices.rest.web.RequestContext;
@@ -28,10 +30,16 @@ public class VisitDocumentResource2_0 extends DataDelegatingCrudResource<VisitDo
 
    @Override
    public VisitDocument save(VisitDocument delegate) {
-      Context.getObsService().saveObs(delegate.getObs(), REASON);
+      FlushMode flushMode = DbSessionUtil.getCurrentFlushMode();
+      DbSessionUtil.setManualFlushMode();
+      try {
+         Context.getObsService().saveObs(delegate.getObs(), REASON);
+      } finally {
+         DbSessionUtil.setFlushMode(flushMode);
+      }
       return delegate;
    }
-
+   
    @Override
    public VisitDocument getByUniqueId(String uniqueId) {
       Obs obs = Context.getObsService().getObsByUuid(uniqueId);

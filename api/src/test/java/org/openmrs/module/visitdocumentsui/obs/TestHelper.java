@@ -71,7 +71,8 @@ public class TestHelper {
 
       lastTmpDir = Files.createTempDirectory(null);
       context.getAdministrationService().saveGlobalProperty( new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_COMPLEX_OBS_DIR, lastTmpDir.toAbsolutePath().toString()) );
-      String conceptComplexUuidMap = "{\"IMAGE\":\"7cac8397-53cd-4f00-a6fe-028e8d743f8e\",\"OTHER\":\"42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00\"}";
+      
+      String conceptComplexUuidMap = "{\"IMAGE\":\"" + VisitDocumentsConstants.CONCEPT_IMAGE_UUID + "\",\"OTHER\":\"" + VisitDocumentsConstants.CONCEPT_DEFAULT_UUID + "\"}";
       context.getAdministrationService().saveGlobalProperty( new GlobalProperty(VisitDocumentsConstants.GP_CONCEPT_COMPLEX_UUID_MAP, conceptComplexUuidMap) );
       return obsSaver.saveOtherDocument(patient, encounter, RandomStringUtils.randomAlphabetic(12), multipartFile, ValueComplex.INSTRUCTIONS_DEFAULT);
    }

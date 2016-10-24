@@ -35,7 +35,7 @@ public class VisitDocumentController1_10Test extends MainResourceControllerTest 
 
    @Override
    public String getURI() {
-      return VisitDocumentsConstants.VISIT_DOCUMENT_URI + "/" + getUuid();
+      return VisitDocumentsConstants.VISIT_DOCUMENT_URI;
    }
 
    @Override
@@ -60,7 +60,7 @@ public class VisitDocumentController1_10Test extends MainResourceControllerTest 
       String json = "{\"uuid\":\"" + getUuid() + "\",\"comment\":\"" + editedComment + "\"}";
       
       // Replay
-      Object doc = deserialize( handle( newPostRequest(getURI(), json) ) );
+      Object doc = deserialize( handle( newPostRequest(getURI() + "/" + getUuid(), json) ) );
       
       // Verif
       String comment = (String) PropertyUtils.getProperty(doc, "comment");
@@ -74,7 +74,7 @@ public class VisitDocumentController1_10Test extends MainResourceControllerTest 
       assertTrue(file.exists());
       
       // Replay
-      handle( newDeleteRequest(getURI(), new Parameter("purge", "")) );
+      handle( newDeleteRequest(getURI() + "/" + getUuid(), new Parameter("purge", "")) );
       
       // Verif
       assertNull(obsService.getObsByUuid(getUuid()));
