@@ -8,7 +8,9 @@
 	<version>1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Visit Documents UI</name>
-	<description>Adds UI components and backend web services to upload, view and manage visit documents within the OpenMRS Reference Application.</description>
+	<description>
+		Adds UI components and backend web services to upload, view and manage visit documents within the OpenMRS Reference Application.
+	</description>
 
 	<developers>
 		<developer>
@@ -24,6 +26,14 @@
 	<scm>
 		<url>https://github.com/mekomsolutions/openmrs-module-visitdocumentsui</url>
 	</scm>
+
+	<modules>
+		<module>api</module>
+		<module>api-1.11</module>
+		<module>api-2.0</module>
+		<module>omod</module>
+		<module>omod-2.0</module>
+	</modules>
 
 	<properties>
 		<openMRSVersion>1.10.2</openMRSVersion> <!-- 1.10.0 -->
@@ -141,25 +151,5 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
-	<modules>
-		<module>api</module>
-		<module>api-1.11</module>
-		<module>api-2.0</module>
-		<module>omod</module>
-	</modules>
-
-	<profiles>
-	  <profile>
-	    <id>2.0</id>
-				<modules>
-					<module>api</module>
-					<module>api-1.11</module>
-					<module>api-2.0</module>
-					<module>omod</module>
-					<module>omod-2.0</module>
-				</modules>
-	  </profile>
-	</profiles>
 
 </project>

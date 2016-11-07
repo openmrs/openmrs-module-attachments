@@ -42,11 +42,11 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 
-		<!-- <dependency>
+		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>${project.parent.artifactId}-omod-2.0</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency> -->
+		</dependency>
 
 		<!-- Begin OpenMRS core -->
 
@@ -350,41 +350,35 @@
 					</execution>
 				</executions>
 			</plugin>
+		</plugins>
+	</build>
 
-			<!-- <plugin> <groupId>de.saumya.mojo</groupId> <artifactId>gem-maven-plugin</artifactId> 
-				<extensions>true</extensions> <executions> <execution> <goals> <goal>exec</goal> 
-				</goals> <phase>generate-resources</phase> </execution> </executions> <configuration> 
-				<jrubyVersion>1.7.10</jrubyVersion> <execArgs>${project.build.directory}/rubygems/bin/compass 
-				compile ${basedir}/src/main/compass</execArgs> </configuration> </plugin> -->
-			</plugins>
-		</build>
+	<profiles>
+		<profile>
+			<id>watch-sass</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>de.saumya.mojo</groupId>
+						<artifactId>gem-maven-plugin</artifactId>
+						<extensions>true</extensions>
+						<executions>
+							<execution>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<phase>generate-resources</phase>
+							</execution>
+						</executions>
+						<configuration>
+							<jrubyVersion>1.7.10</jrubyVersion>
+							<execArgs>${project.build.directory}/rubygems/bin/compass watch
+							${basedir}/src/main/compass</execArgs>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
-		<profiles>
-			<profile>
-				<id>watch-sass</id>
-				<build>
-					<plugins>
-						<plugin>
-							<groupId>de.saumya.mojo</groupId>
-							<artifactId>gem-maven-plugin</artifactId>
-							<extensions>true</extensions>
-							<executions>
-								<execution>
-									<goals>
-										<goal>exec</goal>
-									</goals>
-									<phase>generate-resources</phase>
-								</execution>
-							</executions>
-							<configuration>
-								<jrubyVersion>1.7.10</jrubyVersion>
-								<execArgs>${project.build.directory}/rubygems/bin/compass watch
-									${basedir}/src/main/compass</execArgs>
-								</configuration>
-							</plugin>
-						</plugins>
-					</build>
-				</profile>
-			</profiles>
-
-		</project>
+</project>
