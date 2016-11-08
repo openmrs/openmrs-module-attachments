@@ -124,9 +124,10 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.visitDocumentService', 'v
           comment: $scope.obs.comment
         });
         saved.$promise.then(function(visitDoc) {
+          $scope.obs.uuid = visitDoc.uuid;
           $scope.toggleEditMode(false);
           emr.successMessage(module.getProvider() + ".thumbail.save.success");
-        }, function(reason) {
+        }, function(err) {
           $scope.obs.comment = caption;
           emr.errorMessage(module.getProvider() + ".thumbail.save.error");
           console.log(err);
@@ -203,7 +204,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.visitDocumentService', 'v
           $scope.loading = false;
           $scope.obs.complexData = res.complexData; // Turning the obs into a complex obs.
           setIconHtml($scope.obs);
-        }, function() {
+        }, function(err) {
           $scope.loading = false;
           emr.errorMessage(module.getProvider() + ".thumbail.get.error");
           console.log(err);
@@ -231,7 +232,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.visitDocumentService', 'v
               displayOther($scope.obs, res.complexData);
               break;
           }
-        }, function() {
+        }, function(err) {
           $scope.loading = false;
           emr.errorMessage(module.getProvider() + ".thumbail.get.error");
           console.log(err);

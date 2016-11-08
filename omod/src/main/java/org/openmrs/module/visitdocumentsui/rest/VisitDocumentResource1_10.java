@@ -28,8 +28,8 @@ public class VisitDocumentResource1_10 extends DataDelegatingCrudResource<VisitD
 
    @Override
    public VisitDocument save(VisitDocument delegate) {
-      Context.getObsService().saveObs(delegate.getObs(), REASON);
-      return delegate;
+      Obs obs = Context.getObsService().saveObs(delegate.getObs(), REASON);
+      return new VisitDocument(obs);
    }
 
    @Override

@@ -32,12 +32,14 @@ public class VisitDocumentResource2_0 extends DataDelegatingCrudResource<VisitDo
    public VisitDocument save(VisitDocument delegate) {
       FlushMode flushMode = DbSessionUtil.getCurrentFlushMode();
       DbSessionUtil.setManualFlushMode();
+      VisitDocument visitDoc = new VisitDocument();
       try {
-         Context.getObsService().saveObs(delegate.getObs(), REASON);
+         Obs obs = Context.getObsService().saveObs(delegate.getObs(), REASON);
+         visitDoc = new VisitDocument(obs);
       } finally {
          DbSessionUtil.setFlushMode(flushMode);
       }
-      return delegate;
+      return visitDoc;
    }
    
    @Override
