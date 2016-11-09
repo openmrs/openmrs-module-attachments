@@ -65,7 +65,7 @@
   }
 </style>
 
-<div ng-app="vdui.fragment.encounterTemplate" ng-controller="EncounterTemplateCtrl" ng-init="init()">
+<div id="vdui-fragment-encounter-template" ng-controller="EncounterTemplateCtrl" ng-init="init()">
 
   <script type="text/template" id="complexObsEncounterTemplate">
   <li>
@@ -126,3 +126,8 @@
   </script>
 
 </div>
+
+<script type="text/javascript">
+  // manually bootstrap angular app, in case there are multiple angular apps on a page
+  angular.bootstrap('#vdui-fragment-encounter-template', ['vdui.fragment.encounterTemplate']);
+</script>

@@ -43,7 +43,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <% if (context.hasPrivilege("App: visitdocumentsui.visitdocuments.page")) { %>
 
-<div ng-app="vdui.page.main">
+<div id="vdui-page-main">
 
   <div ng-controller="FileUploadCtrl" class="vdui_main-section">
     <vdui-file-upload config="config"></vdui-file-upload>
@@ -54,5 +54,11 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
   </div>
 
 </div>
+
+
+<script type="text/javascript">
+  // manually bootstrap angular app, in case there are multiple angular apps on a page
+  angular.bootstrap('#vdui-page-main', ['vdui.page.main']);
+</script>
 
 <% } %>

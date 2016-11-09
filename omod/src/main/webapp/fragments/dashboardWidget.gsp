@@ -36,7 +36,7 @@
 	</div>
 	<div class="info-body">
 
-		<div ng-app="vdui.fragment.dashboardWidget" ng-controller="DashboardWidgetCtrl">
+		<div id="vdui-fragment-dashboard-widget" ng-controller="DashboardWidgetCtrl">
 			<vdui-gallery obs-query="obsQuery"></vdui-gallery>
 		</div>
 
@@ -49,3 +49,8 @@
 <% } %>
 
 </div>
+
+<script type="text/javascript">
+  // manually bootstrap angular app, in case there are multiple angular apps on a page
+  angular.bootstrap('#vdui-fragment-dashboard-widget', ['vdui.fragment.dashboardWidget']);
+</script>
