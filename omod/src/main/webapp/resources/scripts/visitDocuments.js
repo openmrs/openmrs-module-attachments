@@ -1,14 +1,14 @@
 angular.module('vdui.page.main', ['obsService', 'session', 'vdui.widget.fileUpload', 'vdui.widget.gallery', 'vdui.widget.thumbnail']);
 
 angular.module('vdui.page.main').controller('FileUploadCtrl', ['$scope', '$window',
-  function ($scope, $window) {
-    $scope.config = $window.config;
-  }]);
+	function ($scope, $window) {
+		$scope.config = $window.vdui.config;
+	}]);
 
 angular.module('vdui.page.main').controller('GalleryCtrl', ['$scope', '$window',
-  function($scope, $window) {
-    $scope.obsQuery = {
-      patient: $window.config.patient.uuid,
-      conceptList: $window.config.conceptComplexUuidList.toString()  // http://stackoverflow.com/a/202247/321797
-    };
-  }]);
+	function($scope, $window) {
+		$scope.obsQuery = {
+			patient: $window.vdui.config.patient.uuid,
+      conceptList: $window.vdui.config.conceptComplexUuidList.toString()  // http://stackoverflow.com/a/202247/321797
+  };
+}]);

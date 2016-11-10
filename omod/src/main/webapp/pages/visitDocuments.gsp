@@ -1,32 +1,39 @@
 <%
-  ui.decorateWith("appui", "standardEmrPage")
+ui.decorateWith("appui", "standardEmrPage")
 
-  ui.includeJavascript("uicommons", "angular.min.js")
-  ui.includeJavascript("uicommons", "angular-resource.min.js")
-  ui.includeJavascript("uicommons", "angular-common.js")
-  ui.includeJavascript("uicommons", "angular-app.js")
+ui.includeJavascript("uicommons", "angular.min.js")
+ui.includeJavascript("uicommons", "angular-resource.min.js")
+ui.includeJavascript("uicommons", "angular-common.js")
+ui.includeJavascript("uicommons", "angular-app.js")
 
-  ui.includeJavascript("visitdocumentsui", "visitDocuments.js")
+ui.includeJavascript("visitdocumentsui", "visitDocuments.js")
 %>
 
 <!-- Angular widgets -->
 <%
-  ui.includeFragment("visitdocumentsui", "dependenciesFileUpload")
-  ui.includeFragment("visitdocumentsui", "dependenciesThumbnail")
-  ui.includeFragment("visitdocumentsui", "dependenciesGallery")
+ui.includeFragment("visitdocumentsui", "dependenciesFileUpload")
+ui.includeFragment("visitdocumentsui", "dependenciesThumbnail")
+ui.includeFragment("visitdocumentsui", "dependenciesGallery")
 %>
 
 <script type="text/javascript">
 
   var breadcrumbs = [
-    { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-    { label: "${ ui.escapeJs(ui.format(patient)) }" ,
-      link: '${ ui.pageLink( "coreapps", "clinicianfacing/patient", [patientId: patient.id] ) }'},
-    { label: "${ ui.message("visitdocumentsui.breadcrumbs.label") }"}
+  { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
+  { label: "${ ui.escapeJs(ui.format(patient)) }" ,
+  link: '${ ui.pageLink( "coreapps", "clinicianfacing/patient", [patientId: patient.id] ) }'},
+  { label: "${ ui.message("visitdocumentsui.breadcrumbs.label") }"}
   ];
 
-  window.config = ${jsonConfig}; // Getting the config from the Spring Java controller.
-  
+  // Getting the config from the Spring Java controller.
+  if ("vdui" in window) {
+    window.vdui.config = ${jsonConfig}
+  } else {
+    window.vdui = {
+      config: ${jsonConfig}
+    }
+  }
+
 </script>
 
 <style>
@@ -50,7 +57,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
   </div>
 
   <div ng-controller="GalleryCtrl" class="vdui_main-section">
-    <vdui-gallery obs-query="obsQuery" config="{canEdit: true}"></vdui-gallery>
+    <vdui-gallery obs-query="obsQuery" config="{canEdit:true}"></vdui-gallery>
   </div>
 
 </div>

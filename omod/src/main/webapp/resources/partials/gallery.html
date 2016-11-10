@@ -14,7 +14,7 @@
 
 <div class="vdui_thumbnails-container">
   <i ng-hide="obsArray && config" class="icon-spinner icon-spin icon-2x" style="margin-left: 10px;"></i>
-  <div ng-show="obsArray && config">
+  <div ng-if="obsArray && config">
     <div ng-show="obsArray.length">
       <vdui-thumbnail ng-repeat="obs in obsArray" obs="obs" config="config"></vdui-thumbnail>
     </div>

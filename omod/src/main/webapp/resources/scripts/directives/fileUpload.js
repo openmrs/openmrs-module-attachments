@@ -68,20 +68,20 @@ angular.module('vdui.widget.fileUpload', ['vdui.widget.modalWebcam'])
 
         $scope.isWebcamDisabled = function() {
           // http://stackoverflow.com/a/24600597/321797
-          return !(config.allowWebcam === true) || (/Mobi/.test(navigator.userAgent));
+          return !($scope.config.allowWebcam === true) || (/Mobi/.test(navigator.userAgent));
         }
 
         $scope.init = function() {
           $scope.typedText = {};
-          $scope.allowWebcam = config.allowWebcam;
+          $scope.allowWebcam = $scope.config.allowWebcam;
           $scope.showWebcam = false;
           Dropzone.options.visitDocumentsDropzone = false;
 
           sessionInfo.get().$promise.then(function(info) {
             providerUuid = info.currentProvider.uuid;
           });
-          if (config.visit) {
-            $scope.visitUuid = config.visit.uuid;
+          if ($scope.config.visit) {
+            $scope.visitUuid = $scope.config.visit.uuid;
           }
         }
 
@@ -89,7 +89,7 @@ angular.module('vdui.widget.fileUpload', ['vdui.widget.modalWebcam'])
           
           'options': // passed into the Dropzone constructor
           { 
-            'url': config.uploadUrl,
+            'url': $scope.config.uploadUrl,
             'thumbnailHeight': 100,
             'thumbnailWidth': 100,
             'maxFiles': 1,
@@ -107,7 +107,7 @@ angular.module('vdui.widget.fileUpload', ['vdui.widget.modalWebcam'])
               });
             },
             'sending': function (file, xhr, formData) {
-              formData.append('patient', config.patient.uuid);
+              formData.append('patient', $scope.config.patient.uuid);
               formData.append('visit', $scope.visitUuid);
               formData.append('provider', providerUuid);
               formData.append('fileCaption', ($scope.typedText.fileCaption == null) ? "" : $scope.typedText.fileCaption );
@@ -126,18 +126,18 @@ angular.module('vdui.widget.fileUpload', ['vdui.widget.modalWebcam'])
 
         var setMaxFileSizeOption = function(mimeType) {
           if (!mimeType) {
-            $scope.setMaxFilesize(config.maxFileSize);
+            $scope.setMaxFilesize($scope.config.maxFileSize);
             return;
           }
           
-          var contentFamily = config.contentFamilyMap[mimeType];
+          var contentFamily = $scope.config.contentFamilyMap[mimeType];
           switch (contentFamily) {
             case module.family.IMAGE:
-              $scope.setMaxFilesize(config.maxFileSize * config.maxCompression);
+              $scope.setMaxFilesize($scope.config.maxFileSize * $scope.config.maxCompression);
               break;
 
             default:
-              $scope.setMaxFilesize(config.maxFileSize);
+              $scope.setMaxFilesize($scope.config.maxFileSize);
               break;
           }
         };
@@ -156,7 +156,7 @@ angular.module('vdui.widget.fileUpload', ['vdui.widget.modalWebcam'])
         }
 
         $scope.isUploadBtnDisabled = function() {
-          return !($scope.typedText.fileCaption || config.allowNoCaption);
+          return !($scope.typedText.fileCaption || $scope.config.allowNoCaption);
         }  
       }
     };
