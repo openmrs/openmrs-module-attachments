@@ -4,7 +4,7 @@ angular.module('vdui.widget.gallery', ['vdui.service.configService'])
 
     restrict: 'E',
     scope: {
-      config: '=?',
+      options: '=?',
       obsQuery: '='
     },
     templateUrl: '/' + module.getPartialsPath(OPENMRS_CONTEXT_PATH) + '/gallery.html',
@@ -45,7 +45,7 @@ angular.module('vdui.widget.gallery', ['vdui.service.configService'])
 
       configService.getConfig().then(function(config) {
         // merging the privileges in the config
-        $scope.config = angular.extend({}, config, $scope.config);
+        $scope.config = angular.extend({}, config, $scope.options);
         $scope.obsArray = [];
         $scope.startIndex = 0;
         $scope.load($scope.config, $scope.startIndex);

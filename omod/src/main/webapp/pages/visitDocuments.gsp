@@ -57,7 +57,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
   </div>
 
   <div ng-controller="GalleryCtrl" class="vdui_main-section">
-    <vdui-gallery obs-query="obsQuery" config="{canEdit:true}"></vdui-gallery>
+    <vdui-gallery obs-query="obsQuery" options="{canEdit:true}"></vdui-gallery>
   </div>
 
 </div>
