@@ -1,4 +1,4 @@
-angular.module('vdui.service.moduleUtils', [])
+angular.module('vdui.service.moduleUtils')
 
 .factory('ModuleUtils', function($q) { 
 

@@ -1,4 +1,4 @@
-angular.module('vdui.service.complexObsCacheService', ['vdui.service.moduleUtils'])
+angular.module('vdui.service.complexObsCacheService')
 
   .service('ComplexObsCacheService', [ 'ModuleUtils', '$http', '$q', function(module, $http, $q) {
 

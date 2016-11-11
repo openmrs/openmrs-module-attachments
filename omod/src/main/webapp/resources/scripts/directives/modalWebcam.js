@@ -1,4 +1,4 @@
-angular.module('vdui.widget.modalWebcam', ['vdui.service.moduleUtils'])
+angular.module('vdui.widget.modalWebcam')
 
 .directive('vduiEscapeKeyDown', function() {
   return function(scope, element, attrs) {

@@ -1,5 +1,3 @@
-angular.module('vdui.fragment.encounterTemplate', ['vdui.widget.complexObsEncounter']);
-
 angular.module('vdui.fragment.encounterTemplate').controller('EncounterTemplateCtrl', ['$scope', '$compile',
   function($scope, $compile) {
   	

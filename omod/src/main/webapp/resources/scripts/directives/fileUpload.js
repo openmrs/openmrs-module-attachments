@@ -1,4 +1,4 @@
-angular.module('vdui.widget.fileUpload', ['vdui.widget.modalWebcam'])
+angular.module('vdui.widget.fileUpload')
   
   .directive('dropzoneDirective',
     function () {

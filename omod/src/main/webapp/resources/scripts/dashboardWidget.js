@@ -1,5 +1,3 @@
-angular.module('vdui.fragment.dashboardWidget', ['obsService', 'vdui.widget.gallery', 'vdui.widget.thumbnail']);
-
 angular.module('vdui.fragment.dashboardWidget').controller('DashboardWidgetCtrl', ['$scope', '$window',
   function($scope, $window) {
     $scope.obsQuery = {

@@ -1,4 +1,4 @@
-angular.module('vdui.widget.modalImage', ['vdui.service.moduleUtils'])
+angular.module('vdui.widget.modalImage')
   .directive('vduiModalImage', [ 'ModuleUtils', function(module) {
     return {
       restrict: 'E',

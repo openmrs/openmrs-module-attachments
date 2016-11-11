@@ -3,8 +3,10 @@
   ui.includeJavascript("uicommons", "angular-resource.min.js")
   ui.includeJavascript("uicommons", "angular-common.js")
   ui.includeJavascript("uicommons", "angular-app.js")
-  ui.includeJavascript("visitdocumentsui", "fragments/complexObsEncounterTemplate.js")
 
+  ui.includeJavascript("visitdocumentsui", "app.js")
+  ui.includeJavascript("visitdocumentsui", "fragments/complexObsEncounterTemplate.js")
+  
   ui.includeJavascript("uicommons", "services/obsService.js")
   ui.includeJavascript("visitdocumentsui", "directives/complexObsEncounterDirective.js")
 %>

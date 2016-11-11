@@ -4,6 +4,7 @@
   ui.includeJavascript("uicommons", "angular-common.js")
   ui.includeJavascript("uicommons", "angular-app.js")
 
+  ui.includeJavascript("visitdocumentsui", "app.js")
   ui.includeJavascript("visitdocumentsui", "dashboardWidget.js")
 %>
 

@@ -1,4 +1,4 @@
-angular.module('vdui.service.configService', ['vdui.service.moduleUtils'])
+angular.module('vdui.service.configService')
   .factory('ConfigService', ['ModuleUtils', '$q', function(module, $q) { 
     var getConfig = function() {
       var deferred = $q.defer();

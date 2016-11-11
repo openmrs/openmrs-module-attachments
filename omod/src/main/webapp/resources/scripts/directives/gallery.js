@@ -1,4 +1,4 @@
-angular.module('vdui.widget.gallery', ['vdui.service.configService', 'vdui.service.moduleUtils'])
+angular.module('vdui.widget.gallery')
 .directive('vduiGallery', ['ObsService', 'ConfigService', 'ModuleUtils', function(obsService, configService, module) {
   return {
 

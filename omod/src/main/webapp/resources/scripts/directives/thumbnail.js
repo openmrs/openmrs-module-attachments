@@ -1,4 +1,4 @@
-angular.module('vdui.widget.thumbnail', ['vdui.service.visitDocumentService', 'vdui.service.complexObsCacheService', 'ngDialog', 'vdui.widget.modalImage'])
+angular.module('vdui.widget.thumbnail')
 
 .config(['$compileProvider', function ($compileProvider) {
   /* Prevent Angular from throwing error when querying images using 'data' protocol */

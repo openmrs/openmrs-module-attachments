@@ -6,6 +6,7 @@ ui.includeJavascript("uicommons", "angular-resource.min.js")
 ui.includeJavascript("uicommons", "angular-common.js")
 ui.includeJavascript("uicommons", "angular-app.js")
 
+ui.includeJavascript("visitdocumentsui", "app.js")  
 ui.includeJavascript("visitdocumentsui", "visitDocuments.js")
 %>
 

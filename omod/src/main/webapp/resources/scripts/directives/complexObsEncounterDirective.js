@@ -1,4 +1,4 @@
-angular.module('vdui.widget.complexObsEncounter', ['obsService', 'vdui.widget.gallery', 'vdui.widget.thumbnail', 'vdui.widget.modalImage'])
+angular.module('vdui.widget.complexObsEncounter')
   .directive('vduiComplexObsEncounter', function() {
     return {
       restrict: 'E',
