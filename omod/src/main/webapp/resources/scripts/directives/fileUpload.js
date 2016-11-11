@@ -33,7 +33,7 @@ angular.module('vdui.widget.fileUpload', ['vdui.widget.modalWebcam'])
       };
     })
 
-  .directive('vduiFileUpload', ['SessionInfo', 'ObsService', function(sessionInfo, obsService) {
+  .directive('vduiFileUpload', ['SessionInfo', 'ObsService', 'ModuleUtils', function(sessionInfo, obsService, module) {
     return {
 
       restrict: 'E',

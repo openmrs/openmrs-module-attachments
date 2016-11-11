@@ -1,6 +1,8 @@
-var module = new function() {
+angular.module('vdui.service.moduleUtils', [])
 
-	this.family = {};
+.factory('ModuleUtils', function($q) { 
+
+  this.family = {};
   this.family.IMAGE = "IMAGE";
   this.family.PDF = "PDF";
   this.family.OTHER = "OTHER";
@@ -48,9 +50,12 @@ var module = new function() {
     // write the bytes of the string to a typed array
     var ia = new Uint8Array(byteString.length);
     for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
+      ia[i] = byteString.charCodeAt(i);
     }
 
     return new Blob([ia], {type:mimeType});
   }
-}
+
+  return this
+
+});

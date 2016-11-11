@@ -1,5 +1,6 @@
-angular.module('vdui.service.complexObsCacheService', [])
-  .service('ComplexObsCacheService', function($http, $q) {
+angular.module('vdui.service.complexObsCacheService', ['vdui.service.moduleUtils'])
+
+  .service('ComplexObsCacheService', [ 'ModuleUtils', '$http', '$q', function(module, $http, $q) {
 
     var setComplexObs = function(obs) {
       if (!module.complexObsCache) {
@@ -67,4 +68,4 @@ angular.module('vdui.service.complexObsCacheService', [])
       return true;
     }
 
-  });
+  }]);

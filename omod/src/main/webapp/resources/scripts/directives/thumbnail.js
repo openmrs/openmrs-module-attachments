@@ -31,7 +31,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.visitDocumentService', 'v
   };
 })
 
-.directive('vduiThumbnail', ['VisitDocument', 'ComplexObsCacheService', 'ngDialog', '$http', '$window', '$sce', function(VisitDocument, obsCache, ngDialog, $http, $window, $sce) {
+.directive('vduiThumbnail', ['VisitDocument', 'ComplexObsCacheService', 'ModuleUtils', 'ngDialog', '$http', '$window', '$sce', function(VisitDocument, obsCache, module, ngDialog, $http, $window, $sce) {
   return {
     restrict: 'E',
     scope: {

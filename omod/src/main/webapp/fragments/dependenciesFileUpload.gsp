@@ -7,5 +7,6 @@
   ui.includeCss("visitdocumentsui", "dropzone/dropzone.css")
   ui.includeJavascript("visitdocumentsui", "webcam/webcam.min.js")
   ui.includeJavascript("visitdocumentsui", "directives/modalWebcam.js")
+  ui.includeJavascript("visitdocumentsui", "services/moduleUtils.js")
   ui.includeJavascript("visitdocumentsui", "directives/fileUpload.js")
 %>

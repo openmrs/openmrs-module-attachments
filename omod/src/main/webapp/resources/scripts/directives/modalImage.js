@@ -1,5 +1,5 @@
-angular.module('vdui.widget.modalImage', [])
-  .directive('vduiModalImage', function() {
+angular.module('vdui.widget.modalImage', ['vdui.service.moduleUtils'])
+  .directive('vduiModalImage', [ 'ModuleUtils', function(module) {
     return {
       restrict: 'E',
       scope: {
@@ -12,4 +12,4 @@ angular.module('vdui.widget.modalImage', [])
         }
       }
     };
-  });
+  }]);

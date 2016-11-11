@@ -1,5 +1,5 @@
-angular.module('vdui.service.configService', [])
-  .factory('ConfigService', function($q) { 
+angular.module('vdui.service.configService', ['vdui.service.moduleUtils'])
+  .factory('ConfigService', ['ModuleUtils', '$q', function(module, $q) { 
     var getConfig = function() {
       var deferred = $q.defer();
       if (module.clientConfig) {
@@ -17,4 +17,4 @@ angular.module('vdui.service.configService', [])
     return {
       getConfig: getConfig
     };
-  })
+  }]);

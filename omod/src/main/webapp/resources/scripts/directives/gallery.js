@@ -1,5 +1,5 @@
-angular.module('vdui.widget.gallery', ['vdui.service.configService'])
-.directive('vduiGallery', ['ObsService', 'ConfigService', function(obsService, configService) {
+angular.module('vdui.widget.gallery', ['vdui.service.configService', 'vdui.service.moduleUtils'])
+.directive('vduiGallery', ['ObsService', 'ConfigService', 'ModuleUtils', function(obsService, configService, module) {
   return {
 
     restrict: 'E',
@@ -10,6 +10,8 @@ angular.module('vdui.widget.gallery', ['vdui.service.configService'])
     templateUrl: '/' + module.getPartialsPath(OPENMRS_CONTEXT_PATH) + '/gallery.html',
 
     controller: function($scope, $rootScope) {
+
+      module.getPartialsPath(OPENMRS_CONTEXT_PATH);
 
       // Loading i18n messages
       var msgCodes = [

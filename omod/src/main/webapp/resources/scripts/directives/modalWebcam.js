@@ -1,4 +1,4 @@
-angular.module('vdui.widget.modalWebcam', [])
+angular.module('vdui.widget.modalWebcam', ['vdui.service.moduleUtils'])
 
 .directive('vduiEscapeKeyDown', function() {
   return function(scope, element, attrs) {
@@ -13,7 +13,7 @@ angular.module('vdui.widget.modalWebcam', [])
   };
 })
 
-.directive('vduiModalWebcam', function() {
+.directive('vduiModalWebcam', [ 'ModuleUtils' ,function(module) {
   return {
     restrict: 'E',
     scope: {
@@ -75,4 +75,4 @@ angular.module('vdui.widget.modalWebcam', [])
       }
     }
   };
-});
+}]);
