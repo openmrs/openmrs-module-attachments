@@ -20,6 +20,8 @@ angular.module('vdui.service.complexObsCacheService', [])
 
     this.getComplexObs = function(obs, url, view) {
       var deferred = $q.defer();
+      // Create a copy of the 'obs' function parameter to avoid modifying the parent $scope.obs variable
+      obs = angular.copy(obs);
       
       var uuid = obs.uuid;
       if (!isViewInCache(uuid, view)) {

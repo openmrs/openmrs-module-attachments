@@ -202,6 +202,7 @@ angular.module('vdui.widget.thumbnail', ['vdui.service.visitDocumentService', 'v
         obsCache.getComplexObs($scope.obs, $scope.config.downloadUrl, $scope.config.thumbView)
         .then(function(res) {
           $scope.loading = false;
+          $scope.obs = res.obs;
           $scope.obs.complexData = res.complexData; // Turning the obs into a complex obs.
           setIconHtml($scope.obs);
         }, function(err) {
