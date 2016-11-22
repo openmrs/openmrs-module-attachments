@@ -57,6 +57,7 @@ angular.module('vdui.widget.thumbnail')
       emr.loadMessages(msgCodes.toString(), function(msgs) {
         $scope.msgs = msgs;
       });
+      moment.locale($scope.config.locale);
 
       $scope.canEdit = function() {
         if($scope.config.canEdit) {
@@ -96,13 +97,13 @@ angular.module('vdui.widget.thumbnail')
 
       $scope.getPrettyDate = function() {
         var timeFormat = "DD MMM YY";
-        var now = new Date();
-        var obsDate = moment($scope.obs.obsDatetime).toDate();  // new Date(..) would throw 'Invalid date' on Apple WebKit
-        if (obsDate.toDateString() === now.toDateString()) {
+        var now = new moment();
+        var obsDate = moment($scope.obs.obsDatetime);  // new Date(..) would throw 'Invalid date' on Apple WebKit
+        if ( ( obsDate.year() == now.year() ) && ( obsDate.dayOfYear() == now.dayOfYear() ) ) {
           timeFormat = "HH:mm";
         }
         else {
-          if (obsDate.getYear() === now.getYear()) {
+          if (obsDate.year() === now.year()) {
             timeFormat = "DD MMM";
           }
         }

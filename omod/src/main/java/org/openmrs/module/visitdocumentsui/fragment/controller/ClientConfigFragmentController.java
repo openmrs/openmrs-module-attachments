@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsContext;
 import org.openmrs.module.visitdocumentsui.obs.ImageDocumentHandler;
@@ -20,6 +21,8 @@ public class ClientConfigFragmentController {
     */
    public static Map<String, Object> getClientConfig(VisitDocumentsContext context, UiUtils ui) {
       Map<String, Object> jsonConfig = new LinkedHashMap<String, Object>();
+      
+      jsonConfig.put("locale", Context.getLocale().getLanguage());
       
       jsonConfig.put("uploadUrl", "/" + ui.contextPath() + "/ws" + VisitDocumentsConstants.UPLOAD_DOCUMENT_URL);
       jsonConfig.put("downloadUrl", "/" + ui.contextPath() + "/ws" + VisitDocumentsConstants.DOWNLOAD_DOCUMENT_URL);
