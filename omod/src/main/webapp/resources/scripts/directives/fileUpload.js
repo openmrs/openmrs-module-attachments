@@ -93,7 +93,10 @@ angular.module('vdui.widget.fileUpload')
             'thumbnailHeight': 100,
             'thumbnailWidth': 100,
             'maxFiles': 1,
-            'autoProcessQueue': false
+            'autoProcessQueue': false,
+            'renameFilename': function (name) { 
+              return name.replace(/\.[^/.]+$/, "") + "_" + moment().format("YYYYMMDD_HHmmss") + "." + name.split(".").pop(); // Timestamping the file name
+            }
           },
           'eventHandlers':
           {
