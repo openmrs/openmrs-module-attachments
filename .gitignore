@@ -6,6 +6,8 @@
 *.sass-cache
 target
 .java-version
+*.releaseBackup
+release.properties
 
 # Package Files #
 *.jar

@@ -29,7 +29,7 @@ cd openmrs-module-visitdocumentsui
 mvn clean install
 ```
 ##### Requirements & compatibility
-* Platform 1.11.4 to (and excluding) 2.0.0
+* Core 1.10.2 to Platform 2.0.0
 * Reference Application distribution 2.3+
 * Core Apps module fixed with [RA-1155](https://issues.openmrs.org/browse/RA-1155)
 <br>RA-1155 brings in the thumbnails on the Visits & Encounters Patient Dashboard.
