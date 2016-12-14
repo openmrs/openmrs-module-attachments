@@ -86,9 +86,9 @@ public class VisitDocumentsController {
             }
          }
       }
-      catch (IOException e) {
-         // TODO Some error info should be returned to the client (perhaps via the Dropzone widget?)
+      catch (Exception e) {
          log.error(e.getMessage(), e);
+         throw new VisitDocumentNotSavedException(e.getMessage(), e); 
       }
 
       return ConversionUtil.convertToRepresentation(obsSaver.getObs(), new CustomRepresentation(VisitDocumentsConstants.REPRESENTATION_OBS));
