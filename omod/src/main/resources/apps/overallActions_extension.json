@@ -1,10 +1,10 @@
 [
   {
-    "id": "${project.parent.artifactId}.visitdocumentsui.mainpage",
+    "id": "${project.parent.artifactId}.visitdocumentsui.overallActions.default",
     "extensionPointId": "patientDashboard.overallActions",
     "type": "link",
     "label": "visitdocumentsui.visitactions.label",
-    "url": "visitdocumentsui/visitDocuments.page?patient={{patient.uuid}}&patientId={{patient.patientId}}&visit={{visit.uuid}}",
+    "url": "visitdocumentsui/visitDocuments.page?patient={{patient.uuid}}&patientId={{patient.patientId}}",
     "icon": "icon-paper-clip",
     "order": 200,
     "requiredPrivilege": "visitdocumentsui.visitdocuments.page"

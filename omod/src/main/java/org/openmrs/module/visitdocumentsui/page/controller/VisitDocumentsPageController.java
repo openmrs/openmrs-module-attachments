@@ -11,29 +11,29 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.domainwrapper.DomainWrapperFactory;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsContext;
 import org.openmrs.module.visitdocumentsui.fragment.controller.ClientConfigFragmentController;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
+import org.openmrs.module.webservices.rest.web.representation.CustomRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
+import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Component
 public class VisitDocumentsPageController {
 	
-	@Autowired
-	private DomainWrapperFactory domainWrapperFactory; 
-
 	public void controller(
 			@RequestParam("patient") Patient patient,
 			@RequestParam(value = "visit", required = false) Visit visit,
 			UiSessionContext sessionContext,
 			UiUtils ui,
 			@InjectBeans VisitDocumentsContext context,
+			@SpringBean DomainWrapperFactory domainWrapperFactory,
 			PageModel model)
 	{
 		//
@@ -42,8 +42,8 @@ public class VisitDocumentsPageController {
 		Map<String, Object> jsonConfig = ClientConfigFragmentController.getClientConfig(context, ui);
 		jsonConfig.put("patient", convertToRef(patient));
 
-		VisitDomainWrapper visitWrapper = getVisitDomainWrapper(patient, visit, context.getAdtService(), sessionContext.getSessionLocation());
-		jsonConfig.put("visit", visitWrapper == null ? "" : convertToRef(visitWrapper.getVisit()));
+		VisitDomainWrapper visitWrapper = getVisitDomainWrapper(domainWrapperFactory, patient, visit, context.getAdtService(), sessionContext.getSessionLocation());
+		jsonConfig.put("visit", visitWrapper == null ? null : convertVisit(visitWrapper.getVisit()));
 
 		jsonConfig.put("contentFamilyMap", getContentFamilyMap());
 
@@ -54,7 +54,7 @@ public class VisitDocumentsPageController {
 		model.put("patient", patient);
 	}
 	
-	protected VisitDomainWrapper getVisitDomainWrapper(Patient patient, Visit visit, AdtService adtService, Location sessionLocation) {
+	protected VisitDomainWrapper getVisitDomainWrapper(DomainWrapperFactory domainWrapperFactory, Patient patient, Visit visit, AdtService adtService, Location sessionLocation) {
 		VisitDomainWrapper visitWrapper = null;
 		if (visit == null) {
 			// Fetching the active visit, if any.
@@ -66,8 +66,12 @@ public class VisitDocumentsPageController {
 		}
 		return visitWrapper;
 	}
+	
+	protected Object convertVisit(Object object) {
+		return object == null ? null : ConversionUtil.convertToRepresentation(object, new CustomRepresentation(VisitDocumentsConstants.REPRESENTATION_VISIT));
+	}
 
-	private Object convertToRef(Object object) {
+	protected Object convertToRef(Object object) {
 		return object == null ? null : ConversionUtil.convertToRepresentation(object, Representation.REF);
 	}
 }

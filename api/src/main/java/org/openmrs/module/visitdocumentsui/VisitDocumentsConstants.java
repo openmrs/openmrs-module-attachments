@@ -100,4 +100,6 @@ public class VisitDocumentsConstants {
     * REST
     */
    public static final String REPRESENTATION_OBS = "(uuid:ref,comment:ref,obsDatetime:ref)";
+   
+   public static final String REPRESENTATION_VISIT = "(uuid:ref,stopDatetime:ref)";
 }

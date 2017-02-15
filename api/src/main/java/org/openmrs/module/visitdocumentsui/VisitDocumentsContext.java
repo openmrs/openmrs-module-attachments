@@ -34,6 +34,7 @@ import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.ProviderService;
@@ -63,6 +64,10 @@ public class VisitDocumentsContext extends ModuleProperties
 	@Qualifier("adtService")
 	protected AdtService adtService;
 
+	@Autowired
+	@Qualifier("locationService")
+	protected LocationService locationService;
+	
 	@Autowired
 	@Qualifier(VisitDocumentsConstants.COMPONENT_COMPLEXDATA_HELPER)
 	protected ComplexDataHelper complexDataHelper;
@@ -103,6 +108,10 @@ public class VisitDocumentsContext extends ModuleProperties
 		return adtService;
 	}
 
+	public LocationService getLocationService() {
+		return locationService;
+	}
+	
 	public ComplexDataHelper getComplexDataHelper() {
 		return complexDataHelper;
 	}

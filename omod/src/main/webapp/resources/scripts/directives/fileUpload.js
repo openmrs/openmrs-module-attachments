@@ -48,6 +48,7 @@ angular.module('vdui.widget.fileUpload')
         var msgCodes = [
           module.getProvider() + ".fileUpload.success",
           module.getProvider() + ".fileUpload.error",
+          module.getProvider() + ".fileUpload.attentionPastVisit",
           module.getProvider() + ".visitdocumentspage.fileTitle",
           module.getProvider() + ".dropzone.innerlabel",
           module.getProvider() + ".visitdocumentspage.commentTitle",
@@ -61,6 +62,7 @@ angular.module('vdui.widget.fileUpload')
 
         var providerUuid = "";
         $scope.visitUuid = "";  // In scope for toggling ng-show
+        $scope.closedVisit = false;
 
         $rootScope.$on(module.webcamCaptureForUpload, function(event, webcamFile) {
           addFileToDropzone(webcamFile);
@@ -82,6 +84,9 @@ angular.module('vdui.widget.fileUpload')
           });
           if ($scope.config.visit) {
             $scope.visitUuid = $scope.config.visit.uuid;
+            if ($scope.config.visit.stopDatetime) {
+              $scope.closedVisit = true;
+            }
           }
         }
 
