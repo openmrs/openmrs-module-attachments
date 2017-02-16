@@ -30,6 +30,7 @@ import org.openmrs.module.visitdocumentsui.VisitDocumentsContext;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.ui.framework.UiUtils;
+import org.openmrs.ui.framework.WebConstants;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class VisitDocumentsPageControllerTest extends BaseModuleWebContextSensit
 	
 	@Autowired
 	@Qualifier("uiUtils")
-	private UiUtils ui;// = new BasicUiUtils();
+	private UiUtils ui;
 	
 	private Location location;
 	
@@ -65,6 +66,8 @@ public class VisitDocumentsPageControllerTest extends BaseModuleWebContextSensit
 		location.addTag(tag);
 		context.getLocationService().saveLocation(location);
 		when(sessionContext.getSessionLocation()).thenReturn(location);
+		
+		WebConstants.CONTEXT_PATH = "openmrs";
 		
 		context.getAdministrationService().saveGlobalProperty( new GlobalProperty(VisitDocumentsConstants.GP_CONCEPT_COMPLEX_UUID_LIST, "[\"7cac8397-53cd-4f00-a6fe-028e8d743f8e\",\"42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00\"]" ) );
 		context.getAdministrationService().saveGlobalProperty( new GlobalProperty(VisitDocumentsConstants.GP_MAX_STORAGE_FILE_SIZE, "1.2" ) );

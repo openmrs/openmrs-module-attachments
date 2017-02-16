@@ -67,10 +67,32 @@
     z-index: 0;
   }
 
+  .vdui_past-visit {
+    text-align: left;
+    padding: 10px 0;
+    padding-left: 10px;
+    padding-bottom: 0;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -o-border-radius: 2px;
+    -ms-border-radius: 2px;
+    -khtml-border-radius: 2px;
+    border-radius: 2px;
+
+    color: #ffa000;
+    text-align: left;
+    padding-bottom: 5px;
+    font-size: 0.9em;
+  }
+
 </style>
 
 
 <vdui-modal-webcam visible="showWebcam" disabled="isWebcamDisabled()"></vdui-modal-webcam>
+
+<div ng-show="visitUuid && closedVisit" class="vdui_past-visit">
+  <p><i class="icon-warning-sign small"></i>{{msgs["visitdocumentsui.fileUpload.attentionPastVisit"]}}</p>
+</div>
 
 <div ng-show="visitUuid" class="vdui_file-upload-container" ng-init="init()">
   <div class="vdui_upload-container">
