@@ -109,7 +109,7 @@ public class VisitDocumentsActivator extends BaseModuleActivator {
       {
          final String name = "Visit Document Upload";
          final String desc = "Encounters used to record visit documents complex obs.";
-         final String uuid = "5021b1a1-e7f6-44b4-ba02-da2f2bcf8718"; // this is also the default GP value set in config.xml
+         final String uuid = VisitDocumentsConstants.ENCOUNTER_TYPE_UUID; // this is also the default GP value set in config.xml
          
          EncounterService es = Context.getEncounterService();
          EncounterType encounterType = es.getEncounterTypeByUuid(uuid);

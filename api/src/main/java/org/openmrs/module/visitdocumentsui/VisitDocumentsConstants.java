@@ -53,6 +53,8 @@ public class VisitDocumentsConstants {
    public static final String CONCEPT_DEFAULT_UUID = "42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00";
    
    public static final String CONCEPT_IMAGE_UUID = "7cac8397-53cd-4f00-a6fe-028e8d743f8e";
+   
+   public static final String ENCOUNTER_TYPE_UUID = "5021b1a1-e7f6-44b4-ba02-da2f2bcf8718";
 
    /*
     * Docs config

@@ -70,7 +70,7 @@ public class VisitDocumentController2_0Test extends MainResourceControllerTest {
    @Test
    public void deleteVisitDocument_shouldPurgeObs() throws Exception {
       // Setup
-      File file = new File(testHelper.getLastSavedFilePath());
+      File file = new File(testHelper.getTestComplexObsFilePath());
       assertTrue(file.exists());
       
       // Replay

@@ -76,12 +76,12 @@ public class VisitDocumentsController {
             
             switch (getContentFamily(multipartFile.getContentType())) {
                case IMAGE:
-                  obsSaver.saveImageDocument(patient, encounter, fileCaption, multipartFile, instructions);
+                  obsSaver.saveImageDocument(visit, patient, encounter, fileCaption, multipartFile, instructions);
                   break;
                   
                case OTHER:
                default:
-                  obsSaver.saveOtherDocument(patient, encounter, fileCaption, multipartFile, instructions);
+                  obsSaver.saveOtherDocument(visit, patient, encounter, fileCaption, multipartFile, instructions);
                   break;
             }
          }

@@ -14,14 +14,13 @@ import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getCompr
 import java.io.IOException;
 import java.util.Date;
 
-import net.coobird.thumbnailator.Thumbnails;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.ConceptComplex;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Person;
+import org.openmrs.Visit;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants.ContentFamily;
 import org.openmrs.module.visitdocumentsui.obs.ComplexDataHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,60 +28,62 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import net.coobird.thumbnailator.Thumbnails;
+
 @Component(VisitDocumentsConstants.COMPONENT_COMPLEXOBS_SAVER)
 public class ComplexObsSaver
 {
-   protected final Log log = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 
-   @Autowired
-   @Qualifier(VisitDocumentsConstants.COMPONENT_VDUI_CONTEXT)
-   protected VisitDocumentsContext context;
+	@Autowired
+	@Qualifier(VisitDocumentsConstants.COMPONENT_VDUI_CONTEXT)
+	protected VisitDocumentsContext context;
 
-   @Autowired
-   @Qualifier(VisitDocumentsConstants.COMPONENT_COMPLEXDATA_HELPER)
-   protected ComplexDataHelper complexDataHelper;
+	@Autowired
+	@Qualifier(VisitDocumentsConstants.COMPONENT_COMPLEXDATA_HELPER)
+	protected ComplexDataHelper complexDataHelper;
 
-   @Autowired
-   @Qualifier(VisitDocumentsConstants.COMPONENT_VISIT_COMPATIBILITY)
-   protected VisitCompatibility visitCompatibility;
+	@Autowired
+	@Qualifier(VisitDocumentsConstants.COMPONENT_VISIT_COMPATIBILITY)
+	protected VisitCompatibility visitCompatibility;
 
-   protected Obs obs = new Obs();
-   protected ConceptComplex conceptComplex;
+	protected Obs obs = new Obs();
+	protected ConceptComplex conceptComplex;
 
-   public Obs getObs() {
-      return obs;
-   }
+	public Obs getObs() {
+		return obs;
+	}
 
-   protected void prepareComplexObs(Person person, Encounter encounter, String fileCaption) {
-      obs = new Obs(person, conceptComplex, new Date(), encounter.getLocation());
-      obs.setEncounter(encounter);
-      obs.setComment(fileCaption);
-   }
+	protected void prepareComplexObs(Visit visit, Person person, Encounter encounter, String fileCaption) {
+		obs = new Obs(person, conceptComplex, visit.getStopDatetime() == null ? new Date() : visit.getStopDatetime(), encounter.getLocation());
+		obs.setEncounter(encounter);
+		obs.setComment(fileCaption);
+	}
 
-   public Obs saveImageDocument(Person person, Encounter encounter, String fileCaption, MultipartFile multipartFile, String instructions)
-         throws IOException
-   {
-      conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
-      prepareComplexObs(person, encounter, fileCaption);
+	public Obs saveImageDocument(Visit visit, Person person, Encounter encounter, String fileCaption, MultipartFile multipartFile, String instructions)
+			throws IOException
+	{
+		conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
+		prepareComplexObs(visit, person, encounter, fileCaption);
 
-      Object image = multipartFile.getInputStream();
-      double compressionRatio = getCompressionRatio(multipartFile.getSize(), 1000000 * context.getMaxStorageFileSize());
-      if (compressionRatio < 1) {
-         image = Thumbnails.of(multipartFile.getInputStream()).scale(compressionRatio).asBufferedImage();
-      }
-      obs.setComplexData( complexDataHelper.build(instructions, multipartFile.getOriginalFilename(), image, multipartFile.getContentType()).asComplexData() );
-      obs = context.getObsService().saveObs(obs, getClass().toString());
-      return obs;
-   }
+		Object image = multipartFile.getInputStream();
+		double compressionRatio = getCompressionRatio(multipartFile.getSize(), 1000000 * context.getMaxStorageFileSize());
+		if (compressionRatio < 1) {
+			image = Thumbnails.of(multipartFile.getInputStream()).scale(compressionRatio).asBufferedImage();
+		}
+		obs.setComplexData( complexDataHelper.build(instructions, multipartFile.getOriginalFilename(), image, multipartFile.getContentType()).asComplexData() );
+		obs = context.getObsService().saveObs(obs, getClass().toString());
+		return obs;
+	}
 
-   public Obs saveOtherDocument(Person person, Encounter encounter, String fileCaption, MultipartFile multipartFile, String instructions)
-         throws IOException
-   {
-      conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
-      prepareComplexObs(person, encounter, fileCaption);
+	public Obs saveOtherDocument(Visit visit, Person person, Encounter encounter, String fileCaption, MultipartFile multipartFile, String instructions)
+			throws IOException
+	{
+		conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
+		prepareComplexObs(visit, person, encounter, fileCaption);
 
-      obs.setComplexData( complexDataHelper.build(instructions, multipartFile.getOriginalFilename(), multipartFile.getBytes(), multipartFile.getContentType()).asComplexData() );
-      obs = context.getObsService().saveObs(obs, getClass().toString());
-      return obs;
-   }
+		obs.setComplexData( complexDataHelper.build(instructions, multipartFile.getOriginalFilename(), multipartFile.getBytes(), multipartFile.getContentType()).asComplexData() );
+		obs = context.getObsService().saveObs(obs, getClass().toString());
+		return obs;
+	}
 }
