@@ -1,6 +1,8 @@
 package org.openmrs.module.visitdocumentsui.web.controller;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -59,6 +61,7 @@ public class VisitDocumentsControllerTest extends BaseModuleWebContextSensitiveT
 	public void shouldSaveFile_WhenVisitIsActive() throws JsonParseException, JsonMappingException, IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		// Setup
 		Visit visit = context.getVisitService().getActiveVisitsByPatient(patient).get(0);
+		assertNull(visit.getStopDatetime());
 
 		// Replay
 		Object obsRep = controller.uploadDocuments(patient, visit, provider, fileCaption, instructions, request);
@@ -67,6 +70,7 @@ public class VisitDocumentsControllerTest extends BaseModuleWebContextSensitiveT
 		String uuid = (String) PropertyUtils.getProperty(obsRep, "uuid");
 		Obs obs = context.getObsService().getObsByUuid(uuid);
 		assertEquals(visit.getId(), obs.getEncounter().getVisit().getId());
+		assertTrue(obs.getObsDatetime().after(obs.getEncounter().getEncounterDatetime()));
 	}
 	
 	@Test
@@ -83,5 +87,7 @@ public class VisitDocumentsControllerTest extends BaseModuleWebContextSensitiveT
 		String uuid = (String) PropertyUtils.getProperty(obsRep, "uuid");
 		Obs obs = context.getObsService().getObsByUuid(uuid);
 		assertEquals(visit.getId(), obs.getEncounter().getVisit().getId());
+		assertEquals(visit.getStopDatetime(), obs.getEncounter().getEncounterDatetime());
+		assertEquals(visit.getStopDatetime(), obs.getObsDatetime());
 	}
 }
