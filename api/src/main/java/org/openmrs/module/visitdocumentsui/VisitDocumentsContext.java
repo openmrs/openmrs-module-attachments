@@ -148,13 +148,13 @@ public class VisitDocumentsContext extends ModuleProperties
 			}
 		}
 		encounter.setProvider(getEncounterRole(), provider);
-		if (visit.getStopDatetime() == null) {
-			encounter.setEncounterDatetime(new Date());
-		}
-		else {	// closed visits
-			encounter.setEncounterDatetime(visit.getStopDatetime());			
-		}
 		if (saveEncounter) {
+			if (visit.getStopDatetime() != null) {
+				encounter.setEncounterDatetime(visit.getStopDatetime());
+			}
+			else {
+				encounter.setEncounterDatetime(new Date());
+			}
 			encounter = getEncounterService().saveEncounter(encounter);
 		}
 		return encounter;
