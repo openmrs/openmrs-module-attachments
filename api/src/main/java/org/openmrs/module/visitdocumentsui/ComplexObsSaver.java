@@ -14,6 +14,8 @@ import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getCompr
 import java.io.IOException;
 import java.util.Date;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.ConceptComplex;
@@ -61,15 +63,15 @@ public class ComplexObsSaver
 	}
 
 	public Obs saveImageDocument(Visit visit, Person person, Encounter encounter, String fileCaption, MultipartFile multipartFile, String instructions)
-			throws IOException
-	{
+			throws IOException {
+
 		conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
 		prepareComplexObs(visit, person, encounter, fileCaption);
 
 		Object image = multipartFile.getInputStream();
 		double compressionRatio = getCompressionRatio(multipartFile.getSize(), 1000000 * context.getMaxStorageFileSize());
 		if (compressionRatio < 1) {
-			image = Thumbnails.of(multipartFile.getInputStream()).scale(compressionRatio).asBufferedImage();
+			image = Thumbnails.of(ImageIO.read(multipartFile.getInputStream())).scale(compressionRatio).asBufferedImage();
 		}
 		obs.setComplexData( complexDataHelper.build(instructions, multipartFile.getOriginalFilename(), image, multipartFile.getContentType()).asComplexData() );
 		obs = context.getObsService().saveObs(obs, getClass().toString());
