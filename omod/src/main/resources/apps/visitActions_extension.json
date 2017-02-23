@@ -7,7 +7,6 @@
     "url": "visitdocumentsui/visitDocuments.page?patient={{patient.uuid}}&patientId={{patient.patientId}}&visit={{visit.uuid}}",
     "icon": "icon-paper-clip",
     "order": 200,
-    "requiredPrivilege": "visitdocumentsui.visitdocuments.page",
-    "require": "!visit.active"
+    "requiredPrivilege": "visitdocumentsui.visitdocuments.page"
   }
 ]
