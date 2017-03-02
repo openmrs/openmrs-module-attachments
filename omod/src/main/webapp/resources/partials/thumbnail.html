@@ -143,7 +143,10 @@
     <div class="vdui_opacity-changeable vdui_thumbnail-frame">
       <i ng-hide="::obs.contentFamily" class="icon-file"></i>
       <div ng-show="::obs.contentFamily">
-        <div ng-bind-html="::iconHtml"></div>
+        <div ng-if="obs.contentFamily == 'IMAGE'">
+          <img img-fix-orientation="imageUrl" ng-src="{{imageUrl}}"></img>
+        </div>
+        <div ng-if="obs.contentFamily != 'IMAGE'" ng-bind-html="::iconHtml"></div>
       </div>
     </div>
     <i ng-show="editMode" class="icon-trash vdui_icon-trash vdui_click-pointer" ng-click="confirmDelete()"></i>

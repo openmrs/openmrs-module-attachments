@@ -10,7 +10,7 @@ angular.module('vdui.widget.complexObsEncounter', ['obsService', 'vdui.widget.ga
 angular.module('vdui.widget.gallery', ['vdui.service.configService', 'vdui.service.moduleUtils']);
 angular.module('vdui.widget.modalWebcam', ['vdui.service.moduleUtils']);
 angular.module('vdui.widget.fileUpload', ['vdui.widget.modalWebcam', 'vdui.service.moduleUtils']);
-angular.module('vdui.widget.thumbnail', ['vdui.service.visitDocumentService', 'vdui.service.complexObsCacheService', 'ngDialog', 'vdui.widget.modalImage','vdui.service.moduleUtils'])
+angular.module('vdui.widget.thumbnail', ['vdui.service.visitDocumentService', 'vdui.service.complexObsCacheService', 'ngDialog', 'vdui.widget.modalImage','vdui.service.moduleUtils', 'cp.ng.fix-image-orientation'])
 
 angular.module('vdui.service.configService', ['vdui.service.moduleUtils']);
 angular.module('vdui.service.moduleUtils', []);

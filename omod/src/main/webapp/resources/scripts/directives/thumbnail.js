@@ -175,6 +175,11 @@ angular.module('vdui.widget.thumbnail')
         Injects the icon's HTML into the DOM. We had to avoid an in-DOM ng-if (or ng-switch) due to performance issues.
       */
       var setIconHtml = function(complexObs) {
+
+        if (complexObs.contentFamily === module.family.IMAGE) {
+          $scope.imageUrl = 'data:' + complexObs.mimeType + ';base64,' + module.arrayBufferToBase64(complexObs.complexData);
+        }
+
         var html = "";
         switch (complexObs.contentFamily) {
           case module.family.IMAGE:

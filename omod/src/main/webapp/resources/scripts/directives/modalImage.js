@@ -10,6 +10,10 @@ angular.module('vdui.widget.modalImage')
         $scope.hide = function() {
           $scope.config = null;
         }
+
+        $scope.getImageUrl = function() {
+          return 'data:' + $scope.config.mimeType + ';base64,' + $scope.config.bytes;
+        }
       }
     };
   }]);

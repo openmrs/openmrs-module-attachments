@@ -9,4 +9,6 @@
   ui.includeJavascript("visitdocumentsui", "directives/modalImage.js")
   ui.includeCss("visitdocumentsui", "icon.css")
   ui.includeJavascript("visitdocumentsui", "date/moment.min.js")
+  ui.includeJavascript("visitdocumentsui", "image/exif.js")
+  ui.includeJavascript("visitdocumentsui", "image/angular-fix-image-orientation.js")
 %>

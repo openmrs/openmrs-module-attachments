@@ -58,7 +58,7 @@
 <div ng-if="config" class="vdui_modal-image-background" ng-click="hide()">
   
   <!-- Modal Content (The Image) -->
-  <img class="vdui_modal-image-content" ng-src="data:{{config.mimeType}};base64,{{config.bytes}}">
+  <img class="vdui_modal-image-content" img-fix-orientation="getImageUrl()" ng-src="{{getImageUrl()}}"></img>
 
   <!-- Modal Caption (Image Text) -->
   <div id="vdui_modal-image-caption">{{config.caption}}</div>
