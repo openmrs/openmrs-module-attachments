@@ -31,12 +31,13 @@
 		<module>api</module>
 		<module>api-1.11</module>
 		<module>api-2.0</module>
-		<module>omod</module>
+		<module>omod-1.10</module>
 		<module>omod-2.0</module>
+		<module>omod</module>
 	</modules>
 
 	<properties>
-		<openMRSVersion>1.10.2</openMRSVersion>
+		<openMRSVersion>1.10.5</openMRSVersion>
 		<appframeworkVersion>2.2.1</appframeworkVersion>
 		<uiframeworkVersion>3.3.1</uiframeworkVersion>
 		<uicommonsVersion>1.4</uicommonsVersion> 

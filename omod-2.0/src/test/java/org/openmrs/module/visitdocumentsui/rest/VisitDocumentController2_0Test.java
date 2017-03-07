@@ -1,11 +1,7 @@
 package org.openmrs.module.visitdocumentsui.rest;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -65,19 +61,5 @@ public class VisitDocumentController2_0Test extends MainResourceControllerTest {
       // Verif
       String comment = (String) PropertyUtils.getProperty(doc, "comment");
       assertEquals(editedComment, comment);
-   }
-   
-   @Test
-   public void deleteVisitDocument_shouldPurgeObs() throws Exception {
-      // Setup
-      File file = new File(testHelper.getTestComplexObsFilePath());
-      assertTrue(file.exists());
-      
-      // Replay
-      handle( newDeleteRequest(getURI() + "/" + getUuid(), new Parameter("purge", "")) );
-      
-      // Verif
-      assertNull(obsService.getObsByUuid(getUuid()));
-      assertFalse(file.exists());
    }
 }

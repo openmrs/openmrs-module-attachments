@@ -29,14 +29,18 @@ api-2.0/.classpath
 api-2.0/.project
 api-2.0/.settings/*
 api-2.0/target/*
-omod/.classpath
-omod/.project
-omod/.settings/*
-omod/target/*
+omod-1.10/.classpath
+omod-1.10/.project
+omod-1.10/.settings/*
+omod-1.10/target/*
 omod-2.0/.classpath
 omod-2.0/.project
 omod-2.0/.settings/*
 omod-2.0/target/*
+omod/.classpath
+omod/.project
+omod/.settings/*
+omod/target/*
 /.settings
 
 # OS X auto-generated files #

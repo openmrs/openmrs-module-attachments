@@ -9,18 +9,10 @@
     <version>1.2-SNAPSHOT</version>
   </parent>
 
-  <artifactId>visitdocumentsui-omod-2.0</artifactId>
+  <artifactId>visitdocumentsui-omod-1.10</artifactId>
   <packaging>jar</packaging>
-  <name>Visit Documents UI 2.0 OMOD</name>
-  <description>OMOD 2.0 project for Visit Documents UI</description>
-
-  <properties>
-    <openMRSVersion>2.0.0</openMRSVersion>
-    <emrapiVersion>1.19</emrapiVersion> 
-    <webservices.restVersion>2.16</webservices.restVersion>
-    <reportingVersion>0.10.4</reportingVersion>
-    <serialization.xstreamVersion>0.2.12</serialization.xstreamVersion>
-  </properties>
+  <name>Visit Documents UI 1.10 OMOD</name>
+  <description>OMOD 1.10 project for Visit Documents UI</description>
 
   <dependencies>
 
@@ -36,24 +28,6 @@
       <version>${project.parent.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>${project.parent.artifactId}-api-1.11</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>${project.parent.artifactId}-api-2.0</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>${project.parent.artifactId}-omod-1.10</artifactId>
-      <version>${project.parent.version}</version>
     </dependency>
 
     <!-- Begin OpenMRS core -->
@@ -128,12 +102,6 @@
       <version>${emrapiVersion}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.openmrs.module</groupId>
-      <artifactId>emrapi-api-1.12</artifactId>
-      <version>${emrapiVersion}</version>
-      <scope>provided</scope>
-    </dependency>
 
       <!-- BEGIN test dep. -->
 
@@ -173,12 +141,6 @@
     <dependency>
       <groupId>org.openmrs.module</groupId>
       <artifactId>serialization.xstream-api-1.10</artifactId>
-      <version>${serialization.xstreamVersion}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openmrs.module</groupId>
-      <artifactId>serialization.xstream-api-2.0</artifactId>
       <version>${serialization.xstreamVersion}</version>
       <scope>test</scope>
     </dependency>
