@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.openmrs.module.Extension;
+import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.module.web.extension.AdministrationSectionExt;
 
 /**
@@ -32,7 +33,7 @@ public class AdminList extends AdministrationSectionExt {
 	 * @see AdministrationSectionExt#getTitle()
 	 */
 	public String getTitle() {
-		return "patientimages.title";
+		return VisitDocumentsConstants.MODULE_ARTIFACT_ID + ".title";
 	}
 	
 	/**
@@ -40,7 +41,7 @@ public class AdminList extends AdministrationSectionExt {
 	 */
 	public Map<String, String> getLinks() {
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-		map.put("/module/patientimages/manage.form", "patientimages.manage");
+		map.put("/module/patientimages/manage.form", VisitDocumentsConstants.MODULE_ARTIFACT_ID + ".manage");
 		return map;
 	}
 	
