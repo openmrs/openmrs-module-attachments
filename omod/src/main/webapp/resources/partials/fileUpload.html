@@ -94,7 +94,7 @@
   <p><i class="icon-warning-sign small"></i>{{msgs["visitdocumentsui.fileUpload.attentionPastVisit"]}}</p>
 </div>
 
-<div ng-show="visitUuid" class="vdui_file-upload-container" ng-init="init()">
+<div ng-show="visitUuid || !associateWithVisitAndEncounter" class="vdui_file-upload-container" ng-init="init()">
   <div class="vdui_upload-container">
     <div class="vdui_upload-element vdui_dropzone-element">
       <h3>{{msgs["visitdocumentsui.visitdocumentspage.fileTitle"]}}</h3>

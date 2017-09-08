@@ -9,13 +9,7 @@
  */
 package org.openmrs.module.visitdocumentsui;
 
-import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getCompressionRatio;
-
-import java.io.IOException;
-import java.util.Date;
-
-import javax.imageio.ImageIO;
-
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.ConceptComplex;
@@ -30,7 +24,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import net.coobird.thumbnailator.Thumbnails;
+import javax.imageio.ImageIO;
+import java.io.IOException;
+import java.util.Date;
+
+import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getCompressionRatio;
 
 @Component(VisitDocumentsConstants.COMPONENT_COMPLEXOBS_SAVER)
 public class ComplexObsSaver
@@ -57,8 +55,8 @@ public class ComplexObsSaver
 	}
 
 	protected void prepareComplexObs(Visit visit, Person person, Encounter encounter, String fileCaption) {
-		obs = new Obs(person, conceptComplex, visit.getStopDatetime() == null ? new Date() : visit.getStopDatetime(), encounter.getLocation());
-		obs.setEncounter(encounter);
+		obs = new Obs(person, conceptComplex, visit == null || visit.getStopDatetime() == null ? new Date() : visit.getStopDatetime(), encounter != null ? encounter.getLocation() : null);
+		obs.setEncounter(encounter);  // may be null
 		obs.setComment(fileCaption);
 	}
 

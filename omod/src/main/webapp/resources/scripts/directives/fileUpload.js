@@ -63,6 +63,7 @@ angular.module('vdui.widget.fileUpload')
         var providerUuid = "";
         $scope.visitUuid = "";  // In scope for toggling ng-show
         $scope.closedVisit = false;
+        $scope.associateWithVisitAndEncounter = $scope.config.associateWithVisitAndEncounter;
 
         $rootScope.$on(module.webcamCaptureForUpload, function(event, webcamFile) {
           addFileToDropzone(webcamFile);
@@ -116,8 +117,8 @@ angular.module('vdui.widget.fileUpload')
             },
             'sending': function (file, xhr, formData) {
               formData.append('patient', $scope.config.patient.uuid);
-              formData.append('visit', $scope.visitUuid);
-              formData.append('provider', providerUuid);
+              formData.append('visit', $scope.visitUuid == null ? "" : $scope.visitUuid);
+              formData.append('provider', providerUuid == null ? "" : providerUuid);
               formData.append('fileCaption', ($scope.typedText.fileCaption == null) ? "" : $scope.typedText.fileCaption );
             },
             'success': function (file, response) {

@@ -90,6 +90,7 @@
 		<defaultValue>5021b1a1-e7f6-44b4-ba02-da2f2bcf8718</defaultValue>
 		<description>
 			UUID of the encounter type used to upload visit documents
+			If blank, will *not* create encounters for documents, but rather store them as stand-alone obs
 		</description>
 	</globalProperty>
 

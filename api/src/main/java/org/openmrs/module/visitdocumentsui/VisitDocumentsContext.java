@@ -9,13 +9,6 @@
  */
 package org.openmrs.module.visitdocumentsui;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -47,6 +40,13 @@ import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Inject this class to access services and global properties.
@@ -134,10 +134,11 @@ public class VisitDocumentsContext extends ModuleProperties
 		Encounter encounter = new Encounter();
 		encounter.setVisit(visit);
 		encounter.setEncounterType(getEncounterType());
-		encounter.setPatient(visit.getPatient());
-		encounter.setLocation(visit.getLocation());
+		encounter.setPatient(patient);
+		encounter.setLocation(visit != null ? visit.getLocation() : null);
+
 		boolean saveEncounter = true;
-		if (isOneEncounterPerVisit()) {
+		if (visit != null && isOneEncounterPerVisit()) {
 			List<Encounter> encounters = visitCompatibility.getNonVoidedEncounters(visit);
 			for (Encounter e : encounters) {
 				if (e.getEncounterType().getUuid() == getEncounterType().getUuid()) {
@@ -147,9 +148,11 @@ public class VisitDocumentsContext extends ModuleProperties
 				}
 			}
 		}
-		encounter.setProvider(getEncounterRole(), provider);
+		if (provider != null) {
+			encounter.setProvider(getEncounterRole(), provider);
+		}
 		if (saveEncounter) {
-			if (visit.getStopDatetime() != null) {
+			if (visit != null && visit.getStopDatetime() != null) {
 				encounter.setEncounterDatetime(visit.getStopDatetime());
 			}
 			else {
@@ -245,8 +248,12 @@ public class VisitDocumentsContext extends ModuleProperties
 	 * @return The encounter type for encounters recording the upload of an image.
 	 */
 	public EncounterType getEncounterType() {
-		EncounterType encounterType = getEncounterTypeByGlobalProperty(VisitDocumentsConstants.GP_ENCOUNTER_TYPE_UUID);
+		EncounterType encounterType = getEncounterTypeByGlobalProperty(VisitDocumentsConstants.GP_ENCOUNTER_TYPE_UUID, false);
 		return encounterType;
+	}
+
+	public Boolean associateWithVisitAndEncounter() {
+		return getEncounterType() != null;
 	}
 
 	/**
