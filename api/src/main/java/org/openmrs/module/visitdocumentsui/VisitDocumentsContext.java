@@ -185,7 +185,7 @@ public class VisitDocumentsContext extends ModuleProperties
 	}
 
 	/**
-	 * @return The concept complex used to save uploaded image-obs.
+	 * @return The default concept complex used to save uploaded documents.
 	 */
 	public ConceptComplex getDefaultConceptComplex() {
 		String globalPropertyName = VisitDocumentsConstants.GP_DEFAULT_CONCEPT_COMPLEX_UUID;
