@@ -45,14 +45,14 @@ public class VisitDocumentResource1_10 extends DataDelegatingCrudResource<VisitD
 
 	@Override
 	protected void delete(VisitDocument delegate, String reason, RequestContext context) throws ResponseException {
-		String encounterUuid = delegate.getObs().getEncounter().getUuid();
+		String encounterUuid = delegate.getObs().getEncounter() != null ? delegate.getObs().getEncounter().getUuid() : null;
 		Context.getObsService().voidObs(delegate.getObs(), REASON);
 		voidEncounterIfEmpty(Context.getEncounterService(), encounterUuid);
 	}
 
 	@Override
 	public void purge(VisitDocument delegate, RequestContext context) throws ResponseException {
-		String encounterUuid = delegate.getObs().getEncounter().getUuid();
+		String encounterUuid = delegate.getObs().getEncounter() != null ? delegate.getObs().getEncounter().getUuid() : null;
 		Context.getObsService().purgeObs(delegate.getObs());
 		voidEncounterIfEmpty(Context.getEncounterService(), encounterUuid);
 	}

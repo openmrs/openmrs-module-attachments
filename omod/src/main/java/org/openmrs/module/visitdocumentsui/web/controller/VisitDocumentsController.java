@@ -1,12 +1,5 @@
 package org.openmrs.module.visitdocumentsui.web.controller;
 
-import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getContentFamily;
-
-import java.io.IOException;
-import java.util.Iterator;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -35,6 +28,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Iterator;
+
+import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getContentFamily;
+
 @Controller
 public class VisitDocumentsController {
 
@@ -56,8 +55,8 @@ public class VisitDocumentsController {
    @ResponseBody
    public Object uploadDocuments(
          @RequestParam("patient") Patient patient,
-         @RequestParam("visit") Visit visit,
-         @RequestParam("provider") Provider provider,
+         @RequestParam(value = "visit", required = false) Visit visit,
+         @RequestParam(value = "provider", required = false) Provider provider,
          @RequestParam("fileCaption") String fileCaption,
          @RequestParam(value="instructions", required=false) String instructions,
          MultipartHttpServletRequest request) 
@@ -70,7 +69,11 @@ public class VisitDocumentsController {
             String uploadedFileName = fileNameIterator.next();
             MultipartFile multipartFile = request.getFile(uploadedFileName);
             
-            final Encounter encounter = context.getVisitDocumentEncounter(patient, visit, provider);
+            Encounter encounter = null;
+            if (context.associateWithVisitAndEncounter()) {
+               encounter = context.getVisitDocumentEncounter(patient, visit, provider);
+            }
+
             if (StringUtils.isEmpty(instructions))
                instructions = ValueComplex.INSTRUCTIONS_DEFAULT;
             

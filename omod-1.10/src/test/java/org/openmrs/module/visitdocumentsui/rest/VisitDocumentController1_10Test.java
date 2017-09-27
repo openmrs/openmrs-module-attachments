@@ -1,24 +1,22 @@
 package org.openmrs.module.visitdocumentsui.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Obs;
-import org.openmrs.api.APIException;
 import org.openmrs.api.ObsService;
 import org.openmrs.module.visitdocumentsui.VisitDocumentsConstants;
 import org.openmrs.module.visitdocumentsui.obs.TestHelper;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
-import org.openmrs.test.Verifies;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class VisitDocumentController1_10Test extends MainResourceControllerTest {
 
@@ -80,7 +78,7 @@ public class VisitDocumentController1_10Test extends MainResourceControllerTest 
 		// Verif
 		assertTrue(obsService.getObsByUuid(getUuid()).isVoided());
 	}
-	
+
 	@Test
 	public void deleteVisitDocumentWithMissingFile_shouldVoidObs() throws Exception {
 		// Setup
@@ -121,5 +119,29 @@ public class VisitDocumentController1_10Test extends MainResourceControllerTest 
 
 		// Verif
 		assertNull(obsService.getObsByUuid(getUuid()));
+	}
+
+	@Test
+	public void deleteVisitDocument_shouldVoidObsWithoutAssociatedEncounter() throws Exception {
+		// Setup
+		Obs obs = testHelper.getTestComplexObsWithoutAssociatedEncounterOrVisit();
+
+		// Replay
+		handle( newDeleteRequest(getURI() + "/" + obs.getUuid()) );
+
+		// Verify
+		assertTrue(obsService.getObsByUuid(obs.getUuid()).isVoided());
+	}
+
+	@Test
+	public void purgeVisitDocument_shouldPurgeObsWithoutAssociatedEncounter() throws Exception {
+		// Setup
+		Obs obs = testHelper.getTestComplexObsWithoutAssociatedEncounterOrVisit();
+
+		// Replay
+		handle( newDeleteRequest(getURI() + "/" + obs.getUuid(), new Parameter("purge", "")) );
+
+		// Verify
+		assertNull(obsService.getObsByUuid(obs.getUuid()));
 	}
 }

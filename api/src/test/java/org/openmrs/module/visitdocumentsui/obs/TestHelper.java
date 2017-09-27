@@ -1,9 +1,5 @@
 package org.openmrs.module.visitdocumentsui.obs;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
@@ -25,6 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Component
 public class TestHelper {
@@ -102,6 +102,15 @@ public class TestHelper {
 
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
 		return obsSaver.saveOtherDocument(visit, patient, encounter, fileCaption, getTestMultipartFile(), ValueComplex.INSTRUCTIONS_DEFAULT);
+	}
+
+	public Obs getTestComplexObsWithoutAssociatedEncounterOrVisit() throws Exception {
+		init();
+
+		Patient patient = Context.getPatientService().getPatient(2);
+
+		String fileCaption = RandomStringUtils.randomAlphabetic(12);
+		return obsSaver.saveOtherDocument(null, patient, null, fileCaption, getTestMultipartFile(), ValueComplex.INSTRUCTIONS_DEFAULT);
 	}
 
 	public String getComplexObsDir() {

@@ -1,9 +1,5 @@
 package org.openmrs.module.visitdocumentsui.page.controller;
 
-import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getContentFamilyMap;
-
-import java.util.Map;
-
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
@@ -23,6 +19,10 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Map;
+
+import static org.openmrs.module.visitdocumentsui.VisitDocumentsContext.getContentFamilyMap;
 
 @Component
 public class VisitDocumentsPageController {
@@ -46,6 +46,7 @@ public class VisitDocumentsPageController {
 		jsonConfig.put("visit", visitWrapper == null ? null : convertVisit(visitWrapper.getVisit()));
 
 		jsonConfig.put("contentFamilyMap", getContentFamilyMap());
+		jsonConfig.put("associateWithVisitAndEncounter", context.associateWithVisitAndEncounter());
 
 		model.put("jsonConfig", ui.toJson(jsonConfig));
 
