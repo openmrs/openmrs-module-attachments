@@ -127,7 +127,7 @@ angular.module('vdui.widget.fileUpload')
               $scope.clearForms();
             },
             'error': function (file, response, xhr) {
-              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".fileUpload.error") });
+              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".fileUpload.error") + " " + response });
               console.log(response);
             }
           }
