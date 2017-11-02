@@ -33,7 +33,7 @@ angular.module('att.widget.fileUpload')
       };
     })
 
-  .directive('attFileUpload', ['SessionInfo', 'ObsService', 'ModuleUtils', function(sessionInfo, obsService, module) {
+  .directive('attFileUpload', ['SessionInfo', 'ObsService', 'ModuleUtils', '$timeout', function(sessionInfo, obsService, module, $timeout) {
     return {
 
       restrict: 'E',
@@ -111,9 +111,9 @@ angular.module('att.widget.fileUpload')
               if (this.files[1] != null) {
                 this.removeFile(this.files[0]);
               }
-              $scope.$apply(function() {
+              $timeout(function() { // https://docs.angularjs.org/error/$rootScope/inprog?p0=$apply#triggering-events-programmatically
                 $scope.fileAdded = true;
-              });
+              }, 0);
             },
             'sending': function (file, xhr, formData) {
               formData.append('patient', $scope.config.patient.uuid);
