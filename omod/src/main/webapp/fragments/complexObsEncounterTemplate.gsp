@@ -4,17 +4,17 @@
   ui.includeJavascript("uicommons", "angular-common.js")
   ui.includeJavascript("uicommons", "angular-app.js")
 
-  ui.includeJavascript("visitdocumentsui", "app.js")
-  ui.includeJavascript("visitdocumentsui", "fragments/complexObsEncounterTemplate.js")
+  ui.includeJavascript("attachments", "app.js")
+  ui.includeJavascript("attachments", "fragments/complexObsEncounterTemplate.js")
   
   ui.includeJavascript("uicommons", "services/obsService.js")
-  ui.includeJavascript("visitdocumentsui", "directives/complexObsEncounterDirective.js")
+  ui.includeJavascript("attachments", "directives/complexObsEncounterDirective.js")
 %>
 
 <!-- Angular widgets -->
 <%
-  ui.includeFragment("visitdocumentsui", "dependenciesThumbnail")
-  ui.includeFragment("visitdocumentsui", "dependenciesGallery")
+  ui.includeFragment("attachments", "dependenciesThumbnail")
+  ui.includeFragment("attachments", "dependenciesGallery")
 %>
 
 <style>
@@ -24,19 +24,19 @@
     overflow: auto;
   }
 
-  #encountersList .encounter-details .vdui_view-details {
+  #encountersList .encounter-details .att_view-details {
     background: #f9f9f9;
   }
-  #encountersList .encounter-details .vdui_view-details .hide-details {
+  #encountersList .encounter-details .att_view-details .hide-details {
     display: none;
   }
-  #encountersList .encounter-details .vdui_view-details:not(.collapsed) .hide-details {
+  #encountersList .encounter-details .att_view-details:not(.collapsed) .hide-details {
     display: inline;
   }
-  #encountersList .encounter-details .vdui_view-details:not(.collapsed) .show-details {
+  #encountersList .encounter-details .att_view-details:not(.collapsed) .show-details {
     display: none;
   }
-  #encountersList .encounter-details .vdui_view-details:not(.collapsed) .icon-caret-right {
+  #encountersList .encounter-details .att_view-details:not(.collapsed) .icon-caret-right {
     -moz-transform: rotate(90deg);
     -webkit-transform: rotate(90deg);
     -o-transform: rotate(90deg);
@@ -55,19 +55,19 @@
     -o-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
   }
-  #encountersList .encounter-details .vdui_view-details i {
+  #encountersList .encounter-details .att_view-details i {
     font-size: 1.2em;
     padding: 0;
     position: relative;
     top: 1px;
     left: -3px;
   }
-  #encountersList .encounter-details .vdui_view-details:hover {
+  #encountersList .encounter-details .att_view-details:hover {
     text-decoration: none;
   }
 </style>
 
-<div id="vdui-fragment-encounter-template" ng-controller="EncounterTemplateCtrl" ng-init="init()">
+<div id="att-fragment-encounter-template" ng-controller="EncounterTemplateCtrl" ng-init="init()">
 
   <script type="text/template" id="complexObsEncounterTemplate">
   <li>
@@ -99,7 +99,7 @@
       </li>
       <li>
         <div class="details-action">
-          <a class="vdui_view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-display-with-html-form="{{- config.displayWithHtmlForm }}" data-target="#encounter-summary{{- encounter.encounterId }}" data-toggle="collapse"
+          <a class="att_view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-display-with-html-form="{{- config.displayWithHtmlForm }}" data-target="#encounter-summary{{- encounter.encounterId }}" data-toggle="collapse"
             data-encounter-uuid="{{- encounter.uuid }}"
             data-encounter-type-uuid="{{- encounter.encounterType.uuid }}">
               <span class="show-details">${ ui.message("coreapps.patientDashBoard.showDetails")}</span>
@@ -131,5 +131,5 @@
 
 <script type="text/javascript">
   // manually bootstrap angular app, in case there are multiple angular apps on a page
-  angular.bootstrap('#vdui-fragment-encounter-template', ['vdui.fragment.encounterTemplate']);
+  angular.bootstrap('#att-fragment-encounter-template', ['att.fragment.encounterTemplate']);
 </script>

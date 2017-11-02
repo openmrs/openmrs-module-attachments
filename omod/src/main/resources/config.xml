@@ -27,7 +27,7 @@
 
 
 	<!-- Module Activator -->
-	<activator>${project.parent.groupId}.${project.parent.artifactId}.VisitDocumentsActivator</activator>
+	<activator>${project.parent.groupId}.${project.parent.artifactId}.AttachmentsActivator</activator>
 
 
 	<!-- Adds link to admin page -->
@@ -41,14 +41,6 @@
 	<messages>
 		<lang>en</lang>
 		<file>messages.properties</file>
-	</messages>
-	<messages>
-		<lang>fr</lang>
-		<file>messages_fr.properties</file>
-	</messages>
-	<messages>
-		<lang>es</lang>
-		<file>messages_es.properties</file>
 	</messages>
 	<!-- /Internationalization -->
 
@@ -89,7 +81,7 @@
 		<property>${project.parent.artifactId}.encounterTypeUuid</property>
 		<defaultValue>5021b1a1-e7f6-44b4-ba02-da2f2bcf8718</defaultValue>
 		<description>
-			UUID of the encounter type used to upload visit documents
+			UUID of the encounter type used to upload attachments
 			If blank, will *not* create encounters for documents, but rather store them as stand-alone obs
 		</description>
 	</globalProperty>
@@ -98,7 +90,7 @@
 		<property>${project.parent.artifactId}.maxUploadFileSize</property>
 		<defaultValue>5.0</defaultValue>
 		<description>
-			Maximum size (in Megabytes) allowed for a visit document
+			Maximum size (in Megabytes) allowed for an attachment
 			file upload
 		</description>
 	</globalProperty>
@@ -107,8 +99,7 @@
 		<property>${project.parent.artifactId}.maxStorageFileSize</property>
 		<defaultValue>1.2</defaultValue>
 		<description>
-			Maximum size (in Megabytes) allowed for the storage of a
-			visit document file
+			Maximum size (in Megabytes) allowed for the storage of an attachment
 		</description>
 	</globalProperty>
 
@@ -125,7 +116,7 @@
 		<property>${project.parent.artifactId}.allowNoCaption</property>
 		<defaultValue>false</defaultValue>
 		<description>
-			Set this property to 'true' to allow empty documents
+			Set this property to 'true' to allow empty attachments
 			captions
 		</description>
 	</globalProperty>
@@ -150,8 +141,8 @@
 
 	<!-- Privileges -->
 	<privilege>
-		<name>App: ${project.parent.artifactId}.visitdocuments.page</name>
-		<description>Allowed to access the Visit Documents page</description>
+		<name>App: ${project.parent.artifactId}.attachments.page</name>
+		<description>Allowed to access the main attachments page</description>
 	</privilege>
 
 </module>

@@ -1,14 +1,14 @@
 <!-- Thumbnail directive dependencies -->
 <%
-  ui.includeJavascript("visitdocumentsui", "directives/thumbnail.js")
-  ui.includeJavascript("visitdocumentsui", "services/visitDocumentService.js")
-  ui.includeJavascript("visitdocumentsui", "services/moduleUtils.js")
-  ui.includeJavascript("visitdocumentsui", "services/complexObsCacheService.js")
+  ui.includeJavascript("attachments", "directives/thumbnail.js")
+  ui.includeJavascript("attachments", "services/attachmentService.js")
+  ui.includeJavascript("attachments", "services/moduleUtils.js")
+  ui.includeJavascript("attachments", "services/complexObsCacheService.js")
   ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
   ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
-  ui.includeJavascript("visitdocumentsui", "directives/modalImage.js")
-  ui.includeCss("visitdocumentsui", "icon.css")
-  ui.includeJavascript("visitdocumentsui", "date/moment.min.js")
-  ui.includeJavascript("visitdocumentsui", "image/exif.js")
-  ui.includeJavascript("visitdocumentsui", "image/angular-fix-image-orientation.js")
+  ui.includeJavascript("attachments", "directives/modalImage.js")
+  ui.includeCss("attachments", "icon.css")
+  ui.includeJavascript("attachments", "date/moment.min.js")
+  ui.includeJavascript("attachments", "image/exif.js")
+  ui.includeJavascript("attachments", "image/angular-fix-image-orientation.js")
 %>

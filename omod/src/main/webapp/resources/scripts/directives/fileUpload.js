@@ -1,4 +1,4 @@
-angular.module('vdui.widget.fileUpload')
+angular.module('att.widget.fileUpload')
   
   .directive('dropzoneDirective',
     function () {
@@ -33,7 +33,7 @@ angular.module('vdui.widget.fileUpload')
       };
     })
 
-  .directive('vduiFileUpload', ['SessionInfo', 'ObsService', 'ModuleUtils', function(sessionInfo, obsService, module) {
+  .directive('attFileUpload', ['SessionInfo', 'ObsService', 'ModuleUtils', function(sessionInfo, obsService, module) {
     return {
 
       restrict: 'E',
@@ -49,12 +49,12 @@ angular.module('vdui.widget.fileUpload')
           module.getProvider() + ".fileUpload.success",
           module.getProvider() + ".fileUpload.error",
           module.getProvider() + ".fileUpload.attentionPastVisit",
-          module.getProvider() + ".visitdocumentspage.fileTitle",
+          module.getProvider() + ".attachmentspage.fileTitle",
           module.getProvider() + ".dropzone.innerlabel",
-          module.getProvider() + ".visitdocumentspage.commentTitle",
+          module.getProvider() + ".attachmentspage.commentTitle",
           module.getProvider() + ".misc.label.enterCaption",
-          module.getProvider() + ".visitdocumentspage.uploadButton",
-          module.getProvider() + ".visitdocumentspage.clearFormsButton"
+          module.getProvider() + ".attachmentspage.uploadButton",
+          module.getProvider() + ".attachmentspage.clearFormsButton"
         ]
         emr.loadMessages(msgCodes.toString(), function(msgs) {
           $scope.msgs = msgs;
@@ -78,7 +78,7 @@ angular.module('vdui.widget.fileUpload')
           $scope.typedText = {};
           $scope.allowWebcam = $scope.config.allowWebcam;
           $scope.showWebcam = false;
-          Dropzone.options.visitDocumentsDropzone = false;
+          Dropzone.options.attachmentsDropzone = false;
 
           sessionInfo.get().$promise.then(function(info) {
             providerUuid = info.currentProvider.uuid;

@@ -5,14 +5,14 @@
 
   <parent>
     <groupId>org.openmrs.module</groupId>
-    <artifactId>visitdocumentsui</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <artifactId>attachments</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>visitdocumentsui-omod-2.0</artifactId>
+  <artifactId>attachments-omod-2.0</artifactId>
   <packaging>jar</packaging>
-  <name>Visit Documents UI 2.0 OMOD</name>
-  <description>OMOD 2.0 project for Visit Documents UI</description>
+  <name>Attachments 2.0 OMOD</name>
+  <description>OMOD 2.0 project for Attachments</description>
 
   <properties>
     <openMRSVersion>2.0.0</openMRSVersion>

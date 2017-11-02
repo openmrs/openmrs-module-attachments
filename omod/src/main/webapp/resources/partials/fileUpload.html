@@ -1,41 +1,41 @@
 <style>
 
-  .vdui_file-upload-container {
+  .att_file-upload-container {
     padding-left: 20px;
     height: 200px;
   }
 
-  .vdui_caption-element textarea {
+  .att_caption-element textarea {
     width: 100%;
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
     box-sizing: border-box;         /* Opera/IE 8+ */
   }
 
-  .vdui_caption-element textarea::-webkit-input-placeholder{
+  .att_caption-element textarea::-webkit-input-placeholder{
     font-size: 1.2em;
     color: LightGrey;
   }
 
-  .vdui_caption-element textarea::-moz-placeholder{
+  .att_caption-element textarea::-moz-placeholder{
     font-size: 1.2em;
     color: LightGrey;
   }
 
-  .vdui_upload-container {
+  .att_upload-container {
     height: 180px;
   }
 
-  .vdui_upload-element {
+  .att_upload-element {
     float: left;
   }
 
-  .vdui_upload-element.vdui_dropzone-element {
+  .att_upload-element.att_dropzone-element {
     width: 30%;
     height: 75%;
   }
 
-  .vdui_upload-element.vdui_caption-element {
+  .att_upload-element.att_caption-element {
     width: 55%;
     margin-left: 2%;
   }
@@ -67,7 +67,7 @@
     z-index: 0;
   }
 
-  .vdui_past-visit {
+  .att_past-visit {
     text-align: left;
     padding: 10px 0;
     padding-left: 10px;
@@ -88,28 +88,28 @@
 </style>
 
 
-<vdui-modal-webcam visible="showWebcam" disabled="isWebcamDisabled()"></vdui-modal-webcam>
+<att-modal-webcam visible="showWebcam" disabled="isWebcamDisabled()"></att-modal-webcam>
 
-<div ng-show="visitUuid && closedVisit" class="vdui_past-visit">
-  <p><i class="icon-warning-sign small"></i>{{msgs["visitdocumentsui.fileUpload.attentionPastVisit"]}}</p>
+<div ng-show="visitUuid && closedVisit" class="att_past-visit">
+  <p><i class="icon-warning-sign small"></i>{{msgs["attachments.fileUpload.attentionPastVisit"]}}</p>
 </div>
 
-<div ng-show="visitUuid || !associateWithVisitAndEncounter" class="vdui_file-upload-container" ng-init="init()">
-  <div class="vdui_upload-container">
-    <div class="vdui_upload-element vdui_dropzone-element">
-      <h3>{{msgs["visitdocumentsui.visitdocumentspage.fileTitle"]}}</h3>
+<div ng-show="visitUuid || !associateWithVisitAndEncounter" class="att_file-upload-container" ng-init="init()">
+  <div class="att_upload-container">
+    <div class="att_upload-element att_dropzone-element">
+      <h3>{{msgs["attachments.attachmentspage.fileTitle"]}}</h3>
       <form action="" dropzone-directive="dropzoneConfig" class="dropzone" id="visit-documents-dropzone">
         <div class="dz-error-message"><span data-dz-errormessage></span></div>
-        <div class="dz-default dz-message">{{msgs["visitdocumentsui.dropzone.innerlabel"]}}</div>
+        <div class="dz-default dz-message">{{msgs["attachments.dropzone.innerlabel"]}}</div>
       </form>
     </div>
-    <div class="vdui_upload-element vdui_caption-element">
-      <h3>{{msgs["visitdocumentsui.visitdocumentspage.commentTitle"]}}</h3>
-      <textarea ng-model="typedText.fileCaption" placeholder="{{msgs['visitdocumentsui.misc.label.enterCaption']}}"></textarea>
+    <div class="att_upload-element att_caption-element">
+      <h3>{{msgs["attachments.attachmentspage.commentTitle"]}}</h3>
+      <textarea ng-model="typedText.fileCaption" placeholder="{{msgs['attachments.misc.label.enterCaption']}}"></textarea>
       <a class="button left" ng-hide="isWebcamDisabled()" ng-click="showWebcam = true" style="margin-top: 4%"><i class="icon-camera"></i></a>
       <span class="right" style="margin-top: 4%">
-        <button class="confirm" ng-click="uploadFile()" ng-disabled="isUploadBtnDisabled()">{{msgs["visitdocumentsui.visitdocumentspage.uploadButton"]}}</button>
-        <button ng-click="clearForms()">{{msgs["visitdocumentsui.visitdocumentspage.clearFormsButton"]}}</button>
+        <button class="confirm" ng-click="uploadFile()" ng-disabled="isUploadBtnDisabled()">{{msgs["attachments.attachmentspage.uploadButton"]}}</button>
+        <button ng-click="clearForms()">{{msgs["attachments.attachmentspage.clearFormsButton"]}}</button>
       </span>
     </div>
   </div>

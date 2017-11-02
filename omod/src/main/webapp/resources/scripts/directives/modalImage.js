@@ -1,5 +1,5 @@
-angular.module('vdui.widget.modalImage')
-  .directive('vduiModalImage', [ 'ModuleUtils', function(module) {
+angular.module('att.widget.modalImage')
+  .directive('attModalImage', [ 'ModuleUtils', function(module) {
     return {
       restrict: 'E',
       scope: {

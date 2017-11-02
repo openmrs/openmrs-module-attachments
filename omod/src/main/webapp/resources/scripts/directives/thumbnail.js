@@ -1,16 +1,16 @@
-angular.module('vdui.widget.thumbnail')
+angular.module('att.widget.thumbnail')
 
 .config(['$compileProvider', function ($compileProvider) {
   /* Prevent Angular from throwing error when querying images using 'data' protocol */
   $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|local|data):/);
 }])
 
-.directive('vduiEnterKeyDown', function() {
+.directive('attEnterKeyDown', function() {
   return function(scope, element, attrs) {
     element.bind("keydown keypress", function(event) {
       if(event.which === 13) {
         scope.$apply(function() {
-          scope.$eval(attrs.vduiEnterKeyDown, {'event': event});
+          scope.$eval(attrs.attEnterKeyDown, {'event': event});
         });
         event.preventDefault();
       }
@@ -18,12 +18,12 @@ angular.module('vdui.widget.thumbnail')
   };
 })
 
-.directive('vduiEscapeKeyDown', function() {
+.directive('attEscapeKeyDown', function() {
   return function(scope, element, attrs) {
     element.bind("keydown keypress", function(event) {
       if(event.which === 27) {
         scope.$apply(function() {
-          scope.$eval(attrs.vduiEscapeKeyDown, {'event': event});
+          scope.$eval(attrs.attEscapeKeyDown, {'event': event});
         });
         event.preventDefault();
       }
@@ -31,7 +31,7 @@ angular.module('vdui.widget.thumbnail')
   };
 })
 
-.directive('vduiThumbnail', ['VisitDocument', 'ComplexObsCacheService', 'ModuleUtils', 'ngDialog', '$http', '$window', '$sce', function(VisitDocument, obsCache, module, ngDialog, $http, $window, $sce) {
+.directive('attThumbnail', ['Attachment', 'ComplexObsCacheService', 'ModuleUtils', 'ngDialog', '$http', '$window', '$sce', function(Attachment, obsCache, module, ngDialog, $http, $window, $sce) {
   return {
     restrict: 'E',
     scope: {
@@ -49,8 +49,8 @@ angular.module('vdui.widget.thumbnail')
         module.getProvider() + ".thumbail.save.error",
         module.getProvider() + ".thumbail.delete.success",
         module.getProvider() + ".thumbail.delete.error",
-        module.getProvider() + ".visitdocumentspage.delete.title",
-        module.getProvider() + ".visitdocumentspage.delete.confirm",
+        module.getProvider() + ".attachmentspage.delete.title",
+        module.getProvider() + ".attachmentspage.delete.confirm",
         "coreapps.yes",
         "coreapps.no"
       ]
@@ -78,7 +78,7 @@ angular.module('vdui.widget.thumbnail')
           $scope.typedText.newCaption = $scope.obs.comment;
           $scope.editMode = editMode;
           if ($scope.editMode) {
-            $scope.editModeCss = "vdui_thumbnail-edit-mode";
+            $scope.editModeCss = "att_thumbnail-edit-mode";
           }
           else {
             $scope.editModeCss = "";
@@ -120,12 +120,12 @@ angular.module('vdui.widget.thumbnail')
 
         $scope.obs.comment = $scope.typedText.newCaption;
 
-        var saved = VisitDocument.save({
+        var saved = Attachment.save({
           uuid: $scope.obs.uuid,
           comment: $scope.obs.comment
         });
-        saved.$promise.then(function(visitDoc) {
-          $scope.obs.uuid = visitDoc.uuid;
+        saved.$promise.then(function(attachment) {
+          $scope.obs.uuid = attachment.uuid;
           $scope.toggleEditMode(false);
           emr.successMessage(module.getProvider() + ".thumbail.save.success");
         }, function(err) {
@@ -151,7 +151,7 @@ angular.module('vdui.widget.thumbnail')
       }
 
       $scope.purge = function(purge, scope) {
-        VisitDocument.delete({
+        Attachment.delete({
           uuid: scope.obs.uuid,
           purge: purge
         })
@@ -190,13 +190,13 @@ angular.module('vdui.widget.thumbnail')
 
           case module.family.PDF:
             html =  '<i class="icon-file-pdf-o"></i>' +
-                    '<span class="vdui_thumbnail-extension">' + complexObs.contentFamily.toUpperCase() + '</span>';
+                    '<span class="att_thumbnail-extension">' + complexObs.contentFamily.toUpperCase() + '</span>';
             break;
 
           case module.family.OTHER:
           default:
             html =  '<i class="icon-file"></i>' +
-                    '<span class="vdui_thumbnail-extension">.' + complexObs.fileExt + '</span>';
+                    '<span class="att_thumbnail-extension">.' + complexObs.fileExt + '</span>';
             break;
         }
         $scope.iconHtml = $sce.trustAsHtml(html);

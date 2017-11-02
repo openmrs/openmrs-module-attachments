@@ -29,5 +29,5 @@
 	</bean>
 
 	<context:component-scan
-		base-package="org.openmrs.module.visitdocumentsui.web.controller" />
+		base-package="org.openmrs.module.attachments.web.controller" />
 </beans>

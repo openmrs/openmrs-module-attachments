@@ -1,4 +1,4 @@
-angular.module('vdui.service.moduleUtils')
+angular.module('att.service.moduleUtils')
 
 .factory('ModuleUtils', function($q) { 
 
@@ -7,11 +7,11 @@ angular.module('vdui.service.moduleUtils')
   this.family.PDF = "PDF";
   this.family.OTHER = "OTHER";
 
-  this.eventNewFile = "vdui_event_newComplexObs";
-  this.webcamCaptureForUpload = "vdui_event_webcamCaptureForFileUpload";
+  this.eventNewFile = "att_event_newComplexObs";
+  this.webcamCaptureForUpload = "att_event_webcamCaptureForFileUpload";
 
   this.getProvider = function() {
-    return "visitdocumentsui";
+    return "attachments";
   }
 
   this.getPath = function(openmrsContextPath) {

@@ -1,11 +1,11 @@
-angular.module('vdui.widget.modalWebcam')
+angular.module('att.widget.modalWebcam')
 
-.directive('vduiEscapeKeyDown', function() {
+.directive('attEscapeKeyDown', function() {
   return function(scope, element, attrs) {
     element.bind("keydown keypress", function(event) {
       if(event.which === 27) {
         scope.$apply(function() {
-          scope.$eval(attrs.vduiEscapeKeyDown, {'event': event});
+          scope.$eval(attrs.attEscapeKeyDown, {'event': event});
         });
         event.preventDefault();
       }
@@ -13,7 +13,7 @@ angular.module('vdui.widget.modalWebcam')
   };
 })
 
-.directive('vduiModalWebcam', [ 'ModuleUtils' ,function(module) {
+.directive('attModalWebcam', [ 'ModuleUtils' ,function(module) {
   return {
     restrict: 'E',
     scope: {
@@ -35,7 +35,7 @@ angular.module('vdui.widget.modalWebcam')
           dest_height: $scope.imgHeight,
           force_flash: forceFlash
         });
-        Webcam.attach('#vdui_webcam-id');
+        Webcam.attach('#att_webcam-id');
       }
 
       $scope.$watch("visible", function() {

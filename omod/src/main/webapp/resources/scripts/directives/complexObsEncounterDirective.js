@@ -1,11 +1,11 @@
-angular.module('vdui.widget.complexObsEncounter')
-  .directive('vduiComplexObsEncounter', function() {
+angular.module('att.widget.complexObsEncounter')
+  .directive('attComplexObsEncounter', function() {
     return {
       restrict: 'E',
       scope: {
         encounter: '='
       },
-      template: '<vdui-gallery obs-query="obsQuery"></vdui-gallery>',
+      template: '<att-gallery obs-query="obsQuery"></att-gallery>',
       controller: function($scope) {
         $scope.obsQuery = {
           encounter: $scope.encounter.uuid

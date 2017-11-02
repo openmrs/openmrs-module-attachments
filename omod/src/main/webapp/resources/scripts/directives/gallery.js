@@ -1,5 +1,5 @@
-angular.module('vdui.widget.gallery')
-.directive('vduiGallery', ['ObsService', 'ConfigService', 'ModuleUtils', function(obsService, configService, module) {
+angular.module('att.widget.gallery')
+.directive('attGallery', ['ObsService', 'ConfigService', 'ModuleUtils', function(obsService, configService, module) {
   return {
 
     restrict: 'E',

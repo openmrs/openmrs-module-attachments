@@ -1,14 +1,14 @@
 [
     {
-        "id": "visitdocumentsui.encounterTemplate",
+        "id": "attachments.encounterTemplate",
         "extensionPointId": "org.openmrs.referenceapplication.encounterTemplate",
         "type": "fragment",
         "extensionParams": {
             "templateId": "complexObsEncounterTemplate",
-            "templateFragmentProviderName": "visitdocumentsui",
+            "templateFragmentProviderName": "attachments",
             "templateFragmentId": "complexObsEncounterTemplate",
             "supportedEncounterTypes": {
-                "5021b1a1-e7f6-44b4-ba02-da2f2bcf8718": { // Visit Document Upload
+                "5021b1a1-e7f6-44b4-ba02-da2f2bcf8718": { // Attachment Upload
                     "icon": "icon-paper-clip",
                     "deletable": "false"
                 }

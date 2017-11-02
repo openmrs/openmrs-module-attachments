@@ -1,4 +1,4 @@
-angular.module('vdui.fragment.dashboardWidget').controller('DashboardWidgetCtrl', ['$scope', '$window',
+angular.module('att.fragment.dashboardWidget').controller('DashboardWidgetCtrl', ['$scope', '$window',
   function($scope, $window) {
     $scope.obsQuery = {
       limit: $window.config.thumbnailCount,

@@ -29,14 +29,14 @@
 						<value>DefaultDocumentHandler</value>
 					</key>
 					<bean
-						class="org.openmrs.module.visitdocumentsui.obs.DefaultDocumentHandler" />
+						class="org.openmrs.module.attachments.obs.DefaultDocumentHandler" />
 				</entry>
 				<entry>
 					<key>
 						<value>ImageDocumentHandler</value>
 					</key>
 					<bean
-						class="org.openmrs.module.visitdocumentsui.obs.ImageDocumentHandler" />
+						class="org.openmrs.module.attachments.obs.ImageDocumentHandler" />
 				</entry>
 			</map>
 		</property>

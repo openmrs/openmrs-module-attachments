@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openmrs.module</groupId>
-	<artifactId>visitdocumentsui</artifactId>
-	<version>1.4-SNAPSHOT</version>
+	<artifactId>attachments</artifactId>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Visit Documents UI</name>
+	<name>Attachments</name>
 	<description>
-		Adds UI components and backend web services to upload, view and manage visit documents within the OpenMRS Reference Application.
+		UI components and backend web services to upload, view and manage attachments within OpenMRS.
 	</description>
 
 	<developers>
@@ -24,7 +24,7 @@
 	</organization>
 
 	<scm>
-		<url>https://github.com/mekomsolutions/openmrs-module-visitdocumentsui</url>
+		<url>https://github.com/openmrs/openmrs-module-attachments</url>
 	</scm>
 
 	<modules>

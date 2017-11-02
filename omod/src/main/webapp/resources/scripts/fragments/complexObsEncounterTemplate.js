@@ -1,9 +1,9 @@
-angular.module('vdui.fragment.encounterTemplate').controller('EncounterTemplateCtrl', ['$scope', '$compile',
+angular.module('att.fragment.encounterTemplate').controller('EncounterTemplateCtrl', ['$scope', '$compile',
   function($scope, $compile) {
   	
   	$scope.init = function() {
 
-      $(document).on('click','.vdui_view-details.collapsed', function(event) {
+      $(document).on('click','.att_view-details.collapsed', function(event) {
         var jqTarget = $(event.currentTarget);
         var uuid = jqTarget.data("encounter-uuid");
         var displayWithHtmlForm = jqTarget.data("encounter-form") && jqTarget.data("display-with-html-form");
@@ -29,7 +29,7 @@ angular.module('vdui.fragment.encounterTemplate').controller('EncounterTemplateC
         encounterStringified = encounterStringified.replace(/\"([^(\")"]+)\":/g,"$1:");
 
         // Delegating the rest to an Angular directive.
-        var htmlContent = "<vdui-complex-obs-encounter encounter='" + encounterStringified + "'></vdui-complex-obs-encounter>";
+        var htmlContent = "<att-complex-obs-encounter encounter='" + encounterStringified + "'></att-complex-obs-encounter>";
         encounterDetailsSection.html( $compile(htmlContent)($scope) );
         $scope.$apply();
       }

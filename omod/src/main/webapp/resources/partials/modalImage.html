@@ -2,7 +2,7 @@
 <style>
 
 /* The Modal (background) */
-.vdui_modal-image-background {
+.att_modal-image-background {
   position: fixed; /* Stay in place */
   z-index: 10; /* Sit on top, in particular of DropzoneJS's thumbnail */
   padding-top: 100px; /* Location of the box */
@@ -16,14 +16,14 @@
 }
 
 /* Modal Content (Image) */
-.vdui_modal-image-content {
+.att_modal-image-content {
   margin: auto;
   display: block;
   max-height: 80%;
 }
 
 /* Caption of Modal Image (Image Text) - Same Width as the Image */
-#vdui_modal-image-caption {
+#att_modal-image-caption {
   margin: auto;
   display: block;
   width: 80%;
@@ -35,7 +35,7 @@
 }
 
 /* Add Animation - Zoom in the Modal */
-.vdui_modal-image-content, #vdui_modal-image-caption { 
+.att_modal-image-content, #att_modal-image-caption { 
   -webkit-animation-name: zoom;
   -webkit-animation-duration: 0.6s;
   animation-name: zoom;
@@ -55,11 +55,11 @@
 </style>
 
 <!-- The Modal -->
-<div ng-if="config" class="vdui_modal-image-background" ng-click="hide()">
+<div ng-if="config" class="att_modal-image-background" ng-click="hide()">
   
   <!-- Modal Content (The Image) -->
-  <img class="vdui_modal-image-content" img-fix-orientation="getImageUrl()" ng-src="{{getImageUrl()}}"></img>
+  <img class="att_modal-image-content" img-fix-orientation="getImageUrl()" ng-src="{{getImageUrl()}}"></img>
 
   <!-- Modal Caption (Image Text) -->
-  <div id="vdui_modal-image-caption">{{config.caption}}</div>
+  <div id="att_modal-image-caption">{{config.caption}}</div>
 </div>
