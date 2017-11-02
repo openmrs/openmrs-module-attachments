@@ -1,17 +1,20 @@
 # Attachments
-The **Attachments** module (ATT) brings to the OpenMRS Reference Application a central place to view & manage file attachments.
+The **Attachments** module brings to the OpenMRS Reference Application a central place to view & manage file attachments.
 <br>Additionally it encompasses files uploaded elsewhere within OpenMRS as long as they are saved as [complex obs](https://wiki.openmrs.org/display/docs/Creating+Complex+Observations+and+Concepts).
 
 ### A central place for attachments management
 In a nutshell Attachments is a '**complex obs management** module' ready to be extended to further content types and concept complex coded obs. It starts as a file viewing gallery underneath a file upload widget.
+
 ![alt tag](readme/att_mainpage.png)
 
 ### Consistent dashboards integration
 Attachments both integrates on the Clinician Facing Patient Dashboard and on the Visits & Encounters Patient Dashboard.
+
 ![alt tag](readme/att_cfdashboard.png)
 
 ### Content is handled based on its MIME type
 For example images are subject to a custom implementation that saves them alongside their thumbnails for faster gallery loading. Moreover a modal viewing applies for most `image/*` content types:
+
 ![alt tag](readme/att_imagemodal.png)
 
 New UI behaviours and backend handlers can be added for further content types.
@@ -19,6 +22,7 @@ New UI behaviours and backend handlers can be added for further content types.
 
 ### _Not-yet-handled_ content types
 When a content type is not yet provided a bespoke implementation, it can still be accessed generically as on a 'drive':
+
 ![alt tag](readme/att_galleryzipfile.png)
 
 ### How to try it out?

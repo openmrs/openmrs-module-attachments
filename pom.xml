@@ -22,10 +22,13 @@
 		<name>Mekom Solutions</name>
 		<url>http://www.mekomsolutions.com</url>
 	</organization>
-
+	
 	<scm>
+		<connection>scm:git:git@github.com:openmrs/openmrs-module-attachments.git</connection>
+		<developerConnection>scm:git:git@github.com:openmrs/openmrs-module-attachments.git</developerConnection>
 		<url>https://github.com/openmrs/openmrs-module-attachments</url>
-	</scm>
+    <tag>HEAD</tag>
+  </scm>
 
 	<modules>
 		<module>api</module>
