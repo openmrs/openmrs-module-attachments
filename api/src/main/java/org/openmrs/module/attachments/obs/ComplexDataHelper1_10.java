@@ -17,37 +17,38 @@ import org.springframework.stereotype.Component;
 @Component(AttachmentsConstants.COMPONENT_COMPLEXDATA_HELPER)
 @OpenmrsProfile(openmrsPlatformVersion = "1.10.2 - 1.12.*")
 public class ComplexDataHelper1_10 implements ComplexDataHelper {
-   
-   @Override
-   public DocumentComplexData build(String instructions, String title, Object data, String mimeType) {
-      return new DocumentComplexData1_10(instructions, title, data, mimeType);
-   }
-   
-   @Override
-   public DocumentComplexData build(String instructions, ComplexData complexData) {
-      return build(instructions, complexData.getTitle(), complexData.getData(), getContentType(complexData));
-   }
-
-   @Override
-   public String getContentType(ComplexData complexData) {
-      
-      if (complexData instanceof DocumentComplexData) {  // In case it's our module's implementation
-         DocumentComplexData docComplexData = (DocumentComplexData) complexData;
-         if (isMimeTypeHandled(docComplexData.getMimeType()))   // Perhaps too restrictive
-            return docComplexData.getMimeType();
-      }
-      
-      byte[] bytes = BaseComplexData.getByteArray(complexData);
-      if (ArrayUtils.isEmpty(bytes))
-         return AttachmentsConstants.UNKNOWN_MIME_TYPE;
-      
-      // guessing the content type
-      InputStream stream = new BufferedInputStream(new ByteArrayInputStream(bytes));
-      try {
-         String mimeType = URLConnection.guessContentTypeFromStream(stream); 
-         return mimeType == null ? AttachmentsConstants.UNKNOWN_MIME_TYPE : mimeType;
-      } catch (IOException e) {
-         return AttachmentsConstants.UNKNOWN_MIME_TYPE;
-      }
-   }
+	
+	@Override
+	public AttachmentComplexData build(String instructions, String title, Object data, String mimeType) {
+		return new AttachmentComplexData1_10(instructions, title, data, mimeType);
+	}
+	
+	@Override
+	public AttachmentComplexData build(String instructions, ComplexData complexData) {
+		return build(instructions, complexData.getTitle(), complexData.getData(), getContentType(complexData));
+	}
+	
+	@Override
+	public String getContentType(ComplexData complexData) {
+		
+		if (complexData instanceof AttachmentComplexData) { // In case it's our module's implementation
+			AttachmentComplexData docComplexData = (AttachmentComplexData) complexData;
+			if (isMimeTypeHandled(docComplexData.getMimeType())) // Perhaps too restrictive
+				return docComplexData.getMimeType();
+		}
+		
+		byte[] bytes = BaseComplexData.getByteArray(complexData);
+		if (ArrayUtils.isEmpty(bytes))
+			return AttachmentsConstants.UNKNOWN_MIME_TYPE;
+		
+		// guessing the content type
+		InputStream stream = new BufferedInputStream(new ByteArrayInputStream(bytes));
+		try {
+			String mimeType = URLConnection.guessContentTypeFromStream(stream);
+			return mimeType == null ? AttachmentsConstants.UNKNOWN_MIME_TYPE : mimeType;
+		}
+		catch (IOException e) {
+			return AttachmentsConstants.UNKNOWN_MIME_TYPE;
+		}
+	}
 }

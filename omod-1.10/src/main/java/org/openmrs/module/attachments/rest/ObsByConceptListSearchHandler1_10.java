@@ -29,35 +29,32 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
- * The contents of this file are subject to the OpenMRS Public License Version
- * 1.0 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at http://license.openmrs.org
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- *
- * Copyright (C) OpenMRS, LLC. All Rights Reserved.
+ * The contents of this file are subject to the OpenMRS Public License Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://license.openmrs.org Software distributed under the License is distributed on an
+ * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
+ * specific language governing rights and limitations under the License. Copyright (C) OpenMRS, LLC.
+ * All Rights Reserved.
  */
 @Component
 public class ObsByConceptListSearchHandler1_10 implements SearchHandler {
-
+	
 	protected final Log log = LogFactory.getLog(getClass());
-
+	
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
 	protected AttachmentsContext context;
-
+	
 	private final SearchConfig searchConfig = new SearchConfig("obsByConceptList", RestConstants.VERSION_1 + "/obs",
-			Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*"),
-			Arrays.asList(new SearchQuery.Builder("Allows you to retrieve Observations for a patient and a for list of concepts")
-					.withRequiredParameters("patient", "conceptList").build()));
-
+	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*"), Arrays.asList(new SearchQuery.Builder(
+	                "Allows you to retrieve Observations for a patient and a for list of concepts").withRequiredParameters(
+	            "patient", "conceptList").build()));
+	
 	@Override
 	public SearchConfig getSearchConfig() {
 		return this.searchConfig;
 	}
-
+	
 	@Override
 	public PageableResult search(RequestContext requestContext) throws ResponseException {
 
@@ -101,10 +98,10 @@ public class ObsByConceptListSearchHandler1_10 implements SearchHandler {
 
 		return new EmptySearchResult();
 	}
-
+	
 	/**
-	 * Returns a {@link List} of {@link Concept} from a provided {@link String} of comma separated concepts.
-	 * Each concept of the list can be provided either as UUID or as Concept Mapping
+	 * Returns a {@link List} of {@link Concept} from a provided {@link String} of comma separated
+	 * concepts. Each concept of the list can be provided either as UUID or as Concept Mapping
 	 * 
 	 * @param conceptListStr
 	 * @param conceptService

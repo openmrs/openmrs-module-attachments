@@ -15,74 +15,74 @@ import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceD
 import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
-@Resource(name = RestConstants.VERSION_1 + "/attachment", supportedClass = Attachment.class,
-supportedOpenmrsVersions = {"1.10.*", "1.11.*", "1.12.*"})
+@Resource(name = RestConstants.VERSION_1 + "/attachment", supportedClass = Attachment.class, supportedOpenmrsVersions = {
+        "1.10.*", "1.11.*", "1.12.*" })
 public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachment> {
-
-   protected static final String REASON = "REST web service";
-
-   @Override
-   public Attachment newDelegate() {
-      return new Attachment();
-   }
-
-   @Override
-   public Attachment save(Attachment delegate) {
-      Obs obs = Context.getObsService().saveObs(delegate.getObs(), REASON);
-      return new Attachment(obs);
-   }
-
-   @Override
-   public Attachment getByUniqueId(String uniqueId) {
-      Obs obs = Context.getObsService().getObsByUuid(uniqueId);
-      if (!obs.isComplex())
-         throw new GenericRestException(uniqueId + " does not identify a complex obs.", null);
-      else {
-         obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
-         return new Attachment(obs);
-      }
-   }
-
-   @Override
-   protected void delete(Attachment delegate, String reason, RequestContext context) throws ResponseException {
-      String encounterUuid = delegate.getObs().getEncounter() != null ? delegate.getObs().getEncounter().getUuid() : null;
-      Context.getObsService().voidObs(delegate.getObs(), REASON);
-      voidEncounterIfEmpty(Context.getEncounterService(), encounterUuid);
-   }
-
-   @Override
-   public void purge(Attachment delegate, RequestContext context) throws ResponseException {
-      String encounterUuid = delegate.getObs().getEncounter() != null ? delegate.getObs().getEncounter().getUuid() : null;
-      Context.getObsService().purgeObs(delegate.getObs());
-      voidEncounterIfEmpty(Context.getEncounterService(), encounterUuid);
-   }
-
-   @Override
-   public DelegatingResourceDescription getCreatableProperties() {
-      DelegatingResourceDescription description = new DelegatingResourceDescription();
-      description.addProperty("comment");
-      return description;
-   }
-
-   @Override
-   public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
-      DelegatingResourceDescription description = new DelegatingResourceDescription();
-      description.addProperty("uuid");
-      description.addProperty("comment");
-      description.addSelfLink();
-      return description;
-   }
-
-   /**
-    * Voids the encounter if it contains no non-voided obs.
-    * 
-    * @param encounterService
-    * @param encounterUuid
-    */
-   public static void voidEncounterIfEmpty(EncounterService encounterService, String encounterUuid) {
-      Encounter encounter = encounterService.getEncounterByUuid(encounterUuid);
-      if (encounter != null && encounter.getAllObs().size() == 0) {
-         encounterService.voidEncounter(encounter, "foo");
-      }
-   }
+	
+	protected static final String REASON = "REST web service";
+	
+	@Override
+	public Attachment newDelegate() {
+		return new Attachment();
+	}
+	
+	@Override
+	public Attachment save(Attachment delegate) {
+		Obs obs = Context.getObsService().saveObs(delegate.getObs(), REASON);
+		return new Attachment(obs);
+	}
+	
+	@Override
+	public Attachment getByUniqueId(String uniqueId) {
+		Obs obs = Context.getObsService().getObsByUuid(uniqueId);
+		if (!obs.isComplex())
+			throw new GenericRestException(uniqueId + " does not identify a complex obs.", null);
+		else {
+			obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
+			return new Attachment(obs);
+		}
+	}
+	
+	@Override
+	protected void delete(Attachment delegate, String reason, RequestContext context) throws ResponseException {
+		String encounterUuid = delegate.getObs().getEncounter() != null ? delegate.getObs().getEncounter().getUuid() : null;
+		Context.getObsService().voidObs(delegate.getObs(), REASON);
+		voidEncounterIfEmpty(Context.getEncounterService(), encounterUuid);
+	}
+	
+	@Override
+	public void purge(Attachment delegate, RequestContext context) throws ResponseException {
+		String encounterUuid = delegate.getObs().getEncounter() != null ? delegate.getObs().getEncounter().getUuid() : null;
+		Context.getObsService().purgeObs(delegate.getObs());
+		voidEncounterIfEmpty(Context.getEncounterService(), encounterUuid);
+	}
+	
+	@Override
+	public DelegatingResourceDescription getCreatableProperties() {
+		DelegatingResourceDescription description = new DelegatingResourceDescription();
+		description.addProperty("comment");
+		return description;
+	}
+	
+	@Override
+	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
+		DelegatingResourceDescription description = new DelegatingResourceDescription();
+		description.addProperty("uuid");
+		description.addProperty("comment");
+		description.addSelfLink();
+		return description;
+	}
+	
+	/**
+	 * Voids the encounter if it contains no non-voided obs.
+	 * 
+	 * @param encounterService
+	 * @param encounterUuid
+	 */
+	public static void voidEncounterIfEmpty(EncounterService encounterService, String encounterUuid) {
+		Encounter encounter = encounterService.getEncounterByUuid(encounterUuid);
+		if (encounter != null && encounter.getAllObs().size() == 0) {
+			encounterService.voidEncounter(encounter, "foo");
+		}
+	}
 }

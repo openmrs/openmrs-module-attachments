@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
-import org.openmrs.module.attachments.obs.ImageDocumentHandler;
+import org.openmrs.module.attachments.obs.ImageAttachmentHandler;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 
@@ -31,7 +31,7 @@ public class ClientConfigFragmentController {
       
       jsonConfig.put("conceptComplexUuidList", context.getConceptComplexList());
       
-      jsonConfig.put("thumbSize", ImageDocumentHandler.THUMBNAIL_HEIGHT);
+      jsonConfig.put("thumbSize", ImageAttachmentHandler.THUMBNAIL_HEIGHT);
       jsonConfig.put("maxFileSize", context.getMaxStorageFileSize());
       jsonConfig.put("maxCompression", context.getMaxCompressionRatio());
       jsonConfig.put("allowNoCaption", context.doAllowEmptyCaption());
