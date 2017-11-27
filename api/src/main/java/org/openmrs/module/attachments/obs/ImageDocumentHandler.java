@@ -2,6 +2,8 @@ package org.openmrs.module.attachments.obs;
 
 import java.io.File;
 import java.io.IOException;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 import net.coobird.thumbnailator.Thumbnails;
 
@@ -30,7 +32,9 @@ public class ImageDocumentHandler extends AbstractDocumentHandler {
    protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view) {
       
       String fileName = valueComplex.getFileName();
-      if (view.equals(AttachmentsConstants.ATT_VIEW_THUMBNAIL)) {
+      
+      if (view.equals(AttachmentsConstants.ATT_VIEW_THUMBNAIL) && 
+    		  !fileName.contains("_smallfile")) {
          fileName = buildThumbnailFileName(fileName);
       }
       
@@ -53,7 +57,7 @@ public class ImageDocumentHandler extends AbstractDocumentHandler {
       String thumbnailFileName = buildThumbnailFileName(fileName);
       
       Obs tmpObs = new Obs();
-      tmpObs.setValueComplex(thumbnailFileName);
+      tmpObs.setValueComplex(thumbnailFileName);      
       boolean isThumbNailPurged = getParent().purgeComplexData(tmpObs);
       tmpObs.setValueComplex(fileName);
       boolean isImagePurged = getParent().purgeComplexData(tmpObs);
@@ -64,23 +68,50 @@ public class ImageDocumentHandler extends AbstractDocumentHandler {
    @Override
    protected ValueComplex saveComplexData(Obs obs, DocumentComplexData docComplexData) {
 
+	   File newSavedFile = null;
+	   int imageHeight = 0;
+	   int imageWidth = 0;
+	   
       // We invoke the parent to inherit from the file saving routines.
       obs = getParent().saveObs(obs);
 
       File savedFile = AbstractHandler.getComplexDataFile(obs);
       String savedFileName = savedFile.getName();
       
-      // Saving the thumbnail
-      File dir = savedFile.getParentFile();
-      String thumbnailFileName = buildThumbnailFileName(savedFileName);
+      // Get image dimensions
       try {
-         Thumbnails.of(savedFile.getAbsolutePath()).size(THUMBNAIL_HEIGHT, THUMBNAIL_WIDTH).toFile( new File(dir, thumbnailFileName) );
+	      BufferedImage image = ImageIO.read(savedFile);
+	      imageHeight = image.getHeight();
+	      imageWidth = image.getWidth();
       } catch (IOException e) {
-         getParent().purgeComplexData(obs);
-         throw new APIException("A thumbnail file could not be saved for obs with"
-               + "OBS_ID='" + obs.getObsId() + "', "
-               + "FILE='" + docComplexData.getTitle() + "'.", e);
-      }
+		         getParent().purgeComplexData(obs);
+		         throw new APIException("Can't read the image file"
+		               + "OBS_ID='" + obs.getObsId() + "', "
+		               + "FILE='" + docComplexData.getTitle() + "'.", e);
+      }    
+  
+      // Check for small image file
+      if ((imageHeight <= THUMBNAIL_HEIGHT) && (imageWidth <= THUMBNAIL_WIDTH)) { 	  
+    	  // Rename the file by append "_smallfile" to the file.
+    	  // Therefore, we will know this is a small file and no need for thumnail.
+    	  String newSavedFileName = buildSmallFileFileName(savedFile.getAbsolutePath());
+    	  newSavedFile = new File(newSavedFileName);
+    	  savedFile.renameTo(newSavedFile);
+    	  savedFileName = buildSmallFileFileName(savedFileName);    	  
+      } else {
+	      // Saving the thumbnail
+	      File dir = savedFile.getParentFile();
+	      String thumbnailFileName = buildThumbnailFileName(savedFileName);  
+	      try {
+	         Thumbnails.of(savedFile.getAbsolutePath()).size(THUMBNAIL_HEIGHT, THUMBNAIL_WIDTH).toFile( new File(dir, thumbnailFileName) );
+	      } catch (IOException e) {
+	         getParent().purgeComplexData(obs);
+	         throw new APIException("A thumbnail file could not be saved for obs with"
+	               + "OBS_ID='" + obs.getObsId() + "', "
+	               + "FILE='" + docComplexData.getTitle() + "'.", e);
+	      }            
+      
+      } 
       
       return new ValueComplex(docComplexData.getInstructions(), docComplexData.getMimeType(), savedFileName);
    }

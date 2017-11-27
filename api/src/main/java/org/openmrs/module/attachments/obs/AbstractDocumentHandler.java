@@ -61,6 +61,10 @@ public abstract class AbstractDocumentHandler implements ComplexObsHandler {
   final protected ComplexObsHandler getParent() {
     return parent;
   }
+  
+  protected static String buildSmallFileFileName(String fileName) {
+      return FilenameUtils.removeExtension(fileName) + "_smallfile" + "." + FilenameUtils.getExtension(fileName);
+  }
 
   protected static String buildThumbnailFileName(String fileName) {
     return FilenameUtils.removeExtension(fileName) + "_thumb" + "." + FilenameUtils.getExtension(fileName);
