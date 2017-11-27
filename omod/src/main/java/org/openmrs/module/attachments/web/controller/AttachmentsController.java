@@ -20,7 +20,7 @@ import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.attachments.VisitCompatibility;
-import org.openmrs.module.attachments.obs.DocumentComplexData;
+import org.openmrs.module.attachments.obs.AttachmentComplexData;
 import org.openmrs.module.attachments.obs.ValueComplex;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.representation.CustomRepresentation;
@@ -114,7 +114,7 @@ public class AttachmentsController {
       
       // Switching to our complex data object
       ValueComplex valueComplex = new ValueComplex(obs.getValueComplex());
-      DocumentComplexData docComplexData = context.getComplexDataHelper().build(valueComplex.getInstructions(), complexData);
+      AttachmentComplexData docComplexData = context.getComplexDataHelper().build(valueComplex.getInstructions(), complexData);
       
       String mimeType = docComplexData.getMimeType();
       try {

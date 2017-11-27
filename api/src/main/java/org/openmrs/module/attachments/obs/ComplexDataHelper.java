@@ -8,11 +8,11 @@ import org.openmrs.obs.ComplexData;
  * @author Mekom Solutions
  */
 public interface ComplexDataHelper {
-
-   public DocumentComplexData build(String instructions, String title, Object data, String mimeType);
-   
-   public DocumentComplexData build(String instructions, ComplexData complexData);
-   
-   public String getContentType(ComplexData complexData);
-   
+	
+	public AttachmentComplexData build(String instructions, String title, Object data, String mimeType);
+	
+	public AttachmentComplexData build(String instructions, ComplexData complexData);
+	
+	public String getContentType(ComplexData complexData);
+	
 }

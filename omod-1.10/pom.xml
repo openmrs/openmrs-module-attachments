@@ -11,7 +11,7 @@
 
   <artifactId>attachments-omod-1.10</artifactId>
   <packaging>jar</packaging>
-  <name>Attachments 1.10 OMOD</name>
+  <name>Attachments OMOD 1.10</name>
   <description>OMOD 1.10 project for Attachments</description>
 
   <dependencies>

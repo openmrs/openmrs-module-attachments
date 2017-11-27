@@ -26,17 +26,17 @@
 			<map>
 				<entry>
 					<key>
-						<value>DefaultDocumentHandler</value>
+						<value>DefaultAttachmentHandler</value>
 					</key>
 					<bean
-						class="org.openmrs.module.attachments.obs.DefaultDocumentHandler" />
+						class="org.openmrs.module.attachments.obs.DefaultAttachmentHandler" />
 				</entry>
 				<entry>
 					<key>
-						<value>ImageDocumentHandler</value>
+						<value>ImageAttachmentHandler</value>
 					</key>
 					<bean
-						class="org.openmrs.module.attachments.obs.ImageDocumentHandler" />
+						class="org.openmrs.module.attachments.obs.ImageAttachmentHandler" />
 				</entry>
 			</map>
 		</property>
