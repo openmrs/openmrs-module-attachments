@@ -62,7 +62,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 		return parent;
 	}
 	
-	protected static String buildThumbnailFileName(String fileName) {
+	public static String buildThumbnailFileName(String fileName) {
 		return FilenameUtils.removeExtension(fileName) + "_thumb" + "." + FilenameUtils.getExtension(fileName);
 	}
 	

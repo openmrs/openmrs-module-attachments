@@ -50,7 +50,7 @@ public class AttachmentController2_0Test extends MainResourceControllerTest {
    @Override @Test public void shouldGetFullByUuid() {}
    
    @Test
-   public void postVisitDocument_shouldUpdateObsComment() throws Exception {
+   public void postAttachment_shouldUpdateObsComment() throws Exception {
       // Setup
       String editedComment = "Hello world!";
       String json = "{\"uuid\":\"" + getUuid() + "\",\"comment\":\"" + editedComment + "\"}";
