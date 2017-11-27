@@ -129,7 +129,7 @@ public class AttachmentsContext extends ModuleProperties {
 		return StringUtils.equalsIgnoreCase(flowStr, "unique");
 	}
 	
-	public Encounter getVisitDocumentEncounter(Patient patient, Visit visit, Provider provider) {
+	public Encounter getAttachmentEncounter(Patient patient, Visit visit, Provider provider) {
 		Encounter encounter = new Encounter();
 		encounter.setVisit(visit);
 		encounter.setEncounterType(getEncounterType());

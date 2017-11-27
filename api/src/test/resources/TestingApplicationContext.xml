@@ -7,4 +7,13 @@
   <bean id="uiUtils" class="org.openmrs.ui.framework.BasicUiUtils" init-method="init"/>
   <bean id="conversionService" class="org.openmrs.module.uiframework.UiFrameworkConversionServiceFactoryBean"/>
 
+  <bean class="org.openmrs.module.webservices.rest.web.api.impl.RestServiceImpl"/>
+  <bean id="xStreamMarshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+    <property name="annotatedClasses">
+        <list>
+            <value>org.openmrs.api.db.ClobDatatypeStorage</value>
+        </list>
+    </property>
+  </bean>
+
 </beans>

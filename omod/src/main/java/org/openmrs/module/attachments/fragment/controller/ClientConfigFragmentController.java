@@ -31,7 +31,7 @@ public class ClientConfigFragmentController {
       
       jsonConfig.put("conceptComplexUuidList", context.getConceptComplexList());
       
-      jsonConfig.put("thumbSize", ImageAttachmentHandler.THUMBNAIL_HEIGHT);
+      jsonConfig.put("thumbSize", ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT);
       jsonConfig.put("maxFileSize", context.getMaxStorageFileSize());
       jsonConfig.put("maxCompression", context.getMaxCompressionRatio());
       jsonConfig.put("allowNoCaption", context.doAllowEmptyCaption());

@@ -1,5 +1,10 @@
 package org.openmrs.module.attachments.obs;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
@@ -10,12 +15,10 @@ import org.openmrs.Provider;
 import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.attachments.AttachmentsActivator;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
-import org.openmrs.module.attachments.obs.ComplexDataHelper;
-import org.openmrs.module.attachments.obs.ValueComplex;
+import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.ui.framework.WebConstants;
 import org.openmrs.util.OpenmrsConstants;
@@ -24,12 +27,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import liquibase.util.file.FilenameUtils;
 
 @Component
 public class TestHelper {
+	
+	public static final String ATTACHMENTS_FOLDER = "attachments";
 	
 	@Autowired
 	protected AttachmentsActivator activator;
@@ -52,11 +55,13 @@ public class TestHelper {
 	
 	protected String fileExt = "ext";
 	
-	protected MockMultipartFile multipartFile = new MockMultipartFile(fileName, fileName + "." + fileExt,
+	protected MockMultipartFile multipartMockFile = new MockMultipartFile(fileName, fileName + "." + fileExt,
 	        "application/octet-stream", "mock_content".getBytes());
 	
+	protected MockMultipartFile multipartImageFile;
+	
 	public MockMultipartFile getTestMultipartFile() {
-		return multipartFile;
+		return multipartMockFile;
 	}
 	
 	public String getTestFileName() {
@@ -116,10 +121,35 @@ public class TestHelper {
 		
 		context.getAdministrationService().saveGlobalProperty(
 		    new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, encounterType.getUuid()));
-		Encounter encounter = context.getVisitDocumentEncounter(patient, visit, provider);
+		Encounter encounter = context.getAttachmentEncounter(patient, visit, provider);
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
-		return obsSaver.saveOtherDocument(visit, patient, encounter, fileCaption, getTestMultipartFile(),
+		return obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, getTestMultipartFile(),
+		    ValueComplex.INSTRUCTIONS_DEFAULT);
+	}
+	
+	/**
+	 * Boilerplate method to save an image attachment.
+	 */
+	public Obs saveImageAttachment() throws IOException {
+		init();
+		
+		Patient patient = Context.getPatientService().getPatient(2);
+		Visit visit = Context.getVisitService().getVisit(1);
+		EncounterService encounterService = Context.getEncounterService();
+		EncounterType encounterType = encounterService.getEncounterType(1);
+		Provider provider = Context.getProviderService().getProvider(1);
+		
+		context.getAdministrationService().saveGlobalProperty(
+		    new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, encounterType.getUuid()));
+		Encounter encounter = context.getAttachmentEncounter(patient, visit, provider);
+		
+		String imageFileName = "OpenMRS_banner.jpg";
+		MockMultipartFile multipartImageFile = new MockMultipartFile(FilenameUtils.getBaseName(imageFileName),
+				imageFileName, "image/jpeg", IOUtils.toByteArray( getClass().getClassLoader().getResourceAsStream(ATTACHMENTS_FOLDER + "/" + imageFileName) ));
+		
+		String fileCaption = RandomStringUtils.randomAlphabetic(12);
+		return obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, multipartImageFile,
 		    ValueComplex.INSTRUCTIONS_DEFAULT);
 	}
 	
@@ -129,7 +159,7 @@ public class TestHelper {
 		Patient patient = Context.getPatientService().getPatient(2);
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
-		return obsSaver.saveOtherDocument(null, patient, null, fileCaption, getTestMultipartFile(),
+		return obsSaver.saveOtherAttachment(null, patient, null, fileCaption, getTestMultipartFile(),
 		    ValueComplex.INSTRUCTIONS_DEFAULT);
 	}
 	

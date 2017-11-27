@@ -32,14 +32,16 @@ public class ComplexDataHelper1_10 implements ComplexDataHelper {
 	public String getContentType(ComplexData complexData) {
 		
 		if (complexData instanceof AttachmentComplexData) { // In case it's our module's implementation
-			AttachmentComplexData docComplexData = (AttachmentComplexData) complexData;
-			if (isMimeTypeHandled(docComplexData.getMimeType())) // Perhaps too restrictive
-				return docComplexData.getMimeType();
+			AttachmentComplexData attComplexData = (AttachmentComplexData) complexData;
+			if (isMimeTypeHandled(attComplexData.getMimeType())) { // Perhaps too restrictive
+				return attComplexData.getMimeType();
+			}
 		}
 		
 		byte[] bytes = BaseComplexData.getByteArray(complexData);
-		if (ArrayUtils.isEmpty(bytes))
+		if (ArrayUtils.isEmpty(bytes)) {
 			return AttachmentsConstants.UNKNOWN_MIME_TYPE;
+		}
 		
 		// guessing the content type
 		InputStream stream = new BufferedInputStream(new ByteArrayInputStream(bytes));
