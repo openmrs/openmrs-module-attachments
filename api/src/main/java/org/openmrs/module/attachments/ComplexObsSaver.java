@@ -63,7 +63,7 @@ public class ComplexObsSaver {
 		obs.setComment(fileCaption);
 	}
 	
-	public Obs saveImageDocument(Visit visit, Person person, Encounter encounter, String fileCaption,
+	public Obs saveImageAttachment(Visit visit, Person person, Encounter encounter, String fileCaption,
 	        MultipartFile multipartFile, String instructions) throws IOException {
 		
 		conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
@@ -80,7 +80,7 @@ public class ComplexObsSaver {
 		return obs;
 	}
 	
-	public Obs saveOtherDocument(Visit visit, Person person, Encounter encounter, String fileCaption,
+	public Obs saveOtherAttachment(Visit visit, Person person, Encounter encounter, String fileCaption,
 	        MultipartFile multipartFile, String instructions) throws IOException {
 		conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
 		prepareComplexObs(visit, person, encounter, fileCaption);

@@ -63,8 +63,8 @@ public class AttachmentsActivator extends BaseModuleActivator {
 		
 		// Concepts Complex
 		{
-			final String name = AttachmentsConstants.MODULE_SHORT_ID + " PATIENT DOCUMENT";
-			final String desc = "Concept complex for 'default patient document' complex obs.";
+			final String name = AttachmentsConstants.MODULE_SHORT_ID + " DEFAULT ATTACHMENT";
+			final String desc = "Concept complex for 'default attachment' complex obs.";
 			final String uuid = AttachmentsConstants.CONCEPT_DEFAULT_UUID;
 			
 			ConceptService conceptService = Context.getConceptService();
@@ -85,8 +85,8 @@ public class AttachmentsActivator extends BaseModuleActivator {
 			}
 		}
 		{
-			final String name = AttachmentsConstants.MODULE_SHORT_ID + " PATIENT IMAGE";
-			final String desc = "Concept complex for 'patient images with thumbnails' complex obs.";
+			final String name = AttachmentsConstants.MODULE_SHORT_ID + " IMAGE ATTACHMENT";
+			final String desc = "Concept complex for 'image attachments with thumbnails' complex obs.";
 			final String uuid = AttachmentsConstants.CONCEPT_IMAGE_UUID;
 			
 			ConceptService conceptService = Context.getConceptService();
@@ -110,7 +110,7 @@ public class AttachmentsActivator extends BaseModuleActivator {
 		// Encounter Type
 		{
 			final String name = "Attachment Upload";
-			final String desc = "Encounters used to record attachments complex obs.";
+			final String desc = "Encounters used to record uploads of attachments.";
 			final String uuid = AttachmentsConstants.ENCOUNTER_TYPE_UUID; // this is also the default GP value set in config.xml
 			
 			EncounterService es = Context.getEncounterService();

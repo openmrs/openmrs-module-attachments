@@ -39,11 +39,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class ImageAttachmentHandlerTest {
 	
 	// Various facets of the test input image resource
-	private String imgFileName = "OpenMRS_logo.png";
+	private String imgFilePath = TestHelper.ATTACHMENTS_FOLDER + "/" + "OpenMRS_logo.png";
+	
+	private String imgFileName = FilenameUtils.getName(imgFilePath);
 	
 	private String imgExt = FilenameUtils.getExtension(imgFileName);
 	
-	private URL imageUrl = getClass().getClassLoader().getResource(imgFileName);
+	private URL imageUrl = getClass().getClassLoader().getResource(imgFilePath);
 	
 	private BufferedImage originalBufferedImg;
 	
@@ -57,6 +59,7 @@ public class ImageAttachmentHandlerTest {
 	
 	@Before
 	public void setUp() throws IOException, APIException, URISyntaxException {
+		
 		originalBufferedImg = ImageIO.read(imageUrl);
 		ImageIO.write(originalBufferedImg, imgExt, imageFile);
 		

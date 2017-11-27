@@ -72,7 +72,7 @@ public class AttachmentsController {
             
             Encounter encounter = null;
             if (context.associateWithVisitAndEncounter()) {
-               encounter = context.getVisitDocumentEncounter(patient, visit, provider);
+               encounter = context.getAttachmentEncounter(patient, visit, provider);
             }
 
             if (StringUtils.isEmpty(instructions))
@@ -80,12 +80,12 @@ public class AttachmentsController {
             
             switch (getContentFamily(multipartFile.getContentType())) {
                case IMAGE:
-                  obsSaver.saveImageDocument(visit, patient, encounter, fileCaption, multipartFile, instructions);
+                  obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, multipartFile, instructions);
                   break;
                   
                case OTHER:
                default:
-                  obsSaver.saveOtherDocument(visit, patient, encounter, fileCaption, multipartFile, instructions);
+                  obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartFile, instructions);
                   break;
             }
          }

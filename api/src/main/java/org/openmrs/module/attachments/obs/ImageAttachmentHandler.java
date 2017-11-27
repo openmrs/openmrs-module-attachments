@@ -3,8 +3,6 @@ package org.openmrs.module.attachments.obs;
 import java.io.File;
 import java.io.IOException;
 
-import net.coobird.thumbnailator.Thumbnails;
-
 import org.openmrs.Obs;
 import org.openmrs.api.APIException;
 import org.openmrs.module.attachments.AttachmentsConstants;
@@ -12,11 +10,13 @@ import org.openmrs.obs.ComplexData;
 import org.openmrs.obs.handler.AbstractHandler;
 import org.openmrs.obs.handler.ImageHandler;
 
+import net.coobird.thumbnailator.Thumbnails;
+
 public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 	
-	public final static int THUMBNAIL_HEIGHT = 200;
+	public final static int THUMBNAIL_MAX_HEIGHT = 200;
 	
-	public final static int THUMBNAIL_WIDTH = THUMBNAIL_HEIGHT;
+	public final static int THUMBNAIL_MAX_WIDTH = THUMBNAIL_MAX_HEIGHT;
 	
 	public ImageAttachmentHandler() {
 		super();
@@ -75,7 +75,7 @@ public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 		File dir = savedFile.getParentFile();
 		String thumbnailFileName = buildThumbnailFileName(savedFileName);
 		try {
-			Thumbnails.of(savedFile.getAbsolutePath()).size(THUMBNAIL_HEIGHT, THUMBNAIL_WIDTH)
+			Thumbnails.of(savedFile.getAbsolutePath()).size(THUMBNAIL_MAX_HEIGHT, THUMBNAIL_MAX_WIDTH)
 			        .toFile(new File(dir, thumbnailFileName));
 		}
 		catch (IOException e) {
