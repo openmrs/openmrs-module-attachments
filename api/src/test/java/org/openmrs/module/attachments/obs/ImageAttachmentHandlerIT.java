@@ -24,7 +24,7 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
 	protected TestHelper testHelper;
 
 	@Test
-	public void saveComplexData_shouldSaveThumbnailToDisk() throws IOException {
+	public void saveComplexData_shouldSaveThumbnailToDiskAndRename() throws IOException {
 
 		// Replay
 		Obs obs = testHelper.saveNormalSizeImageAttachment();
@@ -39,6 +39,10 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(thumbnail.length(), lessThan(file.length()));
 		BufferedImage img = ImageIO.read(thumbnail);
 		Assert.assertEquals(ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT, Math.max(img.getHeight(), img.getWidth()));
+
+		// Now check rename the file by appending NO_THUMBNAIL_SUFFIX to the file
+	    String fileName = ImageAttachmentHandler.saveThumbnailOrRename(file, img.getHeight(), img.getWidth());
+	    Assert.assertTrue(StringUtils.endsWith(FilenameUtils.removeExtension(fileName), ImageAttachmentHandler.NO_THUMBNAIL_SUFFIX));
 	}
 
 	@Test

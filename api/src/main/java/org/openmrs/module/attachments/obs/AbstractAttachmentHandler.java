@@ -44,7 +44,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
     }
 
     /*
-	* To set the "real" implementation parent.
+	 * To set the "real" implementation parent.
      */
     abstract protected void setParentComplexObsHandler();
 
@@ -54,12 +54,12 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
     abstract protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view);
 
     /*
-	* Complex data CRUD - Delete
+	 * Complex data CRUD - Delete
      */
     abstract protected boolean deleteComplexData(Obs obs, AttachmentComplexData complexData);
 
     /*
-	* Complex data CRUD - Save (Update)
+	 * Complex data CRUD - Save (Update)
      */
     abstract protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData);
 
@@ -72,7 +72,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
     }
 
     /*
-	* Appends "___nothumb__" the file
+	 * Appends "___nothumb__" the file
      */
     protected static String buildNoThumbnailFileFileName(String fileName) {
         if (StringUtils.endsWith(FilenameUtils.removeExtension(fileName), NO_THUMBNAIL_SUFFIX)) {
