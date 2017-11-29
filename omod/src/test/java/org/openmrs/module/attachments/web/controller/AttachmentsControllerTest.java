@@ -58,7 +58,7 @@ public class AttachmentsControllerTest extends BaseModuleWebContextSensitiveTest
 
 		List<String> fileNames = Arrays.asList(helper.getTestFileNameWithExt());
 		when(request.getFileNames()).thenReturn(fileNames.iterator());
-		when(request.getFile(eq(helper.getTestFileNameWithExt()))).thenReturn(helper.getTestMultipartFile());
+		when(request.getFile(eq(helper.getTestFileNameWithExt()))).thenReturn(helper.getTestDefaultFile());
 	}
 
 	@Test

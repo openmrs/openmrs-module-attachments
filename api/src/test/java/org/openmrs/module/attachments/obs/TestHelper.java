@@ -55,13 +55,20 @@ public class TestHelper {
 	
 	protected String fileExt = "ext";
 	
-	protected MockMultipartFile multipartMockFile = new MockMultipartFile(fileName, fileName + "." + fileExt,
+	protected MockMultipartFile multipartDefaultFile = new MockMultipartFile(fileName, fileName + "." + fileExt,
 	        "application/octet-stream", "mock_content".getBytes());
 	
-	protected MockMultipartFile multipartImageFile;
+	protected MockMultipartFile lastSavedMultipartImageFile;
 	
-	public MockMultipartFile getTestMultipartFile() {
-		return multipartMockFile;
+	/**
+	 * @return The last saved test image file, null if none was ever saved.
+	 */
+	public MockMultipartFile getLastSavedTestImageFile() {
+		return lastSavedMultipartImageFile;
+	}
+	
+	public MockMultipartFile getTestDefaultFile() {
+		return multipartDefaultFile;
 	}
 	
 	public String getTestFileName() {
@@ -124,14 +131,16 @@ public class TestHelper {
 		Encounter encounter = context.getAttachmentEncounter(patient, visit, provider);
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
-		return obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, getTestMultipartFile(),
+		return obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, getTestDefaultFile(),
 		    ValueComplex.INSTRUCTIONS_DEFAULT);
 	}
 	
 	/**
 	 * Boilerplate method to save an image attachment.
+	 *  
+	 * @param imagePath The path of the image resource.
 	 */
-	public Obs saveImageAttachment() throws IOException {
+	public Obs saveImageAttachment(String imagePath, String mimeType) throws IOException {
 		init();
 		
 		Patient patient = Context.getPatientService().getPatient(2);
@@ -144,13 +153,32 @@ public class TestHelper {
 		    new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, encounterType.getUuid()));
 		Encounter encounter = context.getAttachmentEncounter(patient, visit, provider);
 		
-		String imageFileName = "OpenMRS_banner.jpg";
-		MockMultipartFile multipartImageFile = new MockMultipartFile(FilenameUtils.getBaseName(imageFileName),
-				imageFileName, "image/jpeg", IOUtils.toByteArray( getClass().getClassLoader().getResourceAsStream(ATTACHMENTS_FOLDER + "/" + imageFileName) ));
+		String imageFileName = FilenameUtils.getName(imagePath);
+		lastSavedMultipartImageFile = new MockMultipartFile(FilenameUtils.getBaseName(imageFileName),
+				imageFileName, mimeType, IOUtils.toByteArray( getClass().getClassLoader().getResourceAsStream(imagePath) ));
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
-		return obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, multipartImageFile,
+		return obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, lastSavedMultipartImageFile,
 		    ValueComplex.INSTRUCTIONS_DEFAULT);
+	}
+	
+	/**
+	 * Boilerplate method to save an 'normal sized' image attachment.
+	 * 
+	 * This method doesn't ensure that the size is normal, the method just uses an image file that is assumed to fit.
+	 */
+	public Obs saveNormalSizeImageAttachment() throws IOException {
+		return saveImageAttachment(ATTACHMENTS_FOLDER + "/" + "OpenMRS_banner.jpg", "image/jpeg");
+	}
+	
+	/**
+	 * Boilerplate method to save an 'small sized' image attachment.
+	 * Small sized mean already small enough to be its own thumbnail.
+	 * 
+	 * This method doesn't ensure that the size is small, the method just uses an image file that is assumed to fit.
+	 */
+	public Obs saveSmallSizeImageAttachment() throws IOException {
+		return saveImageAttachment(ATTACHMENTS_FOLDER + "/" + "OpenMRS_icon_100x100.png", "image/png");
 	}
 	
 	public Obs getTestComplexObsWithoutAssociatedEncounterOrVisit() throws Exception {
@@ -159,7 +187,7 @@ public class TestHelper {
 		Patient patient = Context.getPatientService().getPatient(2);
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
-		return obsSaver.saveOtherAttachment(null, patient, null, fileCaption, getTestMultipartFile(),
+		return obsSaver.saveOtherAttachment(null, patient, null, fileCaption, getTestDefaultFile(),
 		    ValueComplex.INSTRUCTIONS_DEFAULT);
 	}
 	
