@@ -49,7 +49,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
     abstract protected void setParentComplexObsHandler();
 
     /*
-	* Complex data CRUD - Read
+	 * Complex data CRUD - Read
      */
     abstract protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view);
 

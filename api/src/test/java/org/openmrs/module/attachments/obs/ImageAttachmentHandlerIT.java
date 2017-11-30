@@ -106,7 +106,6 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
         // Check that the file name contains the no thumbnail suffix
         Assert.assertTrue(StringUtils.endsWith(FilenameUtils.removeExtension(noThumbnailFile.getName()), ImageAttachmentHandler.NO_THUMBNAIL_SUFFIX));        
 	}
-    
     @Test
     public void deleteComplexData_shouldDeleteNoThumbnailFromDisk() throws IOException {
 
