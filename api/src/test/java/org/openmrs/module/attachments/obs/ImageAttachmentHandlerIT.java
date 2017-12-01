@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import org.apache.commons.io.FilenameUtils;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -106,6 +107,7 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
         // Check that the file name contains the no thumbnail suffix
         Assert.assertTrue(StringUtils.endsWith(FilenameUtils.removeExtension(noThumbnailFile.getName()), ImageAttachmentHandler.NO_THUMBNAIL_SUFFIX));        
 	}
+
     @Test
     public void deleteComplexData_shouldDeleteNoThumbnailFromDisk() throws IOException {
 
@@ -113,7 +115,6 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
 		Obs obs = testHelper.saveSmallSizeImageAttachment();
         MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
         String originalFileName = mpFile.getOriginalFilename();  
-
         // Replay
         obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
         Context.getObsService().purgeObs(obs);
