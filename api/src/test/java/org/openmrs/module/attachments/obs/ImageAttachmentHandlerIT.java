@@ -25,7 +25,7 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
 	protected TestHelper testHelper;
 
 	@Test
-	public void saveComplexData_shouldSaveThumbnailToDiskAndRename() throws IOException {
+	public void saveComplexData_shouldSaveThumbnailToDisk() throws IOException {
 
 		// Replay
 		Obs obs = testHelper.saveNormalSizeImageAttachment();
