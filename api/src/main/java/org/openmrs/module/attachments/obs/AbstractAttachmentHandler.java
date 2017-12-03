@@ -44,38 +44,22 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
     }
 
     /*
-<<<<<<< HEAD
-	 * To set the "real" implementation parent.
-=======
      * To set the "real" implementation parent.
->>>>>>> db560b68aaf06822d05b7c0f6de66b395ce96308
      */
     abstract protected void setParentComplexObsHandler();
 
     /*
-<<<<<<< HEAD
-	 * Complex data CRUD - Read
-=======
      * Complex data CRUD - Read
->>>>>>> db560b68aaf06822d05b7c0f6de66b395ce96308
      */
     abstract protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view);
 
     /*
-<<<<<<< HEAD
-	 * Complex data CRUD - Delete
-=======
-	* Complex data CRUD - Delete
->>>>>>> db560b68aaf06822d05b7c0f6de66b395ce96308
+     * Complex data CRUD - Delete
      */
     abstract protected boolean deleteComplexData(Obs obs, AttachmentComplexData complexData);
 
     /*
-<<<<<<< HEAD
-	 * Complex data CRUD - Save (Update)
-=======
      * Complex data CRUD - Save (Update)
->>>>>>> db560b68aaf06822d05b7c0f6de66b395ce96308
      */
     abstract protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData);
 
@@ -88,11 +72,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
     }
 
     /*
-<<<<<<< HEAD
-	 * Appends "___nothumb__" the file
-=======
      * Appends "___nothumb__" the file
->>>>>>> db560b68aaf06822d05b7c0f6de66b395ce96308
      */
     protected static String buildNoThumbnailFileFileName(String fileName) {
         if (StringUtils.endsWith(FilenameUtils.removeExtension(fileName), NO_THUMBNAIL_SUFFIX)) {
@@ -110,8 +90,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
     }
 
     /**
-     * <p>
-     * The saveThumbnailOrRename method checks image dimension to see if the
+     * <p>The saveThumbnailOrRename method checks image dimension to see if the
      * image is small enough to be its own thumbnail. If so, it will rename the
      * image file by appending the <b>NO_THUMBNAIL_SUFFIX</b> to the file.
      * Otherewise, it will create a small thumbnail file alongside the original
