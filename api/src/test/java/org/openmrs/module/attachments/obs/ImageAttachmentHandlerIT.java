@@ -21,81 +21,81 @@ import org.springframework.mock.web.MockMultipartFile;
 
 public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
 
-	@Autowired
-	protected TestHelper testHelper;
+    @Autowired
+    protected TestHelper testHelper;
 
-	@Test
-	public void saveComplexData_shouldSaveThumbnailToDisk() throws IOException {
+    @Test
+    public void saveComplexData_shouldSaveThumbnailToDisk() throws IOException {
 
-		// Replay
-		Obs obs = testHelper.saveNormalSizeImageAttachment();
+        // Replay
+        Obs obs = testHelper.saveNormalSizeImageAttachment();
 
-		// Verif
-		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
-		File file = new File(testHelper.getComplexObsDir() + "/" + mpFile.getOriginalFilename());
-		Assert.assertTrue(file.exists());
-		File thumbnail = new File(testHelper.getComplexObsDir() + "/" + ImageAttachmentHandler.buildThumbnailFileName(mpFile.getOriginalFilename()));
-		Assert.assertTrue(thumbnail.exists());
+        // Verif
+        MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
+        File file = new File(testHelper.getComplexObsDir() + "/" + mpFile.getOriginalFilename());
+        Assert.assertTrue(file.exists());
+        File thumbnail = new File(testHelper.getComplexObsDir() + "/" + ImageAttachmentHandler.buildThumbnailFileName(mpFile.getOriginalFilename()));
+        Assert.assertTrue(thumbnail.exists());
 
-		Assert.assertThat(thumbnail.length(), lessThan(file.length()));
-		BufferedImage img = ImageIO.read(thumbnail);
-		Assert.assertEquals(ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT, Math.max(img.getHeight(), img.getWidth()));
+        Assert.assertThat(thumbnail.length(), lessThan(file.length()));
+        BufferedImage img = ImageIO.read(thumbnail);
+        Assert.assertEquals(ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT, Math.max(img.getHeight(), img.getWidth()));
 
-		// Now check rename the file by appending NO_THUMBNAIL_SUFFIX to the file
-	    String fileName = ImageAttachmentHandler.saveThumbnailOrRename(file, img.getHeight(), img.getWidth());
-	    Assert.assertTrue(StringUtils.endsWith(FilenameUtils.removeExtension(fileName), ImageAttachmentHandler.NO_THUMBNAIL_SUFFIX));
-	}
+        // Now check rename the file by appending NO_THUMBNAIL_SUFFIX to the file
+        String fileName = ImageAttachmentHandler.saveThumbnailOrRename(file, img.getHeight(), img.getWidth());
+        Assert.assertTrue(StringUtils.endsWith(FilenameUtils.removeExtension(fileName), ImageAttachmentHandler.NO_THUMBNAIL_SUFFIX));
+    }
 
-	@Test
-	public void deleteComplexData_shouldDeleteThumbnailFromDisk() throws IOException {
+    @Test
+    public void deleteComplexData_shouldDeleteThumbnailFromDisk() throws IOException {
 
-		// Setup
-		Obs obs = testHelper.saveNormalSizeImageAttachment();
-		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
+        // Setup
+        Obs obs = testHelper.saveNormalSizeImageAttachment();
+        MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
 
-		// Replay
-		obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
-		Context.getObsService().purgeObs(obs);
+        // Replay
+        obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
+        Context.getObsService().purgeObs(obs);
 
-		// Verif
-		File file = new File(testHelper.getComplexObsDir() + "/" + mpFile.getOriginalFilename());
-		Assert.assertFalse(file.exists());
-		File thumbnail = new File(testHelper.getComplexObsDir() + "/" + ImageAttachmentHandler.buildThumbnailFileName(mpFile.getOriginalFilename()));
-		Assert.assertFalse(thumbnail.exists());
-	}
+        // Verif
+        File file = new File(testHelper.getComplexObsDir() + "/" + mpFile.getOriginalFilename());
+        Assert.assertFalse(file.exists());
+        File thumbnail = new File(testHelper.getComplexObsDir() + "/" + ImageAttachmentHandler.buildThumbnailFileName(mpFile.getOriginalFilename()));
+        Assert.assertFalse(thumbnail.exists());
+    }
 
-	@Test
-	public void readComplexData_shouldFetchThumbnail() throws IOException {
+    @Test
+    public void readComplexData_shouldFetchThumbnail() throws IOException {
 
-		// Setup
-		Obs obs = testHelper.saveNormalSizeImageAttachment();
-		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
-		File thumbnail = new File(testHelper.getComplexObsDir() + "/" + ImageAttachmentHandler.buildThumbnailFileName(mpFile.getOriginalFilename()));
-		Assert.assertTrue(thumbnail.exists());
-		byte[] expectedBytes = new BaseComplexData(thumbnail.getName(), ImageIO.read(thumbnail)).asByteArray();
+        // Setup
+        Obs obs = testHelper.saveNormalSizeImageAttachment();
+        MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
+        File thumbnail = new File(testHelper.getComplexObsDir() + "/" + ImageAttachmentHandler.buildThumbnailFileName(mpFile.getOriginalFilename()));
+        Assert.assertTrue(thumbnail.exists());
+        byte[] expectedBytes = new BaseComplexData(thumbnail.getName(), ImageIO.read(thumbnail)).asByteArray();
 
-		// Replay
-		obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_THUMBNAIL);
+        // Replay
+        obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_THUMBNAIL);
 
-		// Verif
-		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obs.getComplexData()));
-	}
+        // Verif
+        Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obs.getComplexData()));
+    }
 
-	@Test
-	public void saveComplexData_shouldNotSaveThumbnailWhenSmallImage() throws IOException {
-		
-		// Setup
-		Obs obs = testHelper.saveSmallSizeImageAttachment();
+    @Test
+    public void saveComplexData_shouldNotSaveThumbnailWhenSmallImage() throws IOException {
+
+        // Setup
+        Obs obs = testHelper.saveSmallSizeImageAttachment();
         MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
         String originalFileName = mpFile.getOriginalFilename();
-        
+
         // Verif the buildNotThumbnailFileFileName()
         File noThumbnailFile = new File(testHelper.getComplexObsDir() + "/" + ImageAttachmentHandler.buildNoThumbnailFileFileName(originalFileName));
         Assert.assertTrue(noThumbnailFile.exists());
         // Not create new file name since it contained NO_THUMBNAIL_SUFFIX
         noThumbnailFile = new File(testHelper.getComplexObsDir() + "/" + ImageAttachmentHandler.buildNoThumbnailFileFileName(noThumbnailFile.getName()));
-        Assert.assertTrue(noThumbnailFile.exists());        
-        
+        Assert.assertTrue(noThumbnailFile.exists());
+
         // Verif the thumbnail file was NOT created
         File thumbnail = new File(testHelper.getComplexObsDir() + "/" + ImageAttachmentHandler.buildThumbnailFileName(originalFileName));
         Assert.assertFalse(thumbnail.exists());
@@ -105,16 +105,16 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
         Assert.assertTrue(ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT >= Math.max(img.getHeight(), img.getWidth()));
 
         // Check that the file name contains the no thumbnail suffix
-        Assert.assertTrue(StringUtils.endsWith(FilenameUtils.removeExtension(noThumbnailFile.getName()), ImageAttachmentHandler.NO_THUMBNAIL_SUFFIX));        
-	}
+        Assert.assertTrue(StringUtils.endsWith(FilenameUtils.removeExtension(noThumbnailFile.getName()), ImageAttachmentHandler.NO_THUMBNAIL_SUFFIX));
+    }
 
     @Test
     public void deleteComplexData_shouldDeleteNoThumbnailFromDisk() throws IOException {
 
         // Setup
-		Obs obs = testHelper.saveSmallSizeImageAttachment();
+        Obs obs = testHelper.saveSmallSizeImageAttachment();
         MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
-        String originalFileName = mpFile.getOriginalFilename();  
+        String originalFileName = mpFile.getOriginalFilename();
         // Replay
         obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
         Context.getObsService().purgeObs(obs);
@@ -123,27 +123,27 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
         File noThumbnailFile = new File(testHelper.getComplexObsDir() + "/" + ImageAttachmentHandler.buildNoThumbnailFileFileName(originalFileName));
         Assert.assertFalse(noThumbnailFile.exists());
     }
-    
-	@Test
-	public void readComplexData_shouldAlwaysFetchOriginalImageWhenSmallImage() throws IOException {
-		
-		// Setup
-		Obs obs = testHelper.saveSmallSizeImageAttachment();
+
+    @Test
+    public void readComplexData_shouldAlwaysFetchOriginalImageWhenSmallImage() throws IOException {
+
+        // Setup
+        Obs obs = testHelper.saveSmallSizeImageAttachment();
         MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
         String originalFileName = mpFile.getOriginalFilename();
         File noThumbnailFile = new File(testHelper.getComplexObsDir() + "/" + ImageAttachmentHandler.buildNoThumbnailFileFileName(originalFileName));
         Assert.assertTrue(noThumbnailFile.exists());
-        byte[] expectedBytes = new BaseComplexData(noThumbnailFile.getName(), ImageIO.read(noThumbnailFile)).asByteArray();        
+        byte[] expectedBytes = new BaseComplexData(noThumbnailFile.getName(), ImageIO.read(noThumbnailFile)).asByteArray();
 
         // Replay
         obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_THUMBNAIL);
 
         // Verif
         Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obs.getComplexData()));
-        
+
         obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_ORIGINAL);
-        
+
         // Verif
-        Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obs.getComplexData()));             
-	}
+        Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obs.getComplexData()));
+    }
 }
