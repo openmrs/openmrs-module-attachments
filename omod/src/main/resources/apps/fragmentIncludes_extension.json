@@ -1,10 +1,10 @@
 [
-  {
-    "id": "${project.parent.groupId}.${project.parent.artifactId}.patientDashboard.secondColumnFragments.att",
-    "extensionPointId": "patientDashboard.secondColumnFragments",
-    "extensionParams": {
-      "provider": "${project.parent.artifactId}",
-      "fragment": "dashboardWidget"
+    {
+        "id" : "${project.parent.groupId}.${project.parent.artifactId}.patientDashboard.secondColumnFragments.att",
+        "extensionPointId" : "patientDashboard.secondColumnFragments",
+        "extensionParams" : {
+            "provider" : "${project.parent.artifactId}",
+            "fragment" : "dashboardWidget"
+        }
     }
-  }
 ]

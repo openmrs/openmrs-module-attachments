@@ -64,8 +64,8 @@ public class ImageAttachmentHandlerTest {
 		ImageIO.write(originalBufferedImg, imgExt, imageFile);
 		
 		AdministrationService adminService = mock(AdministrationService.class);
-		when(adminService.getGlobalProperty(eq(OpenmrsConstants.GLOBAL_PROPERTY_COMPLEX_OBS_DIR))).thenReturn(
-		    imageUrl.toURI().resolve(".").getPath());
+		when(adminService.getGlobalProperty(eq(OpenmrsConstants.GLOBAL_PROPERTY_COMPLEX_OBS_DIR)))
+		        .thenReturn(imageUrl.toURI().resolve(".").getPath());
 		
 		PowerMockito.mockStatic(Context.class);
 		when(Context.getAdministrationService()).thenReturn(adminService);
@@ -77,7 +77,8 @@ public class ImageAttachmentHandlerTest {
 		
 		// Replay
 		Obs savedObs = new Obs();
-		savedObs.setComplexData((new AttachmentComplexData1_10(imgFileName, new FileInputStream(imageFile))).asComplexData());
+		savedObs.setComplexData(
+		    (new AttachmentComplexData1_10(imgFileName, new FileInputStream(imageFile))).asComplexData());
 		imageDocumentHandler.saveObs(savedObs);
 		Obs fetchedObs = imageHandler.getObs(savedObs, randomView);
 		ComplexData complexData = fetchedObs.getComplexData();

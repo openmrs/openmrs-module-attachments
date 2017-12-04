@@ -1,172 +1,196 @@
-angular.module('att.widget.fileUpload')
-  
-  .directive('dropzoneDirective',
-    function () {
-      return function (scope, element, attrs) {
-        var config, dropzone;
+angular
+        .module('att.widget.fileUpload')
 
-        config = scope[attrs.dropzoneDirective];
+        .directive('dropzoneDirective', function() {
+            return function(scope, element, attrs) {
+                var config, dropzone;
 
-        // create a Dropzone for the element with the given options
-        dropzone = new Dropzone(element[0], config.options);
+                config = scope[attrs.dropzoneDirective];
 
-        scope.processDropzone = function() {
-          dropzone.processQueue();
-        };
+                // create a Dropzone for the element with the given options
+                dropzone = new Dropzone(element[0], config.options);
 
-        scope.removeAllFiles = function() {
-          dropzone.removeAllFiles();
-        };
+                scope.processDropzone = function() {
+                    dropzone.processQueue();
+                };
 
-        scope.addFile = function(file) {
-          dropzone.addFile(file);
-        };
+                scope.removeAllFiles = function() {
+                    dropzone.removeAllFiles();
+                };
 
-        scope.setMaxFilesize = function(maxFilesize) {
-          dropzone.options.maxFilesize = maxFilesize;
-        };
+                scope.addFile = function(file) {
+                    dropzone.addFile(file);
+                };
 
-        // bind the given event handlers
-        angular.forEach(config.eventHandlers, function(handler, event) {
-          dropzone.on(event, handler);
-        });
-      };
-    })
+                scope.setMaxFilesize = function(maxFilesize) {
+                    dropzone.options.maxFilesize = maxFilesize;
+                };
 
-  .directive('attFileUpload', ['SessionInfo', 'ObsService', 'ModuleUtils', '$timeout', function(sessionInfo, obsService, module, $timeout) {
-    return {
+                // bind the given event handlers
+                angular.forEach(config.eventHandlers, function(handler, event) {
+                    dropzone.on(event, handler);
+                });
+            };
+        })
 
-      restrict: 'E',
-      scope: {
-        config: '='
-      },
-      templateUrl: '/' + module.getPartialsPath(OPENMRS_CONTEXT_PATH) + '/fileUpload.html',
+        .directive(
+                'attFileUpload',
+                [
+                        'SessionInfo',
+                        'ObsService',
+                        'ModuleUtils',
+                        '$timeout',
+                        function(sessionInfo, obsService, module, $timeout) {
+                            return {
 
-      controller: function($scope, $rootScope) {
+                                restrict : 'E',
+                                scope : {
+                                    config : '='
+                                },
+                                templateUrl : '/' + module.getPartialsPath(OPENMRS_CONTEXT_PATH) + '/fileUpload.html',
 
-        // Loading i18n messages
-        var msgCodes = [
-          module.getProvider() + ".fileUpload.success",
-          module.getProvider() + ".fileUpload.error",
-          module.getProvider() + ".fileUpload.attentionPastVisit",
-          module.getProvider() + ".attachmentspage.fileTitle",
-          module.getProvider() + ".dropzone.innerlabel",
-          module.getProvider() + ".attachmentspage.commentTitle",
-          module.getProvider() + ".misc.label.enterCaption",
-          module.getProvider() + ".attachmentspage.uploadButton",
-          module.getProvider() + ".attachmentspage.clearFormsButton"
-        ]
-        emr.loadMessages(msgCodes.toString(), function(msgs) {
-          $scope.msgs = msgs;
-        });
+                                controller : function($scope, $rootScope) {
 
-        var providerUuid = "";
-        $scope.visitUuid = "";  // In scope for toggling ng-show
-        $scope.closedVisit = false;
-        $scope.associateWithVisitAndEncounter = $scope.config.associateWithVisitAndEncounter;
+                                    // Loading i18n messages
+                                    var msgCodes = [ module.getProvider() + ".fileUpload.success",
+                                            module.getProvider() + ".fileUpload.error",
+                                            module.getProvider() + ".fileUpload.attentionPastVisit",
+                                            module.getProvider() + ".attachmentspage.fileTitle",
+                                            module.getProvider() + ".dropzone.innerlabel",
+                                            module.getProvider() + ".attachmentspage.commentTitle",
+                                            module.getProvider() + ".misc.label.enterCaption",
+                                            module.getProvider() + ".attachmentspage.uploadButton",
+                                            module.getProvider() + ".attachmentspage.clearFormsButton" ]
+                                    emr.loadMessages(msgCodes.toString(), function(msgs) {
+                                        $scope.msgs = msgs;
+                                    });
 
-        $rootScope.$on(module.webcamCaptureForUpload, function(event, webcamFile) {
-          addFileToDropzone(webcamFile);
-        });
+                                    var providerUuid = "";
+                                    $scope.visitUuid = ""; // In scope for toggling ng-show
+                                    $scope.closedVisit = false;
+                                    $scope.associateWithVisitAndEncounter = $scope.config.associateWithVisitAndEncounter;
 
-        $scope.isWebcamDisabled = function() {
-          // http://stackoverflow.com/a/24600597/321797
-          return !($scope.config.allowWebcam === true) || (/Mobi/.test(navigator.userAgent));
-        }
+                                    $rootScope.$on(module.webcamCaptureForUpload, function(event, webcamFile) {
+                                        addFileToDropzone(webcamFile);
+                                    });
 
-        $scope.init = function() {
-          $scope.typedText = {};
-          $scope.allowWebcam = $scope.config.allowWebcam;
-          $scope.showWebcam = false;
-          Dropzone.options.attachmentsDropzone = false;
+                                    $scope.isWebcamDisabled = function() {
+                                        // http://stackoverflow.com/a/24600597/321797
+                                        return !($scope.config.allowWebcam === true)
+                                                || (/Mobi/.test(navigator.userAgent));
+                                    }
 
-          sessionInfo.get().$promise.then(function(info) {
-            providerUuid = info.currentProvider.uuid;
-          });
-          if ($scope.config.visit) {
-            $scope.visitUuid = $scope.config.visit.uuid;
-            if ($scope.config.visit.stopDatetime) {
-              $scope.closedVisit = true;
-            }
-          }
-        }
+                                    $scope.init = function() {
+                                        $scope.typedText = {};
+                                        $scope.allowWebcam = $scope.config.allowWebcam;
+                                        $scope.showWebcam = false;
+                                        Dropzone.options.attachmentsDropzone = false;
 
-        $scope.dropzoneConfig = {
-          
-          'options': // passed into the Dropzone constructor
-          { 
-            'url': $scope.config.uploadUrl,
-            'thumbnailHeight': 100,
-            'thumbnailWidth': 100,
-            'maxFiles': 1,
-            'autoProcessQueue': false,
-            'renameFilename': function (name) { 
-              return name.replace(/\.[^/.]+$/, "") + "_" + moment().format("YYYYMMDD_HHmmss") + "." + name.split(".").pop(); // Timestamping the file name
-            }
-          },
-          'eventHandlers':
-          {
-            'addedfile': function(file) {
-              setMaxFileSizeOption(file.type); // Setting the max upload file size depending on whether the file can be compressed on the backend.
-              if (this.files[1] != null) {
-                this.removeFile(this.files[0]);
-              }
-              $timeout(function() { // https://docs.angularjs.org/error/$rootScope/inprog?p0=$apply#triggering-events-programmatically
-                $scope.fileAdded = true;
-              }, 0);
-            },
-            'sending': function (file, xhr, formData) {
-              formData.append('patient', $scope.config.patient.uuid);
-              formData.append('visit', $scope.visitUuid == null ? "" : $scope.visitUuid);
-              formData.append('provider', providerUuid == null ? "" : providerUuid);
-              formData.append('fileCaption', ($scope.typedText.fileCaption == null) ? "" : $scope.typedText.fileCaption );
-            },
-            'success': function (file, response) {
-              $rootScope.$emit(module.eventNewFile, response);
-              $().toastmessage('showToast', { type: 'success', position: 'top-right', text: emr.message(module.getProvider() + ".fileUpload.success") });
-              $scope.clearForms();
-            },
-            'error': function (file, response, xhr) {
-              $().toastmessage('showToast', { type: 'error', position: 'top-right', text: emr.message(module.getProvider() + ".fileUpload.error") + " " + response });
-              console.log(response);
-            }
-          }
-        };
+                                        sessionInfo.get().$promise.then(function(info) {
+                                            providerUuid = info.currentProvider.uuid;
+                                        });
+                                        if ($scope.config.visit) {
+                                            $scope.visitUuid = $scope.config.visit.uuid;
+                                            if ($scope.config.visit.stopDatetime) {
+                                                $scope.closedVisit = true;
+                                            }
+                                        }
+                                    }
 
-        var setMaxFileSizeOption = function(mimeType) {
-          if (!mimeType) {
-            $scope.setMaxFilesize($scope.config.maxFileSize);
-            return;
-          }
-          
-          var contentFamily = $scope.config.contentFamilyMap[mimeType];
-          switch (contentFamily) {
-            case module.family.IMAGE:
-              $scope.setMaxFilesize($scope.config.maxFileSize * $scope.config.maxCompression);
-              break;
+                                    $scope.dropzoneConfig = {
 
-            default:
-              $scope.setMaxFilesize($scope.config.maxFileSize);
-              break;
-          }
-        };
+                                        'options' : // passed into the Dropzone constructor
+                                        {
+                                            'url' : $scope.config.uploadUrl,
+                                            'thumbnailHeight' : 100,
+                                            'thumbnailWidth' : 100,
+                                            'maxFiles' : 1,
+                                            'autoProcessQueue' : false,
+                                            'renameFilename' : function(name) {
+                                                return name.replace(/\.[^/.]+$/, "") + "_"
+                                                        + moment().format("YYYYMMDD_HHmmss") + "."
+                                                        + name.split(".").pop(); // Timestamping the file name
+                                            }
+                                        },
+                                        'eventHandlers' : {
+                                            'addedfile' : function(file) {
+                                                setMaxFileSizeOption(file.type); // Setting the max upload file size depending on whether the file can be compressed on the backend.
+                                                if (this.files[1] != null) {
+                                                    this.removeFile(this.files[0]);
+                                                }
+                                                $timeout(function() { // https://docs.angularjs.org/error/$rootScope/inprog?p0=$apply#triggering-events-programmatically
+                                                    $scope.fileAdded = true;
+                                                }, 0);
+                                            },
+                                            'sending' : function(file, xhr, formData) {
+                                                formData.append('patient', $scope.config.patient.uuid);
+                                                formData.append('visit',
+                                                        $scope.visitUuid == null ? "" : $scope.visitUuid);
+                                                formData.append('provider', providerUuid == null ? "" : providerUuid);
+                                                formData
+                                                        .append(
+                                                                'fileCaption',
+                                                                ($scope.typedText.fileCaption == null) ? "" : $scope.typedText.fileCaption);
+                                            },
+                                            'success' : function(file, response) {
+                                                $rootScope.$emit(module.eventNewFile, response);
+                                                $().toastmessage('showToast', {
+                                                    type : 'success',
+                                                    position : 'top-right',
+                                                    text : emr.message(module.getProvider() + ".fileUpload.success")
+                                                });
+                                                $scope.clearForms();
+                                            },
+                                            'error' : function(file, response, xhr) {
+                                                $().toastmessage(
+                                                        'showToast',
+                                                        {
+                                                            type : 'error',
+                                                            position : 'top-right',
+                                                            text : emr.message(module.getProvider()
+                                                                    + ".fileUpload.error")
+                                                                    + " " + response
+                                                        });
+                                                console.log(response);
+                                            }
+                                        }
+                                    };
 
-        var addFileToDropzone = function(file) {
-          $scope.addFile(file);
-        };
+                                    var setMaxFileSizeOption = function(mimeType) {
+                                        if (!mimeType) {
+                                            $scope.setMaxFilesize($scope.config.maxFileSize);
+                                            return;
+                                        }
 
-        $scope.uploadFile = function() {
-          $scope.processDropzone();
-        };
+                                        var contentFamily = $scope.config.contentFamilyMap[mimeType];
+                                        switch (contentFamily) {
+                                        case module.family.IMAGE:
+                                            $scope.setMaxFilesize($scope.config.maxFileSize
+                                                    * $scope.config.maxCompression);
+                                            break;
 
-        $scope.clearForms = function() {
-          $scope.removeAllFiles();
-          $scope.typedText.fileCaption = "";
-        }
+                                        default:
+                                            $scope.setMaxFilesize($scope.config.maxFileSize);
+                                            break;
+                                        }
+                                    };
 
-        $scope.isUploadBtnDisabled = function() {
-          return !($scope.typedText.fileCaption || $scope.config.allowNoCaption);
-        }  
-      }
-    };
-  }]);
+                                    var addFileToDropzone = function(file) {
+                                        $scope.addFile(file);
+                                    };
+
+                                    $scope.uploadFile = function() {
+                                        $scope.processDropzone();
+                                    };
+
+                                    $scope.clearForms = function() {
+                                        $scope.removeAllFiles();
+                                        $scope.typedText.fileCaption = "";
+                                    }
+
+                                    $scope.isUploadBtnDisabled = function() {
+                                        return !($scope.typedText.fileCaption || $scope.config.allowNoCaption);
+                                    }
+                                }
+                            };
+                        } ]);

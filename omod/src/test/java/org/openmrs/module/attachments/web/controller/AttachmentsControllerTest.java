@@ -33,60 +33,66 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 public class AttachmentsControllerTest extends BaseModuleWebContextSensitiveTest {
-
+	
 	@Autowired
 	private AttachmentsController controller;
-
+	
 	@Autowired
 	private AttachmentsContext context;
-
+	
 	@Autowired
 	protected TestHelper helper;
-
+	
 	protected Patient patient;
+	
 	protected Provider provider;
+	
 	protected String fileCaption = "test file caption";
+	
 	protected String instructions = null;
+	
 	protected MultipartHttpServletRequest request = mock(MultipartHttpServletRequest.class);
-
+	
 	@Before
 	public void setup() throws IOException {
 		helper.init();
-
+		
 		patient = context.getPatientService().getPatient(2);
 		provider = context.getProviderService().getProvider(1);
-
+		
 		List<String> fileNames = Arrays.asList(helper.getTestFileNameWithExt());
 		when(request.getFileNames()).thenReturn(fileNames.iterator());
 		when(request.getFile(eq(helper.getTestFileNameWithExt()))).thenReturn(helper.getTestDefaultFile());
 	}
-
+	
 	@Test
-	public void shouldSaveFile_WhenVisitIsActive() throws JsonParseException, JsonMappingException, IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public void shouldSaveFile_WhenVisitIsActive() throws JsonParseException, JsonMappingException, IOException,
+	        IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		// Setup
 		Visit visit = context.getVisitService().getActiveVisitsByPatient(patient).get(0);
 		assertNull(visit.getStopDatetime());
-
+		
 		// Replay
 		Object obsRep = controller.uploadDocuments(patient, visit, provider, fileCaption, instructions, request);
-
+		
 		// Verif
 		String uuid = (String) PropertyUtils.getProperty(obsRep, "uuid");
 		Obs obs = context.getObsService().getObsByUuid(uuid);
 		assertEquals(visit.getId(), obs.getEncounter().getVisit().getId());
 		assertTrue(obs.getObsDatetime().after(obs.getEncounter().getEncounterDatetime()));
 	}
-
+	
 	@Test
-	public void shouldSaveFile_WhenVisitIsClosed() throws JsonParseException, JsonMappingException, IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public void shouldSaveFile_WhenVisitIsClosed() throws JsonParseException, JsonMappingException, IOException,
+	        IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		// Setup
 		Visit visit = context.getVisitService().getActiveVisitsByPatient(patient).get(0);
 		visit.setStopDatetime(new DateTime(visit.getStartDatetime()).plusDays(3).toDate());
 		context.getVisitService().saveVisit(visit);
-
+		
 		// Replay
 		Object obsRep = controller.uploadDocuments(patient, visit, provider, fileCaption, instructions, request);
-
+		
 		// Verif
 		String uuid = (String) PropertyUtils.getProperty(obsRep, "uuid");
 		Obs obs = context.getObsService().getObsByUuid(uuid);
@@ -94,16 +100,17 @@ public class AttachmentsControllerTest extends BaseModuleWebContextSensitiveTest
 		assertEquals(visit.getStopDatetime(), obs.getEncounter().getEncounterDatetime());
 		assertEquals(visit.getStopDatetime(), obs.getObsDatetime());
 	}
-
+	
 	@Test
-	public void shouldSaveFile_WhenVisitIsClosedAndUniqueEncounterWorkflow() throws JsonParseException, JsonMappingException, IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public void shouldSaveFile_WhenVisitIsClosedAndUniqueEncounterWorkflow() throws JsonParseException, JsonMappingException,
+	        IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		// Setup
 		Visit visit = context.getVisitService().getActiveVisitsByPatient(patient).get(0);
 		visit.setStopDatetime(new DateTime(visit.getStartDatetime()).plusDays(3).toDate());
 		context.getVisitService().saveVisit(visit);
 		Date encounterDateTime = new DateTime(visit.getStartDatetime()).plusMinutes(120).toDate();
-
-		{	// a pre-existing encounter that started shortly after the visit started
+		
+		{ // a pre-existing encounter that started shortly after the visit started
 			Encounter encounter = new Encounter();
 			encounter.setEncounterType(context.getEncounterType());
 			encounter.setPatient(visit.getPatient());
@@ -112,13 +119,13 @@ public class AttachmentsControllerTest extends BaseModuleWebContextSensitiveTest
 			encounter.setEncounterDatetime(encounterDateTime);
 			visit.addEncounter(encounter);
 		}
-
-		context.getAdministrationService()	// setting the unique encounter workflow
-			.saveGlobalProperty( new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_SAVING_FLOW, "unique" ) );
-
+		
+		context.getAdministrationService() // setting the unique encounter workflow
+		        .saveGlobalProperty(new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_SAVING_FLOW, "unique"));
+		
 		// Replay
 		Object obsRep = controller.uploadDocuments(patient, visit, provider, fileCaption, instructions, request);
-
+		
 		// Verif
 		String uuid = (String) PropertyUtils.getProperty(obsRep, "uuid");
 		Obs obs = context.getObsService().getObsByUuid(uuid);

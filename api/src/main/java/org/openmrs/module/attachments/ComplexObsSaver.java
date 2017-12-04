@@ -57,8 +57,9 @@ public class ComplexObsSaver {
 	}
 	
 	protected void prepareComplexObs(Visit visit, Person person, Encounter encounter, String fileCaption) {
-		obs = new Obs(person, conceptComplex, visit == null || visit.getStopDatetime() == null ? new Date()
-		        : visit.getStopDatetime(), encounter != null ? encounter.getLocation() : null);
+		obs = new Obs(person, conceptComplex,
+		        visit == null || visit.getStopDatetime() == null ? new Date() : visit.getStopDatetime(),
+		        encounter != null ? encounter.getLocation() : null);
 		obs.setEncounter(encounter); // may be null
 		obs.setComment(fileCaption);
 	}
@@ -74,8 +75,9 @@ public class ComplexObsSaver {
 		if (compressionRatio < 1) {
 			image = Thumbnails.of(ImageIO.read(multipartFile.getInputStream())).scale(compressionRatio).asBufferedImage();
 		}
-		obs.setComplexData(complexDataHelper.build(instructions, multipartFile.getOriginalFilename(), image,
-		    multipartFile.getContentType()).asComplexData());
+		obs.setComplexData(
+		    complexDataHelper.build(instructions, multipartFile.getOriginalFilename(), image, multipartFile.getContentType())
+		            .asComplexData());
 		obs = context.getObsService().saveObs(obs, getClass().toString());
 		return obs;
 	}

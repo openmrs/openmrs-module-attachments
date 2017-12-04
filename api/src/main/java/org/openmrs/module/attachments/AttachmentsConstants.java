@@ -12,7 +12,9 @@ package org.openmrs.module.attachments;
 public class AttachmentsConstants {
 	
 	public static enum ContentFamily {
-		IMAGE, PDF, OTHER
+		IMAGE,
+		PDF,
+		OTHER
 	}
 	
 	/*
@@ -65,22 +67,36 @@ public class AttachmentsConstants {
 	
 	public static final String ATT_VIEW_THUMBNAIL = "complexdata.view.thumbnail";
 	
-	public static final String ATT_VIEW_CRUD = ATT_VIEW_ORIGINAL; // Use this view for CRUD operations where a view must be provided.
+	public static final String ATT_VIEW_CRUD = ATT_VIEW_ORIGINAL; // Use this view for CRUD operations where a view must
+	                                                              // be provided.
 	
 	public static final String ATT_VIEW_RANDOM = "complexdata.view.random:m3k0m";
 	
 	public static final String IMAGE_HANDLER_VIEW = "RAW_VIEW"; // Default/unique view handled by Core's ImageHandler
 	
-	public static final String BINARYDATA_HANDLER_VIEW = "RAW_VIEW"; // Default/unique view handled by Core's BinaryDataHandler
+	public static final String BINARYDATA_HANDLER_VIEW = "RAW_VIEW"; // Default/unique view handled by Core's
+	                                                                 // BinaryDataHandler
 	
 	/*
 	 * Global properties
 	 */
 	public static final String GP_DEFAULT_CONCEPT_COMPLEX_UUID = MODULE_ARTIFACT_ID + ".defaultConceptComplexUuid";
 	
-	public static final String GP_CONCEPT_COMPLEX_UUID_MAP = MODULE_ARTIFACT_ID + ".conceptComplexUuidMap"; // Map between content families and concept complex UUIDs
+	public static final String GP_CONCEPT_COMPLEX_UUID_MAP = MODULE_ARTIFACT_ID + ".conceptComplexUuidMap"; // Map
+	                                                                                                        // between
+	                                                                                                        // content
+	                                                                                                        // families
+	                                                                                                        // and
+	                                                                                                        // concept
+	                                                                                                        // complex
+	                                                                                                        // UUIDs
 	
-	public static final String GP_CONCEPT_COMPLEX_UUID_LIST = MODULE_ARTIFACT_ID + ".conceptComplexUuidList"; // List of concepts complex UUIDs for listing/viewing.
+	public static final String GP_CONCEPT_COMPLEX_UUID_LIST = MODULE_ARTIFACT_ID + ".conceptComplexUuidList"; // List of
+	                                                                                                          // concepts
+	                                                                                                          // complex
+	                                                                                                          // UUIDs
+	                                                                                                          // for
+	                                                                                                          // listing/viewing.
 	
 	public static final String GP_ENCOUNTER_TYPE_UUID = MODULE_ARTIFACT_ID + ".encounterTypeUuid";
 	

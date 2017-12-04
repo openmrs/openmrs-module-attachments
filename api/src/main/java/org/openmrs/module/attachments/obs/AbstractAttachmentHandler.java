@@ -35,23 +35,23 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	}
 	
 	/*
-	* To set the "real" implementation parent.
-	*/
+	 * To set the "real" implementation parent.
+	 */
 	abstract protected void setParentComplexObsHandler();
 	
 	/*
-	* Complex data CRUD - Read
-	*/
+	 * Complex data CRUD - Read
+	 */
 	abstract protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view);
 	
 	/*
-	* Complex data CRUD - Delete
-	*/
+	 * Complex data CRUD - Delete
+	 */
 	abstract protected boolean deleteComplexData(Obs obs, AttachmentComplexData complexData);
 	
 	/*
-	* Complex data CRUD - Save (Update)
-	*/
+	 * Complex data CRUD - Save (Update)
+	 */
 	abstract protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData);
 	
 	protected void setParent(ComplexObsHandler complexObsHandler) {
@@ -87,8 +87,8 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	}
 	
 	/*
-	* Drifts to our own CRUD overloadable routine when it is our implementation.
-	*/
+	 * Drifts to our own CRUD overloadable routine when it is our implementation.
+	 */
 	@Override
 	final public Obs getObs(Obs obs, String view) {
 		
@@ -107,8 +107,8 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	}
 	
 	/*
-	* Drifts to our own CRUD overloadable routine when it is our implementation.
-	*/
+	 * Drifts to our own CRUD overloadable routine when it is our implementation.
+	 */
 	@Override
 	final public boolean purgeComplexData(Obs obs) {
 		
@@ -126,8 +126,8 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	}
 	
 	/*
-	* Drifts to our own CRUD overloadable routine when it is our implementation.
-	*/
+	 * Drifts to our own CRUD overloadable routine when it is our implementation.
+	 */
 	@Override
 	final public Obs saveObs(Obs obs) {
 		
