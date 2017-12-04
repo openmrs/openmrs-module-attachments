@@ -24,7 +24,8 @@ public class ValueComplex {
 	
 	protected String fileName = AttachmentsConstants.MODULE_SHORT_ID.toLowerCase() + "_file.dat";
 	
-	protected final static String UNIQUE_PREFIX = "m3ks"; // This is used to identify our implementation from saved valueComplex.
+	protected final static String UNIQUE_PREFIX = "m3ks"; // This is used to identify our implementation from saved
+	                                                      // valueComplex.
 	
 	protected final static String SEP = " | ";
 	
@@ -61,7 +62,8 @@ public class ValueComplex {
 				int pos = StringUtils.ordinalIndexOf(valueComplex, SEP, METADATA_PARTS_COUNT);
 				pos += SEP.length();
 				fileName = StringUtils.substring(valueComplex, pos);
-			} else { // That'd be a case where the file name is not even part of the valueComplex String, anything else looking valid.
+			} else { // That'd be a case where the file name is not even part of the valueComplex
+			         // String, anything else looking valid.
 				fileName = FilenameUtils.removeExtension(fileName) + "." + AttachmentsContext.getExtension(mimeType);
 			}
 		}

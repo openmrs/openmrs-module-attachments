@@ -113,27 +113,34 @@
   </dependencies>
 
   <build>
+    <plugins>
+      <plugin>
+        <groupId>net.revelc.code.formatter</groupId>
+        <artifactId>formatter-maven-plugin</artifactId>
+        <version>2.7.1</version>
+        <configuration>
+          <directories>
+            <directory>.</directory>
+          </directories>
+          <configFile>../OpenMRSFormatter.xml</configFile>
+          <includes>
+            <include>**/*.java</include>
+            <include>**/*.js</include>
+            <include>**/*.json</include>
+          </includes>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>format</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
-          <artifactId>maven-java-formatter-plugin</artifactId>
-          <version>0.3</version>
-          <configuration>
-            <compilerSource>${javaCompilerVersion}</compilerSource>
-            <compilerCompliance>${javaCompilerVersion}</compilerCompliance>
-            <compilerTargetPlatform>${javaCompilerVersion}</compilerTargetPlatform>
-            <configFile>eclipse/OpenMRSFormatter.xml</configFile>
-            <overrideConfigCompilerVersion>true</overrideConfigCompilerVersion>
-          </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>org.openmrs.tools</groupId>
-              <artifactId>openmrs-tools</artifactId>
-              <version>${openMRSVersion}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>

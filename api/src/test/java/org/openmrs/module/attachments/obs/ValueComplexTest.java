@@ -67,10 +67,4 @@ public class ValueComplexTest {
 		assertEquals(mimeType, valueComplex.getMimeType());
 		assertEquals(fileName, valueComplex.getFileName());
 	}
-	
-	@Test
-	public void foo() {
-		String ext = FilenameUtils.getExtension("jpozajdpoja    azpd .ipoezjdiozjeid");
-		ext.length();
-	}
 }

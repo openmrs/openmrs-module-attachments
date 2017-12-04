@@ -107,7 +107,8 @@ public class ObsByConceptListSearchHandler1_10Test extends MainResourceControlle
 		}
 	}
 	
-	//	@Ignore("The standardTestDataset.xml does not create mappings. Skipping this test")
+	// @Ignore("The standardTestDataset.xml does not create mappings. Skipping this
+	// test")
 	@Test
 	public void parseConceptList_shouldHandleMappingsAndUuids() throws Exception {
 		
@@ -115,8 +116,8 @@ public class ObsByConceptListSearchHandler1_10Test extends MainResourceControlle
 		
 		ConceptService conceptServiceMock = mock(ConceptService.class);
 		
-		when(conceptServiceMock.getConceptByMapping(CONCEPT_2_NUMBER, CONCEPT_2_SOURCE)).thenReturn(
-		    conceptService.getConceptByUuid(CONCEPT_2_UUID));
+		when(conceptServiceMock.getConceptByMapping(CONCEPT_2_NUMBER, CONCEPT_2_SOURCE))
+		        .thenReturn(conceptService.getConceptByUuid(CONCEPT_2_UUID));
 		when(conceptServiceMock.getConceptByUuid(CONCEPT_1_UUID))
 		        .thenReturn(conceptService.getConceptByUuid(CONCEPT_1_UUID));
 		when(conceptServiceMock.getConceptByUuid(CONCEPT_3_UUID))
@@ -149,7 +150,8 @@ public class ObsByConceptListSearchHandler1_10Test extends MainResourceControlle
 	
 	@Override
 	public long getAllCount() {
-		// This method is never called since the 'shouldGetAll' test is overridden and returns exception
+		// This method is never called since the 'shouldGetAll' test is overridden and
+		// returns exception
 		return 0;
 	}
 }

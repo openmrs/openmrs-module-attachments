@@ -37,124 +37,120 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 @Controller
 public class AttachmentsController {
-
-   @Autowired
-   @Qualifier(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
-   protected AttachmentsContext context;
-   
-   @Autowired
-   @Qualifier(AttachmentsConstants.COMPONENT_VISIT_COMPATIBILITY)
-   protected VisitCompatibility visitCompatibility;
-   
-   @Autowired
-   @Qualifier(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER)
-   protected ComplexObsSaver obsSaver; 
-
-   protected final Log log = LogFactory.getLog(getClass());
-
-   @RequestMapping(value = AttachmentsConstants.UPLOAD_ATTACHMENT_URL, method = RequestMethod.POST)
-   @ResponseBody
-   public Object uploadDocuments(
-         @RequestParam("patient") Patient patient,
-         @RequestParam(value = "visit", required = false) Visit visit,
-         @RequestParam(value = "provider", required = false) Provider provider,
-         @RequestParam("fileCaption") String fileCaption,
-         @RequestParam(value="instructions", required=false) String instructions,
-         MultipartHttpServletRequest request) 
-   {
-      try
-      {
-         Iterator<String> fileNameIterator = request.getFileNames();  // Looping through the uploaded file names.
-
-         while (fileNameIterator.hasNext()) {
-            String uploadedFileName = fileNameIterator.next();
-            MultipartFile multipartFile = request.getFile(uploadedFileName);
-            
-            Encounter encounter = null;
-            if (context.associateWithVisitAndEncounter()) {
-               encounter = context.getAttachmentEncounter(patient, visit, provider);
-            }
-
-            if (StringUtils.isEmpty(instructions))
-               instructions = ValueComplex.INSTRUCTIONS_DEFAULT;
-            
-            switch (getContentFamily(multipartFile.getContentType())) {
-               case IMAGE:
-                  obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, multipartFile, instructions);
-                  break;
-                  
-               case OTHER:
-               default:
-                  obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartFile, instructions);
-                  break;
-            }
-         }
-      }
-      catch (Exception e) {
-         log.error(e.getMessage(), e);
-         throw new AttachmentNotSavedException(e.getMessage(), e); 
-      }
-
-      return ConversionUtil.convertToRepresentation(obsSaver.getObs(), new CustomRepresentation(AttachmentsConstants.REPRESENTATION_OBS));
-   }
-   
-   @RequestMapping(value = AttachmentsConstants.DOWNLOAD_ATTACHMENT_URL, method = RequestMethod.GET)
-   public void downloadDocument(
-         @RequestParam("obs") String obsUuid,
-         @RequestParam(value="view", required=false) String view,
-         HttpServletResponse response)
-   {
-      if (StringUtils.isEmpty(view))
-         view = AttachmentsConstants.ATT_VIEW_ORIGINAL;
-
-      // Getting the Core/Platform complex data object
-      Obs obs = context.getObsService().getObsByUuid(obsUuid);
-      Obs complexObs = context.getObsService().getComplexObs(obs.getObsId(), view);
-      ComplexData complexData = complexObs.getComplexData();
-      
-      // Switching to our complex data object
-      ValueComplex valueComplex = new ValueComplex(obs.getValueComplex());
-      AttachmentComplexData docComplexData = context.getComplexDataHelper().build(valueComplex.getInstructions(), complexData);
-      
-      String mimeType = docComplexData.getMimeType();
-      try {
-         // The document meta data is sent as HTTP headers.
-         response.setContentType(mimeType);
-         response.addHeader("Content-Family", getContentFamily(mimeType).name());   // custom header
-         response.addHeader("File-Name", docComplexData.getTitle());   // custom header
-         response.addHeader("File-Ext", getExtension(docComplexData.getTitle(), mimeType));   // custom header
-         switch (getContentFamily(mimeType)) {
-            default:
-               response.getOutputStream().write(docComplexData.asByteArray());
-               break;
-         }
-      }
-      catch (IOException e) {
-         response.setStatus(500);
-         log.error("Could not write to HTTP response for when fetching obs with"
-               + " VALUE_COMPLEX='" + complexObs.getValueComplex() + "',"
-               + " OBS_ID='" + complexObs.getId() + "',"
-               + " OBS_UUID='" + complexObs.getUuid() + "'"
-               , e);
-      }
-   }
-   
-   /**
-    * @param fileName
-    * @param mimeType
-    * @return The best guess extension for the file, preferring it coming out from the original file name if possible.
-    */
-   public static String getExtension(String fileName, String mimeType) {
-      String ext = FilenameUtils.getExtension(fileName);
-      String extFromMimeType = AttachmentsContext.getExtension(mimeType);
-      if (!StringUtils.isEmpty(ext)) {
-         if (ext.length() > 6) {  // this is a bit arbitrary, just to discriminate funny named files such as "uiohdz.iuhezuidhuih"
-            ext = extFromMimeType;
-         }
-      }
-      else {
-         ext = extFromMimeType;
-      }
-      return ext;
-   }
+	
+	@Autowired
+	@Qualifier(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
+	protected AttachmentsContext context;
+	
+	@Autowired
+	@Qualifier(AttachmentsConstants.COMPONENT_VISIT_COMPATIBILITY)
+	protected VisitCompatibility visitCompatibility;
+	
+	@Autowired
+	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER)
+	protected ComplexObsSaver obsSaver;
+	
+	protected final Log log = LogFactory.getLog(getClass());
+	
+	@RequestMapping(value = AttachmentsConstants.UPLOAD_ATTACHMENT_URL, method = RequestMethod.POST)
+	@ResponseBody
+	public Object uploadDocuments(@RequestParam("patient") Patient patient,
+	        @RequestParam(value = "visit", required = false) Visit visit,
+	        @RequestParam(value = "provider", required = false) Provider provider,
+	        @RequestParam("fileCaption") String fileCaption,
+	        @RequestParam(value = "instructions", required = false) String instructions,
+	        MultipartHttpServletRequest request) {
+		try {
+			Iterator<String> fileNameIterator = request.getFileNames(); // Looping through the uploaded file names.
+			
+			while (fileNameIterator.hasNext()) {
+				String uploadedFileName = fileNameIterator.next();
+				MultipartFile multipartFile = request.getFile(uploadedFileName);
+				
+				Encounter encounter = null;
+				if (context.associateWithVisitAndEncounter()) {
+					encounter = context.getAttachmentEncounter(patient, visit, provider);
+				}
+				
+				if (StringUtils.isEmpty(instructions))
+					instructions = ValueComplex.INSTRUCTIONS_DEFAULT;
+				
+				switch (getContentFamily(multipartFile.getContentType())) {
+					case IMAGE:
+						obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, multipartFile, instructions);
+						break;
+					
+					case OTHER:
+					default:
+						obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartFile, instructions);
+						break;
+				}
+			}
+		}
+		catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new AttachmentNotSavedException(e.getMessage(), e);
+		}
+		
+		return ConversionUtil.convertToRepresentation(obsSaver.getObs(),
+		    new CustomRepresentation(AttachmentsConstants.REPRESENTATION_OBS));
+	}
+	
+	@RequestMapping(value = AttachmentsConstants.DOWNLOAD_ATTACHMENT_URL, method = RequestMethod.GET)
+	public void downloadDocument(@RequestParam("obs") String obsUuid,
+	        @RequestParam(value = "view", required = false) String view, HttpServletResponse response) {
+		if (StringUtils.isEmpty(view))
+			view = AttachmentsConstants.ATT_VIEW_ORIGINAL;
+		
+		// Getting the Core/Platform complex data object
+		Obs obs = context.getObsService().getObsByUuid(obsUuid);
+		Obs complexObs = context.getObsService().getComplexObs(obs.getObsId(), view);
+		ComplexData complexData = complexObs.getComplexData();
+		
+		// Switching to our complex data object
+		ValueComplex valueComplex = new ValueComplex(obs.getValueComplex());
+		AttachmentComplexData docComplexData = context.getComplexDataHelper().build(valueComplex.getInstructions(),
+		    complexData);
+		
+		String mimeType = docComplexData.getMimeType();
+		try {
+			// The document meta data is sent as HTTP headers.
+			response.setContentType(mimeType);
+			response.addHeader("Content-Family", getContentFamily(mimeType).name()); // custom header
+			response.addHeader("File-Name", docComplexData.getTitle()); // custom header
+			response.addHeader("File-Ext", getExtension(docComplexData.getTitle(), mimeType)); // custom header
+			switch (getContentFamily(mimeType)) {
+				default:
+					response.getOutputStream().write(docComplexData.asByteArray());
+					break;
+			}
+		}
+		catch (IOException e) {
+			response.setStatus(500);
+			log.error("Could not write to HTTP response for when fetching obs with" + " VALUE_COMPLEX='"
+			        + complexObs.getValueComplex() + "'," + " OBS_ID='" + complexObs.getId() + "'," + " OBS_UUID='"
+			        + complexObs.getUuid() + "'",
+			    e);
+		}
+	}
+	
+	/**
+	 * @param fileName
+	 * @param mimeType
+	 * @return The best guess extension for the file, preferring it coming out from the original file
+	 *         name if possible.
+	 */
+	public static String getExtension(String fileName, String mimeType) {
+		String ext = FilenameUtils.getExtension(fileName);
+		String extFromMimeType = AttachmentsContext.getExtension(mimeType);
+		if (!StringUtils.isEmpty(ext)) {
+			if (ext.length() > 6) { // this is a bit arbitrary, just to discriminate funny named files such as
+			                        // "uiohdz.iuhezuidhuih"
+				ext = extFromMimeType;
+			}
+		} else {
+			ext = extFromMimeType;
+		}
+		return ext;
+	}
 }
