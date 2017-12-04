@@ -217,8 +217,8 @@ public class AttachmentsContext extends ModuleProperties {
 	
 	/**
 	 * @param contentFamily The content family ('IMAGE', 'PDF', 'OTHER', ... etc).
-	 * @return The concept complex configured to save files belonging to the content family, and if
-	 *         none is found the default concept complex is returned.
+	 * @return The concept complex configured to save files belonging to the content family, and if none
+	 *         is found the default concept complex is returned.
 	 */
 	public ConceptComplex getConceptComplex(ContentFamily contentFamily) {
 		Map<String, String> map = getMapByGlobalProperty(AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_MAP);
@@ -296,8 +296,8 @@ public class AttachmentsContext extends ModuleProperties {
 	public EncounterRole getEncounterRole() {
 		EncounterRole unknownRole = getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
 		if (unknownRole == null) {
-			throw new IllegalStateException("No 'Unknown' encounter role with uuid "
-			        + EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID + ".");
+			throw new IllegalStateException(
+			        "No 'Unknown' encounter role with uuid " + EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID + ".");
 		}
 		return unknownRole;
 	}

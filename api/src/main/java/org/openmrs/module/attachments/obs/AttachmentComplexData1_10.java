@@ -14,8 +14,8 @@ public class AttachmentComplexData1_10 extends BaseComplexData implements Attach
 	
 	/**
 	 * @param instructions Custom instructions to be processed by {@link DefaultAttachmentHandler}
-	 * @param mimeType Same as HTTP content type, @see <a
-	 *            href="http://www.sitepoint.com/web-foundations/mime-types-complete-list/"/>
+	 * @param mimeType Same as HTTP content type, @see
+	 *            <a href= "http://www.sitepoint.com/web-foundations/mime-types-complete-list/"/>
 	 */
 	public AttachmentComplexData1_10(String instructions, String title, Object data, String mimeType) {
 		super(title, data);

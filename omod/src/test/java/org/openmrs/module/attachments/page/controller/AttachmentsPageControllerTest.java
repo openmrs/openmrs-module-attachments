@@ -33,29 +33,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 public class AttachmentsPageControllerTest extends BaseModuleWebContextSensitiveTest {
-
+	
 	@Autowired
 	protected TestHelper testHelper;
-
+	
 	@Autowired
 	private AttachmentsPageController controller;
-
+	
 	@Autowired
 	private AttachmentsContext context;
-
+	
 	@Autowired
 	private DomainWrapperFactory domainWrapperFactory;
-
+	
 	private UiSessionContext sessionContext = mock(UiSessionContext.class);
-
+	
 	@Autowired
 	@Qualifier("uiUtils")
 	private UiUtils ui;
-
+	
 	private Location location;
-
+	
 	private PageModel model = new PageModel();
-
+	
 	@Before
 	public void setup() throws IOException {
 		testHelper.init();
@@ -68,62 +68,66 @@ public class AttachmentsPageControllerTest extends BaseModuleWebContextSensitive
 		context.getLocationService().saveLocation(location);
 		when(sessionContext.getSessionLocation()).thenReturn(location);
 	}
-
+	
 	public static Visit getModelVisit(PageModel model) throws JsonParseException, JsonMappingException, IOException {
-		HashMap<String,Object> jsonConfig = (new ObjectMapper()).readValue((String) model.get("jsonConfig"), HashMap.class);
+		HashMap<String, Object> jsonConfig = (new ObjectMapper()).readValue((String) model.get("jsonConfig"), HashMap.class);
 		Object visitObj = jsonConfig.get("visit");
 		Visit modelVisit = null;
 		if (visitObj != null) {
-			modelVisit = (Visit) ConversionUtil.convertMap( (LinkedHashMap<String,Object>) jsonConfig.get("visit") , Visit.class);
+			modelVisit = (Visit) ConversionUtil.convertMap((LinkedHashMap<String, Object>) jsonConfig.get("visit"),
+			    Visit.class);
 		}
 		return modelVisit;
 	}
-
+	
 	@Test
-	public void shouldPassVisitToModel_WhenClosedVisitProvided() throws JsonParseException, JsonMappingException, IOException {
-
+	public void shouldPassVisitToModel_WhenClosedVisitProvided()
+	        throws JsonParseException, JsonMappingException, IOException {
+		
 		// Setup
 		Patient patient = context.getPatientService().getPatient(2);
 		Visit visit = context.getVisitService().getActiveVisitsByPatient(patient).get(0);
-		visit.setLocation(location);	// associating the first active visit with our location
+		visit.setLocation(location); // associating the first active visit with our location
 		visit.setStopDatetime(new DateTime(visit.getStartDatetime()).plusDays(3).toDate());
 		context.getVisitService().saveVisit(visit);
-
+		
 		// Replay
 		controller.controller(patient, visit, sessionContext, ui, context, domainWrapperFactory, model);
-
+		
 		// Verif
 		Visit modelVisit = getModelVisit(model);
 		assertEquals(visit.getId(), modelVisit.getId());
 	}
-
+	
 	@Test
-	public void shouldPassLocationActiveVisitToModel_WhenNoVisitProvided() throws JsonParseException, JsonMappingException, IOException {
-
+	public void shouldPassLocationActiveVisitToModel_WhenNoVisitProvided()
+	        throws JsonParseException, JsonMappingException, IOException {
+		
 		// Setup
 		Patient patient = context.getPatientService().getPatient(2);
 		List<Visit> visits = context.getVisitService().getActiveVisitsByPatient(patient);
 		Visit activeVisit = context.getVisitService().getActiveVisitsByPatient(patient).get(0);
-		activeVisit.setLocation(location);	// associating the first active visit with our location
+		activeVisit.setLocation(location); // associating the first active visit with our location
 		context.getVisitService().saveVisit(activeVisit);
-
+		
 		// Replay
 		controller.controller(patient, null, sessionContext, ui, context, domainWrapperFactory, model);
-
+		
 		// Verif
 		Visit modelVisit = getModelVisit(model);
 		assertEquals(activeVisit.getId(), modelVisit.getId());
 	}
-
+	
 	@Test
-	public void shouldPassNullVisitToModel_WhenNoVisitProvidedAndNoActiveVisitAtLocation() throws JsonParseException, JsonMappingException, IOException {
-
+	public void shouldPassNullVisitToModel_WhenNoVisitProvidedAndNoActiveVisitAtLocation()
+	        throws JsonParseException, JsonMappingException, IOException {
+		
 		// Setup
 		Patient patient = context.getPatientService().getPatient(2);
-
+		
 		// Replay
 		controller.controller(patient, null, sessionContext, ui, context, domainWrapperFactory, model);
-
+		
 		// Verif
 		Visit modelVisit = getModelVisit(model);
 		assertNull(modelVisit);

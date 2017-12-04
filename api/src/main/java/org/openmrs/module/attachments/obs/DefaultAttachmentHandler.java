@@ -28,7 +28,9 @@ public class DefaultAttachmentHandler extends AbstractAttachmentHandler {
 			// This handler doesn't have data for thumbnails, we return a null content
 			complexData = new ComplexData(valueComplex.getFileName(), null);
 		} else {
-			tmpObs = getParent().getObs(tmpObs, AttachmentsConstants.BINARYDATA_HANDLER_VIEW); // BinaryDataHandler doesn't handle several views
+			tmpObs = getParent().getObs(tmpObs, AttachmentsConstants.BINARYDATA_HANDLER_VIEW); // BinaryDataHandler
+			                                                                                   // doesn't handle
+			                                                                                   // several views
 			complexData = tmpObs.getComplexData();
 		}
 		

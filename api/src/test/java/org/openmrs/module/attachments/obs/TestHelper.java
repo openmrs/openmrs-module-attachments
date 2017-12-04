@@ -99,19 +99,19 @@ public class TestHelper {
 		
 		WebConstants.CONTEXT_PATH = "openmrs";
 		
-		context.getAdministrationService().saveGlobalProperty(
-		    new GlobalProperty(AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_LIST,
-		            "[\"7cac8397-53cd-4f00-a6fe-028e8d743f8e\",\"42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00\"]"));
-		context.getAdministrationService().saveGlobalProperty(
-		    new GlobalProperty(AttachmentsConstants.GP_MAX_STORAGE_FILE_SIZE, "1.2"));
-		context.getAdministrationService().saveGlobalProperty(
-		    new GlobalProperty(AttachmentsConstants.GP_MAX_UPLOAD_FILE_SIZE, "5.0"));
-		context.getAdministrationService().saveGlobalProperty(
-		    new GlobalProperty(AttachmentsConstants.GP_ALLOW_NO_CAPTION, "false"));
-		context.getAdministrationService().saveGlobalProperty(
-		    new GlobalProperty(AttachmentsConstants.GP_WEBCAM_ALLOWED, "true"));
-		context.getAdministrationService().saveGlobalProperty(
-		    new GlobalProperty(RestConstants.MAX_RESULTS_DEFAULT_GLOBAL_PROPERTY_NAME, "50"));
+		context.getAdministrationService()
+		        .saveGlobalProperty(new GlobalProperty(AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_LIST,
+		                "[\"7cac8397-53cd-4f00-a6fe-028e8d743f8e\",\"42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00\"]"));
+		context.getAdministrationService()
+		        .saveGlobalProperty(new GlobalProperty(AttachmentsConstants.GP_MAX_STORAGE_FILE_SIZE, "1.2"));
+		context.getAdministrationService()
+		        .saveGlobalProperty(new GlobalProperty(AttachmentsConstants.GP_MAX_UPLOAD_FILE_SIZE, "5.0"));
+		context.getAdministrationService()
+		        .saveGlobalProperty(new GlobalProperty(AttachmentsConstants.GP_ALLOW_NO_CAPTION, "false"));
+		context.getAdministrationService()
+		        .saveGlobalProperty(new GlobalProperty(AttachmentsConstants.GP_WEBCAM_ALLOWED, "true"));
+		context.getAdministrationService()
+		        .saveGlobalProperty(new GlobalProperty(RestConstants.MAX_RESULTS_DEFAULT_GLOBAL_PROPERTY_NAME, "50"));
 		
 		context.getAdministrationService().saveGlobalProperty(
 		    new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, AttachmentsConstants.ENCOUNTER_TYPE_UUID));
@@ -137,7 +137,7 @@ public class TestHelper {
 	
 	/**
 	 * Boilerplate method to save an image attachment.
-	 *  
+	 * 
 	 * @param imagePath The path of the image resource.
 	 */
 	public Obs saveImageAttachment(String imagePath, String mimeType) throws IOException {
@@ -154,8 +154,8 @@ public class TestHelper {
 		Encounter encounter = context.getAttachmentEncounter(patient, visit, provider);
 		
 		String imageFileName = FilenameUtils.getName(imagePath);
-		lastSavedMultipartImageFile = new MockMultipartFile(FilenameUtils.getBaseName(imageFileName),
-				imageFileName, mimeType, IOUtils.toByteArray( getClass().getClassLoader().getResourceAsStream(imagePath) ));
+		lastSavedMultipartImageFile = new MockMultipartFile(FilenameUtils.getBaseName(imageFileName), imageFileName,
+		        mimeType, IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream(imagePath)));
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
 		return obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, lastSavedMultipartImageFile,
@@ -163,19 +163,17 @@ public class TestHelper {
 	}
 	
 	/**
-	 * Boilerplate method to save an 'normal sized' image attachment.
-	 * 
-	 * This method doesn't ensure that the size is normal, the method just uses an image file that is assumed to fit.
+	 * Boilerplate method to save an 'normal sized' image attachment. This method doesn't ensure that
+	 * the size is normal, the method just uses an image file that is assumed to fit.
 	 */
 	public Obs saveNormalSizeImageAttachment() throws IOException {
 		return saveImageAttachment(ATTACHMENTS_FOLDER + "/" + "OpenMRS_banner.jpg", "image/jpeg");
 	}
 	
 	/**
-	 * Boilerplate method to save an 'small sized' image attachment.
-	 * Small sized mean already small enough to be its own thumbnail.
-	 * 
-	 * This method doesn't ensure that the size is small, the method just uses an image file that is assumed to fit.
+	 * Boilerplate method to save an 'small sized' image attachment. Small sized mean already small
+	 * enough to be its own thumbnail. This method doesn't ensure that the size is small, the method
+	 * just uses an image file that is assumed to fit.
 	 */
 	public Obs saveSmallSizeImageAttachment() throws IOException {
 		return saveImageAttachment(ATTACHMENTS_FOLDER + "/" + "OpenMRS_icon_100x100.png", "image/png");

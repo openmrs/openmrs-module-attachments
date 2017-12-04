@@ -111,7 +111,8 @@ public class AttachmentsActivator extends BaseModuleActivator {
 		{
 			final String name = "Attachment Upload";
 			final String desc = "Encounters used to record uploads of attachments.";
-			final String uuid = AttachmentsConstants.ENCOUNTER_TYPE_UUID; // this is also the default GP value set in config.xml
+			final String uuid = AttachmentsConstants.ENCOUNTER_TYPE_UUID; // this is also the default GP value set in
+			                                                              // config.xml
 			
 			EncounterService es = Context.getEncounterService();
 			EncounterType encounterType = es.getEncounterTypeByUuid(uuid);

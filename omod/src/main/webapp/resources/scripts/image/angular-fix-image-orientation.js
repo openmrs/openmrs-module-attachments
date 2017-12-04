@@ -1,8 +1,8 @@
-(function (angular, EXIF) {
+(function(angular, EXIF) {
     'use strict';
-    
-    angular.module("cp.ng.fix-image-orientation", []).directive('imgFixOrientation', [orient]);
-    
+
+    angular.module("cp.ng.fix-image-orientation", []).directive('imgFixOrientation', [ orient ]);
+
     /**
      * Directive definition.
      * 
@@ -10,13 +10,13 @@
      */
     function orient() {
         return {
-            restrict: 'A',
-            scope: {
-                'imgFixOrientation': '='
+            restrict : 'A',
+            scope : {
+                'imgFixOrientation' : '='
             },
-            link: linkLogic
+            link : linkLogic
         };
-        
+
         /**
          * {@inheritDoc}
          * 
@@ -27,13 +27,12 @@
          */
         function linkLogic(scope, element, attrs) {
             var imageUrl = scope.imgFixOrientation;
-            
+
             if (0 === imageUrl.indexOf('data:image')) {
                 var base64 = imageUrl.split(',')[1];
                 var exifData = EXIF.readFromBinaryFile(base64ToArrayBuffer(base64));
                 reOrient(parseInt(exifData.Orientation || 1, 10), element);
-            }
-            else {
+            } else {
                 var xhr = new XMLHttpRequest();
                 xhr.open("GET", imageUrl, true);
                 xhr.responseType = "arraybuffer";
@@ -45,7 +44,7 @@
                 xhr.send();
             }
         }
-        
+
         /**
          * Convert base64 string to array buffer.
          * 
@@ -55,15 +54,15 @@
         function base64ToArrayBuffer(base64) {
             var binaryString = window.atob(base64);
             var len = binaryString.length;
-            var bytes = new Uint8Array( len );
-            
-            for (var i = 0; i < len; i++)        {
+            var bytes = new Uint8Array(len);
+
+            for (var i = 0; i < len; i++) {
                 bytes[i] = binaryString.charCodeAt(i);
             }
-            
+
             return bytes.buffer;
         }
-        
+
         /**
          * Reorient specified element.
          * 
@@ -73,64 +72,64 @@
          */
         function reOrient(orientation, element) {
             switch (orientation) {
-                case 1:
-                    // No action needed
-                    break;
-                case 2:
-                    element.css({
-                        '-moz-transform': 'scaleX(-1)',
-                        '-o-transform': 'scaleX(-1)',
-                        '-webkit-transform': 'scaleX(-1)',
-                        'transform': 'scaleX(-1)',
-                        'filter': 'FlipH',
-                        '-ms-filter': "FlipH"
-                    });
-                    break;
-                case 3:
-                    element.css({
-                        'transform': 'rotate(180deg)'
-                    });
-                    break;
-                case 4:
-                    element.css({
-                        '-moz-transform': 'scaleX(-1)',
-                        '-o-transform': 'scaleX(-1)',
-                        '-webkit-transform': 'scaleX(-1)',
-                        'transform': 'scaleX(-1) rotate(180deg)',
-                        'filter': 'FlipH',
-                        '-ms-filter': "FlipH"
-                    });
-                    break;
-                case 5:
-                    element.css({
-                        '-moz-transform': 'scaleX(-1)',
-                        '-o-transform': 'scaleX(-1)',
-                        '-webkit-transform': 'scaleX(-1)',
-                        'transform': 'scaleX(-1) rotate(90deg)',
-                        'filter': 'FlipH',
-                        '-ms-filter': "FlipH"
-                    });
-                    break;
-                case 6:
-                    element.css({
-                        'transform': 'rotate(90deg)'
-                    });
-                    break;
-                case 7:
-                    element.css({
-                        '-moz-transform': 'scaleX(-1)',
-                        '-o-transform': 'scaleX(-1)',
-                        '-webkit-transform': 'scaleX(-1)',
-                        'transform': 'scaleX(-1) rotate(-90deg)',
-                        'filter': 'FlipH',
-                        '-ms-filter': "FlipH"
-                    });
-                    break;
-                case 8:
-                    element.css({
-                        'transform': 'rotate(-90deg)'
-                    });
-                    break;
+            case 1:
+                // No action needed
+                break;
+            case 2:
+                element.css({
+                    '-moz-transform' : 'scaleX(-1)',
+                    '-o-transform' : 'scaleX(-1)',
+                    '-webkit-transform' : 'scaleX(-1)',
+                    'transform' : 'scaleX(-1)',
+                    'filter' : 'FlipH',
+                    '-ms-filter' : "FlipH"
+                });
+                break;
+            case 3:
+                element.css({
+                    'transform' : 'rotate(180deg)'
+                });
+                break;
+            case 4:
+                element.css({
+                    '-moz-transform' : 'scaleX(-1)',
+                    '-o-transform' : 'scaleX(-1)',
+                    '-webkit-transform' : 'scaleX(-1)',
+                    'transform' : 'scaleX(-1) rotate(180deg)',
+                    'filter' : 'FlipH',
+                    '-ms-filter' : "FlipH"
+                });
+                break;
+            case 5:
+                element.css({
+                    '-moz-transform' : 'scaleX(-1)',
+                    '-o-transform' : 'scaleX(-1)',
+                    '-webkit-transform' : 'scaleX(-1)',
+                    'transform' : 'scaleX(-1) rotate(90deg)',
+                    'filter' : 'FlipH',
+                    '-ms-filter' : "FlipH"
+                });
+                break;
+            case 6:
+                element.css({
+                    'transform' : 'rotate(90deg)'
+                });
+                break;
+            case 7:
+                element.css({
+                    '-moz-transform' : 'scaleX(-1)',
+                    '-o-transform' : 'scaleX(-1)',
+                    '-webkit-transform' : 'scaleX(-1)',
+                    'transform' : 'scaleX(-1) rotate(-90deg)',
+                    'filter' : 'FlipH',
+                    '-ms-filter' : "FlipH"
+                });
+                break;
+            case 8:
+                element.css({
+                    'transform' : 'rotate(-90deg)'
+                });
+                break;
             }
         }// End reOrient()
     }// End orient()
