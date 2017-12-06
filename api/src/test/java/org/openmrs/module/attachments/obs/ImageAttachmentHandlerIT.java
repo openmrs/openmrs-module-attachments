@@ -42,10 +42,9 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
 		BufferedImage img = ImageIO.read(thumbnail);
 		Assert.assertEquals(ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT, Math.max(img.getHeight(), img.getWidth()));
 		
-		// Now check rename the file by appending NO_THUMBNAIL_SUFFIX to the file
-		String fileName = ImageAttachmentHandler.saveThumbnailOrRename(file, img.getHeight(), img.getWidth());
-		Assert.assertTrue(
-		    StringUtils.endsWith(FilenameUtils.removeExtension(fileName), ImageAttachmentHandler.NO_THUMBNAIL_SUFFIX));
+		File noThumbnailFile = new File(testHelper.getComplexObsDir() + "/"
+		        + ImageAttachmentHandler.buildNoThumbnailFileFileName(mpFile.getOriginalFilename()));
+		Assert.assertFalse(noThumbnailFile.exists());
 	}
 	
 	@Test
@@ -112,8 +111,7 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
 		Assert.assertTrue(ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT >= Math.max(img.getHeight(), img.getWidth()));
 		
 		// Check that the file name contains the no thumbnail suffix
-		Assert.assertTrue(StringUtils.endsWith(FilenameUtils.removeExtension(noThumbnailFile.getName()),
-		    ImageAttachmentHandler.NO_THUMBNAIL_SUFFIX));
+		Assert.assertTrue(ImageAttachmentHandler.isThumbnail(FilenameUtils.removeExtension(noThumbnailFile.getName())));
 	}
 	
 	@Test

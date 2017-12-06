@@ -32,8 +32,7 @@ public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 	protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view) {
 		
 		String fileName = valueComplex.getFileName();
-		if (view.equals(AttachmentsConstants.ATT_VIEW_THUMBNAIL)
-		        && !StringUtils.endsWith(FilenameUtils.removeExtension(fileName), NO_THUMBNAIL_SUFFIX)) {
+		if (view.equals(AttachmentsConstants.ATT_VIEW_THUMBNAIL) && !isThumbnail(fileName)) {
 			fileName = buildThumbnailFileName(fileName);
 		}
 		
@@ -41,7 +40,7 @@ public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 		Obs tmpObs = new Obs();
 		tmpObs.setValueComplex(fileName); // Temp obs used as a safety
 		tmpObs = getParent().getObs(tmpObs, AttachmentsConstants.IMAGE_HANDLER_VIEW); // ImageHandler doesn't handle
-		                                                                              // several views
+		// several views
 		ComplexData complexData = tmpObs.getComplexData();
 		
 		// Then we build our own custom complex data
@@ -57,7 +56,7 @@ public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 		boolean isThumbNailPurged = true;
 		Obs tmpObs = new Obs();
 		
-		if (!StringUtils.endsWith(FilenameUtils.removeExtension(fileName), NO_THUMBNAIL_SUFFIX)) {
+		if (!isThumbnail(fileName)) {
 			String thumbnailFileName = buildThumbnailFileName(fileName);
 			tmpObs.setValueComplex(thumbnailFileName);
 			isThumbNailPurged = getParent().purgeComplexData(tmpObs);
@@ -73,12 +72,12 @@ public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 	protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData) {
 		int imageHeight = Integer.MAX_VALUE;
 		int imageWidth = Integer.MAX_VALUE;
-		String savedFileName = null;
 		
 		// We invoke the parent to inherit from the file saving routines.
 		obs = getParent().saveObs(obs);
 		
 		File savedFile = AbstractHandler.getComplexDataFile(obs);
+		String savedFileName = savedFile.getName();
 		
 		// Get image dimensions
 		try {
@@ -87,8 +86,8 @@ public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 			imageWidth = image.getWidth();
 		}
 		catch (IOException e) {
-			log.warn(
-			    "The dimensions of image 'savedFileName' could not be determined, continuing with generating thumbnail.");
+			log.warn("The dimensions of image file '" + savedFileName
+			        + "' could not be determined, continuing with generating its thumbnail anyway.");
 		}
 		
 		try {

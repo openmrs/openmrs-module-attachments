@@ -72,8 +72,12 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 		return parent;
 	}
 	
+	public static boolean isThumbnail(String fileName) {
+		return StringUtils.endsWith(FilenameUtils.removeExtension(fileName), NO_THUMBNAIL_SUFFIX);
+	}
+	
 	/*
-	 * Appends "___nothumb__" the file
+	 * Appends NO_THUMBNAIL_SUFFIX the file
 	 */
 	protected static String buildNoThumbnailFileFileName(String fileName) {
 		if (StringUtils.endsWith(FilenameUtils.removeExtension(fileName), NO_THUMBNAIL_SUFFIX)) {
@@ -85,7 +89,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	}
 	
 	/*
-	 * Appends "_thumb" the file
+	 * Appends THUMBNAIL_SUFFIX the file
 	 */
 	public static String buildThumbnailFileName(String fileName) {
 		return FilenameUtils.removeExtension(fileName) + "_thumb" + "." + FilenameUtils.getExtension(fileName);
@@ -108,16 +112,12 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 		
 		String savedFileName = savedFile.getName();
 		
-		// Check for small image file
 		if ((imageHeight <= THUMBNAIL_MAX_HEIGHT) && (imageWidth <= THUMBNAIL_MAX_WIDTH)) {
-			// Rename the file by append NO_THUMBNAIL_SUFFIX to the file.
-			// Therefore, we will know this is a small file and no need for thumnail.
 			String newSavedFileName = buildNoThumbnailFileFileName(savedFile.getAbsolutePath());
 			File newSavedFile = new File(newSavedFileName);
 			savedFile.renameTo(newSavedFile);
 			savedFileName = buildNoThumbnailFileFileName(savedFileName);
 		} else {
-			// Saving the thumbnail
 			File dir = savedFile.getParentFile();
 			String thumbnailFileName = buildThumbnailFileName(savedFileName);
 			try {
