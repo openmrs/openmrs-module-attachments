@@ -17,7 +17,7 @@
   <properties>
     <openMRSVersion>2.0.0</openMRSVersion>
     <emrapiVersion>1.19</emrapiVersion> 
-    <webservices.restVersion>2.16</webservices.restVersion>
+    <webservices.restVersion>2.22.0</webservices.restVersion>
     <reportingVersion>0.10.4</reportingVersion>
     <serialization.xstreamVersion>0.2.12</serialization.xstreamVersion>
   </properties>
