@@ -36,6 +36,7 @@ public class AttachmentController2_0Test extends MainResourceControllerTest {
 	@Autowired
 	protected TestHelper testHelper;
 	
+	@Autowired
 	private AttachmentsContext attachmentsContext;
 	
 	private Obs obs;
@@ -46,8 +47,6 @@ public class AttachmentController2_0Test extends MainResourceControllerTest {
 	public void setup() throws IOException {
 		obs = testHelper.getTestComplexObs();
 		new Random().nextBytes(randomData);
-		attachmentsContext = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT,
-		    AttachmentsContext.class);
 	}
 	
 	@Override
@@ -102,11 +101,11 @@ public class AttachmentController2_0Test extends MainResourceControllerTest {
 	@Test
 	public void postAttachment_shouldUploadFile() throws Exception {
 		
-		String fileCaption = "TEXT HERE";
+		String fileCaption = "Test file caption";
 		
 		{
 			// Setup
-			String fileName = "testFile.obj";
+			String fileName = "testFile.dat";
 			Patient patient = Context.getPatientService().getPatient(2);
 			Visit visit = Context.getVisitService().getVisit(1);
 			
@@ -136,7 +135,7 @@ public class AttachmentController2_0Test extends MainResourceControllerTest {
 		// File upload should not require visit
 		{
 			// Setup
-			String fileName = "noVisitFile.obj";
+			String fileName = "noVisitTestFile.dat";
 			Patient patient = Context.getPatientService().getPatient(2);
 			
 			MockMultipartHttpServletRequest request = newUploadRequest(getURI());

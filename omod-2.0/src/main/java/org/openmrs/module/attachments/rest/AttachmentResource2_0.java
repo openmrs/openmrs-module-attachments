@@ -61,7 +61,7 @@ public class AttachmentResource2_0 extends AttachmentResource1_10 implements Upl
 		
 		// Verify Parameters
 		if (patient == null) {
-			throw new IllegalRequestException("Patient is required.");
+			throw new IllegalRequestException("A patient parameter must be provided when uploading an attachment.");
 		}
 		
 		if (StringUtils.isEmpty(instructions))
