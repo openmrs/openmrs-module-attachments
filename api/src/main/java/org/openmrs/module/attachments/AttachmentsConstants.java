@@ -27,13 +27,13 @@ public class AttachmentsConstants {
 	public static final String MODULE_SHORT_ID = "ATT";
 	
 	public static final String MODULE_BASE_URL = "/" + MODULE_ARTIFACT_ID;
-
+	
 	public static final String ATTACHMENT_URI = "attachment";
-
+	
 	public static final String UPLOAD_ATTACHMENT_URL = "/rest/v1/" + ATTACHMENT_URI;
 	
 	public static final String DOWNLOAD_ATTACHMENT_URL = MODULE_BASE_URL + "/download";
-
+	
 	/*
 	 * Spring components qualifiers
 	 */
