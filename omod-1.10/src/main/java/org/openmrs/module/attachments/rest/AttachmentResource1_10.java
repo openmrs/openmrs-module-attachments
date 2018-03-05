@@ -1,7 +1,11 @@
 package org.openmrs.module.attachments.rest;
 
 import org.apache.commons.lang.StringUtils;
-import org.openmrs.*;
+import org.openmrs.Patient;
+import org.openmrs.Encounter;
+import org.openmrs.Obs;
+import org.openmrs.Provider;
+import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;

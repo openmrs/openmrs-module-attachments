@@ -180,7 +180,7 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		
 		{
 			// Setup
-			String fileName = "testFile.dat";
+			String fileName = "testFile1.dat";
 			Patient patient = Context.getPatientService().getPatient(2);
 			Visit visit = Context.getVisitService().getVisit(1);
 			
@@ -210,7 +210,7 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		// File upload should not require visit
 		{
 			// Setup
-			String fileName = "noVisitTestFile.dat";
+			String fileName = "testFile2.dat";
 			Patient patient = Context.getPatientService().getPatient(2);
 			
 			MockMultipartHttpServletRequest request = newUploadRequest(getURI());
