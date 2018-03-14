@@ -13,6 +13,7 @@ import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.obs.TestHelper;
 import org.openmrs.module.webservices.rest.SimpleObject;
+import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
 import org.openmrs.obs.ComplexData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,7 +193,7 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 			request.addParameter("visit", visit.getUuid());
 			request.addParameter("fileCaption", fileCaption);
 			
-			// Reply
+			// Replay
 			SimpleObject response = deserialize(handle(request));
 			
 			Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
@@ -220,7 +221,7 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 			request.addParameter("patient", patient.getUuid());
 			request.addParameter("fileCaption", fileCaption);
 			
-			// Reply
+			// Replay
 			SimpleObject response = deserialize(handle(request));
 			
 			Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
@@ -233,5 +234,27 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 			Assert.assertArrayEquals(randomData, (byte[]) complexData.getData());
 			Assert.assertNull(obs.getEncounter());
 		}
+	}
+	
+	@Test(expected = IllegalRequestException.class)
+	public void postAttachment_shouldNotUploadFileAboveSizeLimit() throws Exception {
+		// Setup
+		String fileCaption = "Test file caption";
+		String fileName = "testFile1.dat";
+		Patient patient = Context.getPatientService().getPatient(2);
+		Visit visit = Context.getVisitService().getVisit(1);
+		
+		byte[] maxData = new byte[(int) ((attachmentsContext.getMaxUploadFileSize() * 1024 * 1024) + 1)];
+		
+		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
+		MockMultipartFile file = new MockMultipartFile("file", fileName, "application/octet-stream", maxData);
+		
+		request.addFile(file);
+		request.addParameter("patient", patient.getUuid());
+		request.addParameter("visit", visit.getUuid());
+		request.addParameter("fileCaption", fileCaption);
+		
+		// Replay
+		SimpleObject response = deserialize(handle(request));
 	}
 }
