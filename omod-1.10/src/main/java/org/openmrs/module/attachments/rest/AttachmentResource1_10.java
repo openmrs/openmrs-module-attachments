@@ -1,6 +1,8 @@
 package org.openmrs.module.attachments.rest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -17,17 +19,25 @@ import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
+import org.openmrs.module.webservices.rest.web.api.RestService;
 import org.openmrs.module.webservices.rest.web.representation.CustomRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
+import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.api.Uploadable;
 import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
+import org.openmrs.module.webservices.rest.web.resource.impl.EmptySearchResult;
+import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
+import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_8.EncounterResource1_8;
+import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_8.PatientResource1_8;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
@@ -36,6 +46,8 @@ import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily
 public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachment> implements Uploadable {
 	
 	protected static final String REASON = "REST web service";
+	
+	protected final Log log = LogFactory.getLog(getClass());
 	
 	ComplexObsSaver obsSaver = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER,
 	    ComplexObsSaver.class);
@@ -63,6 +75,39 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
 			return new Attachment(obs);
 		}
+	}
+	
+	/**
+	 * Gets attachements by patient or encounter (paged according to context if necessary) only if a
+	 * patient or encounter parameter exists respectively in the request set on the
+	 * {@link RequestContext} otherwise searches for obs that match the specified query
+	 *
+	 * @param context
+	 * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource#doSearch(org.openmrs.module.webservices.rest.web.RequestContext)
+	 */
+	@Override
+	protected PageableResult doSearch(RequestContext context) {
+		String patientUuid = context.getRequest().getParameter("patient");
+		if (patientUuid != null) {
+			Patient patient = ((PatientResource1_8) Context.getService(RestService.class)
+			        .getResourceBySupportedClass(Patient.class)).getByUniqueId(patientUuid);
+			if (patient == null)
+				return new EmptySearchResult();
+			List<Obs> obs = Context.getObsService().getObservationsByPerson(patient);
+			return new NeedsPaging<Obs>(obs, context);
+		}
+		
+		String encounterUuid = context.getRequest().getParameter("encounter");
+		if (encounterUuid != null) {
+			Encounter enc = ((EncounterResource1_8) Context.getService(RestService.class)
+			        .getResourceBySupportedClass(Encounter.class)).getByUniqueId(encounterUuid);
+			if (enc == null)
+				return new EmptySearchResult();
+			List<Obs> obs = new ArrayList<Obs>(enc.getAllObs());
+			return new NeedsPaging<Obs>(obs, context);
+		}
+		
+		return new NeedsPaging<Obs>(Context.getObsService().getObservations(context.getParameter("q")), context);
 	}
 	
 	@Override

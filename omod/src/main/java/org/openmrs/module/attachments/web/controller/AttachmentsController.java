@@ -52,7 +52,7 @@ public class AttachmentsController {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
-	@RequestMapping(value = AttachmentsConstants.UPLOAD_ATTACHMENT_URL, method = RequestMethod.POST)
+	@RequestMapping(value = AttachmentsConstants.OLD_UPLOAD_ATTACHMENT_URL, method = RequestMethod.POST)
 	@ResponseBody
 	public Object uploadDocuments(@RequestParam("patient") Patient patient,
 	        @RequestParam(value = "visit", required = false) Visit visit,

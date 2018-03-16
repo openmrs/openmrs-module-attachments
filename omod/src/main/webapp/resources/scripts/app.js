@@ -9,7 +9,7 @@ angular.module('att.fragment.encounterTemplate', [ 'att.widget.complexObsEncount
 angular.module('att.widget.modalImage', [ 'att.service.moduleUtils' ]);
 angular.module('att.widget.complexObsEncounter', [ 'obsService', 'att.widget.gallery', 'att.widget.thumbnail',
         'att.widget.modalImage' ]);
-angular.module('att.widget.gallery', [ 'att.service.configService', 'att.service.moduleUtils' ]);
+angular.module('att.widget.gallery', [ 'att.service.configService', 'att.service.moduleUtils' ,'att.service.attachmentService']);
 angular.module('att.widget.modalWebcam', [ 'att.service.moduleUtils' ]);
 angular.module('att.widget.fileUpload', [ 'att.widget.modalWebcam', 'att.service.moduleUtils' ]);
 angular.module('att.widget.thumbnail', [ 'att.service.attachmentService', 'att.service.complexObsCacheService',

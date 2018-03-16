@@ -26,6 +26,7 @@ public class ClientConfigFragmentController {
 		
 		jsonConfig.put("uploadUrl", "/" + ui.contextPath() + "/ws" + AttachmentsConstants.UPLOAD_ATTACHMENT_URL);
 		jsonConfig.put("downloadUrl", "/" + ui.contextPath() + "/ws" + AttachmentsConstants.DOWNLOAD_ATTACHMENT_URL);
+		jsonConfig.put("searchUrL", "/" + ui.contextPath() + "/ws" + AttachmentsConstants.SEARCH_ATTACHEMENT_URL);
 		jsonConfig.put("originalView", AttachmentsConstants.ATT_VIEW_ORIGINAL);
 		jsonConfig.put("thumbView", AttachmentsConstants.ATT_VIEW_THUMBNAIL);
 		

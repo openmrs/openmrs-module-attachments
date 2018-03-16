@@ -3,8 +3,9 @@ angular.module('att.widget.gallery').directive(
         [
                 'ObsService',
                 'ConfigService',
+                'AttachmentService',
                 'ModuleUtils',
-                function(obsService, configService, module) {
+                function(obsService, configService, attachmentService, module) {
                     return {
 
                         restrict : 'E',
@@ -28,7 +29,7 @@ angular.module('att.widget.gallery').directive(
                             var fetch = function(query) {
                                 query.startIndex = $scope.startIndex;
                                 $scope.showSpinner = true;
-                                obsService.getObs(query).then(function(obs) {
+                                attachmentService.getAttachments(query).then(function(obs) {
                                     $scope.showSpinner = false;
                                     $scope.obsArray.push.apply($scope.obsArray, obs);
                                     if (obs.length === $scope.config.maxRestResults) {
