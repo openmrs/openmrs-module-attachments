@@ -134,6 +134,11 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		String fileCaption = context.getParameter("fileCaption");
 		String instructions = context.getParameter("instructions");
 		
+		// Verify File Size
+		if (attachmentsContext.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
+			throw new IllegalRequestException("The file  exceeds the maximum size");
+		}
+		
 		// Verify Parameters
 		if (patient == null) {
 			throw new IllegalRequestException("A patient parameter must be provided when uploading an attachment.");
