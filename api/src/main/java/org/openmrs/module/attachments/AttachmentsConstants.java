@@ -34,6 +34,8 @@ public class AttachmentsConstants {
 	
 	public static final String DOWNLOAD_ATTACHMENT_URL = MODULE_BASE_URL + "/download";
 	
+	public static final String SEARCH_ATTACHMENT_URL = "/rest/v1/" + ATTACHMENT_URI;
+	
 	/*
 	 * Spring components qualifiers
 	 */
