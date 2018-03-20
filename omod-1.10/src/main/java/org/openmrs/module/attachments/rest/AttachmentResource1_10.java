@@ -31,8 +31,9 @@ import java.io.IOException;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
-@Resource(name = RestConstants.VERSION_1 + "/attachment", supportedClass = Attachment.class, supportedOpenmrsVersions = {
-        "1.10.*", "1.11.*", "1.12.*" })
+@Resource(name = RestConstants.VERSION_1 + "/"
+        + AttachmentsConstants.ATTACHMENT_URI, supportedClass = Attachment.class, supportedOpenmrsVersions = { "1.10.*",
+                "1.11.*", "1.12.*" })
 public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachment> implements Uploadable {
 	
 	protected static final String REASON = "REST web service";

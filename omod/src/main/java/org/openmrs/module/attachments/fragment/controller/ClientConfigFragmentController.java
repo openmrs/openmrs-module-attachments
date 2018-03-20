@@ -1,8 +1,5 @@
 package org.openmrs.module.attachments.fragment.controller;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
@@ -11,6 +8,9 @@ import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.obs.ImageAttachmentHandler;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ClientConfigFragmentController {
 	
@@ -24,7 +24,7 @@ public class ClientConfigFragmentController {
 		
 		jsonConfig.put("locale", Context.getLocale().getLanguage());
 		
-		jsonConfig.put("uploadUrl", "/" + ui.contextPath() + "/ws" + AttachmentsConstants.UPLOAD_ATTACHMENT_URL);
+		jsonConfig.put("uploadUrl", "/" + ui.contextPath() + "/ws" + AttachmentsConstants.LEGACY_UPLOAD_ATTACHMENT_URL);
 		jsonConfig.put("downloadUrl", "/" + ui.contextPath() + "/ws" + AttachmentsConstants.DOWNLOAD_ATTACHMENT_URL);
 		jsonConfig.put("originalView", AttachmentsConstants.ATT_VIEW_ORIGINAL);
 		jsonConfig.put("thumbView", AttachmentsConstants.ATT_VIEW_THUMBNAIL);

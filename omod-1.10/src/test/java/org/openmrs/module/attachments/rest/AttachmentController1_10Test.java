@@ -17,9 +17,11 @@ import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
 import org.openmrs.obs.ComplexData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockMultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
@@ -256,5 +258,36 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		
 		// Replay
 		SimpleObject response = deserialize(handle(request));
+	}
+	
+	@Test
+	public void getAttachmentBytes_shouldDownloadFile() throws Exception {
+		
+		// Setup
+		String fileCaption = "Test file caption";
+		String uuid;
+		
+		{// Upload Test File
+			String fileName = "testFile.dat";
+			Patient patient = Context.getPatientService().getPatient(2);
+			
+			MockMultipartHttpServletRequest request = newUploadRequest(getURI());
+			MockMultipartFile file = new MockMultipartFile("file", fileName, "application/octet-stream", randomData);
+			
+			request.addFile(file);
+			request.addParameter("patient", patient.getUuid());
+			request.addParameter("fileCaption", fileCaption);
+			
+			SimpleObject response = deserialize(handle(request));
+			uuid = response.get("uuid");
+		}
+		HttpServletRequest request = newGetRequest(getURI() + "/" + uuid + "/file");
+		
+		// Replay
+		MockHttpServletResponse response = handle(request);
+		byte[] downloadedFile = response.getContentAsByteArray();
+		
+		// Verify
+		Assert.assertArrayEquals(randomData, downloadedFile);
 	}
 }
