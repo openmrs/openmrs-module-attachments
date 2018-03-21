@@ -12,21 +12,24 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	@Override
 	public List<Attachment> getAttachments(Patient patient, Visit visit, Encounter encounter, boolean includeRetired) {
 		
-		List<Obs> obs = Context.getObsService().getObservationsByPerson(patient);
 		List<Attachment> attachments = new ArrayList<>();
 		if (visit == null && encounter == null) {
+			List<Obs> obs = Context.getObsService().getObservations((List<Person>) patient, null, null, null, null, null,
+			    null, null, null, null, null, includeRetired);
 			for (Obs observation : obs) {
 				attachments.add(new Attachment(observation));
 			}
 			return attachments;
 		} else if (visit == null) {
+			List<Obs> obs = Context.getObsService().getObservations((List<Person>) patient, (List<Encounter>) encounter,
+			    null, null, null, null, null, null, null, null, null, includeRetired);
 			for (Obs observation : obs) {
-				if (observation.getEncounter() == encounter) {
-					attachments.add(new Attachment(observation));
-				}
+				attachments.add(new Attachment(observation));
 			}
 			return attachments;
 		} else {
+			List<Obs> obs = Context.getObsService().getObservations((List<Person>) patient, (List<Encounter>) encounter,
+			    null, null, null, null, null, null, null, null, null, includeRetired);
 			for (Obs observation : obs) {
 				if (observation.getEncounter().getVisit() == visit) {
 					attachments.add(new Attachment(observation));
