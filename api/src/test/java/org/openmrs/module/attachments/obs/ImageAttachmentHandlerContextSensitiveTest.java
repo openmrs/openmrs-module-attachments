@@ -7,19 +7,18 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import org.apache.commons.io.FilenameUtils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 
-public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
+public class ImageAttachmentHandlerContextSensitiveTest extends BaseModuleWebContextSensitiveTest {
 	
 	@Autowired
 	protected TestHelper testHelper;
@@ -28,7 +27,7 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
 	public void saveComplexData_shouldSaveThumbnailToDisk() throws IOException {
 		
 		// Replay
-		Obs obs = testHelper.saveNormalSizeImageAttachment();
+		testHelper.saveNormalSizeImageAttachment();
 		
 		// Verif
 		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
@@ -88,7 +87,7 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
 	public void saveComplexData_shouldNotSaveThumbnailWhenSmallImage() throws IOException {
 		
 		// Setup
-		Obs obs = testHelper.saveSmallSizeImageAttachment();
+		testHelper.saveSmallSizeImageAttachment();
 		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
 		String originalFileName = mpFile.getOriginalFilename();
 		
