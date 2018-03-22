@@ -1,7 +1,13 @@
 package org.openmrs.module.attachments;
 
-import org.openmrs.*;
+import org.openmrs.Encounter;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.Person;
+import org.openmrs.Visit;
+
 import org.openmrs.api.context.Context;
+
 import org.openmrs.module.attachments.obs.Attachment;
 
 import java.util.ArrayList;
