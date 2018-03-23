@@ -14,11 +14,11 @@ import org.junit.Test;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
-import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
+import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 
-public class ImageAttachmentHandlerContextSensitiveTest extends BaseModuleWebContextSensitiveTest {
+public class ImageAttachmentHandlerContextSensitiveTest extends BaseModuleContextSensitiveTest {
 	
 	@Autowired
 	protected TestHelper testHelper;

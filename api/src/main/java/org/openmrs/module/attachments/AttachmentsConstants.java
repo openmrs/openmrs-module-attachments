@@ -112,6 +112,10 @@ public class AttachmentsConstants {
 	
 	public static final String GP_DASHBOARD_THUMBNAIL_COUNT = MODULE_ARTIFACT_ID + ".dashboardThumbnailCount";
 	
+	// Should always be the same as
+	// RestConstants.MAX_RESULTS_DEFAULT_GLOBAL_PROPERTY_NAME
+	public static final String GP_RESTWS_MAX_RESULTS_DEFAULT_GLOBAL_PROPERTY_NAME = "webservices.rest.maxResultsDefault";
+	
 	/*
 	 * REST
 	 */
