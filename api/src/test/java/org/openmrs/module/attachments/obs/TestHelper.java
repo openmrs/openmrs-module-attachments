@@ -3,6 +3,9 @@ package org.openmrs.module.attachments.obs;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -197,5 +200,33 @@ public class TestHelper {
 	 */
 	public String getTestComplexObsFilePath() {
 		return getComplexObsDir() + "/" + getTestFileNameWithExt();
+	}
+	
+	public List<Obs> saveComplexObs(int count) throws IOException {
+		
+		init();
+		
+		List<Obs> attachmentList = new ArrayList<>();
+		byte[] randomData = new byte[20];
+		
+		Patient patient = Context.getPatientService().getPatient(2);
+		Visit visit = Context.getVisitService().getVisit(1);
+		
+		EncounterService encounterService = Context.getEncounterService();
+		EncounterType encounterType = encounterService.getEncounterType(1);
+		Provider provider = Context.getProviderService().getProvider(1);
+		context.getAdministrationService().saveGlobalProperty(
+		    new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, encounterType.getUuid()));
+		Encounter encounter = context.getAttachmentEncounter(patient, visit, provider);
+		
+		for (int i = 0; i < count; i++) {
+			String fileCaption = RandomStringUtils.randomAlphabetic(12);
+			new Random().nextBytes(randomData);
+			MockMultipartFile multipartRandomFile = new MockMultipartFile(String.valueOf(i), String.valueOf(i),
+			        "application/octet-stream", randomData);
+			attachmentList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartRandomFile,
+			    ValueComplex.INSTRUCTIONS_DEFAULT));
+		}
+		return attachmentList;
 	}
 }
