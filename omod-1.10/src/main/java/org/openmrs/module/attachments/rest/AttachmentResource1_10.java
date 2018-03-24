@@ -19,7 +19,9 @@ import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.CustomRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
+import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.api.Uploadable;
+import org.openmrs.module.webservices.rest.web.resource.impl.AlreadyPaged;
 import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.response.GenericRestException;
@@ -28,12 +30,14 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
 @Resource(name = RestConstants.VERSION_1 + "/attachment", supportedClass = Attachment.class, supportedOpenmrsVersions = {
         "1.10.*", "1.11.*", "1.12.*" })
-public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachment> implements Uploadable {
+public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachment> implements Uploadable, AttachmentService {
 	
 	protected static final String REASON = "REST web service";
 	
@@ -125,6 +129,24 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	}
 	
 	@Override
+	protected PageableResult doSearch(RequestContext context) {
+		// Prepare Parameters
+		Patient patient = Context.getPatientService().getPatientByUuid(context.getParameter("patient"));
+		Visit visit = Context.getVisitService().getVisitByUuid(context.getParameter("visit"));
+		Encounter encounter = Context.getEncounterService().getEncounterByUuid(context.getParameter("encounter"));
+		Boolean includeRetired = "true".equals(context.getParameter("includeRetired"));
+		
+		// Verify Parameters
+		if (patient == null) {
+			throw new IllegalRequestException("A patient parameter must be provided for searching.");
+		}
+		
+		List<Attachment> attachments = getAttachments(patient, visit, encounter, includeRetired);
+		
+		return new AlreadyPaged<>(context, attachments, false);
+	}
+	
+	@Override
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addProperty("comment");
@@ -150,6 +172,34 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		Encounter encounter = encounterService.getEncounterByUuid(encounterUuid);
 		if (encounter != null && encounter.getAllObs().size() == 0) {
 			encounterService.voidEncounter(encounter, "foo");
+		}
+	}
+	
+	@Override
+	public List<Attachment> getAttachments(Patient patient, Visit visit, Encounter encounter, boolean includeRetired) {
+		
+		List<Obs> obs = Context.getObsService().getObservationsByPerson(patient);
+		List<Attachment> attachments = new ArrayList<>();
+		
+		if (visit == null && encounter == null) {
+			for (Obs observation : obs) {
+				attachments.add(new Attachment(observation));
+			}
+			return attachments;
+		} else if (visit == null) {
+			for (Obs observation : obs) {
+				if (observation.getEncounter() == encounter) {
+					attachments.add(new Attachment(observation));
+				}
+			}
+			return attachments;
+		} else {
+			for (Obs observation : obs) {
+				if (observation.getEncounter().getVisit() == visit) {
+					attachments.add(new Attachment(observation));
+				}
+			}
+			return attachments;
 		}
 	}
 }
