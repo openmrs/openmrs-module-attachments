@@ -18,24 +18,31 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	@Override
 	public List<Attachment> getAttachments(Patient patient, Visit visit, Encounter encounter, boolean includeRetired) {
 		
+		List<Person> personList = new ArrayList<>();
+		personList.add(patient);
+		
 		List<Attachment> attachments = new ArrayList<>();
 		if (visit == null && encounter == null) {
-			List<Obs> obs = Context.getObsService().getObservations((List<Person>) patient, null, null, null, null, null,
-			    null, null, null, null, null, includeRetired);
+			List<Obs> obs = Context.getObsService().getObservations(personList, null, null, null, null, null, null, null,
+			    null, null, null, includeRetired);
 			for (Obs observation : obs) {
 				attachments.add(new Attachment(observation));
 			}
 			return attachments;
 		} else if (visit == null) {
-			List<Obs> obs = Context.getObsService().getObservations((List<Person>) patient, (List<Encounter>) encounter,
-			    null, null, null, null, null, null, null, null, null, includeRetired);
+			List<Encounter> encounterList = new ArrayList<>();
+			encounterList.add(encounter);
+			List<Obs> obs = Context.getObsService().getObservations(personList, encounterList, null, null, null, null, null,
+			    null, null, null, null, includeRetired);
 			for (Obs observation : obs) {
 				attachments.add(new Attachment(observation));
 			}
 			return attachments;
 		} else {
-			List<Obs> obs = Context.getObsService().getObservations((List<Person>) patient, (List<Encounter>) encounter,
-			    null, null, null, null, null, null, null, null, null, includeRetired);
+			List<Encounter> encounterList = new ArrayList<>();
+			encounterList.add(encounter);
+			List<Obs> obs = Context.getObsService().getObservations(personList, encounterList, null, null, null, null, null,
+			    null, null, null, null, includeRetired);
 			for (Obs observation : obs) {
 				if (observation.getEncounter().getVisit() == visit) {
 					attachments.add(new Attachment(observation));

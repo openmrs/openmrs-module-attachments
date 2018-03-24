@@ -1,50 +1,57 @@
 package org.openmrs.module.attachments;
 
 import org.junit.Test;
-import org.openmrs.*;
+import org.openmrs.Encounter;
+import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.attachments.obs.Attachment;
+import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.Verifies;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class AttachmentsServiceTest extends BaseModuleWebContextSensitiveTest {
+public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Autowired
 	private AttachmentsService as;
 	
 	@Autowired
-	private PatientService patientService;
+	@Qualifier("patientService")
+	protected PatientService ps;
 	
 	@Autowired
-	private VisitService visitService;
+	@Qualifier("visitService")
+	protected VisitService vs;
 	
 	@Autowired
-	private EncounterService encounterService;
+	@Qualifier("encounterService")
+	private EncounterService es;
 	
 	@Test
 	@Verifies(value = "the parameters should return the corresponding attachments", method = "getAttachments(patient, visit, encounter, includeRetired)")
 	public void getAttachments_shouldReturnAttachments() {
 		
 		// Setup
-		Patient patient = patientService.getPatient(0);
-		Visit visit = visitService.getVisit(1);
-		Encounter encounter = encounterService.getEncountersByPatient(patient).get(0);
+		Patient patient = ps.getPatient(2);
+		Visit visit = vs.getVisit(1);
+		Encounter encounter = es.getEncountersByPatient(patient).get(0);
 		
-		//Replay
+		// Replay
 		List<Attachment> attachmentList = as.getAttachments(patient, visit, encounter, true);
 		
-		//Verify
+		// Verify
 		for (Attachment attachment : attachmentList) {
-			assertEquals(attachment.getObs().getPerson(),(Person)patient);
-			assertEquals(attachment.getObs().getEncounter().getVisit(),visit);
-			assertEquals(attachment.getObs().getEncounter(),encounter);
+			assertEquals(attachment.getObs().getPerson(), patient);
+			assertEquals(attachment.getObs().getEncounter().getVisit(), visit);
+			assertEquals(attachment.getObs().getEncounter(), encounter);
 		}
 		
 	}
