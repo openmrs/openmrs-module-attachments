@@ -19,7 +19,6 @@ import org.openmrs.module.attachments.AttachmentsActivator;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.ComplexObsSaver;
-import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.ui.framework.WebConstants;
 import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,8 +109,8 @@ public class TestHelper {
 		        .saveGlobalProperty(new GlobalProperty(AttachmentsConstants.GP_ALLOW_NO_CAPTION, "false"));
 		context.getAdministrationService()
 		        .saveGlobalProperty(new GlobalProperty(AttachmentsConstants.GP_WEBCAM_ALLOWED, "true"));
-		context.getAdministrationService()
-		        .saveGlobalProperty(new GlobalProperty(RestConstants.MAX_RESULTS_DEFAULT_GLOBAL_PROPERTY_NAME, "50"));
+		context.getAdministrationService().saveGlobalProperty(
+		    new GlobalProperty(AttachmentsConstants.GP_RESTWS_MAX_RESULTS_DEFAULT_GLOBAL_PROPERTY_NAME, "50"));
 		
 		context.getAdministrationService().saveGlobalProperty(
 		    new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, AttachmentsConstants.ENCOUNTER_TYPE_UUID));
