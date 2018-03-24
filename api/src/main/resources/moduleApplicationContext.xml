@@ -18,6 +18,7 @@
   		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<!-- Add here beans related to the API context -->
+    
     <bean id = "as" class = "org.openmrs.module.attachments.AttachmentsServiceImpl"></bean>
 
 
