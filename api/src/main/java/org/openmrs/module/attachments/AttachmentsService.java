@@ -1,9 +1,9 @@
 package org.openmrs.module.attachments;
 
 import org.openmrs.Encounter;
-import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
+import org.openmrs.module.attachments.obs.Attachment;
 
 import java.util.List;
 
@@ -12,6 +12,6 @@ import java.util.List;
  */
 public interface AttachmentsService {
 	
-	List<Obs> getAttachments(Patient patient, Visit visit, Encounter encounter, boolean includeRetired);
+	List<Attachment> getAttachments(Patient patient, Visit visit, Encounter encounter, boolean includeRetired);
 	
 }

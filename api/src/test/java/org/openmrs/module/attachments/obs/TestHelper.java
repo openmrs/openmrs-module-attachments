@@ -202,11 +202,16 @@ public class TestHelper {
 		return getComplexObsDir() + "/" + getTestFileNameWithExt();
 	}
 	
+	/**
+	 * Boilerplate method to save a collection of complex obs.
+	 *
+	 * @param count The number of the complex obs to be saved.
+	 */
 	public List<Obs> saveComplexObs(int count) throws IOException {
 		
 		init();
 		
-		List<Obs> attachmentList = new ArrayList<>();
+		List<Obs> obsList = new ArrayList<>();
 		byte[] randomData = new byte[20];
 		
 		Patient patient = Context.getPatientService().getPatient(2);
@@ -224,9 +229,9 @@ public class TestHelper {
 			new Random().nextBytes(randomData);
 			MockMultipartFile multipartRandomFile = new MockMultipartFile(String.valueOf(i), String.valueOf(i),
 			        "application/octet-stream", randomData);
-			attachmentList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartRandomFile,
+			obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartRandomFile,
 			    ValueComplex.INSTRUCTIONS_DEFAULT));
 		}
-		return attachmentList;
+		return obsList;
 	}
 }

@@ -8,12 +8,14 @@ import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.VisitService;
+import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.TestHelper;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.Verifies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -44,17 +46,22 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	public void getAttachments_shouldReturnAttachments() throws Exception {
 		
 		// Setup
-		List<Obs> originalAttachmentsList = testHelper.saveComplexObs(3);
+		List<Obs> obsList = testHelper.saveComplexObs(3);
 		
-		Patient patient = ps.getPatient(2);
-		Visit visit = originalAttachmentsList.get(0).getEncounter().getVisit();
-		Encounter encounter = originalAttachmentsList.get(0).getEncounter();
+		Obs obs = obsList.get(0);
+		Patient patient = obs.getEncounter().getPatient();
+		Visit visit = obs.getEncounter().getVisit();
+		Encounter encounter = obs.getEncounter();
 		
 		// Replay
-		List<Obs> searchedAttachmentList = as.getAttachments(patient, visit, encounter, true);
+		List<Attachment> attachmentList = as.getAttachments(patient, visit, encounter, true);
 		
 		// Verify
-		assertEquals(new HashSet<>(originalAttachmentsList), new HashSet<>(searchedAttachmentList));
+		List<Attachment> originalAttachmentsList = new ArrayList<>();
+		for (Obs observation : obsList) {
+				originalAttachmentsList.add(new Attachment(observation));
+		}
+		assertEquals(new HashSet<>(originalAttachmentsList), new HashSet<>(attachmentList));
 		
 	}
 }

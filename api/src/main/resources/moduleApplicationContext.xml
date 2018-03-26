@@ -18,9 +18,34 @@
   		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<!-- Add here beans related to the API context -->
-    
-    <bean id = "as" class = "org.openmrs.module.attachments.AttachmentsServiceImpl"></bean>
 
+    <!-- Wraps AttachmentsService methods in DB transactions and OpenMRS interceptors,
+    which set audit info like dateCreated, changedBy, etc.-->
+    <bean id="attachments.AttachmentsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.attachments.AttachmentsServiceImpl"/>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+
+    <!-- Adds InitializerService to OpenMRS context so it can be accessed
+    calling Context.getService(InitializerService.class) -->
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.attachments.AttachmentsService</value>
+                <ref bean="attachments.AttachmentsService" />
+            </list>
+        </property>
+    </bean>
 
 	<!-- Handlers that can be set to complex concepts -->
 	<bean parent="obsServiceTarget">
