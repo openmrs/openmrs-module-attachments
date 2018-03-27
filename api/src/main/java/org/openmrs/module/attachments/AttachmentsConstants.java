@@ -38,6 +38,8 @@ public class AttachmentsConstants {
 	
 	public static final String DOWNLOAD_ATTACHMENT_URL = MODULE_BASE_URL + "/download";
 	
+	public static final String ATTACHMENT_BYTES_URI = "/{uuid}/bytes";
+	
 	/*
 	 * Spring components qualifiers
 	 */

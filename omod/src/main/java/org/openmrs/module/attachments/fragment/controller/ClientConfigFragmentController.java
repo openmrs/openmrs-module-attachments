@@ -24,7 +24,7 @@ public class ClientConfigFragmentController {
 		
 		jsonConfig.put("locale", Context.getLocale().getLanguage());
 		
-		jsonConfig.put("uploadUrl", "/" + ui.contextPath() + "/ws" + AttachmentsConstants.LEGACY_UPLOAD_ATTACHMENT_URL);
+		jsonConfig.put("uploadUrl", "/" + ui.contextPath() + "/ws" + AttachmentsConstants.UPLOAD_ATTACHMENT_URL);
 		jsonConfig.put("downloadUrl", "/" + ui.contextPath() + "/ws" + AttachmentsConstants.DOWNLOAD_ATTACHMENT_URL);
 		jsonConfig.put("originalView", AttachmentsConstants.ATT_VIEW_ORIGINAL);
 		jsonConfig.put("thumbView", AttachmentsConstants.ATT_VIEW_THUMBNAIL);

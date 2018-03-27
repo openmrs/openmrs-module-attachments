@@ -281,7 +281,7 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 			SimpleObject response = deserialize(handle(request));
 			uuid = response.get("uuid");
 		}
-		HttpServletRequest request = newGetRequest(getURI() + "/" + uuid + "/file");
+		HttpServletRequest request = newGetRequest(getURI() + "/" + uuid + "/bytes");
 		
 		// Replay
 		MockHttpServletResponse response = handle(request);
