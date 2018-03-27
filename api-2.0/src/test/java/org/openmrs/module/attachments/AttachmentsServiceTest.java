@@ -11,13 +11,12 @@ import org.openmrs.api.VisitService;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.TestHelper;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
-import org.openmrs.test.Verifies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -42,7 +41,6 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	private EncounterService es;
 	
 	@Test
-	@Verifies(value = "the parameters should return the corresponding attachments", method = "getAttachments(patient, visit, encounter, includeRetired)")
 	public void getAttachments_shouldReturnAttachments() throws Exception {
 		
 		// Setup
@@ -54,14 +52,11 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		Encounter encounter = obs.getEncounter();
 		
 		// Replay
-		List<Attachment> attachmentList = as.getAttachments(patient, visit, encounter, true);
+		List<Attachment> attachmentsList = as.getAttachments(patient, visit, encounter, true);
 		
 		// Verify
-		List<Attachment> originalAttachmentsList = new ArrayList<>();
-		for (Obs observation : obsList) {
-				originalAttachmentsList.add(new Attachment(observation));
-		}
-		assertEquals(new HashSet<>(originalAttachmentsList), new HashSet<>(attachmentList));
+		List<Attachment> originalAttachmentsList = obsList.stream().map(Attachment::new).collect(Collectors.toList());
 		
+		assertEquals(new HashSet<>(originalAttachmentsList), new HashSet<>(attachmentsList));
 	}
 }

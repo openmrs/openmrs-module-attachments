@@ -15,4 +15,6 @@
     </property>
   </bean>
 
+    <bean class="org.openmrs.module.emrapi.encounter.EncounterTransactionMapper"/>
+
 </beans>
