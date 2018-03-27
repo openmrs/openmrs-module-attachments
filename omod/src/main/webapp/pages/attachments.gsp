@@ -53,12 +53,20 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <div id="att-page-main">
 
-  <div ng-controller="FileUploadCtrl" class="att_main-section">
-    <att-file-upload config="config"></att-file-upload>
-  </div>
+  <% if (context.hasPrivilege("App: attachments.attachments.upload")) { %>
+
+      <div ng-controller="FileUploadCtrl" class="att_main-section">
+        <att-file-upload config="config"></att-file-upload>
+      </div>
+
+  <% } %>
 
   <div ng-controller="GalleryCtrl" class="att_main-section">
-    <att-gallery obs-query="obsQuery" options="{canEdit:true}"></att-gallery>
+     <% if (context.hasPrivilege("App: attachments.attachments.delete")) { %>
+        <att-gallery obs-query="obsQuery" options="{canEdit:true,canDelete:true}"></att-gallery>
+    <% } else { %>
+        <att-gallery obs-query="obsQuery" options="{canEdit:true,canDelete:false}"></att-gallery>
+    <% } %>
   </div>
 
 </div>

@@ -149,7 +149,7 @@
         <div ng-if="obs.contentFamily != 'IMAGE'" ng-bind-html="::iconHtml"></div>
       </div>
     </div>
-    <i ng-show="editMode" class="icon-trash att_icon-trash att_click-pointer" ng-click="confirmDelete()"></i>
+    <i ng-show="canDelete&&editMode" class="icon-trash att_icon-trash att_click-pointer" ng-click="confirmDelete()"></i>
   </div>
 
   <div class="att_thumbnail-caption-section" ng-class="canEdit() ? 'att_editable' : ''">

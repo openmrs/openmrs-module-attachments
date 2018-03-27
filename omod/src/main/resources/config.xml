@@ -144,5 +144,13 @@
 		<name>App: ${project.parent.artifactId}.attachments.page</name>
 		<description>Allowed to access the main attachments page</description>
 	</privilege>
+	<privilege>
+		<name>App: ${project.parent.artifactId}.attachments.upload</name>
+		<description>Allowed to access the main attachments page</description>
+	</privilege>
+	<privilege>
+		<name>App: ${project.parent.artifactId}.attachments.delete</name>
+		<description>Allowed to access the main attachments page</description>
+	</privilege>
 
 </module>
