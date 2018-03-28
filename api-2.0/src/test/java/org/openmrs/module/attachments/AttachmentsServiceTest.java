@@ -16,9 +16,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	
@@ -58,5 +60,16 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		List<Attachment> originalAttachmentsList = obsList.stream().map(Attachment::new).collect(Collectors.toList());
 		
 		assertEquals(new HashSet<>(originalAttachmentsList), new HashSet<>(attachmentsList));
+		
+		for (Attachment originalAttachment : originalAttachmentsList) {
+			boolean found = false;
+			for (Attachment testingAttachment : attachmentsList) {
+				if (Objects.equals(originalAttachment.getUuid(), testingAttachment.getUuid())) {
+					found = true;
+					break;
+				}
+			}
+			assertTrue(found);
+		}
 	}
 }
