@@ -9,8 +9,6 @@
  */
 package org.openmrs.module.attachments;
 
-import org.openmrs.module.webservices.rest.web.RestConstants;
-
 public class AttachmentsConstants {
 	
 	public static enum ContentFamily {
@@ -32,7 +30,7 @@ public class AttachmentsConstants {
 	
 	public static final String ATTACHMENT_URI = "attachment";
 	
-	public static final String UPLOAD_ATTACHMENT_URL = "/rest/" + RestConstants.VERSION_1 + "/" + ATTACHMENT_URI;
+	public static final String UPLOAD_ATTACHMENT_URL = "/rest/v1/" + ATTACHMENT_URI;
 	
 	public static final String LEGACY_UPLOAD_ATTACHMENT_URL = MODULE_BASE_URL + "/upload";
 	

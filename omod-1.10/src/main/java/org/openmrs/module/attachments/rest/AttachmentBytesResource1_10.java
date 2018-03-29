@@ -10,7 +10,9 @@ import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.obs.AttachmentComplexData;
 import org.openmrs.module.attachments.obs.ValueComplex;
 import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
+import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.BaseRestController;
 import org.openmrs.obs.ComplexData;
 import org.springframework.stereotype.Controller;
@@ -21,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.openmrs.module.attachments.AttachmentsConstants.ATTACHMENT_BYTES_URI;
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
 @Controller
@@ -34,12 +35,13 @@ public class AttachmentBytesResource1_10 extends BaseRestController {
 	protected final Log log = LogFactory.getLog(getClass());
 	
 	@RequestMapping(value = AttachmentsConstants.ATTACHMENT_BYTES_URI, method = RequestMethod.GET)
-	public void getFile(@PathVariable("uuid") String uuid, HttpServletResponse response) throws IOException {
+	public void getFile(@PathVariable("uuid") String uuid, HttpServletResponse response) throws ResponseException {
 		// Getting the Core/Platform complex data object
 		Obs obs = context.getObsService().getObsByUuid(uuid);
 		
 		if (!obs.isComplex()) {
-			throw new IllegalRequestException("It is not a complex obs, thus have no data.");
+			throw new IllegalRequestException("The following obs is not a complex obs, no complex data can be retrieved. "
+			        + "Obs UUID: " + obs.getUuid());
 		}
 		
 		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
@@ -57,7 +59,15 @@ public class AttachmentBytesResource1_10 extends BaseRestController {
 		response.addHeader("Content-Family", getContentFamily(mimeType).name());
 		response.addHeader("File-Name", attComplexData.getTitle());
 		response.addHeader("File-Ext", getExtension(attComplexData.getTitle(), mimeType));
-		response.getOutputStream().write(attComplexData.asByteArray());
+		
+		try {
+			response.getOutputStream().write(attComplexData.asByteArray());
+		}
+		catch (IOException ex) {
+			response.setStatus(500);
+			throw new GenericRestException("There was an error when downloading the attachment's bytes content."
+			        + " Perhaps the file content is corrupted.", ex);
+		}
 		
 	}
 	
