@@ -66,8 +66,8 @@
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api</artifactId>
-            <version>1.12</version>
+            <artifactId>emrapi-api-1.12</artifactId>
+            <version>${emrapiVersion}</version>
             <scope>test</scope>
         </dependency>
 
