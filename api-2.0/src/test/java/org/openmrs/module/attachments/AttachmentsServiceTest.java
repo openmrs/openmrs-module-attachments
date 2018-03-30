@@ -1,5 +1,6 @@
 package org.openmrs.module.attachments;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -14,13 +15,8 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	
@@ -54,22 +50,13 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		Encounter encounter = obs.getEncounter();
 		
 		// Replay
-		List<Attachment> attachmentsList = as.getAttachments(patient, visit, encounter, true);
+		List<Attachment> actualAttachments = as.getAttachments(patient, visit, encounter, true);
 		
 		// Verify
-		List<Attachment> originalAttachmentsList = obsList.stream().map(Attachment::new).collect(Collectors.toList());
+		List<Attachment> expectedAttachments = obsList.stream().map(Attachment::new).collect(Collectors.toList());
 		
-		assertEquals(new HashSet<>(originalAttachmentsList), new HashSet<>(attachmentsList));
-		
-		for (Attachment originalAttachment : originalAttachmentsList) {
-			boolean found = false;
-			for (Attachment testingAttachment : attachmentsList) {
-				if (Objects.equals(originalAttachment.getUuid(), testingAttachment.getUuid())) {
-					found = true;
-					break;
-				}
-			}
-			assertTrue(found);
-		}
+		Assert.assertArrayEquals(
+		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
+		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
 	}
 }
