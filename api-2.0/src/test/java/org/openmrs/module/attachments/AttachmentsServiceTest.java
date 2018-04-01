@@ -16,6 +16,7 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,6 +57,16 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		Obs obs = complexObsList.get(0);
 		Patient patient = obs.getEncounter().getPatient();
 		Encounter encounter = obs.getEncounter();
+		
+		// saving some other obs during the same encounter
+		Obs otherObs = new Obs();
+		otherObs.setConcept(cs.getConcept(3));
+		otherObs.setObsDatetime(new Date());
+		otherObs.setEncounter(encounter);
+		otherObs.setPerson(patient);
+		otherObs.setValueText("Some text value for a test obs.");
+		otherObs = os.saveObs(otherObs, null);
+		Assert.assertNotNull(otherObs.getId());
 		
 		// Replay
 		List<Attachment> actualAttachments = as.getAttachments(patient, null, encounter, true);
