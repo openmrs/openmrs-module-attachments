@@ -26,7 +26,9 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			List<Obs> obs = Context.getObsService().getObservations(personList, null, null, null, null, null, null, null,
 			    null, null, null, includeRetired);
 			for (Obs observation : obs) {
-				attachmentsList.add(new Attachment(observation));
+				if (observation.isComplex()) {
+					attachmentsList.add(new Attachment(observation));
+				}
 			}
 			return attachmentsList;
 		} else if (visit == null) {
@@ -36,7 +38,9 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			List<Obs> obs = Context.getObsService().getObservations(personList, encounterList, null, null, null, null, null,
 			    null, null, null, null, includeRetired);
 			for (Obs observation : obs) {
-				attachmentsList.add(new Attachment(observation));
+				if (observation.isComplex()) {
+					attachmentsList.add(new Attachment(observation));
+				}
 			}
 			return attachmentsList;
 		} else {
@@ -45,7 +49,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			List<Obs> obs = Context.getObsService().getObservations(personList, encounterList, null, null, null, null, null,
 			    null, null, null, null, includeRetired);
 			for (Obs observation : obs) {
-				if (observation.getEncounter().getVisit() == visit) {
+				if (observation.getEncounter().getVisit() == visit && observation.isComplex()) {
 					attachmentsList.add(new Attachment(observation));
 				}
 			}
