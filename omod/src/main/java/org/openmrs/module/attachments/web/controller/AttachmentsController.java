@@ -34,6 +34,12 @@ import java.util.Iterator;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
+/*
+ * @Deprecated and replaced by
+ * {@link org.openmrs.module.attachments.rest.AttachmentBytesResource1_10 AttachmentBytesResource}
+ * and
+ * {@link org.openmrs.module.attachments.rest.AttachmentResource1_10 AttachmentResource}
+ */
 @Deprecated
 @Controller
 public class AttachmentsController {
