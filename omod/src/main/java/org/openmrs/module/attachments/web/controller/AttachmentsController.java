@@ -34,6 +34,7 @@ import java.util.Iterator;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
+@Deprecated
 @Controller
 public class AttachmentsController {
 	
