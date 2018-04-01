@@ -1,5 +1,7 @@
 package org.openmrs.module.attachments;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -19,9 +21,11 @@ import java.util.List;
 
 public class AttachmentsServiceImpl implements AttachmentsService {
 	
+	private final Log log = LogFactory.getLog(getClass());
+	
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
-	protected AttachmentsContext context;
+	private AttachmentsContext context;
 	
 	@Autowired
 	@Qualifier("conceptService")
@@ -37,7 +41,12 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		List<String> conceptComplexList = context.getConceptComplexList();
 		List<Concept> questionConcepts = new ArrayList<>();
 		for (String uuid : conceptComplexList) {
-			questionConcepts.add(cs.getConceptByUuid(uuid));
+			Concept concept = cs.getConceptByUuid(uuid);
+			if (concept == null) {
+				log.error("The Concept with UUID " + uuid + " was not found");
+			} else {
+				questionConcepts.add(concept);
+			}
 		}
 		
 		if (visit == null && encounter == null) {
