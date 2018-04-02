@@ -15,6 +15,7 @@ import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.attachments.VisitCompatibility;
 import org.openmrs.module.attachments.obs.AttachmentComplexData;
 import org.openmrs.module.attachments.obs.ValueComplex;
+import org.openmrs.module.attachments.rest.AttachmentBytesResource1_10;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.representation.CustomRepresentation;
 import org.openmrs.obs.ComplexData;
@@ -124,7 +125,7 @@ public class AttachmentsController {
 			response.setContentType(mimeType);
 			response.addHeader("Content-Family", getContentFamily(mimeType).name()); // custom header
 			response.addHeader("File-Name", docComplexData.getTitle()); // custom header
-			response.addHeader("File-Ext", getExtension(docComplexData.getTitle(), mimeType)); // custom header
+			response.addHeader("File-Ext", AttachmentBytesResource1_10.getExtension(docComplexData.getTitle(), mimeType)); // custom header
 			switch (getContentFamily(mimeType)) {
 				default:
 					response.getOutputStream().write(docComplexData.asByteArray());
@@ -138,25 +139,5 @@ public class AttachmentsController {
 			        + complexObs.getUuid() + "'",
 			    e);
 		}
-	}
-	
-	/**
-	 * @param fileName
-	 * @param mimeType
-	 * @return The best guess extension for the file, preferring it coming out from the original file
-	 *         name if possible.
-	 */
-	public static String getExtension(String fileName, String mimeType) {
-		String ext = FilenameUtils.getExtension(fileName);
-		String extFromMimeType = AttachmentsContext.getExtension(mimeType);
-		if (!StringUtils.isEmpty(ext)) {
-			if (ext.length() > 6) { // this is a bit arbitrary, just to discriminate funny named files such as
-			                        // "uiohdz.iuhezuidhuih"
-				ext = extFromMimeType;
-			}
-		} else {
-			ext = extFromMimeType;
-		}
-		return ext;
 	}
 }

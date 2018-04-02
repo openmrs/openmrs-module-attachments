@@ -59,7 +59,7 @@ public class AttachmentBytesResource1_10 extends BaseRestController {
 		response.addHeader("Content-Family", getContentFamily(mimeType).name());
 		response.addHeader("File-Name", attComplexData.getTitle());
 		response.addHeader("File-Ext", getExtension(attComplexData.getTitle(), mimeType));
-
+		
 		try {
 			response.getOutputStream().write(attComplexData.asByteArray());
 		}
