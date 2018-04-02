@@ -26,7 +26,7 @@ import java.io.IOException;
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
 @Controller
-@RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + "/attachment")
+@RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + "/" + AttachmentsConstants.ATTACHMENT_URI)
 public class AttachmentBytesResource1_10 extends BaseRestController {
 	
 	protected AttachmentsContext context = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT,
@@ -59,7 +59,7 @@ public class AttachmentBytesResource1_10 extends BaseRestController {
 		response.addHeader("Content-Family", getContentFamily(mimeType).name());
 		response.addHeader("File-Name", attComplexData.getTitle());
 		response.addHeader("File-Ext", getExtension(attComplexData.getTitle(), mimeType));
-		
+
 		try {
 			response.getOutputStream().write(attComplexData.asByteArray());
 		}

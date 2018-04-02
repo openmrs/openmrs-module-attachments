@@ -267,25 +267,25 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		String fileCaption = "Test file caption";
 		String uuid;
 		
-		{// Upload Test File
-			String fileName = "testFile.dat";
-			Patient patient = Context.getPatientService().getPatient(2);
-			
-			MockMultipartHttpServletRequest request = newUploadRequest(getURI());
-			MockMultipartFile file = new MockMultipartFile("file", fileName, "application/octet-stream", randomData);
-			
-			request.addFile(file);
-			request.addParameter("patient", patient.getUuid());
-			request.addParameter("fileCaption", fileCaption);
-			
-			SimpleObject response = deserialize(handle(request));
-			uuid = response.get("uuid");
-		}
-		HttpServletRequest request = newGetRequest(getURI() + "/" + uuid + "/bytes");
+		// Upload Test File
+		String fileName = "testFile.dat";
+		Patient patient = Context.getPatientService().getPatient(2);
+		
+		MockMultipartHttpServletRequest uploadRequest = newUploadRequest(getURI());
+		MockMultipartFile file = new MockMultipartFile("file", fileName, "application/octet-stream", randomData);
+		
+		uploadRequest.addFile(file);
+		uploadRequest.addParameter("patient", patient.getUuid());
+		uploadRequest.addParameter("fileCaption", fileCaption);
+		
+		SimpleObject uploadResponse = deserialize(handle(uploadRequest));
+		uuid = uploadResponse.get("uuid");
+		
+		HttpServletRequest downloadRequest = newGetRequest(getURI() + "/" + uuid + "/bytes");
 		
 		// Replay
-		MockHttpServletResponse response = handle(request);
-		byte[] downloadedFile = response.getContentAsByteArray();
+		MockHttpServletResponse downloadResponse = handle(downloadRequest);
+		byte[] downloadedFile = downloadResponse.getContentAsByteArray();
 		
 		// Verify
 		Assert.assertArrayEquals(randomData, downloadedFile);
