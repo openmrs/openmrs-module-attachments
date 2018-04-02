@@ -32,7 +32,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	private ConceptService cs;
 	
 	@Override
-	public List<Attachment> getAttachments(Patient patient, Visit visit, Encounter encounter, boolean includeRetired) {
+	public List<Attachment> getAttachments(Patient patient, Encounter encounter, boolean includeRetired) {
 		
 		List<Person> personList = new ArrayList<>();
 		List<Attachment> attachmentsList = new ArrayList<>();
@@ -48,39 +48,67 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 				questionConcepts.add(concept);
 			}
 		}
-		
-		if (visit == null && encounter == null) {
-			List<Obs> obs = Context.getObsService().getObservations(personList, null, questionConcepts, null, null, null,
-			    null, null, null, null, null, includeRetired);
-			for (Obs observation : obs) {
-				if (observation.isComplex()) {
-					attachmentsList.add(new Attachment(observation));
-				}
+		List<Encounter> encounterList = new ArrayList<>();
+		encounterList.add(encounter);
+		List<Obs> obs = Context.getObsService().getObservations(personList, encounterList, questionConcepts, null, null,
+		    null, null, null, null, null, null, includeRetired);
+		for (Obs observation : obs) {
+			if (observation.isComplex()) {
+				attachmentsList.add(new Attachment(observation));
 			}
-			return attachmentsList;
-		} else if (visit == null) {
-			List<Encounter> encounterList = new ArrayList<>();
-			encounterList.add(encounter);
-			
-			List<Obs> obs = Context.getObsService().getObservations(personList, encounterList, questionConcepts, null, null,
-			    null, null, null, null, null, null, includeRetired);
-			for (Obs observation : obs) {
-				if (observation.isComplex()) {
-					attachmentsList.add(new Attachment(observation));
-				}
-			}
-			return attachmentsList;
-		} else {
-			List<Encounter> encounterList = new ArrayList<>();
-			encounterList.add(encounter);
-			List<Obs> obs = Context.getObsService().getObservations(personList, encounterList, questionConcepts, null, null,
-			    null, null, null, null, null, null, includeRetired);
-			for (Obs observation : obs) {
-				if (observation.getEncounter().getVisit() == visit && observation.isComplex()) {
-					attachmentsList.add(new Attachment(observation));
-				}
-			}
-			return attachmentsList;
 		}
+		return attachmentsList;
+	}
+	
+	@Override
+	public List<Attachment> getAttachments(Patient patient, Visit visit, boolean includeRetired) {
+		List<Person> personList = new ArrayList<>();
+		List<Attachment> attachmentsList = new ArrayList<>();
+		personList.add(patient);
+		
+		List<String> conceptComplexList = context.getConceptComplexList();
+		List<Concept> questionConcepts = new ArrayList<>();
+		for (String uuid : conceptComplexList) {
+			Concept concept = cs.getConceptByUuid(uuid);
+			if (concept == null) {
+				log.error("The Concept with UUID " + uuid + " was not found");
+			} else {
+				questionConcepts.add(concept);
+			}
+		}
+		List<Obs> obs = Context.getObsService().getObservations(personList, null, questionConcepts, null, null, null, null,
+		    null, null, null, null, includeRetired);
+		for (Obs observation : obs) {
+			if (observation.getEncounter().getVisit().equals(visit) && observation.isComplex()) {
+				attachmentsList.add(new Attachment(observation));
+			}
+		}
+		return attachmentsList;
+	}
+	
+	public List<Attachment> getAttachments(Patient patient, boolean includeRetired) {
+		List<Person> personList = new ArrayList<>();
+		List<Attachment> attachmentsList = new ArrayList<>();
+		personList.add(patient);
+		
+		List<String> conceptComplexList = context.getConceptComplexList();
+		List<Concept> questionConcepts = new ArrayList<>();
+		for (String uuid : conceptComplexList) {
+			Concept concept = cs.getConceptByUuid(uuid);
+			if (concept == null) {
+				log.error("The Concept with UUID " + uuid + " was not found");
+			} else {
+				questionConcepts.add(concept);
+			}
+		}
+		List<Obs> obs = Context.getObsService().getObservations(personList, null, questionConcepts, null, null, null, null,
+		    null, null, null, null, includeRetired);
+		
+		for (Obs observation : obs) {
+			if (observation.isComplex()) {
+				attachmentsList.add(new Attachment(observation));
+			}
+		}
+		return attachmentsList;
 	}
 }

@@ -12,6 +12,10 @@ import java.util.List;
  */
 public interface AttachmentsService {
 	
-	List<Attachment> getAttachments(Patient patient, Visit visit, Encounter encounter, boolean includeRetired);
+	List<Attachment> getAttachments(Patient patient, boolean includeRetired);
+	
+	List<Attachment> getAttachments(Patient patient, Encounter encounter, boolean includeRetired);
+	
+	List<Attachment> getAttachments(Patient patient, Visit visit, boolean includeRetired);
 	
 }

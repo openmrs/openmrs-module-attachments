@@ -69,7 +69,7 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		Assert.assertNotNull(otherObs.getId());
 		
 		// Replay
-		List<Attachment> actualAttachments = as.getAttachments(patient, null, encounter, true);
+		List<Attachment> actualAttachments = as.getAttachments(patient, encounter, true);
 		
 		// Verify
 		List<Attachment> expectedAttachments = complexObsList.stream().map(Attachment::new).collect(Collectors.toList());
