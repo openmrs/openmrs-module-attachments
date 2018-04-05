@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
@@ -52,7 +53,7 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	public void getAttachments_shouldReturnEncounterAttachments() throws Exception {
 		
 		// Setup
-		List<Obs> complexObsList = testHelper.saveComplexObs(3);
+		List<Obs> complexObsList = testHelper.saveComplexObsForEncounter(3);
 		
 		Obs obs = complexObsList.get(0);
 		Patient patient = obs.getEncounter().getPatient();
@@ -70,6 +71,38 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		
 		// Replay
 		List<Attachment> actualAttachments = as.getAttachments(patient, encounter, true);
+		
+		// Verify
+		List<Attachment> expectedAttachments = complexObsList.stream().map(Attachment::new).collect(Collectors.toList());
+		
+		Assert.assertArrayEquals(
+		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
+		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
+	}
+	
+	@Test
+	public void getAttachments_shouldReturnVisitAttachments() throws Exception {
+		
+		// Setup
+		List<Obs> complexObsList = testHelper.saveComplexObsForVisit(4);
+		
+		Obs obs = complexObsList.get(0);
+		Patient patient = obs.getEncounter().getPatient();
+		Encounter encounter = obs.getEncounter();
+		Visit visit = obs.getEncounter().getVisit();
+		
+		// saving some other obs during the same visit
+		Obs otherObs = new Obs();
+		otherObs.setConcept(cs.getConcept(3));
+		otherObs.setObsDatetime(new Date());
+		otherObs.setEncounter(encounter);
+		otherObs.setPerson(patient);
+		otherObs.setValueText("Some text value for a test obs.");
+		otherObs = os.saveObs(otherObs, null);
+		Assert.assertNotNull(otherObs.getId());
+		
+		// Replay
+		List<Attachment> actualAttachments = as.getAttachments(patient, visit, true);
 		
 		// Verify
 		List<Attachment> expectedAttachments = complexObsList.stream().map(Attachment::new).collect(Collectors.toList());

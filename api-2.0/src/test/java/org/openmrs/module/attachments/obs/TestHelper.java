@@ -200,8 +200,7 @@ public class TestHelper {
 	 *
 	 * @param count The number of the complex obs to be saved.
 	 */
-	public List<Obs> saveComplexObs(int count) throws IOException {
-		
+	public List<Obs> saveComplexObsForEncounter(int count) throws IOException {
 		init();
 		
 		List<Obs> obsList = new ArrayList<>();
@@ -223,6 +222,44 @@ public class TestHelper {
 			MockMultipartFile multipartRandomFile = new MockMultipartFile(String.valueOf(i), String.valueOf(i),
 			        "application/octet-stream", randomData);
 			obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartRandomFile,
+			    ValueComplex.INSTRUCTIONS_DEFAULT));
+		}
+		return obsList;
+	}
+	
+	public List<Obs> saveComplexObsForVisit(int count) throws IOException {
+		init();
+		
+		List<Obs> obsList = new ArrayList<>();
+		byte[] randomData = new byte[20];
+		
+		Patient patient = Context.getPatientService().getPatient(2);
+		Visit visit = Context.getVisitService().getVisit(1);
+		
+		EncounterService encounterService = Context.getEncounterService();
+		EncounterType encounterType = encounterService.getEncounterType(1);
+		Provider provider = Context.getProviderService().getProvider(1);
+		
+		context.getAdministrationService().saveGlobalProperty(
+		    new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, encounterType.getUuid()));
+		
+		Encounter encounter = context.getAttachmentEncounter(patient, visit, provider);
+		Encounter encounter2 = context.getAttachmentEncounter(patient, visit, provider);
+		
+		// saving first obs different from the others
+		String fileCaption = RandomStringUtils.randomAlphabetic(12);
+		new Random().nextBytes(randomData);
+		MockMultipartFile multipartRandomFile = new MockMultipartFile(String.valueOf(0), String.valueOf(0),
+		        "application/octet-stream", randomData);
+		obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartRandomFile,
+		    ValueComplex.INSTRUCTIONS_DEFAULT));
+		
+		for (int i = 1; i < count; i++) {
+			fileCaption = RandomStringUtils.randomAlphabetic(12);
+			new Random().nextBytes(randomData);
+			multipartRandomFile = new MockMultipartFile(String.valueOf(i), String.valueOf(i), "application/octet-stream",
+			        randomData);
+			obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter2, fileCaption, multipartRandomFile,
 			    ValueComplex.INSTRUCTIONS_DEFAULT));
 		}
 		return obsList;
