@@ -17,9 +17,11 @@ import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
 import org.openmrs.obs.ComplexData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockMultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
@@ -256,5 +258,41 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		
 		// Replay
 		SimpleObject response = deserialize(handle(request));
+	}
+	
+	@Test
+	public void getAttachmentBytes_shouldDownloadFile() throws Exception {
+		
+		// Setup
+		String fileCaption = "Test file caption";
+		String uuid;
+		String mimeType = "application/octet-stream";
+		String fileExtension = "dat";
+		String fileName = "testFile." + fileExtension;
+
+		// Upload Test File
+		Patient patient = Context.getPatientService().getPatient(2);
+		MockMultipartHttpServletRequest uploadRequest = newUploadRequest(getURI());
+		MockMultipartFile file = new MockMultipartFile("file", fileName, mimeType , randomData);
+		
+		uploadRequest.addFile(file);
+		uploadRequest.addParameter("patient", patient.getUuid());
+		uploadRequest.addParameter("fileCaption", fileCaption);
+		
+		SimpleObject uploadResponse = deserialize(handle(uploadRequest));
+		uuid = uploadResponse.get("uuid");
+		
+		HttpServletRequest downloadRequest = newGetRequest(getURI() + "/" + uuid + "/bytes");
+		
+		// Replay
+		MockHttpServletResponse downloadResponse = handle(downloadRequest);
+		byte[] bytesContent = downloadResponse.getContentAsByteArray();
+		
+		// Verify
+		Assert.assertArrayEquals(randomData, bytesContent);
+		Assert.assertEquals(downloadResponse.getContentType(), mimeType);
+		Assert.assertEquals(downloadResponse.getHeader("File-Name"), fileName);
+		Assert.assertEquals(downloadResponse.getHeader("File-Ext"), fileExtension);
+
 	}
 }

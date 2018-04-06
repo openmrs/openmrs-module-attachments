@@ -1,8 +1,5 @@
 package org.openmrs.module.attachments.fragment.controller;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
@@ -11,6 +8,9 @@ import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.obs.ImageAttachmentHandler;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ClientConfigFragmentController {
 	
