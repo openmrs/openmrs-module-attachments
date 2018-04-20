@@ -68,6 +68,8 @@ angular.module('att.widget.thumbnail')
         return false;
       }
 
+      $scope.canDelete = $scope.config.canDelete;
+
       $scope.toggleVisible = function(visible) {
         $scope.active = visible;
       }
