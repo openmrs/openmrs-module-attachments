@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
+import java.util.Locale;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -77,6 +78,8 @@ public class TestHelper {
 		return getTestFileName() + "." + fileExt;
 	}
 	
+	public ConceptComplex ConceptComplexOutAttach;
+	
 	/**
 	 * This initialization routine configure a lot of boilerplate settings to mimic the actual
 	 * environment.
@@ -113,6 +116,20 @@ public class TestHelper {
 		
 		context.getAdministrationService().saveGlobalProperty(
 		    new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, AttachmentsConstants.ENCOUNTER_TYPE_UUID));
+		
+		//		ConceptComplex conceptComplexOutAttach = new ConceptComplex();
+		//		conceptComplexOutAttach.setHandler(BinaryDataHandler.class.getSimpleName());
+		//		ConceptName conceptName = new ConceptName("Out-of-Attachments test concept complex", Locale.ENGLISH);
+		//		conceptComplexOutAttach.setFullySpecifiedName(conceptName);
+		//		conceptComplexOutAttach.setPreferredName(conceptName);
+		//		conceptComplexOutAttach
+		//		        .setConceptClass(context.getConceptService().getConceptClassByUuid(ConceptClass.QUESTION_UUID));
+		//		conceptComplexOutAttach
+		//		        .setDatatype(context.getConceptService().getConceptDatatypeByUuid(ConceptDatatype.COMPLEX_UUID));
+		//		conceptComplexOutAttach.addDescription(new ConceptDescription(desc, Locale.ENGLISH));
+		//
+		//		context.getConceptService().saveConcept(conceptComplexOutAttach);
+		//		ConceptComplexOutAttach = conceptComplexOutAttach;
 	}
 	
 	public Obs getTestComplexObs() throws IOException {
@@ -230,42 +247,23 @@ public class TestHelper {
 		return obsList;
 	}
 	
-	// public Obs saveComplexObsForEncounterDefult(Patient patient, Encounter
-	// encounter, Visit visit) throws IOException {
-	//
-	// // byte[] randomData = new byte[20];
-	// // String fileCaption = RandomStringUtils.randomAlphabetic(12);
-	// // new Random().nextBytes(randomData);
-	// //
-	// // MockMultipartFile multipartRandomFile = new MockMultipartFile("1", "1",
-	// "application/octet-stream", randomData);
-	// //
-	// // Concept concept =
-	// context.getConceptService().getConceptByUuid("42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00");
-	// // ConceptComplex conceptComplex =
-	// context.getConceptService().getConceptComplex(concept.getConceptId());
-	// // if (conceptComplex == null) {
-	// // throw new IllegalStateException("ConceptComplex is null");
-	// // }
-	// //
-	// // Obs obs = new Obs(patient, conceptComplex,
-	// // visit == null || visit.getStopDatetime() == null ? new Date() :
-	// visit.getStopDatetime(),
-	// // encounter != null ? encounter.getLocation() : null);
-	// // obs.setEncounter(encounter); // may be null
-	// // obs.setComment(fileCaption);
-	// // obs.setComplexData(
-	// // complexDataHelper.build(ValueComplex.INSTRUCTIONS_DEFAULT,
-	// multipartRandomFile.getOriginalFilename(),
-	// // multipartRandomFile.getBytes(),
-	// multipartRandomFile.getContentType()).asComplexData());
-	// // obs = context.getObsService().saveObs(obs, getClass().toString());
-	// // executeDataSet(OBS_DATASET_XML);
-	// // Obs newObs = context.getobsService.getObs(44);
-	// // newObs.setEncounter(encounter);
-	// // newObs = context.getObsService().saveObs(newObs, getClass().toString());
-	// // return newObs;
-	// }
+	public Obs saveComplexObsForEncounterDefault(Patient patient, ConceptComplex conceptComplex, Encounter encounter)
+	        throws IOException {
+		byte[] randomData = new byte[20];
+		Obs obs = new Obs();
+		obs.setConcept(conceptComplex);
+		obs.setObsDatetime(new Date());
+		obs.setPerson(patient);
+		obs.setEncounter(encounter);
+		
+		new Random().nextBytes(randomData);
+		MockMultipartFile multipartRandomFile = new MockMultipartFile("1", "1", "application/octet-stream", randomData);
+		obs.setComplexData(
+		    complexDataHelper.build(ValueComplex.INSTRUCTIONS_DEFAULT, multipartRandomFile.getOriginalFilename(),
+		        multipartRandomFile.getBytes(), multipartRandomFile.getContentType()).asComplexData());
+		obs = Context.getObsService().saveObs(obs, null);
+		return obs;
+	}
 	
 	public List<Obs> saveComplexObsForVisit(int count) throws IOException {
 		init();

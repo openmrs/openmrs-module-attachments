@@ -4,8 +4,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
+import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
+import org.openmrs.ConceptComplex;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
@@ -49,32 +51,29 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	@Qualifier("obsService")
 	private ObsService os;
 	
-	protected static final String OBS_DATASET_XML = "org/openmrs/module/include/ObsTest.xml";
+	protected static final String OBS_DATASET_XML = "org/openmrs/module/include/ComplexObsTest.xml";
 	
 	@Test
 	public void getAttachments_shouldReturnEncounterAttachments() throws Exception {
 		
 		// Setup
 		List<Obs> complexObsList = testHelper.saveComplexObsForEncounter(2);
+		executeDataSet(OBS_DATASET_XML);
 		
 		Obs obs = complexObsList.get(0);
 		Patient patient = obs.getEncounter().getPatient();
 		Encounter encounter = obs.getEncounter();
+		System.out.println(encounter.getEncounterId());
 		Visit visit = encounter.getVisit();
 		
-		// Obs complexDefaultObs = testHelper.saveComplexObsForEncounterDefult(patient,
-		// encounter, visit);
-		executeDataSet(OBS_DATASET_XML);
-		Obs newObs = os.getObs(45);
-		if (newObs == null) {
-			throw new IllegalStateException("obs is null");
-		}
-		newObs.setEncounter(encounter);
-		newObs = os.saveObs(newObs, "Add Encounter");
+		//Creating the Concept Complex Obs not relevent to the attachments
+		//ConceptComplex conceptComplex = cs.getConceptComplex(8474);
 		
-		// Assert.assertNotNull(newObs.getId());
-		
-		// complexObsList.add(newObs);
+		// Creating the Concept Complex Obs relevent to the attachments
+		ConceptComplex conceptComplex = cs.getConceptComplex(obs.getConcept().getConceptId());
+
+
+		Obs conceptComplexDefaultObs = testHelper.saveComplexObsForEncounterDefault(patient, conceptComplex, encounter);
 		
 		// saving some other obs during the same encounter
 		Obs otherObs = new Obs();
