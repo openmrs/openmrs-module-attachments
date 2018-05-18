@@ -49,15 +49,32 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	@Qualifier("obsService")
 	private ObsService os;
 	
+	protected static final String OBS_DATASET_XML = "org/openmrs/module/include/ObsTest.xml";
+	
 	@Test
 	public void getAttachments_shouldReturnEncounterAttachments() throws Exception {
 		
 		// Setup
-		List<Obs> complexObsList = testHelper.saveComplexObsForEncounter(3);
+		List<Obs> complexObsList = testHelper.saveComplexObsForEncounter(2);
 		
 		Obs obs = complexObsList.get(0);
 		Patient patient = obs.getEncounter().getPatient();
 		Encounter encounter = obs.getEncounter();
+		Visit visit = encounter.getVisit();
+		
+		// Obs complexDefaultObs = testHelper.saveComplexObsForEncounterDefult(patient,
+		// encounter, visit);
+		executeDataSet(OBS_DATASET_XML);
+		Obs newObs = os.getObs(45);
+		if (newObs == null) {
+			throw new IllegalStateException("obs is null");
+		}
+		newObs.setEncounter(encounter);
+		newObs = os.saveObs(newObs, "Add Encounter");
+		
+		// Assert.assertNotNull(newObs.getId());
+		
+		// complexObsList.add(newObs);
 		
 		// saving some other obs during the same encounter
 		Obs otherObs = new Obs();

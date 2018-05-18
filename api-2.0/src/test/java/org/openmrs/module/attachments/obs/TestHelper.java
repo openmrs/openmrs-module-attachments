@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Date;
 
 @Component
 public class TestHelper {
@@ -54,6 +55,8 @@ public class TestHelper {
 	        "application/octet-stream", "mock_content".getBytes());
 	
 	protected MockMultipartFile lastSavedMultipartImageFile;
+	
+	protected static final String OBS_DATASET_XML = "org/resources/ObsServiceTest-complex.xml";
 	
 	/**
 	 * @return The last saved test image file, null if none was ever saved.
@@ -226,6 +229,43 @@ public class TestHelper {
 		}
 		return obsList;
 	}
+	
+	// public Obs saveComplexObsForEncounterDefult(Patient patient, Encounter
+	// encounter, Visit visit) throws IOException {
+	//
+	// // byte[] randomData = new byte[20];
+	// // String fileCaption = RandomStringUtils.randomAlphabetic(12);
+	// // new Random().nextBytes(randomData);
+	// //
+	// // MockMultipartFile multipartRandomFile = new MockMultipartFile("1", "1",
+	// "application/octet-stream", randomData);
+	// //
+	// // Concept concept =
+	// context.getConceptService().getConceptByUuid("42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00");
+	// // ConceptComplex conceptComplex =
+	// context.getConceptService().getConceptComplex(concept.getConceptId());
+	// // if (conceptComplex == null) {
+	// // throw new IllegalStateException("ConceptComplex is null");
+	// // }
+	// //
+	// // Obs obs = new Obs(patient, conceptComplex,
+	// // visit == null || visit.getStopDatetime() == null ? new Date() :
+	// visit.getStopDatetime(),
+	// // encounter != null ? encounter.getLocation() : null);
+	// // obs.setEncounter(encounter); // may be null
+	// // obs.setComment(fileCaption);
+	// // obs.setComplexData(
+	// // complexDataHelper.build(ValueComplex.INSTRUCTIONS_DEFAULT,
+	// multipartRandomFile.getOriginalFilename(),
+	// // multipartRandomFile.getBytes(),
+	// multipartRandomFile.getContentType()).asComplexData());
+	// // obs = context.getObsService().saveObs(obs, getClass().toString());
+	// // executeDataSet(OBS_DATASET_XML);
+	// // Obs newObs = context.getobsService.getObs(44);
+	// // newObs.setEncounter(encounter);
+	// // newObs = context.getObsService().saveObs(newObs, getClass().toString());
+	// // return newObs;
+	// }
 	
 	public List<Obs> saveComplexObsForVisit(int count) throws IOException {
 		init();

@@ -37,7 +37,6 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		List<Person> personList = new ArrayList<>();
 		List<Attachment> attachmentsList = new ArrayList<>();
 		personList.add(patient);
-		
 		List<String> conceptComplexList = context.getConceptComplexList();
 		List<Concept> questionConcepts = new ArrayList<>();
 		for (String uuid : conceptComplexList) {

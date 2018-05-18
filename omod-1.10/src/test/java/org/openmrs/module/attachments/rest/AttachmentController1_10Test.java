@@ -269,11 +269,11 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		String mimeType = "application/octet-stream";
 		String fileExtension = "dat";
 		String fileName = "testFile." + fileExtension;
-
+		
 		// Upload Test File
 		Patient patient = Context.getPatientService().getPatient(2);
 		MockMultipartHttpServletRequest uploadRequest = newUploadRequest(getURI());
-		MockMultipartFile file = new MockMultipartFile("file", fileName, mimeType , randomData);
+		MockMultipartFile file = new MockMultipartFile("file", fileName, mimeType, randomData);
 		
 		uploadRequest.addFile(file);
 		uploadRequest.addParameter("patient", patient.getUuid());
@@ -293,6 +293,6 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		Assert.assertEquals(downloadResponse.getContentType(), mimeType);
 		Assert.assertEquals(downloadResponse.getHeader("File-Name"), fileName);
 		Assert.assertEquals(downloadResponse.getHeader("File-Ext"), fileExtension);
-
+		
 	}
 }
