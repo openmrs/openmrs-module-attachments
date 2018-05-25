@@ -51,28 +51,20 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	@Qualifier("obsService")
 	private ObsService os;
 	
-	protected static final String OBS_DATASET_XML = "org/openmrs/module/include/ComplexObsTest.xml";
-	
 	@Test
 	public void getAttachments_shouldReturnEncounterAttachments() throws Exception {
 		
 		// Setup
 		List<Obs> complexObsList = testHelper.saveComplexObsForEncounter(2);
-		executeDataSet(OBS_DATASET_XML);
 		
 		Obs obs = complexObsList.get(0);
 		Patient patient = obs.getEncounter().getPatient();
 		Encounter encounter = obs.getEncounter();
-		System.out.println(encounter.getEncounterId());
 		Visit visit = encounter.getVisit();
-		
-		//Creating the Concept Complex Obs not relevent to the attachments
-		//ConceptComplex conceptComplex = cs.getConceptComplex(8474);
 		
 		// Creating the Concept Complex Obs relevent to the attachments
 		ConceptComplex conceptComplex = cs.getConceptComplex(obs.getConcept().getConceptId());
-
-
+		// call the method in TestHelper.
 		Obs conceptComplexDefaultObs = testHelper.saveComplexObsForEncounterDefault(patient, conceptComplex, encounter);
 		
 		// saving some other obs during the same encounter

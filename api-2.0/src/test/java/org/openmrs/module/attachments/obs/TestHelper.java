@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import java.util.Locale;
+import org.openmrs.obs.handler.BinaryDataHandler;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -56,8 +57,6 @@ public class TestHelper {
 	        "application/octet-stream", "mock_content".getBytes());
 	
 	protected MockMultipartFile lastSavedMultipartImageFile;
-	
-	protected static final String OBS_DATASET_XML = "org/resources/ObsServiceTest-complex.xml";
 	
 	/**
 	 * @return The last saved test image file, null if none was ever saved.
@@ -117,19 +116,19 @@ public class TestHelper {
 		context.getAdministrationService().saveGlobalProperty(
 		    new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, AttachmentsConstants.ENCOUNTER_TYPE_UUID));
 		
-		//		ConceptComplex conceptComplexOutAttach = new ConceptComplex();
-		//		conceptComplexOutAttach.setHandler(BinaryDataHandler.class.getSimpleName());
-		//		ConceptName conceptName = new ConceptName("Out-of-Attachments test concept complex", Locale.ENGLISH);
-		//		conceptComplexOutAttach.setFullySpecifiedName(conceptName);
-		//		conceptComplexOutAttach.setPreferredName(conceptName);
-		//		conceptComplexOutAttach
-		//		        .setConceptClass(context.getConceptService().getConceptClassByUuid(ConceptClass.QUESTION_UUID));
-		//		conceptComplexOutAttach
-		//		        .setDatatype(context.getConceptService().getConceptDatatypeByUuid(ConceptDatatype.COMPLEX_UUID));
-		//		conceptComplexOutAttach.addDescription(new ConceptDescription(desc, Locale.ENGLISH));
-		//
-		//		context.getConceptService().saveConcept(conceptComplexOutAttach);
-		//		ConceptComplexOutAttach = conceptComplexOutAttach;
+		ConceptComplex conceptComplexOutAttach = new ConceptComplex();
+		conceptComplexOutAttach.setHandler(BinaryDataHandler.class.getSimpleName());
+		ConceptName conceptName = new ConceptName("OutOfAttachmentsTestComplex", Locale.ENGLISH);
+		conceptComplexOutAttach.setFullySpecifiedName(conceptName);
+		conceptComplexOutAttach.setPreferredName(conceptName);
+		conceptComplexOutAttach
+		        .setConceptClass(context.getConceptService().getConceptClassByUuid(ConceptClass.QUESTION_UUID));
+		conceptComplexOutAttach
+		        .setDatatype(context.getConceptService().getConceptDatatypeByUuid(ConceptDatatype.COMPLEX_UUID));
+		conceptComplexOutAttach
+		        .addDescription(new ConceptDescription("Out-of-Attachments test concept complex", Locale.ENGLISH));
+		context.getConceptService().saveConcept(conceptComplexOutAttach);
+		ConceptComplexOutAttach = conceptComplexOutAttach;
 	}
 	
 	public Obs getTestComplexObs() throws IOException {
@@ -251,7 +250,13 @@ public class TestHelper {
 	        throws IOException {
 		byte[] randomData = new byte[20];
 		Obs obs = new Obs();
-		obs.setConcept(conceptComplex);
+		
+		//set out-of-Attachment test concept complex
+		obs.setConcept(ConceptComplexOutAttach);
+		
+		// set Attachement concept complex
+		//obs.setConcept(conceptComplex);
+		
 		obs.setObsDatetime(new Date());
 		obs.setPerson(patient);
 		obs.setEncounter(encounter);
@@ -273,7 +278,6 @@ public class TestHelper {
 		
 		Patient patient = Context.getPatientService().getPatient(2);
 		Visit visit = Context.getVisitService().getVisit(1);
-		
 		EncounterService encounterService = Context.getEncounterService();
 		EncounterType encounterType = encounterService.getEncounterType(1);
 		Provider provider = Context.getProviderService().getProvider(1);
@@ -302,4 +306,5 @@ public class TestHelper {
 		}
 		return obsList;
 	}
+	
 }
