@@ -329,9 +329,9 @@ public class TestHelper {
 			
 			// set Attachement concept complex
 			
-			ConceptComplex conceptComplex = context.getConceptService()
-			        .getConceptComplex(obsList.get(0).getConcept().getConceptId());
-			obs.setConcept(conceptComplex);
+			// ConceptComplex conceptComplex = context.getConceptService()
+			// .getConceptComplex(obsList.get(0).getConcept().getConceptId());
+			// obs.setConcept(conceptComplex);
 			
 			obs.setObsDatetime(new Date());
 			obs.setPerson(patient);
