@@ -54,33 +54,14 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAttachments_shouldReturnEncounterAttachments() throws Exception {
 		
-		// Setup
 		List<Obs> complexObsList = testHelper.saveComplexObsForEncounter(2);
-		
 		Obs obs = complexObsList.get(0);
 		Patient patient = obs.getEncounter().getPatient();
 		Encounter encounter = obs.getEncounter();
-		Visit visit = encounter.getVisit();
-		
-		// Creating the Concept Complex Obs relevent to the attachments
-		ConceptComplex conceptComplex = cs.getConceptComplex(obs.getConcept().getConceptId());
-		// call the method in TestHelper.
-		Obs conceptComplexDefaultObs = testHelper.saveComplexObsForEncounterDefault(patient, conceptComplex, encounter);
-		
-		// saving some other obs during the same encounter
-		Obs otherObs = new Obs();
-		otherObs.setConcept(cs.getConcept(3));
-		otherObs.setObsDatetime(new Date());
-		otherObs.setEncounter(encounter);
-		otherObs.setPerson(patient);
-		otherObs.setValueText("Some text value for a test obs.");
-		otherObs = os.saveObs(otherObs, null);
-		Assert.assertNotNull(otherObs.getId());
-		
 		// Replay
 		List<Attachment> actualAttachments = as.getAttachments(patient, encounter, true);
 		
-		// Verify
+		// Verify ( This will map to List<Obs> to List<Attachment> )
 		List<Attachment> expectedAttachments = complexObsList.stream().map(Attachment::new).collect(Collectors.toList());
 		
 		Assert.assertArrayEquals(
@@ -99,20 +80,10 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		Encounter encounter = obs.getEncounter();
 		Visit visit = obs.getEncounter().getVisit();
 		
-		// saving some other obs during the same visit
-		Obs otherObs = new Obs();
-		otherObs.setConcept(cs.getConcept(3));
-		otherObs.setObsDatetime(new Date());
-		otherObs.setEncounter(encounter);
-		otherObs.setPerson(patient);
-		otherObs.setValueText("Some text value for a test obs.");
-		otherObs = os.saveObs(otherObs, null);
-		Assert.assertNotNull(otherObs.getId());
-		
 		// Replay
 		List<Attachment> actualAttachments = as.getAttachments(patient, visit, true);
 		
-		// Verify
+		// Verify ( This will map to List<Obs> to List<Attachment> )
 		List<Attachment> expectedAttachments = complexObsList.stream().map(Attachment::new).collect(Collectors.toList());
 		
 		Assert.assertArrayEquals(
