@@ -54,16 +54,13 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAttachments_shouldReturnEncounterAttachments() throws Exception {
 		
-		List<Obs> complexObsList = testHelper.saveComplexObsForEncounter(2);
-		Obs obs = complexObsList.get(0);
-		Patient patient = obs.getEncounter().getPatient();
-		Encounter encounter = obs.getEncounter();
+		Encounter encounter = testHelper.getTestEncounter();
+		List<Obs> complexObsList = testHelper.saveComplexObs(encounter, 2, 2, false);
+		Patient patient = encounter.getPatient();
 		// Replay
 		List<Attachment> actualAttachments = as.getAttachments(patient, encounter, true);
-		
 		// Verify ( This will map to List<Obs> to List<Attachment> )
 		List<Attachment> expectedAttachments = complexObsList.stream().map(Attachment::new).collect(Collectors.toList());
-		
 		Assert.assertArrayEquals(
 		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
 		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
@@ -81,7 +78,6 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		
 		// Replay
 		List<Attachment> actualAttachments = as.getAttachments(patient, visit, true);
-		
 		// Verify ( This will map to List<Obs> to List<Attachment> )
 		List<Attachment> expectedAttachments = complexObsList.stream().map(Attachment::new).collect(Collectors.toList());
 		
