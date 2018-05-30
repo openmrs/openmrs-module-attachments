@@ -57,9 +57,22 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		Encounter encounter = testHelper.getTestEncounter();
 		List<Obs> complexObsList = testHelper.saveComplexObs(encounter, 2, 2, false);
 		Patient patient = encounter.getPatient();
+
+		{
+			// Createing some other obs ( not complex Obs ) during the same encounter
+			Obs otherObs = new Obs();
+			otherObs.setConcept(cs.getConcept(3));
+			otherObs.setObsDatetime(new Date());
+			otherObs.setEncounter(encounter);
+			otherObs.setPerson(patient);
+			otherObs.setValueText("Some text value for a test obs.");
+			otherObs = os.saveObs(otherObs, null);
+		}
+
 		// Replay
 		List<Attachment> actualAttachments = as.getAttachments(patient, encounter, true);
 		// Verify ( This will map to List<Obs> to List<Attachment> )
+
 		List<Attachment> expectedAttachments = complexObsList.stream().map(Attachment::new).collect(Collectors.toList());
 		Assert.assertArrayEquals(
 		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
