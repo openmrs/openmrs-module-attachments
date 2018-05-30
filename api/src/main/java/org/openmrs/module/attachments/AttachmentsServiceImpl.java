@@ -49,7 +49,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		}
 		List<Encounter> encounterList = new ArrayList<>();
 		encounterList.add(encounter);
-		List<Obs> obs = Context.getObsService().getObservations(personList, encounterList, questionConcepts, null, null,
+		List<Obs> obs = context.getObsService().getObservations(personList, encounterList, questionConcepts, null, null,
 		    null, null, null, null, null, null, includeRetired);
 		for (Obs observation : obs) {
 			if (observation.isComplex()) {
@@ -61,52 +61,23 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	
 	@Override
 	public List<Attachment> getAttachments(Patient patient, Visit visit, boolean includeRetired) {
-		List<Person> personList = new ArrayList<>();
+		List<Visit> visitList = new ArrayList<>();
+		visitList.add(visit);
 		List<Attachment> attachmentsList = new ArrayList<>();
-		personList.add(patient);
-		
-		List<String> conceptComplexList = context.getConceptComplexList();
-		List<Concept> questionConcepts = new ArrayList<>();
-		for (String uuid : conceptComplexList) {
-			Concept concept = cs.getConceptByUuid(uuid);
-			if (concept == null) {
-				log.error("The Concept with UUID " + uuid + " was not found");
-			} else {
-				questionConcepts.add(concept);
-			}
-		}
-		List<Obs> obs = Context.getObsService().getObservations(personList, null, questionConcepts, null, null, null, null,
-		    null, null, null, null, includeRetired);
-		for (Obs observation : obs) {
-			if (observation.getEncounter().getVisit().equals(visit) && observation.isComplex()) {
-				attachmentsList.add(new Attachment(observation));
-			}
+		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, null, null, null, null, null,
+		    null, visitList, includeRetired);
+		for (Encounter encounter : encounters) {
+			attachmentsList.addAll(getAttachments(patient, encounter, includeRetired));
 		}
 		return attachmentsList;
 	}
 	
 	public List<Attachment> getAttachments(Patient patient, boolean includeRetired) {
-		List<Person> personList = new ArrayList<>();
 		List<Attachment> attachmentsList = new ArrayList<>();
-		personList.add(patient);
-		
-		List<String> conceptComplexList = context.getConceptComplexList();
-		List<Concept> questionConcepts = new ArrayList<>();
-		for (String uuid : conceptComplexList) {
-			Concept concept = cs.getConceptByUuid(uuid);
-			if (concept == null) {
-				log.error("The Concept with UUID " + uuid + " was not found");
-			} else {
-				questionConcepts.add(concept);
-			}
-		}
-		List<Obs> obs = Context.getObsService().getObservations(personList, null, questionConcepts, null, null, null, null,
-		    null, null, null, null, includeRetired);
-		
-		for (Obs observation : obs) {
-			if (observation.isComplex()) {
-				attachmentsList.add(new Attachment(observation));
-			}
+		List<Encounter> encounters = context.getEncounterService()
+		        .getEncountersByPatient(patient.getPatientIdentifier().toString(), includeRetired);
+		for (Encounter encounter : encounters) {
+			attachmentsList.addAll(getAttachments(patient, encounter, includeRetired));
 		}
 		return attachmentsList;
 	}
