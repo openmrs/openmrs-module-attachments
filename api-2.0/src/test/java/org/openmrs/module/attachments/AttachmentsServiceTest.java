@@ -55,9 +55,9 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	public void getAttachments_shouldReturnEncounterAttachments() throws Exception {
 		
 		Encounter encounter = testHelper.getTestEncounter();
-		List<Obs> complexObsList = testHelper.saveComplexObs(encounter, 2, 2, false);
+		List<Obs> complexObsList = testHelper.saveComplexObs(encounter, 2, 2);
 		Patient patient = encounter.getPatient();
-
+		
 		{
 			// Createing some other obs ( not complex Obs ) during the same encounter
 			Obs otherObs = new Obs();
@@ -68,11 +68,10 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 			otherObs.setValueText("Some text value for a test obs.");
 			otherObs = os.saveObs(otherObs, null);
 		}
-
+		
 		// Replay
 		List<Attachment> actualAttachments = as.getAttachments(patient, encounter, true);
 		// Verify ( This will map to List<Obs> to List<Attachment> )
-
 		List<Attachment> expectedAttachments = complexObsList.stream().map(Attachment::new).collect(Collectors.toList());
 		Assert.assertArrayEquals(
 		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
@@ -94,9 +93,8 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		// Verify ( This will map to List<Obs> to List<Attachment> )
 		List<Attachment> expectedAttachments = complexObsList.stream().map(Attachment::new).collect(Collectors.toList());
 		
-		// Assert.assertArrayEquals(
-		// expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
-		// actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
-		Assert.assertEquals(expectedAttachments.size(), actualAttachments.size());
+		 Assert.assertArrayEquals(
+		 expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
+		 actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
 	}
 }
