@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.openmrs.Concept;
@@ -128,6 +129,7 @@ public class TestHelper {
 		context.getAdministrationService().saveGlobalProperty(
 		    new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, AttachmentsConstants.ENCOUNTER_TYPE_UUID));
 		
+		// Create a out of attachment complex concept.
 		if (context.getConceptService().getConceptByName("OutOfAttachmentsTestComplex") == null) {
 			ConceptComplex conceptComplex = new ConceptComplex();
 			conceptComplex.setHandler(BinaryDataHandler.class.getSimpleName());
@@ -139,11 +141,15 @@ public class TestHelper {
 			conceptComplex.addDescription(new ConceptDescription("Out-of-Attachments test concept complex", Locale.ENGLISH));
 			context.getConceptService().saveConcept(conceptComplex);
 			otherConceptComplex = conceptComplex;
-			// System.out.println(conceptComplexOutAttach.getUuid());
 			
 		}
 	}
 	
+	/**
+	 * Boilerplate method to get an test encounter
+	 *
+	 * @return Encounter object.
+	 */
 	public Encounter getTestEncounter() throws IOException {
 		Patient patient = Context.getPatientService().getPatient(2);
 		Visit visit = Context.getVisitService().getVisit(1);
@@ -241,31 +247,34 @@ public class TestHelper {
 	}
 	
 	/**
-	 * Boilerplate method to save a collection of complex obs.
+	 * Boilerplate method to save a collection of complex obs based on the encounter.
 	 *
-	 * @param count The number of the complex obs to be saved.
+	 * @param encounter target encounter for save the complex obs.
+	 * @param count The number of the attachment-complex obs to be saved.
+	 * @param otherCount The number of the other complex obs to be saved.
+	 * @return List of saved attachment-complex obs.
 	 */
-	public List<Obs> saveComplexObs(Encounter encounter, int count, int otherCount) throws IOException {
+	public List<Attachment> saveComplexObs(Encounter encounter, int count, int otherCount) throws IOException {
 		init();
 		
-		// Creating the list of Complex Obs relevant to the attachment module (
-		// Attachments ) using ComplexObsSaver class.
-		List<Obs> obsList = new ArrayList<>();
+		List<Attachment> obsList = new ArrayList<>();
 		byte[] randomData = new byte[20];
 		Patient patient = encounter.getPatient();
 		Visit visit = encounter.getVisit();
+		
+		// Saves a complex obs as if they had been saved relevant to the attachment.
 		for (int i = 0; i < count; i++) {
 			String fileCaption = RandomStringUtils.randomAlphabetic(12);
 			new Random().nextBytes(randomData);
 			MockMultipartFile multipartRandomFile = new MockMultipartFile(String.valueOf(i), String.valueOf(i),
 			        "application/octet-stream", randomData);
-			obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartRandomFile,
-			    ValueComplex.INSTRUCTIONS_DEFAULT));
+			obsList.add(new Attachment(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption,
+			    multipartRandomFile, ValueComplex.INSTRUCTIONS_DEFAULT)));
 		}
+		
+		// Saves a complex obs as if they had been saved outside of Attachments
 		for (int i = 0; i < otherCount; i++) {
-			// Creating the complex Obs not relevant to the attachment module
 			Obs obs = new Obs();
-			// set out-of-Attachment test concept complex
 			obs.setConcept(otherConceptComplex);
 			obs.setObsDatetime(new Date());
 			obs.setPerson(patient);
@@ -280,78 +289,6 @@ public class TestHelper {
 			obs = context.getObsService().saveObs(obs, null);
 			
 		}
-		return obsList;
-	}
-	
-	public List<Obs> saveComplexObsForVisit(int count) throws IOException {
-		init();
-		
-		List<Obs> obsList = new ArrayList<>();
-		byte[] randomData = new byte[20];
-		
-		Patient patient = context.getPatientService().getPatient(2);
-		Visit visit = context.getVisitService().getVisit(1);
-		EncounterService encounterService = context.getEncounterService();
-		EncounterType encounterType = encounterService.getEncounterType(1);
-		Provider provider = context.getProviderService().getProvider(1);
-		
-		context.getAdministrationService().saveGlobalProperty(
-		    new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, encounterType.getUuid()));
-		
-		Encounter encounter = context.getAttachmentEncounter(patient, visit, provider);
-		Encounter encounter2 = context.getAttachmentEncounter(patient, visit, provider);
-		
-		// saving first obs different from the others
-		String fileCaption = RandomStringUtils.randomAlphabetic(12);
-		new Random().nextBytes(randomData);
-		MockMultipartFile multipartRandomFile = new MockMultipartFile(String.valueOf(0), String.valueOf(0),
-		        "application/octet-stream", randomData);
-		obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartRandomFile,
-		    ValueComplex.INSTRUCTIONS_DEFAULT));
-		
-		for (int i = 1; i < count; i++) {
-			fileCaption = RandomStringUtils.randomAlphabetic(12);
-			new Random().nextBytes(randomData);
-			multipartRandomFile = new MockMultipartFile(String.valueOf(i), String.valueOf(i), "application/octet-stream",
-			        randomData);
-			obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter2, fileCaption, multipartRandomFile,
-			    ValueComplex.INSTRUCTIONS_DEFAULT));
-		}
-		{
-			// Creating the complex Obs not relevent / relevent to the attachment module
-			// during the same visit.
-			Obs obs = new Obs();
-			// set out-of-Attachment test concept complex
-			obs.setConcept(otherConceptComplex);
-			
-			// // set Attachement concept complex
-			// ConceptComplex conceptComplex = context.getConceptService()
-			// .getConceptComplex(obsList.get(0).getConcept().getConceptId());
-			// obs.setConcept(conceptComplex);
-			
-			obs.setObsDatetime(new Date());
-			obs.setPerson(patient);
-			obs.setEncounter(encounter);
-			obs.setComplexData(
-			    complexDataHelper.build(ValueComplex.INSTRUCTIONS_DEFAULT, multipartRandomFile.getOriginalFilename(),
-			        multipartRandomFile.getBytes(), multipartRandomFile.getContentType()).asComplexData());
-			obs = context.getObsService().saveObs(obs, null);
-			
-			// Add complex obs to ObsList when Obs is created using attachment concept
-			// complex
-			// obsList.add(obs);
-		}
-		{
-			// Create some other Obs ( not complex Obs ) during the same visit .
-			Obs otherObs = new Obs();
-			otherObs.setConcept(context.getConceptService().getConcept(3));
-			otherObs.setObsDatetime(new Date());
-			otherObs.setEncounter(encounter2);
-			otherObs.setPerson(patient);
-			otherObs.setValueText("Some text value for a test obs.");
-			otherObs = context.getObsService().saveObs(otherObs, null);
-		}
-		
 		return obsList;
 	}
 }
