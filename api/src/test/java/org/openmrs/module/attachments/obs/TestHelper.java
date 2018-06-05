@@ -129,7 +129,7 @@ public class TestHelper {
 		context.getAdministrationService().saveGlobalProperty(
 		    new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, AttachmentsConstants.ENCOUNTER_TYPE_UUID));
 		
-		// Create a out of attachment complex concept.
+		// Create a concept complex that is not managed by Attachments
 		if (context.getConceptService().getConceptByName("OutOfAttachmentsTestComplex") == null) {
 			ConceptComplex conceptComplex = new ConceptComplex();
 			conceptComplex.setHandler(BinaryDataHandler.class.getSimpleName());

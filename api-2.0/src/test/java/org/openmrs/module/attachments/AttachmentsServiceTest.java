@@ -68,23 +68,24 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAttachments_shouldReturnEncounterAttachments() throws Exception {
 		
+		// setup
 		Encounter encounter = testHelper.getTestEncounter();
 		List<Attachment> expectedAttachments = testHelper.saveComplexObs(encounter, 2, 2);
 		Patient patient = encounter.getPatient();
 		
-		{
-			// Createing some other obs ( not complex Obs ) during the same encounter
-			Obs otherObs = new Obs();
-			otherObs.setConcept(cs.getConcept(3));
-			otherObs.setObsDatetime(new Date());
-			otherObs.setEncounter(encounter);
-			otherObs.setPerson(patient);
-			otherObs.setValueText("Some text value for a test obs.");
-			otherObs = os.saveObs(otherObs, null);
-		}
+		// adding a non-complex obs
+		Obs otherObs = new Obs();
+		otherObs.setConcept(cs.getConcept(3));
+		otherObs.setObsDatetime(new Date());
+		otherObs.setEncounter(encounter);
+		otherObs.setPerson(patient);
+		otherObs.setValueText("Some text value for a test obs.");
+		otherObs = os.saveObs(otherObs, null);
 		
+		// replay
 		List<Attachment> actualAttachments = as.getAttachments(patient, encounter, true);
 		
+		// verify
 		Assert.assertArrayEquals(
 		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
 		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
@@ -93,20 +94,41 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAttachments_shouldReturnVisitAttachments() throws Exception {
 		
-		Encounter encounter = testHelper.getTestEncounter();
-		Visit visit = encounter.getVisit();
-		Patient patient = encounter.getPatient();
+		// setup
+		Encounter encounter1 = testHelper.getTestEncounter();
+		Visit visit = encounter1.getVisit();
+		Patient patient = encounter1.getPatient();
 		Provider provider = prs.getProvider(1);
 		
 		Encounter encounter2 = context.getAttachmentEncounter(patient, visit, provider);
 		Encounter encounter3 = context.getAttachmentEncounter(patient, visit, provider);
 		
-		List<Attachment> expectedAttachments = testHelper.saveComplexObs(encounter, 1, 1);
+		// adding a non-complex obs from encounter1
+		Obs otherObs1 = new Obs();
+		otherObs1.setConcept(cs.getConcept(3));
+		otherObs1.setObsDatetime(new Date());
+		otherObs1.setEncounter(encounter1);
+		otherObs1.setPerson(patient);
+		otherObs1.setValueText("Some text value for a test obs.");
+		otherObs1 = os.saveObs(otherObs1, null);
+		
+		// adding a non-complex obs from encounter2
+		Obs otherObs2 = new Obs();
+		otherObs2.setConcept(cs.getConcept(3));
+		otherObs2.setObsDatetime(new Date());
+		otherObs2.setEncounter(encounter2);
+		otherObs2.setPerson(patient);
+		otherObs2.setValueText("Some text value for a test obs.");
+		otherObs2 = os.saveObs(otherObs2, null);
+		
+		List<Attachment> expectedAttachments = testHelper.saveComplexObs(encounter1, 1, 1);
 		expectedAttachments.addAll(testHelper.saveComplexObs(encounter2, 2, 2));
 		expectedAttachments.addAll(testHelper.saveComplexObs(encounter3, 3, 3));
 		
+		// replay
 		List<Attachment> actualAttachments = as.getAttachments(patient, visit, true);
 		
+		// verify
 		Assert.assertArrayEquals(
 		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
 		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());

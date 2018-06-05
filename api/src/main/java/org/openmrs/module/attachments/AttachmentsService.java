@@ -18,4 +18,6 @@ public interface AttachmentsService {
 	
 	List<Attachment> getAttachments(Patient patient, Visit visit, boolean includeRetired);
 	
+	List<Attachment> getIsolatedAttachments(Patient patient, boolean includeRetired);
+	
 }
