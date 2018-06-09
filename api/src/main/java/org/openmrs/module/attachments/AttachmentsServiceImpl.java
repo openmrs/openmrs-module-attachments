@@ -93,7 +93,9 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			
 			for (Obs observation : obs) {
 				if (observation.isComplex()) {
-					attachments.add(new Attachment(observation));
+					if (observation.getEncounter() == null) {
+						attachments.add(new Attachment(observation));
+					}
 				}
 			}
 		}

@@ -18,15 +18,19 @@ import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.TestHelper;
+import org.openmrs.module.attachments.obs.ValueComplex;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
@@ -127,6 +131,53 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		
 		// replay
 		List<Attachment> actualAttachments = as.getAttachments(patient, visit, true);
+		
+		// verify
+		Assert.assertArrayEquals(
+		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
+		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
+	}
+	
+	@Test
+	public void getAttachments_shouldReturnIsolatedAttachments() throws Exception {
+		
+		// setup
+		Encounter encounter = testHelper.getTestEncounter();
+		List<Attachment> attachments = testHelper.saveComplexObs(encounter, 1, 1);
+		Patient patient = ps.getPatient(2);
+		List<Attachment> expectedAttachments = new ArrayList<>();
+		
+		// Saves a complex obs as if they had been saved relevant to the attachments not associated with any visits or encounters.
+		for (int i = 0; i < 2; i++) {
+			Obs obs = new Obs();
+			ConceptComplex conceptComplex = context.getConceptService()
+			        .getConceptComplex(attachments.get(0).getObs().getConcept().getConceptId());
+			obs.setConcept(conceptComplex);
+			byte[] randomData = new byte[20];
+			new Random().nextBytes(randomData);
+			MockMultipartFile multipartRandomFile = new MockMultipartFile("1", "1", "application/octet-stream", randomData);
+			obs.setComplexData(
+			    context.complexDataHelper.build(ValueComplex.INSTRUCTIONS_DEFAULT, multipartRandomFile.getOriginalFilename(),
+			        multipartRandomFile.getBytes(), multipartRandomFile.getContentType()).asComplexData());
+			obs.setObsDatetime(new Date());
+			obs.setPerson(patient);
+			obs.setValueText("Some text value for a test obs.");
+			obs = os.saveObs(obs, null);
+			expectedAttachments.add(new Attachment(obs));
+		}
+		
+		// Saves a complex obs as if they had been saved outside to the attachments not associated with any visits or encounters.
+		for (int j = 0; j < 2; j++) {
+			Obs otherObs = new Obs();
+			otherObs.setConcept(cs.getConcept(3));
+			otherObs.setObsDatetime(new Date());
+			otherObs.setPerson(patient);
+			otherObs.setValueText("Some text value for a test obs.");
+			otherObs = os.saveObs(otherObs, null);
+		}
+		
+		// replay
+		List<Attachment> actualAttachments = as.getIsolatedAttachments(patient, true);
 		
 		// verify
 		Assert.assertArrayEquals(
