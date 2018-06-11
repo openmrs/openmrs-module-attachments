@@ -69,6 +69,10 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	@Qualifier("obsService")
 	private ObsService os;
 	
+	@Autowired
+	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER)
+	private ComplexObsSaver obsSaver;
+	
 	@Test
 	public void getAttachments_shouldReturnEncounterAttachments() throws Exception {
 		
@@ -143,36 +147,28 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		
 		// setup
 		Encounter encounter = testHelper.getTestEncounter();
-		List<Attachment> attachments = testHelper.saveComplexObs(encounter, 1, 1);
+		testHelper.saveComplexObs(encounter, 3, 2);
 		Patient patient = ps.getPatient(2);
-		List<Attachment> expectedAttachments = new ArrayList<>();
 		
-		// Saves a complex obs as if they had been saved relevant to the attachments not associated with any visits or encounters.
+		// attachments not bound to any visits/encounters
+		List<Attachment> expectedAttachments = new ArrayList<>();
 		for (int i = 0; i < 2; i++) {
-			Obs obs = new Obs();
-			ConceptComplex conceptComplex = context.getConceptService()
-			        .getConceptComplex(attachments.get(0).getObs().getConcept().getConceptId());
-			obs.setConcept(conceptComplex);
 			byte[] randomData = new byte[20];
 			new Random().nextBytes(randomData);
+			
 			MockMultipartFile multipartRandomFile = new MockMultipartFile("1", "1", "application/octet-stream", randomData);
-			obs.setComplexData(
-			    context.complexDataHelper.build(ValueComplex.INSTRUCTIONS_DEFAULT, multipartRandomFile.getOriginalFilename(),
-			        multipartRandomFile.getBytes(), multipartRandomFile.getContentType()).asComplexData());
-			obs.setObsDatetime(new Date());
-			obs.setPerson(patient);
-			obs.setValueText("Some text value for a test obs.");
-			obs = os.saveObs(obs, null);
+			Obs obs = obsSaver.saveOtherAttachment(null, patient, null, "File caption #" + i + 1, multipartRandomFile,
+			    ValueComplex.INSTRUCTIONS_DEFAULT);
 			expectedAttachments.add(new Attachment(obs));
 		}
 		
-		// Saves a complex obs as if they had been saved outside to the attachments not associated with any visits or encounters.
-		for (int j = 0; j < 2; j++) {
+		// adding some non-complex obs
+		for (int i = 0; i < 2; i++) {
 			Obs otherObs = new Obs();
 			otherObs.setConcept(cs.getConcept(3));
 			otherObs.setObsDatetime(new Date());
 			otherObs.setPerson(patient);
-			otherObs.setValueText("Some text value for a test obs.");
+			otherObs.setValueText("Some text value for a test obs # " + i + 1);
 			otherObs = os.saveObs(otherObs, null);
 		}
 		
