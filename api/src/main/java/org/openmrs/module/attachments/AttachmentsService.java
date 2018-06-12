@@ -14,7 +14,8 @@ import java.util.List;
 public interface AttachmentsService {
 	
 	/**
-	 * Get a patient's attachments that are associated with encounters.
+	 * Get a patient's attachments including attachments that are not associated with any visits or
+	 * encounters.
 	 *
 	 * @param includeRetired Specifies whether the underlying complex obs that are fetched should
 	 *            include retired ones or not.
@@ -43,12 +44,14 @@ public interface AttachmentsService {
 	List<Attachment> getAttachments(Patient patient, Visit visit, boolean includeRetired);
 	
 	/**
-	 * Get a patient's attachments that are not associated with any visits or encounters.
+	 * Get a patient's attachments.
 	 *
 	 * @param includeRetired Specifies whether the underlying complex obs that are fetched should
 	 *            include retired ones or not.
+	 * @param includeIsolated Specifies whether the underlying attachments that are fetched should
+	 *            include attachments that are not associated with any visits or encounters.
 	 * @throws APIException if no concepts complex were configured or found to query attachments
 	 */
-	List<Attachment> getIsolatedAttachments(Patient patient, boolean includeRetired);
+	List<Attachment> getAttachments(Patient patient, boolean includeIsolated, boolean includeRetired);
 	
 }

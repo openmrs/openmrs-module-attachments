@@ -143,15 +143,14 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void getAttachments_shouldReturnIsolatedAttachments() throws Exception {
+	public void getAttachments_shouldReturnAllAttachments() throws Exception {
 		
 		// setup
 		Encounter encounter = testHelper.getTestEncounter();
-		testHelper.saveComplexObs(encounter, 3, 2);
+		List<Attachment> expectedAttachments = testHelper.saveComplexObs(encounter, 3, 2);
 		Patient patient = ps.getPatient(2);
 		
 		// attachments not bound to any visits/encounters
-		List<Attachment> expectedAttachments = new ArrayList<>();
 		for (int i = 0; i < 2; i++) {
 			byte[] randomData = new byte[20];
 			new Random().nextBytes(randomData);
@@ -173,7 +172,44 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		}
 		
 		// replay
-		List<Attachment> actualAttachments = as.getIsolatedAttachments(patient, true);
+		List<Attachment> actualAttachments = as.getAttachments(patient, true);
+		
+		// verify
+		Assert.assertArrayEquals(
+		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
+		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
+	}
+	
+	@Test
+	public void getAttachments_shouldNotReturnIsolatedAttachments() throws Exception {
+		
+		// setup
+		Encounter encounter = testHelper.getTestEncounter();
+		List<Attachment> expectedAttachments = testHelper.saveComplexObs(encounter, 3, 2);
+		Patient patient = ps.getPatient(2);
+		
+		// attachments not bound to any visits/encounters
+		for (int i = 0; i < 2; i++) {
+			byte[] randomData = new byte[20];
+			new Random().nextBytes(randomData);
+			
+			MockMultipartFile multipartRandomFile = new MockMultipartFile("1", "1", "application/octet-stream", randomData);
+			Obs obs = obsSaver.saveOtherAttachment(null, patient, null, "File caption #" + i + 1, multipartRandomFile,
+			    ValueComplex.INSTRUCTIONS_DEFAULT);
+		}
+		
+		// adding some non-complex obs
+		for (int i = 0; i < 2; i++) {
+			Obs otherObs = new Obs();
+			otherObs.setConcept(cs.getConcept(3));
+			otherObs.setObsDatetime(new Date());
+			otherObs.setPerson(patient);
+			otherObs.setValueText("Some text value for a test obs # " + i + 1);
+			otherObs = os.saveObs(otherObs, null);
+		}
+		
+		// replay
+		List<Attachment> actualAttachments = as.getAttachments(patient, false, true);
 		
 		// verify
 		Assert.assertArrayEquals(

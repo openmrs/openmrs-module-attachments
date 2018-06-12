@@ -72,17 +72,13 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		return attachments;
 	}
 	
+	@Override
 	public List<Attachment> getAttachments(Patient patient, boolean includeRetired) {
-		List<Attachment> attachments = new ArrayList<>();
-		List<Encounter> encounters = context.getEncounterService()
-		        .getEncountersByPatient(patient.getPatientIdentifier().toString(), includeRetired);
-		for (Encounter encounter : encounters) {
-			attachments.addAll(getAttachments(patient, encounter, includeRetired));
-		}
-		return attachments;
+		return getAttachments(patient, true, includeRetired);
 	}
 	
-	public List<Attachment> getIsolatedAttachments(Patient patient, boolean includeRetired) {
+	@Override
+	public List<Attachment> getAttachments(Patient patient, boolean includeIsolated, boolean includeRetired) {
 		List<Person> persons = new ArrayList<>();
 		List<Attachment> attachments = new ArrayList<>();
 		List<Concept> questionConcepts = getAttachmentConcepts();
@@ -93,7 +89,9 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			
 			for (Obs observation : obs) {
 				if (observation.isComplex()) {
-					if (observation.getEncounter() == null) {
+					if (includeIsolated) {
+						attachments.add(new Attachment(observation));
+					} else if (observation.getEncounter() != null) {
 						attachments.add(new Attachment(observation));
 					}
 				}
