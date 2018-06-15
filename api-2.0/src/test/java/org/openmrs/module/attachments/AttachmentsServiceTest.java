@@ -1,6 +1,7 @@
 package org.openmrs.module.attachments;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -215,5 +216,85 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		Assert.assertArrayEquals(
 		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
 		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
+	}
+	
+	@Test
+	public void getAttachments_shouldReturnIsolatedAttachments() throws Exception {
+		
+		// setup
+		Encounter encounter = testHelper.getTestEncounter();
+		testHelper.saveComplexObs(encounter, 3, 2);
+		Patient patient = ps.getPatient(2);
+		
+		// attachments not bound to any visits/encounters
+		List<Attachment> expectedAttachments = new ArrayList<>();
+		for (int i = 0; i < 2; i++) {
+			byte[] randomData = new byte[20];
+			new Random().nextBytes(randomData);
+			
+			MockMultipartFile multipartRandomFile = new MockMultipartFile(String.valueOf(i), String.valueOf(i),
+			        "application/octet-stream", randomData);
+			Obs obs = obsSaver.saveOtherAttachment(null, patient, null, "File caption #" + i + 1, multipartRandomFile,
+			    ValueComplex.INSTRUCTIONS_DEFAULT);
+			expectedAttachments.add(new Attachment(obs));
+		}
+		
+		// adding some non-complex obs
+		for (int i = 0; i < 2; i++) {
+			Obs otherObs = new Obs();
+			otherObs.setConcept(cs.getConcept(3));
+			otherObs.setObsDatetime(new Date());
+			otherObs.setPerson(patient);
+			otherObs.setValueText("Some text value for a test obs # " + i + 1);
+			otherObs = os.saveObs(otherObs, null);
+		}
+		
+		// replay
+		List<Attachment> actualAttachments = as.getIsolatedAttachments(patient, true);
+		
+		// verify
+		Assert.assertArrayEquals(
+		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
+		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
+	}
+	
+	@Test
+	public void testIncludeIsolatedParameter() throws Exception {
+		
+		// setup
+		Encounter encounter = testHelper.getTestEncounter();
+		testHelper.saveComplexObs(encounter, 3, 2);
+		Patient patient = ps.getPatient(2);
+		
+		// attachments not bound to any visits/encounters
+		for (int i = 0; i < 2; i++) {
+			byte[] randomData = new byte[20];
+			new Random().nextBytes(randomData);
+			
+			MockMultipartFile multipartRandomFile = new MockMultipartFile("1", "1", "application/octet-stream", randomData);
+			Obs obs = obsSaver.saveOtherAttachment(null, patient, null, "File caption #" + i + 1, multipartRandomFile,
+			    ValueComplex.INSTRUCTIONS_DEFAULT);
+		}
+		
+		// adding some non-complex obs
+		for (int i = 0; i < 2; i++) {
+			Obs otherObs = new Obs();
+			otherObs.setConcept(cs.getConcept(3));
+			otherObs.setObsDatetime(new Date());
+			otherObs.setPerson(patient);
+			otherObs.setValueText("Some text value for a test obs # " + i + 1);
+			otherObs = os.saveObs(otherObs, null);
+		}
+		
+		List<Attachment> expectedAllAttachments = as.getAttachments(patient, false, true);
+		expectedAllAttachments.addAll(as.getIsolatedAttachments(patient, true));
+		
+		// replay
+		List<Attachment> actualAllAttachments = as.getAttachments(patient, true, true);
+		
+		// verify
+		Assert.assertArrayEquals(
+		    expectedAllAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
+		    actualAllAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
 	}
 }

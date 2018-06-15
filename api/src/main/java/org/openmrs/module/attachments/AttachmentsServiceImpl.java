@@ -104,6 +104,31 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		return attachments;
 	}
 	
+	@Override
+	public List<Attachment> getIsolatedAttachments(Patient patient, boolean includeRetired) {
+		List<Person> persons = new ArrayList<>();
+		List<Attachment> attachments = new ArrayList<>();
+		List<Concept> questionConcepts = getAttachmentConcepts();
+		persons.add(patient);
+		try {
+			List<Obs> obs = context.getObsService().getObservations(persons, null, questionConcepts, null, null, null, null,
+			    null, null, null, null, includeRetired);
+			
+			for (Obs observation : obs) {
+				if (observation.isComplex()) {
+					if (observation.getEncounter() == null) {
+						attachments.add(new Attachment(observation));
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			throw new APIException("No concepts complex were configured or found to query attachments.", e);
+		}
+		
+		return attachments;
+	}
+	
 	// Get list of attachment complex concepts.
 	private List<Concept> getAttachmentConcepts() {
 		List<String> conceptComplexes = context.getConceptComplexList();

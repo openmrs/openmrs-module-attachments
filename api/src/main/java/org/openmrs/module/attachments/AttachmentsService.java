@@ -54,4 +54,13 @@ public interface AttachmentsService {
 	 */
 	List<Attachment> getAttachments(Patient patient, boolean includeIsolated, boolean includeRetired);
 	
+	/**
+	 * Get a patient's attachments that are not associated with any visits or encounters.
+	 *
+	 * @param includeRetired Specifies whether the underlying complex obs that are fetched should
+	 *            include retired ones or not.
+	 * @throws APIException if no concepts complex were configured or found to query attachments
+	 */
+	List<Attachment> getIsolatedAttachments(Patient patient, boolean includeRetired);
+	
 }
