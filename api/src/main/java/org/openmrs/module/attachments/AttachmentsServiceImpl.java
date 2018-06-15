@@ -1,5 +1,8 @@
 package org.openmrs.module.attachments;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -8,66 +11,41 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.Visit;
-
 import org.openmrs.api.APIException;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.context.Context;
-
 import org.openmrs.module.attachments.obs.Attachment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.util.CollectionUtils;
 
 public class AttachmentsServiceImpl implements AttachmentsService {
 	
 	private final Log log = LogFactory.getLog(getClass());
 	
+	protected final static String NON_COMPLEX_OBS_ERR = "A non-complex obs was returned while fetching attachments, are the concepts complex configured properly?";
+	
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
-	private AttachmentsContext context;
-	
-	@Autowired
-	@Qualifier("conceptService")
-	private ConceptService cs;
+	private AttachmentsContext ctx;
 	
 	@Override
-	public List<Attachment> getAttachments(Patient patient, Encounter encounter, boolean includeRetired) {
-		
+	public List<Attachment> getAttachments(Patient patient, boolean includeIsolated, boolean includeRetired) {
 		List<Person> persons = new ArrayList<>();
-		List<Attachment> attachments = new ArrayList<>();
-		List<Encounter> encounters = new ArrayList<>();
 		List<Concept> questionConcepts = getAttachmentConcepts();
 		persons.add(patient);
-		encounters.add(encounter);
-		try {
-			List<Obs> obs = context.getObsService().getObservations(persons, encounters, questionConcepts, null, null, null,
-			    null, null, null, null, null, includeRetired);
-			
-			for (Obs observation : obs) {
-				if (observation.isComplex()) {
-					attachments.add(new Attachment(observation));
-				}
-			}
-		}
-		catch (Exception e) {
-			throw new APIException("No concepts complex were configured or found to query attachments.", e);
-		}
 		
-		return attachments;
-	}
-	
-	@Override
-	public List<Attachment> getAttachments(Patient patient, Visit visit, boolean includeRetired) {
-		List<Visit> visits = new ArrayList<>();
+		List<Obs> obsList = ctx.getObsService().getObservations(persons, null, questionConcepts, null, null, null, null,
+		    null, null, null, null, includeRetired);
+		
 		List<Attachment> attachments = new ArrayList<>();
-		visits.add(visit);
-		List<Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, null, null, null, null, null,
-		    null, visits, includeRetired);
-		for (Encounter encounter : encounters) {
-			attachments.addAll(getAttachments(patient, encounter, includeRetired));
+		for (Obs obs : obsList) {
+			if (!obs.isComplex()) {
+				throw new APIException(NON_COMPLEX_OBS_ERR);
+			}
+			if (includeIsolated) {
+				attachments.add(new Attachment(obs));
+			} else if (obs.getEncounter() != null) {
+				attachments.add(new Attachment(obs));
+			}
 		}
 		return attachments;
 	}
@@ -78,43 +56,75 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	}
 	
 	@Override
-	public List<Attachment> getAttachments(Patient patient, boolean includeIsolated, boolean includeRetired) {
+	public List<Attachment> getIsolatedAttachments(Patient patient, boolean includeRetired) {
 		List<Person> persons = new ArrayList<>();
-		List<Attachment> attachments = new ArrayList<>();
 		List<Concept> questionConcepts = getAttachmentConcepts();
 		persons.add(patient);
-		try {
-			List<Obs> obs = context.getObsService().getObservations(persons, null, questionConcepts, null, null, null, null,
-			    null, null, null, null, includeRetired);
-			
-			for (Obs observation : obs) {
-				if (observation.isComplex()) {
-					if (includeIsolated) {
-						attachments.add(new Attachment(observation));
-					} else if (observation.getEncounter() != null) {
-						attachments.add(new Attachment(observation));
-					}
-				}
+		
+		List<Obs> obsList = ctx.getObsService().getObservations(persons, null, questionConcepts, null, null, null, null,
+		    null, null, null, null, includeRetired);
+		
+		List<Attachment> attachments = new ArrayList<>();
+		for (Obs obs : obsList) {
+			if (!obs.isComplex()) {
+				throw new APIException(NON_COMPLEX_OBS_ERR);
+			}
+			if (obs.getEncounter() == null) {
+				attachments.add(new Attachment(obs));
 			}
 		}
-		catch (Exception e) {
-			throw new APIException("No concepts complex were configured or found to query attachments.", e);
-		}
-		
 		return attachments;
 	}
 	
-	// Get list of attachment complex concepts.
-	private List<Concept> getAttachmentConcepts() {
-		List<String> conceptComplexes = context.getConceptComplexList();
+	@Override
+	public List<Attachment> getAttachments(Patient patient, Encounter encounter, boolean includeRetired) {
+		List<Person> persons = new ArrayList<>();
+		List<Encounter> encounters = new ArrayList<>();
+		List<Concept> questionConcepts = getAttachmentConcepts();
+		persons.add(patient);
+		encounters.add(encounter);
+		
+		List<Obs> obsList = ctx.getObsService().getObservations(persons, encounters, questionConcepts, null, null, null,
+		    null, null, null, null, null, includeRetired);
+		
+		List<Attachment> attachments = new ArrayList<>();
+		for (Obs obs : obsList) {
+			if (!obs.isComplex()) {
+				throw new APIException(NON_COMPLEX_OBS_ERR);
+			}
+			attachments.add(new Attachment(obs));
+		}
+		return attachments;
+	}
+	
+	@Override
+	public List<Attachment> getAttachments(Patient patient, final Visit visit, boolean includeRetired) {
+		List<Visit> visits = new ArrayList<>();
+		visits.add(visit);
+		List<Encounter> encounters = ctx.getEncounterService().getEncounters(patient, null, null, null, null, null, null,
+		    null, visits, includeRetired);
+		
+		List<Attachment> attachments = new ArrayList<>();
+		for (Encounter encounter : encounters) {
+			attachments.addAll(getAttachments(patient, encounter, includeRetired));
+		}
+		return attachments;
+	}
+	
+	// Get list of attachment complex concepts
+	protected List<Concept> getAttachmentConcepts() {
+		List<String> conceptsComplex = ctx.getConceptComplexList();
 		List<Concept> questionConcepts = new ArrayList<>();
-		for (String uuid : conceptComplexes) {
-			Concept concept = cs.getConceptByUuid(uuid);
+		for (String uuid : conceptsComplex) {
+			Concept concept = ctx.getConceptService().getConceptByUuid(uuid);
 			if (concept == null) {
 				log.error("The Concept with UUID " + uuid + " was not found");
 			} else {
 				questionConcepts.add(concept);
 			}
+		}
+		if (CollectionUtils.isEmpty(questionConcepts)) {
+			log.warn("No concepts complex are configured to fetch attachments.");
 		}
 		return questionConcepts;
 	}

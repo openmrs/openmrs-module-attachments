@@ -1,16 +1,13 @@
 package org.openmrs.module.attachments;
 
+import java.util.List;
+
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.module.attachments.obs.Attachment;
 
-import java.util.List;
-
-/**
- * Used for managing attachments
- */
 public interface AttachmentsService {
 	
 	/**
@@ -19,9 +16,29 @@ public interface AttachmentsService {
 	 *
 	 * @param includeRetired Specifies whether the underlying complex obs that are fetched should
 	 *            include retired ones or not.
-	 * @throws APIException if no concepts complex were configured or found to query attachments
+	 * @throws APIException if non-complex obs are mistakenly returned
 	 */
 	List<Attachment> getAttachments(Patient patient, boolean includeRetired);
+	
+	/**
+	 * Get a patient's attachments.
+	 *
+	 * @param includeRetired Specifies whether the underlying complex obs that are fetched should
+	 *            include retired ones or not.
+	 * @param includeIsolated Specifies whether the underlying attachments that are fetched should
+	 *            include attachments that are not associated with any visits or encounters.
+	 * @throws APIException if non-complex obs are mistakenly returned
+	 */
+	List<Attachment> getAttachments(Patient patient, boolean includeIsolated, boolean includeRetired);
+	
+	/**
+	 * Get a patient's attachments that are not associated with any visits or encounters.
+	 *
+	 * @param includeRetired Specifies whether the underlying complex obs that are fetched should
+	 *            include retired ones or not.
+	 * @throws APIException if non-complex obs are mistakenly returned
+	 */
+	List<Attachment> getIsolatedAttachments(Patient patient, boolean includeRetired);
 	
 	/**
 	 * Get a patient's attachments that are associated with a specified encounter.
@@ -29,7 +46,7 @@ public interface AttachmentsService {
 	 * @param encounter the encounter which attachment to get
 	 * @param includeRetired Specifies whether the underlying complex obs that are fetched should
 	 *            include retired ones or not.
-	 * @throws APIException if no concepts complex were configured or found to query attachments
+	 * @throws APIException if non-complex obs are mistakenly returned
 	 */
 	List<Attachment> getAttachments(Patient patient, Encounter encounter, boolean includeRetired);
 	
@@ -39,19 +56,7 @@ public interface AttachmentsService {
 	 * @param visit the visit which attachments to get
 	 * @param includeRetired Specifies whether the underlying complex obs that are fetched should
 	 *            include retired ones or not.
-	 * @throws APIException if no concepts complex were configured or found to query attachments
+	 * @throws APIException if non-complex obs are mistakenly returned
 	 */
 	List<Attachment> getAttachments(Patient patient, Visit visit, boolean includeRetired);
-	
-	/**
-	 * Get a patient's attachments.
-	 *
-	 * @param includeRetired Specifies whether the underlying complex obs that are fetched should
-	 *            include retired ones or not.
-	 * @param includeIsolated Specifies whether the underlying attachments that are fetched should
-	 *            include attachments that are not associated with any visits or encounters.
-	 * @throws APIException if no concepts complex were configured or found to query attachments
-	 */
-	List<Attachment> getAttachments(Patient patient, boolean includeIsolated, boolean includeRetired);
-	
 }
