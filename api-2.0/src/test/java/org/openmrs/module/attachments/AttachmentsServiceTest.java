@@ -1,22 +1,24 @@
 package org.openmrs.module.attachments;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
-import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
-import org.openmrs.ConceptComplex;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.ObsService;
-import org.openmrs.api.PatientService;
-import org.openmrs.api.ProviderService;
-import org.openmrs.api.VisitService;
-import org.openmrs.api.context.Context;
+import org.openmrs.api.APIException;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.TestHelper;
 import org.openmrs.module.attachments.obs.ValueComplex;
@@ -25,15 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Random;
-import java.util.stream.Collectors;
-
 public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Autowired
@@ -41,60 +34,56 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
-	protected AttachmentsContext context;
+	protected AttachmentsContext ctx;
 	
 	@Autowired
 	private TestHelper testHelper;
 	
 	@Autowired
-	@Qualifier("patientService")
-	private PatientService ps;
-	
-	@Autowired
-	@Qualifier("visitService")
-	private VisitService vs;
-	
-	@Autowired
-	@Qualifier("providerService")
-	private ProviderService prs;
-	
-	@Autowired
-	@Qualifier("encounterService")
-	private EncounterService es;
-	
-	@Autowired
-	@Qualifier("conceptService")
-	private ConceptService cs;
-	
-	@Autowired
-	@Qualifier("obsService")
-	private ObsService os;
-	
-	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER)
 	private ComplexObsSaver obsSaver;
+	
+	@Before
+	public void setup() throws IOException {
+		testHelper.init();
+	}
+	
+	@After
+	public void tearDown() throws IOException {
+		testHelper.tearDown();
+	}
+	
+	protected static List<Attachment> asAttachments(List<Obs> obsList) {
+		return obsList.stream().map(obs -> new Attachment(obs)).collect(Collectors.toList());
+	}
 	
 	@Test
 	public void getAttachments_shouldReturnEncounterAttachments() throws Exception {
 		
+		//
 		// setup
+		//
 		Encounter encounter = testHelper.getTestEncounter();
-		List<Attachment> expectedAttachments = testHelper.saveComplexObs(encounter, 2, 2);
+		List<Attachment> expectedAttachments = asAttachments(testHelper.saveComplexObs(encounter, 2, 2));
 		Patient patient = encounter.getPatient();
 		
 		// adding a non-complex obs
 		Obs otherObs = new Obs();
-		otherObs.setConcept(cs.getConcept(3));
+		otherObs.setConcept(ctx.getConceptService().getConcept(3));
 		otherObs.setObsDatetime(new Date());
 		otherObs.setEncounter(encounter);
 		otherObs.setPerson(patient);
 		otherObs.setValueText("Some text value for a test obs.");
-		otherObs = os.saveObs(otherObs, null);
+		otherObs = ctx.getObsService().saveObs(otherObs, null);
 		
+		//
 		// replay
+		//
 		List<Attachment> actualAttachments = as.getAttachments(patient, encounter, true);
 		
+		//
 		// verify
+		//
 		Assert.assertArrayEquals(
 		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
 		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
@@ -103,41 +92,47 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAttachments_shouldReturnVisitAttachments() throws Exception {
 		
+		//
 		// setup
+		//
 		Encounter encounter1 = testHelper.getTestEncounter();
 		Visit visit = encounter1.getVisit();
 		Patient patient = encounter1.getPatient();
-		Provider provider = prs.getProvider(1);
+		Provider provider = ctx.getProviderService().getProvider(1);
 		
-		Encounter encounter2 = context.getAttachmentEncounter(patient, visit, provider);
-		Encounter encounter3 = context.getAttachmentEncounter(patient, visit, provider);
+		Encounter encounter2 = ctx.getAttachmentEncounter(patient, visit, provider);
+		Encounter encounter3 = ctx.getAttachmentEncounter(patient, visit, provider);
 		
-		// adding a non-complex obs from encounter1
+		// adding a non-complex obs to encounter1
 		Obs otherObs1 = new Obs();
-		otherObs1.setConcept(cs.getConcept(3));
+		otherObs1.setConcept(ctx.getConceptService().getConcept(3));
 		otherObs1.setObsDatetime(new Date());
 		otherObs1.setEncounter(encounter1);
 		otherObs1.setPerson(patient);
 		otherObs1.setValueText("Some text value for a test obs.");
-		otherObs1 = os.saveObs(otherObs1, null);
+		otherObs1 = ctx.getObsService().saveObs(otherObs1, null);
 		
-		// adding a non-complex obs from encounter2
+		// adding a non-complex obs to encounter2
 		Obs otherObs2 = new Obs();
-		otherObs2.setConcept(cs.getConcept(3));
+		otherObs2.setConcept(ctx.getConceptService().getConcept(3));
 		otherObs2.setObsDatetime(new Date());
 		otherObs2.setEncounter(encounter2);
 		otherObs2.setPerson(patient);
 		otherObs2.setValueText("Some text value for a test obs.");
-		otherObs2 = os.saveObs(otherObs2, null);
+		otherObs2 = ctx.getObsService().saveObs(otherObs2, null);
 		
-		List<Attachment> expectedAttachments = testHelper.saveComplexObs(encounter1, 1, 1);
-		expectedAttachments.addAll(testHelper.saveComplexObs(encounter2, 2, 2));
-		expectedAttachments.addAll(testHelper.saveComplexObs(encounter3, 3, 3));
+		List<Attachment> expectedAttachments = asAttachments(testHelper.saveComplexObs(encounter1, 1, 1));
+		expectedAttachments.addAll(asAttachments(testHelper.saveComplexObs(encounter2, 2, 2)));
+		expectedAttachments.addAll(asAttachments(testHelper.saveComplexObs(encounter3, 3, 3)));
 		
+		//
 		// replay
+		//
 		List<Attachment> actualAttachments = as.getAttachments(patient, visit, true);
 		
+		//
 		// verify
+		//
 		Assert.assertArrayEquals(
 		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
 		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
@@ -146,36 +141,34 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAttachments_shouldReturnAllAttachments() throws Exception {
 		
+		//
 		// setup
+		//
 		Encounter encounter = testHelper.getTestEncounter();
-		List<Attachment> expectedAttachments = testHelper.saveComplexObs(encounter, 3, 2);
-		Patient patient = ps.getPatient(2);
+		List<Attachment> expectedAttachments = asAttachments(testHelper.saveComplexObs(encounter, 3, 2));
+		Patient patient = ctx.getPatientService().getPatient(2);
 		
 		// attachments not bound to any visits/encounters
-		for (int i = 0; i < 2; i++) {
-			byte[] randomData = new byte[20];
-			new Random().nextBytes(randomData);
-			
-			MockMultipartFile multipartRandomFile = new MockMultipartFile("1", "1", "application/octet-stream", randomData);
-			Obs obs = obsSaver.saveOtherAttachment(null, patient, null, "File caption #" + i + 1, multipartRandomFile,
-			    ValueComplex.INSTRUCTIONS_DEFAULT);
-			expectedAttachments.add(new Attachment(obs));
-		}
+		expectedAttachments.addAll(asAttachments(testHelper.saveComplexObs(null, 2, 0)));
 		
 		// adding some non-complex obs
 		for (int i = 0; i < 2; i++) {
 			Obs otherObs = new Obs();
-			otherObs.setConcept(cs.getConcept(3));
+			otherObs.setConcept(ctx.getConceptService().getConcept(3));
 			otherObs.setObsDatetime(new Date());
 			otherObs.setPerson(patient);
-			otherObs.setValueText("Some text value for a test obs # " + i + 1);
-			otherObs = os.saveObs(otherObs, null);
+			otherObs.setValueText("Some text value for a test obs #" + i + 1);
+			otherObs = ctx.getObsService().saveObs(otherObs, null);
 		}
 		
+		//
 		// replay
+		//
 		List<Attachment> actualAttachments = as.getAttachments(patient, true);
 		
+		//
 		// verify
+		//
 		Assert.assertArrayEquals(
 		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
 		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
@@ -184,35 +177,34 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAttachments_shouldNotReturnIsolatedAttachments() throws Exception {
 		
+		//
 		// setup
+		//
 		Encounter encounter = testHelper.getTestEncounter();
-		List<Attachment> expectedAttachments = testHelper.saveComplexObs(encounter, 3, 2);
-		Patient patient = ps.getPatient(2);
+		List<Attachment> expectedAttachments = asAttachments(testHelper.saveComplexObs(encounter, 3, 2));
+		Patient patient = ctx.getPatientService().getPatient(2);
 		
 		// attachments not bound to any visits/encounters
-		for (int i = 0; i < 2; i++) {
-			byte[] randomData = new byte[20];
-			new Random().nextBytes(randomData);
-			
-			MockMultipartFile multipartRandomFile = new MockMultipartFile("1", "1", "application/octet-stream", randomData);
-			Obs obs = obsSaver.saveOtherAttachment(null, patient, null, "File caption #" + i + 1, multipartRandomFile,
-			    ValueComplex.INSTRUCTIONS_DEFAULT);
-		}
+		testHelper.saveComplexObs(null, 2, 0);
 		
 		// adding some non-complex obs
 		for (int i = 0; i < 2; i++) {
 			Obs otherObs = new Obs();
-			otherObs.setConcept(cs.getConcept(3));
+			otherObs.setConcept(ctx.getConceptService().getConcept(3));
 			otherObs.setObsDatetime(new Date());
 			otherObs.setPerson(patient);
-			otherObs.setValueText("Some text value for a test obs # " + i + 1);
-			otherObs = os.saveObs(otherObs, null);
+			otherObs.setValueText("Some text value for a test obs #" + i + 1);
+			otherObs = ctx.getObsService().saveObs(otherObs, null);
 		}
 		
+		//
 		// replay
+		//
 		List<Attachment> actualAttachments = as.getAttachments(patient, false, true);
 		
+		//
 		// verify
+		//
 		Assert.assertArrayEquals(
 		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
 		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
@@ -221,38 +213,34 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAttachments_shouldReturnIsolatedAttachments() throws Exception {
 		
+		//
 		// setup
+		//
 		Encounter encounter = testHelper.getTestEncounter();
 		testHelper.saveComplexObs(encounter, 3, 2);
-		Patient patient = ps.getPatient(2);
+		Patient patient = ctx.getPatientService().getPatient(2);
 		
 		// attachments not bound to any visits/encounters
-		List<Attachment> expectedAttachments = new ArrayList<>();
-		for (int i = 0; i < 2; i++) {
-			byte[] randomData = new byte[20];
-			new Random().nextBytes(randomData);
-			
-			MockMultipartFile multipartRandomFile = new MockMultipartFile(String.valueOf(i), String.valueOf(i),
-			        "application/octet-stream", randomData);
-			Obs obs = obsSaver.saveOtherAttachment(null, patient, null, "File caption #" + i + 1, multipartRandomFile,
-			    ValueComplex.INSTRUCTIONS_DEFAULT);
-			expectedAttachments.add(new Attachment(obs));
-		}
+		List<Attachment> expectedAttachments = asAttachments(testHelper.saveComplexObs(null, 2, 0));
 		
 		// adding some non-complex obs
 		for (int i = 0; i < 2; i++) {
 			Obs otherObs = new Obs();
-			otherObs.setConcept(cs.getConcept(3));
+			otherObs.setConcept(ctx.getConceptService().getConcept(3));
 			otherObs.setObsDatetime(new Date());
 			otherObs.setPerson(patient);
-			otherObs.setValueText("Some text value for a test obs # " + i + 1);
-			otherObs = os.saveObs(otherObs, null);
+			otherObs.setValueText("Some text value for a test obs #" + i + 1);
+			otherObs = ctx.getObsService().saveObs(otherObs, null);
 		}
 		
+		//
 		// replay
+		//
 		List<Attachment> actualAttachments = as.getIsolatedAttachments(patient, true);
 		
+		//
 		// verify
+		//
 		Assert.assertArrayEquals(
 		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
 		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
@@ -260,41 +248,63 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void testIncludeIsolatedParameter() throws Exception {
-		
+		//
 		// setup
+		//
 		Encounter encounter = testHelper.getTestEncounter();
 		testHelper.saveComplexObs(encounter, 3, 2);
-		Patient patient = ps.getPatient(2);
+		Patient patient = ctx.getPatientService().getPatient(2);
 		
 		// attachments not bound to any visits/encounters
-		for (int i = 0; i < 2; i++) {
-			byte[] randomData = new byte[20];
-			new Random().nextBytes(randomData);
-			
-			MockMultipartFile multipartRandomFile = new MockMultipartFile("1", "1", "application/octet-stream", randomData);
-			Obs obs = obsSaver.saveOtherAttachment(null, patient, null, "File caption #" + i + 1, multipartRandomFile,
-			    ValueComplex.INSTRUCTIONS_DEFAULT);
-		}
+		testHelper.saveComplexObs(null, 2, 0);
 		
 		// adding some non-complex obs
 		for (int i = 0; i < 2; i++) {
 			Obs otherObs = new Obs();
-			otherObs.setConcept(cs.getConcept(3));
+			otherObs.setConcept(ctx.getConceptService().getConcept(3));
 			otherObs.setObsDatetime(new Date());
 			otherObs.setPerson(patient);
 			otherObs.setValueText("Some text value for a test obs # " + i + 1);
-			otherObs = os.saveObs(otherObs, null);
+			otherObs = ctx.getObsService().saveObs(otherObs, null);
 		}
 		
+		//
+		// replay
+		//
 		List<Attachment> expectedAllAttachments = as.getAttachments(patient, false, true);
 		expectedAllAttachments.addAll(as.getIsolatedAttachments(patient, true));
-		
-		// replay
 		List<Attachment> actualAllAttachments = as.getAttachments(patient, true, true);
 		
+		//
 		// verify
+		//
 		Assert.assertArrayEquals(
 		    expectedAllAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
 		    actualAllAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
 	}
+	
+	@Test(expected = APIException.class)
+	public void getAttachments_shouldThrowAPIExceptionForMisconfiguredComplexObs() throws Exception {
+		
+		//
+		// setup
+		//
+		Encounter encounter = testHelper.getTestEncounter();
+		Patient patient = ctx.getPatientService().getPatient(2);
+		for (int i = 0; i < 2; i++) {
+			Obs obs = new Obs();
+			obs.setConcept(ctx.getConceptService().getConcept(5));
+			obs.setObsDatetime(new Date());
+			obs.setEncounter(encounter);
+			obs.setPerson(patient);
+			obs.setValueText("Some text value for a test obs #" + i + 1);
+			obs = ctx.getObsService().saveObs(obs, null);
+		}
+		
+		//
+		// replay
+		//
+		List<Attachment> actualAttachments = as.getAttachments(patient, encounter, true);
+	}
+	
 }

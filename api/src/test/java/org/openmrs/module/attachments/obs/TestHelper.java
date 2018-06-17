@@ -1,8 +1,7 @@
 package org.openmrs.module.attachments.obs;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +32,7 @@ import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.obs.handler.BinaryDataHandler;
 import org.openmrs.ui.framework.WebConstants;
 import org.openmrs.util.OpenmrsConstants;
+import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockMultipartFile;
@@ -60,7 +60,7 @@ public class TestHelper {
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER)
 	protected ComplexObsSaver obsSaver;
 	
-	protected Path complexObsDir;
+	protected File complexObsDir;
 	
 	protected String fileName = "mock_file_name";
 	
@@ -70,6 +70,8 @@ public class TestHelper {
 	        "application/octet-stream", "mock_content".getBytes());
 	
 	protected MockMultipartFile lastSavedMultipartImageFile;
+	
+	protected final static String OTHER_CONCEPT_COMPLEX_NAME = "OutOfAttachmentsTestComplex";
 	
 	protected Concept otherConceptComplex;
 	
@@ -94,7 +96,7 @@ public class TestHelper {
 	
 	/**
 	 * This initialization routine configure a lot of boilerplate settings to mimic the actual
-	 * environment.
+	 * environment. This method should be invoked when setting up unit tests.
 	 * 
 	 * @throws IOException
 	 */
@@ -106,15 +108,15 @@ public class TestHelper {
 		context.getAdministrationService().saveGlobalProperty(
 		    new GlobalProperty(AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_MAP, conceptComplexUuidMap));
 		
-		complexObsDir = Files.createTempDirectory(null);
+		complexObsDir = OpenmrsUtil.getDirectoryInApplicationDataDirectory("complex_obs");
 		context.getAdministrationService().saveGlobalProperty(
 		    new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_COMPLEX_OBS_DIR, getComplexObsDir()));
 		
 		WebConstants.CONTEXT_PATH = "openmrs";
 		
-		context.getAdministrationService()
-		        .saveGlobalProperty(new GlobalProperty(AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_LIST,
-		                "[\"7cac8397-53cd-4f00-a6fe-028e8d743f8e\",\"42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00\"]"));
+		context.getAdministrationService().saveGlobalProperty(new GlobalProperty(
+		        AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_LIST,
+		        "[\"7cac8397-53cd-4f00-a6fe-028e8d743f8e\",\"42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00\",\"32d3611a-6699-4d52-823f-b4b788bac3e3\"]"));
 		context.getAdministrationService()
 		        .saveGlobalProperty(new GlobalProperty(AttachmentsConstants.GP_MAX_STORAGE_FILE_SIZE, "1.2"));
 		context.getAdministrationService()
@@ -130,10 +132,10 @@ public class TestHelper {
 		    new GlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, AttachmentsConstants.ENCOUNTER_TYPE_UUID));
 		
 		// Create a concept complex that is not managed by Attachments
-		if (context.getConceptService().getConceptByName("OutOfAttachmentsTestComplex") == null) {
+		if (context.getConceptService().getConceptByName(OTHER_CONCEPT_COMPLEX_NAME) == null) {
 			ConceptComplex conceptComplex = new ConceptComplex();
 			conceptComplex.setHandler(BinaryDataHandler.class.getSimpleName());
-			ConceptName conceptName = new ConceptName("OutOfAttachmentsTestComplex", Locale.ENGLISH);
+			ConceptName conceptName = new ConceptName(OTHER_CONCEPT_COMPLEX_NAME, Locale.ENGLISH);
 			conceptComplex.setFullySpecifiedName(conceptName);
 			conceptComplex.setPreferredName(conceptName);
 			conceptComplex.setConceptClass(context.getConceptService().getConceptClassByUuid(ConceptClass.QUESTION_UUID));
@@ -141,8 +143,15 @@ public class TestHelper {
 			conceptComplex.addDescription(new ConceptDescription("Out-of-Attachments test concept complex", Locale.ENGLISH));
 			context.getConceptService().saveConcept(conceptComplex);
 			otherConceptComplex = conceptComplex;
-			
 		}
+	}
+	
+	/**
+	 * This method should be invoked when tearing down unit tests.
+	 */
+	public void tearDown() throws IOException {
+		context.getConceptService().purgeConcept(context.getConceptService().getConceptByName(OTHER_CONCEPT_COMPLEX_NAME));
+		OpenmrsUtil.deleteDirectory(complexObsDir);
 	}
 	
 	/**
@@ -164,8 +173,6 @@ public class TestHelper {
 	}
 	
 	public Obs getTestComplexObs() throws IOException {
-		init();
-		
 		Patient patient = Context.getPatientService().getPatient(2);
 		Visit visit = Context.getVisitService().getVisit(1);
 		EncounterService encounterService = Context.getEncounterService();
@@ -187,8 +194,6 @@ public class TestHelper {
 	 * @param imagePath The path of the image resource.
 	 */
 	public Obs saveImageAttachment(String imagePath, String mimeType) throws IOException {
-		init();
-		
 		Patient patient = Context.getPatientService().getPatient(2);
 		Visit visit = Context.getVisitService().getVisit(1);
 		EncounterService encounterService = Context.getEncounterService();
@@ -226,8 +231,6 @@ public class TestHelper {
 	}
 	
 	public Obs getTestComplexObsWithoutAssociatedEncounterOrVisit() throws Exception {
-		init();
-		
 		Patient patient = Context.getPatientService().getPatient(2);
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
@@ -236,7 +239,7 @@ public class TestHelper {
 	}
 	
 	public String getComplexObsDir() {
-		return complexObsDir.toAbsolutePath().toString();
+		return complexObsDir.getAbsolutePath();
 	}
 	
 	/**
@@ -249,27 +252,28 @@ public class TestHelper {
 	/**
 	 * Boilerplate method to save a collection of complex obs based on the encounter.
 	 *
-	 * @param encounter target encounter for save the complex obs.
-	 * @param count The number of the attachment-complex obs to be saved.
-	 * @param otherCount The number of the other complex obs to be saved.
-	 * @return List of saved attachment-complex obs.
+	 * @param encounter target encounter for save the complex obs. Leave null to save encounter-less
+	 *            complex obs.
+	 * @param count The number of the attachments/complex obs to be saved.
+	 * @param otherCount The number of other complex obs to be saved.
+	 * @return List of saved attachments/complex obs.
 	 */
-	public List<Attachment> saveComplexObs(Encounter encounter, int count, int otherCount) throws IOException {
-		init();
-		
-		List<Attachment> obsList = new ArrayList<>();
+	public List<Obs> saveComplexObs(Encounter encounter, int count, int otherCount) throws IOException {
+		List<Obs> obsList = new ArrayList<>();
 		byte[] randomData = new byte[20];
-		Patient patient = encounter.getPatient();
-		Visit visit = encounter.getVisit();
+		Patient patient = (encounter == null) ? context.getPatientService().getPatient(2) : encounter.getPatient();
+		Visit visit = (encounter == null) ? null : encounter.getVisit();
 		
 		// Saves a complex obs as if they had been saved relevant to the attachment.
 		for (int i = 0; i < count; i++) {
 			String fileCaption = RandomStringUtils.randomAlphabetic(12);
 			new Random().nextBytes(randomData);
-			MockMultipartFile multipartRandomFile = new MockMultipartFile(String.valueOf(i), String.valueOf(i),
+			
+			String filename = RandomStringUtils.randomAlphabetic(7) + ".ext";
+			MockMultipartFile multipartRandomFile = new MockMultipartFile(FilenameUtils.getBaseName(filename), filename,
 			        "application/octet-stream", randomData);
-			obsList.add(new Attachment(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption,
-			    multipartRandomFile, ValueComplex.INSTRUCTIONS_DEFAULT)));
+			obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartRandomFile,
+			    ValueComplex.INSTRUCTIONS_DEFAULT));
 		}
 		
 		// Saves a complex obs as if they had been saved outside of Attachments
@@ -281,7 +285,8 @@ public class TestHelper {
 			obs.setEncounter(encounter);
 			
 			new Random().nextBytes(randomData);
-			MockMultipartFile multipartRandomFile = new MockMultipartFile(String.valueOf(i), String.valueOf(i),
+			String filename = RandomStringUtils.randomAlphabetic(7) + ".ext";
+			MockMultipartFile multipartRandomFile = new MockMultipartFile(FilenameUtils.getBaseName(filename), filename,
 			        "application/octet-stream", randomData);
 			obs.setComplexData(
 			    complexDataHelper.build(ValueComplex.INSTRUCTIONS_DEFAULT, multipartRandomFile.getOriginalFilename(),
