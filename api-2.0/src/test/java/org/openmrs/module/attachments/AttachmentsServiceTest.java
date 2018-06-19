@@ -1,6 +1,8 @@
 package org.openmrs.module.attachments;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,6 +10,7 @@ import java.util.stream.Collectors;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -144,7 +147,7 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		
 		// attachments not bound to any visits/encounters
 		expectedAttachments.addAll(asAttachments(testHelper.saveComplexObs(null, 2, 0)));
-		
+		Collections.sort(expectedAttachments, Comparator.comparing(Attachment::getDateTime).reversed());
 		// adding some non-complex obs
 		for (int i = 0; i < 2; i++) {
 			Obs otherObs = new Obs();
@@ -169,13 +172,14 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void getAttachments_shouldNotReturnIsolatedAttachments() throws Exception {
+	public void getAttachments_shouldNotReturnEncounterlessAttachments() throws Exception {
 		
 		//
 		// setup
 		//
 		Encounter encounter = testHelper.getTestEncounter();
 		List<Attachment> expectedAttachments = asAttachments(testHelper.saveComplexObs(encounter, 3, 2));
+		Collections.sort(expectedAttachments, Comparator.comparing(Attachment::getDateTime).reversed());
 		Patient patient = ctx.getPatientService().getPatient(2);
 		
 		// attachments not bound to any visits/encounters
@@ -205,7 +209,7 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void getAttachments_shouldReturnIsolatedAttachments() throws Exception {
+	public void getAttachments_shouldReturnEncounterlessAttachments() throws Exception {
 		
 		//
 		// setup
@@ -216,6 +220,7 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		
 		// attachments not bound to any visits/encounters
 		List<Attachment> expectedAttachments = asAttachments(testHelper.saveComplexObs(null, 2, 0));
+		Collections.sort(expectedAttachments, Comparator.comparing(Attachment::getDateTime).reversed());
 		
 		// adding some non-complex obs
 		for (int i = 0; i < 2; i++) {
@@ -230,7 +235,7 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		//
 		// replay
 		//
-		List<Attachment> actualAttachments = as.getIsolatedAttachments(patient, true);
+		List<Attachment> actualAttachments = as.getEncounterlessAttachments(patient, true);
 		
 		//
 		// verify
@@ -266,7 +271,8 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		// replay
 		//
 		List<Attachment> expectedAllAttachments = as.getAttachments(patient, false, true);
-		expectedAllAttachments.addAll(as.getIsolatedAttachments(patient, true));
+		expectedAllAttachments.addAll(as.getEncounterlessAttachments(patient, true));
+		Collections.sort(expectedAllAttachments, Comparator.comparing(Attachment::getDateTime).reversed());
 		List<Attachment> actualAllAttachments = as.getAttachments(patient, true, true);
 		
 		//

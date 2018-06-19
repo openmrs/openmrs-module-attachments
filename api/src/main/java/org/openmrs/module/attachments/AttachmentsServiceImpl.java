@@ -28,7 +28,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	private AttachmentsContext ctx;
 	
 	@Override
-	public List<Attachment> getAttachments(Patient patient, boolean includeIsolated, boolean includeRetired) {
+	public List<Attachment> getAttachments(Patient patient, boolean includeEncounterless, boolean includeRetired) {
 		List<Person> persons = new ArrayList<>();
 		List<Concept> questionConcepts = getAttachmentConcepts();
 		persons.add(patient);
@@ -41,7 +41,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			if (!obs.isComplex()) {
 				throw new APIException(NON_COMPLEX_OBS_ERR);
 			}
-			if (includeIsolated) {
+			if (includeEncounterless) {
 				attachments.add(new Attachment(obs));
 			} else if (obs.getEncounter() != null) {
 				attachments.add(new Attachment(obs));
@@ -56,7 +56,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	}
 	
 	@Override
-	public List<Attachment> getIsolatedAttachments(Patient patient, boolean includeRetired) {
+	public List<Attachment> getEncounterlessAttachments(Patient patient, boolean includeRetired) {
 		List<Person> persons = new ArrayList<>();
 		List<Concept> questionConcepts = getAttachmentConcepts();
 		persons.add(patient);

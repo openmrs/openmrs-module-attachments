@@ -25,11 +25,11 @@ public interface AttachmentsService {
 	 *
 	 * @param includeRetired Specifies whether the underlying complex obs that are fetched should
 	 *            include retired ones or not.
-	 * @param includeIsolated Specifies whether the underlying attachments that are fetched should
+	 * @param includeEncounterless Specifies whether the underlying attachments that are fetched should
 	 *            include attachments that are not associated with any visits or encounters.
 	 * @throws APIException if non-complex obs are mistakenly returned
 	 */
-	List<Attachment> getAttachments(Patient patient, boolean includeIsolated, boolean includeRetired);
+	List<Attachment> getAttachments(Patient patient, boolean includeEncounterless, boolean includeRetired);
 	
 	/**
 	 * Get a patient's attachments that are not associated with any visits or encounters.
@@ -38,7 +38,7 @@ public interface AttachmentsService {
 	 *            include retired ones or not.
 	 * @throws APIException if non-complex obs are mistakenly returned
 	 */
-	List<Attachment> getIsolatedAttachments(Patient patient, boolean includeRetired);
+	List<Attachment> getEncounterlessAttachments(Patient patient, boolean includeRetired);
 	
 	/**
 	 * Get a patient's attachments that are associated with a specified encounter.
