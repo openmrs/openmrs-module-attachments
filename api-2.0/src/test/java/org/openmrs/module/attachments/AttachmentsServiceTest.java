@@ -1,16 +1,13 @@
 package org.openmrs.module.attachments;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -18,14 +15,11 @@ import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.TestHelper;
-import org.openmrs.module.attachments.obs.ValueComplex;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockMultipartFile;
 
 public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	
@@ -247,7 +241,7 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void testIncludeIsolatedParameter() throws Exception {
+	public void getAttachments_shouldBeConsistentAcrossServiceApi() throws Exception {
 		//
 		// setup
 		//
@@ -284,7 +278,7 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test(expected = APIException.class)
-	public void getAttachments_shouldThrowAPIExceptionForMisconfiguredComplexObs() throws Exception {
+	public void getAttachments_shouldThrowWhenFetchingNonComplexObs() throws Exception {
 		
 		//
 		// setup
@@ -304,7 +298,7 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		//
 		// replay
 		//
-		List<Attachment> actualAttachments = as.getAttachments(patient, encounter, true);
+		as.getAttachments(patient, encounter, true);
 	}
 	
 }
