@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.openmrs.Concept;
@@ -37,8 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
-
-import liquibase.util.file.FilenameUtils;
 
 @Component
 public class TestHelper {

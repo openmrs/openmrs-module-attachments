@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -50,18 +49,19 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		testHelper.tearDown();
 	}
 	
-	protected static List<Attachment> asAttachments(List<Obs> obsList) {
-		return obsList.stream().map(obs -> new Attachment(obs)).collect(Collectors.toList());
+	protected static List<Attachment> asSortedAttachments(List<Obs> obsList) {
+		List<Attachment> attachments = obsList.stream().map(obs -> new Attachment(obs)).collect(Collectors.toList());
+		Collections.sort(attachments, Comparator.comparing(Attachment::getDateTime).reversed());
+		return attachments;
 	}
 	
 	@Test
 	public void getAttachments_shouldReturnEncounterAttachments() throws Exception {
-		
 		//
 		// setup
 		//
 		Encounter encounter = testHelper.getTestEncounter();
-		List<Attachment> expectedAttachments = asAttachments(testHelper.saveComplexObs(encounter, 2, 2));
+		List<Attachment> expectedAttachments = asSortedAttachments(testHelper.saveComplexObs(encounter, 2, 2));
 		Patient patient = encounter.getPatient();
 		
 		// adding a non-complex obs
@@ -88,7 +88,6 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void getAttachments_shouldReturnVisitAttachments() throws Exception {
-		
 		//
 		// setup
 		//
@@ -118,9 +117,10 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		otherObs2.setValueText("Some text value for a test obs.");
 		otherObs2 = ctx.getObsService().saveObs(otherObs2, null);
 		
-		List<Attachment> expectedAttachments = asAttachments(testHelper.saveComplexObs(encounter1, 1, 1));
-		expectedAttachments.addAll(asAttachments(testHelper.saveComplexObs(encounter2, 2, 2)));
-		expectedAttachments.addAll(asAttachments(testHelper.saveComplexObs(encounter3, 3, 3)));
+		List<Obs> obsList = testHelper.saveComplexObs(encounter1, 1, 1);
+		obsList.addAll(testHelper.saveComplexObs(encounter2, 2, 2));
+		obsList.addAll(testHelper.saveComplexObs(encounter3, 3, 3));
+		List<Attachment> expectedAttachments = asSortedAttachments(obsList);
 		
 		//
 		// replay
@@ -137,17 +137,16 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void getAttachments_shouldReturnAllAttachments() throws Exception {
-		
 		//
 		// setup
 		//
 		Encounter encounter = testHelper.getTestEncounter();
-		List<Attachment> expectedAttachments = asAttachments(testHelper.saveComplexObs(encounter, 3, 2));
+		List<Obs> obsList = testHelper.saveComplexObs(encounter, 3, 2);
 		Patient patient = ctx.getPatientService().getPatient(2);
 		
 		// attachments not bound to any visits/encounters
-		expectedAttachments.addAll(asAttachments(testHelper.saveComplexObs(null, 2, 0)));
-		Collections.sort(expectedAttachments, Comparator.comparing(Attachment::getDateTime).reversed());
+		obsList.addAll(testHelper.saveComplexObs(null, 2, 0));
+		
 		// adding some non-complex obs
 		for (int i = 0; i < 2; i++) {
 			Obs otherObs = new Obs();
@@ -167,20 +166,18 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		// verify
 		//
 		Assert.assertArrayEquals(
-		    expectedAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
+		    asSortedAttachments(obsList).stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
 		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
 	}
 	
 	@Test
 	public void getAttachments_shouldNotReturnEncounterlessAttachments() throws Exception {
-		
 		//
 		// setup
 		//
 		Encounter encounter = testHelper.getTestEncounter();
-		List<Attachment> expectedAttachments = asAttachments(testHelper.saveComplexObs(encounter, 3, 2));
-		Collections.sort(expectedAttachments, Comparator.comparing(Attachment::getDateTime).reversed());
 		Patient patient = ctx.getPatientService().getPatient(2);
+		List<Attachment> expectedAttachments = asSortedAttachments(testHelper.saveComplexObs(encounter, 3, 2));
 		
 		// attachments not bound to any visits/encounters
 		testHelper.saveComplexObs(null, 2, 0);
@@ -210,7 +207,6 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void getAttachments_shouldReturnEncounterlessAttachments() throws Exception {
-		
 		//
 		// setup
 		//
@@ -219,8 +215,7 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		Patient patient = ctx.getPatientService().getPatient(2);
 		
 		// attachments not bound to any visits/encounters
-		List<Attachment> expectedAttachments = asAttachments(testHelper.saveComplexObs(null, 2, 0));
-		Collections.sort(expectedAttachments, Comparator.comparing(Attachment::getDateTime).reversed());
+		List<Attachment> expectedAttachments = asSortedAttachments(testHelper.saveComplexObs(null, 2, 0));
 		
 		// adding some non-complex obs
 		for (int i = 0; i < 2; i++) {
@@ -286,9 +281,7 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	@Test(expected = APIException.class)
 	public void getAttachments_shouldThrowWhenFetchingNonComplexObs() throws Exception {
 		
-		//
 		// setup
-		//
 		Encounter encounter = testHelper.getTestEncounter();
 		Patient patient = ctx.getPatientService().getPatient(2);
 		for (int i = 0; i < 2; i++) {
@@ -301,10 +294,7 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 			obs = ctx.getObsService().saveObs(obs, null);
 		}
 		
-		//
 		// replay
-		//
 		as.getAttachments(patient, encounter, true);
 	}
-	
 }
