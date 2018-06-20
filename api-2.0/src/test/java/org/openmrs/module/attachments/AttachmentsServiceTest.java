@@ -282,6 +282,9 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	public void getAttachments_shouldThrowWhenFetchingNonComplexObs() throws Exception {
 		
 		// setup
+		
+		ctx.getAdministrationService().updateGlobalProperty(AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_LIST,
+		    "[\"7cac8397-53cd-4f00-a6fe-028e8d743f8e\",\"42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00\",\"32d3611a-6699-4d52-823f-b4b788bac3e3\"]");
 		Encounter encounter = testHelper.getTestEncounter();
 		Patient patient = ctx.getPatientService().getPatient(2);
 		for (int i = 0; i < 2; i++) {
