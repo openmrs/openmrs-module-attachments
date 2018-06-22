@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -280,24 +281,28 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Test(expected = APIException.class)
 	public void getAttachments_shouldThrowWhenFetchingNonComplexObs() throws Exception {
-		
+		//
 		// setup
-		
-		ctx.getAdministrationService().updateGlobalProperty(AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_LIST,
-		    "[\"7cac8397-53cd-4f00-a6fe-028e8d743f8e\",\"42ed45fd-f3f6-44b6-bfc2-8bde1bb41e00\",\"32d3611a-6699-4d52-823f-b4b788bac3e3\"]");
+		//
+		Concept nonComplexConcept = ctx.getConceptService().getConcept(5);
 		Encounter encounter = testHelper.getTestEncounter();
 		Patient patient = ctx.getPatientService().getPatient(2);
 		for (int i = 0; i < 2; i++) {
 			Obs obs = new Obs();
-			obs.setConcept(ctx.getConceptService().getConcept(5));
+			obs.setConcept(nonComplexConcept);
 			obs.setObsDatetime(new Date());
 			obs.setEncounter(encounter);
 			obs.setPerson(patient);
 			obs.setValueText("Some text value for a test obs #" + i + 1);
 			obs = ctx.getObsService().saveObs(obs, null);
 		}
+		// pointing the configuration to the non-complex concept
+		ctx.getAdministrationService().updateGlobalProperty(AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_LIST,
+		    "[\"" + nonComplexConcept.getUuid() + "\"]");
 		
+		//
 		// replay
+		//
 		as.getAttachments(patient, encounter, true);
 	}
 }
