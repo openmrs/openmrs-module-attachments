@@ -1,6 +1,18 @@
 package org.openmrs.module.attachments.rest;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Random;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.beanutils.PropertyUtils;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,13 +33,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockMultipartHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.util.Random;
-
-import static org.junit.Assert.*;
-
 public class AttachmentController1_10Test extends MainResourceControllerTest {
 	
 	@Autowired
@@ -45,8 +50,14 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 	
 	@Before
 	public void setup() throws IOException {
+		testHelper.init();
 		obs = testHelper.getTestComplexObs();
 		new Random().nextBytes(randomData);
+	}
+	
+	@After
+	public void tearDown() throws IOException {
+		testHelper.tearDown();
 	}
 	
 	@Override
@@ -269,11 +280,11 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		String mimeType = "application/octet-stream";
 		String fileExtension = "dat";
 		String fileName = "testFile." + fileExtension;
-
+		
 		// Upload Test File
 		Patient patient = Context.getPatientService().getPatient(2);
 		MockMultipartHttpServletRequest uploadRequest = newUploadRequest(getURI());
-		MockMultipartFile file = new MockMultipartFile("file", fileName, mimeType , randomData);
+		MockMultipartFile file = new MockMultipartFile("file", fileName, mimeType, randomData);
 		
 		uploadRequest.addFile(file);
 		uploadRequest.addParameter("patient", patient.getUuid());
@@ -293,6 +304,6 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		Assert.assertEquals(downloadResponse.getContentType(), mimeType);
 		Assert.assertEquals(downloadResponse.getHeader("File-Name"), fileName);
 		Assert.assertEquals(downloadResponse.getHeader("File-Ext"), fileExtension);
-
+		
 	}
 }

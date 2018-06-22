@@ -9,7 +9,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
@@ -22,6 +24,16 @@ public class ImageAttachmentHandlerContextSensitiveTest extends BaseModuleContex
 	
 	@Autowired
 	protected TestHelper testHelper;
+	
+	@Before
+	public void setup() throws IOException {
+		testHelper.init();
+	}
+	
+	@After
+	public void tearDown() throws IOException {
+		testHelper.tearDown();
+	}
 	
 	@Test
 	public void saveComplexData_shouldSaveThumbnailToDisk() throws IOException {
@@ -143,14 +155,11 @@ public class ImageAttachmentHandlerContextSensitiveTest extends BaseModuleContex
 		byte[] expectedBytes = new BaseComplexData(noThumbnailFile.getName(), ImageIO.read(noThumbnailFile)).asByteArray();
 		
 		// Replay
-		obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_THUMBNAIL);
+		Obs obsThumbnailView = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_THUMBNAIL);
+		Obs obsOriginalView = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_ORIGINAL);
 		
 		// Verif
-		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obs.getComplexData()));
-		
-		obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_ORIGINAL);
-		
-		// Verif
-		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obs.getComplexData()));
+		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obsThumbnailView.getComplexData()));
+		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obsOriginalView.getComplexData()));
 	}
 }
