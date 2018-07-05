@@ -86,26 +86,30 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		// Prepare Parameters
 		Patient patient = Context.getPatientService().getPatientByUuid(context.getParameter("patient"));
 		Visit visit = Context.getVisitService().getVisitByUuid(context.getParameter("visit"));
+		Encounter encounter = Context.getEncounterService().getEncounterByUuid(context.getParameter("encounter"));
 		Provider provider = Context.getProviderService().getProviderByUuid(context.getParameter("provider"));
 		String fileCaption = context.getParameter("fileCaption");
 		String instructions = context.getParameter("instructions");
-		
+
 		// Verify File Size
 		if (attachmentsContext.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
 			throw new IllegalRequestException("The file  exceeds the maximum size");
 		}
-		
+
 		// Verify Parameters
 		if (patient == null) {
 			throw new IllegalRequestException("A patient parameter must be provided when uploading an attachment.");
 		}
-		
+
 		if (StringUtils.isEmpty(instructions))
 			instructions = ValueComplex.INSTRUCTIONS_DEFAULT;
-		
-		Encounter encounter = null;
-		if (visit != null) {
+
+		if (visit != null && encounter == null) {
 			encounter = attachmentsContext.getAttachmentEncounter(patient, visit, provider);
+		}
+
+		if (encounter != null && visit == null) {
+			visit = encounter.getVisit();
 		}
 		
 		// Save Obs
