@@ -16,6 +16,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
@@ -246,6 +247,34 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 			Assert.assertEquals(complexData.getTitle(), fileName);
 			Assert.assertArrayEquals(randomData, (byte[]) complexData.getData());
 			Assert.assertNull(obs.getEncounter());
+		}
+		// File upload with Encounter
+		{
+			// Setup
+			String fileName = "testFile3.dat";
+			Patient patient = Context.getPatientService().getPatient(2);
+			Encounter encounter = testHelper.getTestEncounter();
+			
+			MockMultipartHttpServletRequest request = newUploadRequest(getURI());
+			MockMultipartFile file = new MockMultipartFile("file", fileName, "application/octet-stream", randomData);
+			
+			request.addFile(file);
+			request.addParameter("patient", patient.getUuid());
+			request.addParameter("encounter", encounter.getUuid());
+			request.addParameter("fileCaption", fileCaption);
+			
+			// Replay
+			SimpleObject response = deserialize(handle(request));
+			
+			Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
+			Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
+			ComplexData complexData = complexObs.getComplexData();
+			
+			// Verify
+			Assert.assertEquals(obs.getComment(), fileCaption);
+			Assert.assertEquals(complexData.getTitle(), fileName);
+			Assert.assertArrayEquals(randomData, (byte[]) complexData.getData());
+			Assert.assertNotNull(obs.getEncounter());
 		}
 	}
 	
