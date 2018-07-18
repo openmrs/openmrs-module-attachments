@@ -279,6 +279,28 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 	}
 	
 	@Test(expected = IllegalRequestException.class)
+	public void postAttachment_shouldNotUploadFileWithDifferentEncounterAndVisit() throws Exception {
+		// Setup
+		String fileCaption = "Test file caption";
+		String fileName = "testFile1.dat";
+		Patient patient = Context.getPatientService().getPatient(2);
+		Visit visit = Context.getVisitService().getVisit(1);
+		Encounter encounter = Context.getEncounterService().getEncounter(3);
+		
+		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
+		MockMultipartFile file = new MockMultipartFile("file", fileName, "application/octet-stream", randomData);
+		
+		request.addFile(file);
+		request.addParameter("patient", patient.getUuid());
+		request.addParameter("visit", visit.getUuid());
+		request.addParameter("encounter", encounter.getUuid());
+		request.addParameter("fileCaption", fileCaption);
+		
+		// Replay
+		SimpleObject response = deserialize(handle(request));
+	}
+	
+	@Test(expected = IllegalRequestException.class)
 	public void postAttachment_shouldNotUploadFileAboveSizeLimit() throws Exception {
 		// Setup
 		String fileCaption = "Test file caption";

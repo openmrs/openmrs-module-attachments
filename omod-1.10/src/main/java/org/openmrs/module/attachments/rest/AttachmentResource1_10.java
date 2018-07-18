@@ -104,6 +104,13 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		if (StringUtils.isEmpty(instructions))
 			instructions = ValueComplex.INSTRUCTIONS_DEFAULT;
 		
+		// Verify Parameters
+		if (encounter != null && visit != null) {
+			if (encounter.getVisit() != visit) {
+				throw new IllegalRequestException("Visit and Encounter cannot be mismatched");
+			}
+		}
+		
 		if (visit != null && encounter == null) {
 			encounter = attachmentsContext.getAttachmentEncounter(patient, visit, provider);
 		}
