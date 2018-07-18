@@ -105,7 +105,7 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		// Replay
 		Object doc = deserialize(handle(newPostRequest(getURI() + "/" + getUuid(), json)));
 		
-		// Verif
+		// Verify
 		String comment = (String) PropertyUtils.getProperty(doc, "comment");
 		assertEquals(editedComment, comment);
 	}
@@ -118,7 +118,7 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		// Replay
 		handle(newDeleteRequest(getURI() + "/" + getUuid()));
 		
-		// Verif
+		// Verify
 		assertTrue(obsService.getObsByUuid(getUuid()).isVoided());
 	}
 	
@@ -132,7 +132,7 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		// Replay
 		handle(newDeleteRequest(getURI() + "/" + getUuid()));
 		
-		// Verif
+		// Verify
 		assertTrue(obsService.getObsByUuid(getUuid()).isVoided());
 	}
 	
@@ -145,7 +145,7 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		// Replay
 		handle(newDeleteRequest(getURI() + "/" + getUuid(), new Parameter("purge", "")));
 		
-		// Verif
+		// Verify
 		assertNull(obsService.getObsByUuid(getUuid()));
 		assertFalse(file.exists());
 	}
@@ -160,7 +160,7 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 		// Replay
 		handle(newDeleteRequest(getURI() + "/" + getUuid(), new Parameter("purge", "")));
 		
-		// Verif
+		// Verify
 		assertNull(obsService.getObsByUuid(getUuid()));
 	}
 	
@@ -189,10 +189,8 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 	}
 	
 	@Test
-	public void postAttachment_shouldUploadFile() throws Exception {
-		
+	public void postAttachment_shouldUploadFileToVisit() throws Exception {
 		String fileCaption = "Test file caption";
-		
 		{
 			// Setup
 			String fileName = "testFile1.dat";
@@ -221,65 +219,70 @@ public class AttachmentController1_10Test extends MainResourceControllerTest {
 			Assert.assertNotNull(obs.getEncounter());
 			Assert.assertEquals(obs.getEncounter().getEncounterType(), attachmentsContext.getEncounterType());
 		}
+	}
+	
+	@Test
+	public void postAttachment_shouldUploadFileAsEncounterless() throws Exception {
+		String fileCaption = "Test file caption";
 		
-		// File upload should not require visit
-		{
-			// Setup
-			String fileName = "testFile2.dat";
-			Patient patient = Context.getPatientService().getPatient(2);
-			
-			MockMultipartHttpServletRequest request = newUploadRequest(getURI());
-			MockMultipartFile file = new MockMultipartFile("file", fileName, "application/octet-stream", randomData);
-			
-			request.addFile(file);
-			request.addParameter("patient", patient.getUuid());
-			request.addParameter("fileCaption", fileCaption);
-			
-			// Replay
-			SimpleObject response = deserialize(handle(request));
-			
-			Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
-			Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
-			ComplexData complexData = complexObs.getComplexData();
-			
-			// Verify
-			Assert.assertEquals(obs.getComment(), fileCaption);
-			Assert.assertEquals(complexData.getTitle(), fileName);
-			Assert.assertArrayEquals(randomData, (byte[]) complexData.getData());
-			Assert.assertNull(obs.getEncounter());
-		}
-		// File upload with Encounter
-		{
-			// Setup
-			String fileName = "testFile3.dat";
-			Patient patient = Context.getPatientService().getPatient(2);
-			Encounter encounter = testHelper.getTestEncounter();
-			
-			MockMultipartHttpServletRequest request = newUploadRequest(getURI());
-			MockMultipartFile file = new MockMultipartFile("file", fileName, "application/octet-stream", randomData);
-			
-			request.addFile(file);
-			request.addParameter("patient", patient.getUuid());
-			request.addParameter("encounter", encounter.getUuid());
-			request.addParameter("fileCaption", fileCaption);
-			
-			// Replay
-			SimpleObject response = deserialize(handle(request));
-			
-			Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
-			Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
-			ComplexData complexData = complexObs.getComplexData();
-			
-			// Verify
-			Assert.assertEquals(obs.getComment(), fileCaption);
-			Assert.assertEquals(complexData.getTitle(), fileName);
-			Assert.assertArrayEquals(randomData, (byte[]) complexData.getData());
-			Assert.assertNotNull(obs.getEncounter());
-		}
+		// Setup
+		String fileName = "testFile2.dat";
+		Patient patient = Context.getPatientService().getPatient(2);
+		
+		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
+		MockMultipartFile file = new MockMultipartFile("file", fileName, "application/octet-stream", randomData);
+		
+		request.addFile(file);
+		request.addParameter("patient", patient.getUuid());
+		request.addParameter("fileCaption", fileCaption);
+		
+		// Replay
+		SimpleObject response = deserialize(handle(request));
+		
+		Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
+		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
+		ComplexData complexData = complexObs.getComplexData();
+		
+		// Verify
+		Assert.assertEquals(obs.getComment(), fileCaption);
+		Assert.assertEquals(complexData.getTitle(), fileName);
+		Assert.assertArrayEquals(randomData, (byte[]) complexData.getData());
+		Assert.assertNull(obs.getEncounter());
+		
+	}
+	
+	@Test
+	public void postAttachment_shouldUploadFileToEncounter() throws Exception {
+		String fileCaption = "Test file caption";
+		// Setup
+		String fileName = "testFile3.dat";
+		Patient patient = Context.getPatientService().getPatient(2);
+		Encounter encounter = testHelper.getTestEncounter();
+		
+		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
+		MockMultipartFile file = new MockMultipartFile("file", fileName, "application/octet-stream", randomData);
+		
+		request.addFile(file);
+		request.addParameter("patient", patient.getUuid());
+		request.addParameter("encounter", encounter.getUuid());
+		request.addParameter("fileCaption", fileCaption);
+		
+		// Replay
+		SimpleObject response = deserialize(handle(request));
+		
+		Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
+		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
+		ComplexData complexData = complexObs.getComplexData();
+		
+		// Verify
+		Assert.assertEquals(obs.getComment(), fileCaption);
+		Assert.assertEquals(complexData.getTitle(), fileName);
+		Assert.assertArrayEquals(randomData, (byte[]) complexData.getData());
+		Assert.assertEquals(obs.getEncounter().getUuid(), encounter.getUuid());
 	}
 	
 	@Test(expected = IllegalRequestException.class)
-	public void postAttachment_shouldNotUploadFileWithDifferentEncounterAndVisit() throws Exception {
+	public void postAttachment_shouldThrowWhenVisitAndEncounterDoNotMatch() throws Exception {
 		// Setup
 		String fileCaption = "Test file caption";
 		String fileName = "testFile1.dat";

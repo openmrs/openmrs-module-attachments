@@ -107,7 +107,8 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		// Verify Parameters
 		if (encounter != null && visit != null) {
 			if (encounter.getVisit() != visit) {
-				throw new IllegalRequestException("Visit and Encounter cannot be mismatched");
+				throw new IllegalRequestException(
+				        "The specified encounter does not belong to the provided visit, upload aborted.");
 			}
 		}
 		
