@@ -86,6 +86,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		// Prepare Parameters
 		Patient patient = Context.getPatientService().getPatientByUuid(context.getParameter("patient"));
 		Visit visit = Context.getVisitService().getVisitByUuid(context.getParameter("visit"));
+		Encounter encounter = Context.getEncounterService().getEncounterByUuid(context.getParameter("encounter"));
 		Provider provider = Context.getProviderService().getProviderByUuid(context.getParameter("provider"));
 		String fileCaption = context.getParameter("fileCaption");
 		String instructions = context.getParameter("instructions");
@@ -103,9 +104,20 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		if (StringUtils.isEmpty(instructions))
 			instructions = ValueComplex.INSTRUCTIONS_DEFAULT;
 		
-		Encounter encounter = null;
-		if (visit != null) {
+		// Verify Parameters
+		if (encounter != null && visit != null) {
+			if (encounter.getVisit() != visit) {
+				throw new IllegalRequestException(
+				        "The specified encounter does not belong to the provided visit, upload aborted.");
+			}
+		}
+		
+		if (visit != null && encounter == null) {
 			encounter = attachmentsContext.getAttachmentEncounter(patient, visit, provider);
+		}
+		
+		if (encounter != null && visit == null) {
+			visit = encounter.getVisit();
 		}
 		
 		// Save Obs
