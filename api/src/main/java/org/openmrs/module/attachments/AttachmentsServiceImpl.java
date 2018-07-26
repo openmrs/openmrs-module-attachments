@@ -28,13 +28,13 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	private AttachmentsContext ctx;
 	
 	@Override
-	public List<Attachment> getAttachments(Patient patient, boolean includeEncounterless, boolean includeRetired) {
+	public List<Attachment> getAttachments(Patient patient, boolean includeEncounterless, boolean includeVoided) {
 		List<Person> persons = new ArrayList<>();
 		List<Concept> questionConcepts = getAttachmentConcepts();
 		persons.add(patient);
 		
 		List<Obs> obsList = ctx.getObsService().getObservations(persons, null, questionConcepts, null, null, null, null,
-		    null, null, null, null, includeRetired);
+		    null, null, null, null, includeVoided);
 		
 		List<Attachment> attachments = new ArrayList<>();
 		for (Obs obs : obsList) {
@@ -51,18 +51,18 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	}
 	
 	@Override
-	public List<Attachment> getAttachments(Patient patient, boolean includeRetired) {
-		return getAttachments(patient, true, includeRetired);
+	public List<Attachment> getAttachments(Patient patient, boolean includeVoided) {
+		return getAttachments(patient, true, includeVoided);
 	}
 	
 	@Override
-	public List<Attachment> getEncounterlessAttachments(Patient patient, boolean includeRetired) {
+	public List<Attachment> getEncounterlessAttachments(Patient patient, boolean includeVoided) {
 		List<Person> persons = new ArrayList<>();
 		List<Concept> questionConcepts = getAttachmentConcepts();
 		persons.add(patient);
 		
 		List<Obs> obsList = ctx.getObsService().getObservations(persons, null, questionConcepts, null, null, null, null,
-		    null, null, null, null, includeRetired);
+		    null, null, null, null, includeVoided);
 		
 		List<Attachment> attachments = new ArrayList<>();
 		for (Obs obs : obsList) {
@@ -77,7 +77,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	}
 	
 	@Override
-	public List<Attachment> getAttachments(Patient patient, Encounter encounter, boolean includeRetired) {
+	public List<Attachment> getAttachments(Patient patient, Encounter encounter, boolean includeVoided) {
 		List<Person> persons = new ArrayList<>();
 		List<Encounter> encounters = new ArrayList<>();
 		List<Concept> questionConcepts = getAttachmentConcepts();
@@ -85,7 +85,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		encounters.add(encounter);
 		
 		List<Obs> obsList = ctx.getObsService().getObservations(persons, encounters, questionConcepts, null, null, null,
-		    null, null, null, null, null, includeRetired);
+		    null, null, null, null, null, includeVoided);
 		
 		List<Attachment> attachments = new ArrayList<>();
 		for (Obs obs : obsList) {
@@ -98,15 +98,15 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	}
 	
 	@Override
-	public List<Attachment> getAttachments(Patient patient, final Visit visit, boolean includeRetired) {
+	public List<Attachment> getAttachments(Patient patient, final Visit visit, boolean includeVoided) {
 		List<Visit> visits = new ArrayList<>();
 		visits.add(visit);
 		List<Encounter> encounters = ctx.getEncounterService().getEncounters(patient, null, null, null, null, null, null,
-		    null, visits, includeRetired);
+		    null, visits, includeVoided);
 		
 		List<Attachment> attachments = new ArrayList<>();
 		for (Encounter encounter : encounters) {
-			attachments.addAll(getAttachments(patient, encounter, includeRetired));
+			attachments.addAll(getAttachments(patient, encounter, includeVoided));
 		}
 		return attachments;
 	}
