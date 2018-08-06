@@ -1,5 +1,6 @@
 package org.openmrs.module.attachments.rest;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.Encounter;
@@ -19,15 +20,20 @@ import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.CustomRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
+import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.api.Uploadable;
 import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
+import org.openmrs.module.webservices.rest.web.resource.impl.EmptySearchResult;
+import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
@@ -165,4 +171,72 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			encounterService.voidEncounter(encounter, "foo");
 		}
 	}
+	
+	public List<Attachment> search(Patient patient, Visit visit, Encounter encounter, String includeEncounterless,
+	        boolean includeVoided) {
+		List<Attachment> attachmentList = new ArrayList<>();
+		
+		// Verify Parameter
+		if (includeEncounterless != null) {
+			if (includeEncounterless.equals("only")) {
+				attachmentList = attachmentsContext.getAttachmentsService().getEncounterlessAttachments(patient,
+				    includeVoided);
+				
+			} else {
+				attachmentList = attachmentsContext.getAttachmentsService().getAttachments(patient,
+				    BooleanUtils.toBoolean(includeEncounterless), includeVoided);
+			}
+		} else {
+			if (encounter != null && visit == null) {
+				attachmentList = attachmentsContext.getAttachmentsService().getAttachments(patient, encounter,
+				    includeVoided);
+			}
+			
+			if (visit != null && encounter == null) {
+				attachmentList = attachmentsContext.getAttachmentsService().getAttachments(patient, visit, includeVoided);
+			}
+			if (encounter == null && visit == null) {
+				attachmentList = attachmentsContext.getAttachmentsService().getAttachments(patient, includeVoided);
+			}
+			
+		}
+		return attachmentList;
+	}
+	
+	/**
+	 * Gets orders by given patient (paged according to context if necessary) only if a patient
+	 * parameter exists in the request set on the {@link RequestContext}, optional careSetting, asOfDate
+	 * request parameters can be specified to filter on
+	 *
+	 * @param context
+	 * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource#doSearch(org.openmrs.module.webservices.rest.web.RequestContext)
+	 * @return all orders for a given patient (possibly filtered by context.type)
+	 */
+	@Override
+	protected PageableResult doSearch(RequestContext context) {
+		
+		// Prepare Parameters
+		Patient patient = Context.getPatientService().getPatientByUuid(context.getParameter("patient"));
+		Visit visit = Context.getVisitService().getVisitByUuid(context.getParameter("visit"));
+		Encounter encounter = Context.getEncounterService().getEncounterByUuid(context.getParameter("encounter"));
+		String includeEncounterless = context.getParameter("includeEncounterless");
+		Boolean includeVoided = BooleanUtils.toBoolean(context.getParameter("includeVoided"));
+		
+		// Verify Parameters
+		if (patient == null) {
+			throw new IllegalRequestException("A patient parameter must be provided when searching the attachments.");
+		}
+		
+		if (includeVoided == null) {
+			System.out.println("Warning Message");
+			includeVoided = false;
+		}
+		
+		List<Attachment> attachmentList = search(patient, visit, encounter, includeEncounterless, includeVoided);
+		if (attachmentList != null) {
+			return new NeedsPaging<Attachment>(attachmentList, context);
+		}
+		return new EmptySearchResult();
+	}
+	
 }
