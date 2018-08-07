@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Obs;
@@ -26,7 +27,13 @@ public class AttachmentController2_0Test extends MainResourceControllerTest {
 	
 	@Before
 	public void setup() throws IOException {
+		testHelper.init();
 		obs = testHelper.getTestComplexObs();
+	}
+	
+	@After
+	public void tearDown() throws IOException {
+		testHelper.tearDown();
 	}
 	
 	@Override

@@ -7,10 +7,11 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import org.apache.commons.io.FilenameUtils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
@@ -19,16 +20,26 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 
-public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
+public class ImageAttachmentHandlerContextSensitiveTest extends BaseModuleContextSensitiveTest {
 	
 	@Autowired
 	protected TestHelper testHelper;
+	
+	@Before
+	public void setup() throws IOException {
+		testHelper.init();
+	}
+	
+	@After
+	public void tearDown() throws IOException {
+		testHelper.tearDown();
+	}
 	
 	@Test
 	public void saveComplexData_shouldSaveThumbnailToDisk() throws IOException {
 		
 		// Replay
-		Obs obs = testHelper.saveNormalSizeImageAttachment();
+		testHelper.saveNormalSizeImageAttachment();
 		
 		// Verif
 		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
@@ -88,7 +99,7 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
 	public void saveComplexData_shouldNotSaveThumbnailWhenSmallImage() throws IOException {
 		
 		// Setup
-		Obs obs = testHelper.saveSmallSizeImageAttachment();
+		testHelper.saveSmallSizeImageAttachment();
 		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
 		String originalFileName = mpFile.getOriginalFilename();
 		
@@ -144,14 +155,11 @@ public class ImageAttachmentHandlerIT extends BaseModuleContextSensitiveTest {
 		byte[] expectedBytes = new BaseComplexData(noThumbnailFile.getName(), ImageIO.read(noThumbnailFile)).asByteArray();
 		
 		// Replay
-		obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_THUMBNAIL);
+		Obs obsThumbnailView = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_THUMBNAIL);
+		Obs obsOriginalView = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_ORIGINAL);
 		
 		// Verif
-		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obs.getComplexData()));
-		
-		obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_ORIGINAL);
-		
-		// Verif
-		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obs.getComplexData()));
+		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obsThumbnailView.getComplexData()));
+		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obsOriginalView.getComplexData()));
 	}
 }

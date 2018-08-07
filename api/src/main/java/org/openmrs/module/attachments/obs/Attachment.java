@@ -1,5 +1,7 @@
 package org.openmrs.module.attachments.obs;
 
+import java.util.Date;
+
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
@@ -16,7 +18,7 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 	
 	protected Integer id = null;
 	
-	protected String uuid = "";
+	protected Date dateTime = null;
 	
 	protected String comment = "";
 	
@@ -30,8 +32,18 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 	 */
 	public Attachment(Obs obs) {
 		super();
+		
 		setUuid(obs.getUuid());
 		setId(obs.getId());
+		setCreator(obs.getCreator());
+		setDateCreated(obs.getDateCreated());
+		setChangedBy(obs.getChangedBy());
+		setDateChanged(obs.getDateChanged());
+		setVoided(obs.getVoided());
+		setVoidedBy(obs.getVoidedBy());
+		setVoidReason(obs.getVoidReason());
+		
+		setDateTime(obs.getObsDatetime());
 		setComment(obs.getComment());
 		setComplexData(obs.getComplexData());
 	}
@@ -42,7 +54,15 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 			obs = new Obs();
 			obs.setUuid(getUuid());
 			obs.setId(getId());
+			obs.setCreator(getCreator());
+			obs.setDateCreated(getDateCreated());
+			obs.setChangedBy(getChangedBy());
+			obs.setDateChanged(getDateChanged());
+			obs.setVoided(getVoided());
+			obs.setVoidedBy(getVoidedBy());
+			obs.setVoidReason(getVoidReason());
 		}
+		obs.setObsDatetime(getDateTime());
 		obs.setComment(getComment());
 		obs.setComplexData(getComplexData());
 		return obs;
@@ -58,12 +78,12 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 		this.id = id;
 	}
 	
-	public String getUuid() {
-		return uuid;
+	public Date getDateTime() {
+		return dateTime;
 	}
 	
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public void setDateTime(Date dateTime) {
+		this.dateTime = dateTime;
 	}
 	
 	public String getComment() {

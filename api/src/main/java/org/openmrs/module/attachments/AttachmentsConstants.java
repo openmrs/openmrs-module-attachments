@@ -28,11 +28,15 @@ public class AttachmentsConstants {
 	
 	public static final String MODULE_BASE_URL = "/" + MODULE_ARTIFACT_ID;
 	
-	public static final String UPLOAD_ATTACHMENT_URL = MODULE_BASE_URL + "/upload";
+	public static final String ATTACHMENT_URI = "attachment";
+	
+	public static final String UPLOAD_ATTACHMENT_URL = "/rest/v1/" + ATTACHMENT_URI;
+	
+	public static final String LEGACY_UPLOAD_ATTACHMENT_URL = MODULE_BASE_URL + "/upload";
 	
 	public static final String DOWNLOAD_ATTACHMENT_URL = MODULE_BASE_URL + "/download";
 	
-	public static final String ATTACHMENT_URI = "attachment";
+	public static final String ATTACHMENT_BYTES_URI = "/{uuid}/bytes";
 	
 	/*
 	 * Spring components qualifiers
@@ -111,6 +115,10 @@ public class AttachmentsConstants {
 	public static final String GP_ALLOW_NO_CAPTION = MODULE_ARTIFACT_ID + ".allowNoCaption";
 	
 	public static final String GP_DASHBOARD_THUMBNAIL_COUNT = MODULE_ARTIFACT_ID + ".dashboardThumbnailCount";
+	
+	// Should always be the same as
+	// RestConstants.MAX_RESULTS_DEFAULT_GLOBAL_PROPERTY_NAME
+	public static final String GP_RESTWS_MAX_RESULTS_DEFAULT_GLOBAL_PROPERTY_NAME = "webservices.rest.maxResultsDefault";
 	
 	/*
 	 * REST
