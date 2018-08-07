@@ -11,6 +11,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
+import org.openmrs.module.attachments.AttachmentsService;
 import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.ValueComplex;
@@ -172,31 +173,37 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		}
 	}
 	
-	public List<Attachment> search(Patient patient, Visit visit, Encounter encounter, String includeEncounterless,
-	        boolean includeVoided) {
+	/**
+	 * Get the Attachments using AttachmentService.
+	 *
+	 * @param as specifies the AttachmentService instance.
+	 * @param patient
+	 * @param visit
+	 * @param encounter
+	 * @param includeEncounterless
+	 * @param includeVoided
+	 */
+	public List<Attachment> search(AttachmentsService as, Patient patient, Visit visit, Encounter encounter,
+	        String includeEncounterless, boolean includeVoided) {
+		
 		List<Attachment> attachmentList = new ArrayList<>();
 		
-		// Verify Parameter
 		if (includeEncounterless != null) {
 			if (includeEncounterless.equals("only")) {
-				attachmentList = attachmentsContext.getAttachmentsService().getEncounterlessAttachments(patient,
-				    includeVoided);
+				attachmentList = as.getEncounterlessAttachments(patient, includeVoided);
 				
 			} else {
-				attachmentList = attachmentsContext.getAttachmentsService().getAttachments(patient,
-				    BooleanUtils.toBoolean(includeEncounterless), includeVoided);
+				attachmentList = as.getAttachments(patient, BooleanUtils.toBoolean(includeEncounterless), includeVoided);
 			}
 		} else {
 			if (encounter != null && visit == null) {
-				attachmentList = attachmentsContext.getAttachmentsService().getAttachments(patient, encounter,
-				    includeVoided);
+				attachmentList = as.getAttachments(patient, encounter, includeVoided);
 			}
-			
 			if (visit != null && encounter == null) {
-				attachmentList = attachmentsContext.getAttachmentsService().getAttachments(patient, visit, includeVoided);
+				attachmentList = as.getAttachments(patient, visit, includeVoided);
 			}
 			if (encounter == null && visit == null) {
-				attachmentList = attachmentsContext.getAttachmentsService().getAttachments(patient, includeVoided);
+				attachmentList = as.getAttachments(patient, includeVoided);
 			}
 			
 		}
@@ -204,13 +211,14 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	}
 	
 	/**
-	 * Gets orders by given patient (paged according to context if necessary) only if a patient
-	 * parameter exists in the request set on the {@link RequestContext}, optional careSetting, asOfDate
-	 * request parameters can be specified to filter on
+	 * Get Attachments by given parameters (paged according to context if necessary) only if a patient
+	 * parameter exists in the request set on the {@link RequestContext}, optional encounter, visit ,
+	 * includeEncounterless , includeVoided request parameters can be specified to filter the
+	 * attachments.
 	 *
 	 * @param context
 	 * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource#doSearch(org.openmrs.module.webservices.rest.web.RequestContext)
-	 * @return all orders for a given patient (possibly filtered by context.type)
+	 * @return Attachments based on the user parameters
 	 */
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
@@ -228,11 +236,13 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		}
 		
 		if (includeVoided == null) {
-			System.out.println("Warning Message");
 			includeVoided = false;
 		}
 		
-		List<Attachment> attachmentList = search(patient, visit, encounter, includeEncounterless, includeVoided);
+		// Search Attachments
+		List<Attachment> attachmentList = search(attachmentsContext.getAttachmentsService(), patient, visit, encounter,
+		    includeEncounterless, includeVoided);
+		
 		if (attachmentList != null) {
 			return new NeedsPaging<Attachment>(attachmentList, context);
 		}
