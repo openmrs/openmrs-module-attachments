@@ -76,6 +76,8 @@ public class AttachmentsContext extends ModuleProperties {
 	@Qualifier(AttachmentsConstants.COMPONENT_VISIT_COMPATIBILITY)
 	protected VisitCompatibility visitCompatibility;
 	
+	@Autowired
+	protected AttachmentsService attachmentsService;
 	/*
 	 * Exposing all needed services through OUR context
 	 */
@@ -118,6 +120,10 @@ public class AttachmentsContext extends ModuleProperties {
 	
 	public AdministrationService getAdministrationService() {
 		return administrationService;
+	}
+	
+	public AttachmentsService getAttachmentsService() {
+		return attachmentsService;
 	}
 	
 	public boolean doAllowEmptyCaption() {
