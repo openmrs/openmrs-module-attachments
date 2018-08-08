@@ -1,11 +1,5 @@
 package org.openmrs.module.attachments.rest;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -28,6 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * The contents of this file are subject to the OpenMRS Public License Version 1.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy of the
@@ -46,7 +46,7 @@ public class ObsByConceptListSearchHandler1_10 implements SearchHandler {
 	protected AttachmentsContext context;
 	
 	private final SearchConfig searchConfig = new SearchConfig("obsByConceptList", RestConstants.VERSION_1 + "/obs",
-	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*"),
+	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*"),
 	        Arrays.asList(
 	            new SearchQuery.Builder("Allows you to retrieve Observations for a patient and a for list of concepts")
 	                    .withRequiredParameters("patient", "conceptList").build()));
