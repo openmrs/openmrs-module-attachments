@@ -28,58 +28,83 @@ public class AttachmentResourceTest {
 	}
 	
 	@Test
-	public void searchAttachments_shouldReturnEncounterAttachments() {
-		
+	public void search_shouldInvokeApiForEncounterAttachments() {
+
+		// Setup
 		AttachmentResource1_10 res = new AttachmentResource1_10();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
 		Encounter encounter = new Encounter();
+
+		// Replay
 		res.search(attachmentsService, patient, null, encounter, null, true);
+
+		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, encounter, true);
 		
 	}
 	
 	@Test
-	public void searchAttachments_shouldReturnVisitAttachments() {
-		
+	public void search_shouldInvokeApiForVisitAttachments() {
+
+		// Setup
 		AttachmentResource1_10 res = new AttachmentResource1_10();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
 		Visit visit = new Visit();
+
+		// Replay
 		res.search(attachmentsService, patient, visit, null, null, true);
+
+		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, visit, true);
 		
 	}
 	
 	@Test
-	public void searchAttachments_shouldReturnAllAttachments() {
-		
+	public void search_shouldInvokeApiForAllAttachments() {
+
+		// Setup
 		AttachmentResource1_10 res = new AttachmentResource1_10();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
+
+		// Replay
 		res.search(attachmentsService, patient, null, null, null, true);
+
+		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, true);
 		
 	}
 	
 	@Test
-	public void searchAttachments_shouldReturnEncounterlessAttachments() {
-		
+	public void search_shouldInvokeApiForEncounterlessAttachments() {
+
+		// Setup
 		AttachmentResource1_10 res = new AttachmentResource1_10();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
+
+		// Replay
 		res.search(attachmentsService, patient, null, null, "only", true);
+
+		// Verify
 		verify(attachmentsService, times(1)).getEncounterlessAttachments(patient, true);
 		
 	}
 	
 	@Test
-	public void searchAttachments_shouldNotReturnEncounterlessAttachments() {
-		
+	public void search_shouldInvokeApiForAllAttachmentsButEncounterless() {
+
+		// Setup
 		AttachmentResource1_10 res = new AttachmentResource1_10();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
+
+		// Replay
 		res.search(attachmentsService, patient, null, null, "false", true);
+
+		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, false, true);
 	}
 }
