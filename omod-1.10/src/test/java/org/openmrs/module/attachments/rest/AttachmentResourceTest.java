@@ -12,9 +12,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(PowerMockRunner.class)
@@ -34,12 +32,13 @@ public class AttachmentResourceTest {
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
 		Encounter encounter = new Encounter();
-
+		
 		// Replay
 		res.search(attachmentsService, patient, null, encounter, null, true);
-
+		
 		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, encounter, true);
+		verifyNoMoreInteractions(attachmentsService);
 	}
 	
 	@Test
@@ -49,12 +48,13 @@ public class AttachmentResourceTest {
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
 		Visit visit = new Visit();
-
+		
 		// Replay
 		res.search(attachmentsService, patient, visit, null, null, true);
-
+		
 		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, visit, true);
+		verifyNoMoreInteractions(attachmentsService);
 	}
 	
 	@Test
@@ -63,12 +63,13 @@ public class AttachmentResourceTest {
 		AttachmentResource1_10 res = new AttachmentResource1_10();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
-
+		
 		// Replay
 		res.search(attachmentsService, patient, null, null, null, true);
-
+		
 		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, true);
+		verifyNoMoreInteractions(attachmentsService);
 	}
 	
 	@Test
@@ -77,12 +78,13 @@ public class AttachmentResourceTest {
 		AttachmentResource1_10 res = new AttachmentResource1_10();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
-
+		
 		// Replay
 		res.search(attachmentsService, patient, null, null, "only", true);
-
+		
 		// Verify
 		verify(attachmentsService, times(1)).getEncounterlessAttachments(patient, true);
+		verifyNoMoreInteractions(attachmentsService);
 	}
 	
 	@Test
@@ -91,11 +93,12 @@ public class AttachmentResourceTest {
 		AttachmentResource1_10 res = new AttachmentResource1_10();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
-
+		
 		// Replay
 		res.search(attachmentsService, patient, null, null, "false", true);
-
+		
 		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, false, true);
+		verifyNoMoreInteractions(attachmentsService);
 	}
 }
