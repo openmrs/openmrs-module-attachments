@@ -29,7 +29,6 @@ public class AttachmentResourceTest {
 	
 	@Test
 	public void search_shouldInvokeApiForEncounterAttachments() {
-
 		// Setup
 		AttachmentResource1_10 res = new AttachmentResource1_10();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
@@ -41,12 +40,10 @@ public class AttachmentResourceTest {
 
 		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, encounter, true);
-		
 	}
 	
 	@Test
 	public void search_shouldInvokeApiForVisitAttachments() {
-
 		// Setup
 		AttachmentResource1_10 res = new AttachmentResource1_10();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
@@ -58,12 +55,10 @@ public class AttachmentResourceTest {
 
 		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, visit, true);
-		
 	}
 	
 	@Test
 	public void search_shouldInvokeApiForAllAttachments() {
-
 		// Setup
 		AttachmentResource1_10 res = new AttachmentResource1_10();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
@@ -74,12 +69,10 @@ public class AttachmentResourceTest {
 
 		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, true);
-		
 	}
 	
 	@Test
 	public void search_shouldInvokeApiForEncounterlessAttachments() {
-
 		// Setup
 		AttachmentResource1_10 res = new AttachmentResource1_10();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
@@ -90,12 +83,10 @@ public class AttachmentResourceTest {
 
 		// Verify
 		verify(attachmentsService, times(1)).getEncounterlessAttachments(patient, true);
-		
 	}
 	
 	@Test
 	public void search_shouldInvokeApiForAllAttachmentsButEncounterless() {
-
 		// Setup
 		AttachmentResource1_10 res = new AttachmentResource1_10();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
