@@ -39,6 +39,7 @@ import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.VisitService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants.ContentFamily;
 import org.openmrs.module.attachments.obs.ComplexDataHelper;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -76,8 +77,6 @@ public class AttachmentsContext extends ModuleProperties {
 	@Qualifier(AttachmentsConstants.COMPONENT_VISIT_COMPATIBILITY)
 	protected VisitCompatibility visitCompatibility;
 	
-	@Autowired
-	protected AttachmentsService attachmentsService;
 	/*
 	 * Exposing all needed services through OUR context
 	 */
@@ -123,7 +122,7 @@ public class AttachmentsContext extends ModuleProperties {
 	}
 	
 	public AttachmentsService getAttachmentsService() {
-		return attachmentsService;
+		return Context.getService(AttachmentsService.class);
 	}
 	
 	public boolean doAllowEmptyCaption() {
