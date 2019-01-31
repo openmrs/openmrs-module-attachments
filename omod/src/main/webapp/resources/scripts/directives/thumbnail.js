@@ -96,18 +96,19 @@ angular.module('att.widget.thumbnail')
       }
 
       $scope.getPrettyDate = function() {
-        var timeFormat = "DD MMM YY";
+        var dateTimeFormat = ($scope.config.dateFormat).toUpperCase();
         var now = new moment();
         var obsDate = moment($scope.obs.obsDatetime);  // new Date(..) would throw 'Invalid date' on Apple WebKit
         if ( ( obsDate.year() == now.year() ) && ( obsDate.dayOfYear() == now.dayOfYear() ) ) {
-          timeFormat = "HH:mm";
+          dateTimeFormat = "HH:mm";
         }
         else {
           if (obsDate.year() === now.year()) {
-            timeFormat = "DD MMM";
+          	// Strips off the year part. Eg 'dd-MMM-yy' → 'dd-MMM', 'YYYY MM DD' → 'MM DD', ... etc
+            dateTimeFormat = dateTimeFormat.replace(/(,?[\.\/\s-])?[yY]+([\.\/\s-])?/ , '');
           }
         }
-        return moment(obsDate).format(timeFormat);
+        return moment(obsDate).format(dateTimeFormat);
       }
 
       $scope.saveCaption = function() {
