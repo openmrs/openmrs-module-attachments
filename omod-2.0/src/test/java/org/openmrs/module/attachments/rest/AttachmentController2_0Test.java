@@ -105,24 +105,22 @@ public class AttachmentController2_0Test extends MainResourceControllerTest {
 		
 		AttachmentsService as = Context.getService(AttachmentsService.class);
 		List<Attachment> attachments = as.getAttachments(patient, false);
-
+		
 		MockHttpServletRequest request = newGetRequest(getURI() + "/");
 		request.addParameter("patient", patient.getUuid());
 		request.addParameter("v", "full");
 		
 		RequestContext requestContext = new RequestContext();
 		requestContext.setRequest(request);
-
-		//Replay
+		
+		// Replay
 		BasePageableResult response = (BasePageableResult) res.doSearch(requestContext);
-
+		
 		List<Attachment> actualAttachments = response.getPageOfResults();
-
+		
 		// Verify
-		assertArrayEquals(
-				attachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
-		       actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray()
-		);
+		assertArrayEquals(attachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray(),
+		    actualAttachments.stream().map(Attachment::getUuid).collect(Collectors.toList()).toArray());
 		
 	}
 }
