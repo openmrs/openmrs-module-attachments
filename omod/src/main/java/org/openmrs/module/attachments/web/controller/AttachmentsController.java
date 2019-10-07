@@ -77,6 +77,10 @@ public class AttachmentsController {
 				Encounter encounter = null;
 				if (context.associateWithVisitAndEncounter()) {
 					encounter = context.getAttachmentEncounter(patient, visit, provider);
+				} else {
+					// if there is no default encounter type configured, then do not attach this
+					// attachment to any visit
+					visit = null;
 				}
 				
 				if (StringUtils.isEmpty(instructions))
