@@ -1,16 +1,20 @@
 package org.openmrs.module.attachments.rest;
 
-import org.junit.Test;
+import org.junit.Before;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResourceTest;
 
 public class AttachmentResource1_10Test extends BaseDelegatingResourceTest<AttachmentResource1_10, Attachment> {
 	
-	private Attachment doc = new Attachment();
+	@Before
+	public void before() throws Exception {
+		executeDataSet("org/openmrs/api/include/ObsServiceTest-complex.xml");
+	}
 	
 	@Override
 	public Attachment newObject() {
-		return doc;
+		return new Attachment(Context.getObsService().getObsByUuid("9b6639b2-5785-4603-a364-075c2d61cd51"));
 	}
 	
 	@Override
@@ -20,11 +24,15 @@ public class AttachmentResource1_10Test extends BaseDelegatingResourceTest<Attac
 	
 	@Override
 	public String getUuidProperty() {
-		return doc.getUuid();
+		return "9b6639b2-5785-4603-a364-075c2d61cd51";
 	}
 	
-	@Test
-	public void shouldLoadResource() throws Exception {
-		AttachmentResource1_10 resource = getResource();
+	@Override
+	public void validateDefaultRepresentation() throws Exception {
+		super.validateDefaultRepresentation();
+		
+		assertPropEquals("dateTime", getObject().getDateTime());
+		assertPropEquals("comment", getObject().getComment());
+		assertPropEquals("complexData", getObject().getComplexData());
 	}
 }

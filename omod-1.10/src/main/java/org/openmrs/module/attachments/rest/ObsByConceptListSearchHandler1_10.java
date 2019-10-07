@@ -46,7 +46,7 @@ public class ObsByConceptListSearchHandler1_10 implements SearchHandler {
 	protected AttachmentsContext context;
 	
 	private final SearchConfig searchConfig = new SearchConfig("obsByConceptList", RestConstants.VERSION_1 + "/obs",
-	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*"),
+	        Arrays.asList("1.*", "2.*"),
 	        Arrays.asList(
 	            new SearchQuery.Builder("Allows you to retrieve Observations for a patient and a for list of concepts")
 	                    .withRequiredParameters("patient", "conceptList").build()));
