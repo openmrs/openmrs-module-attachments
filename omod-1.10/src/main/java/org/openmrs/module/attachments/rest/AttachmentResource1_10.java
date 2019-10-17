@@ -1,11 +1,5 @@
 package org.openmrs.module.attachments.rest;
 
-import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
@@ -37,6 +31,12 @@ import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
 @Resource(name = RestConstants.VERSION_1 + "/"
         + AttachmentsConstants.ATTACHMENT_URI, supportedClass = Attachment.class, supportedOpenmrsVersions = { "1.10.*",
@@ -119,7 +119,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			}
 		}
 		
-		if (visit != null && encounter == null) {
+		if (visit != null && encounter == null && attachmentsContext.associateWithVisitAndEncounter()) {
 			encounter = attachmentsContext.getAttachmentEncounter(patient, visit, provider);
 		}
 		
