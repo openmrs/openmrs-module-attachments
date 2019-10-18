@@ -258,7 +258,8 @@ public class AttachmentsContext extends ModuleProperties {
 	}
 	
 	public Boolean associateWithVisit() {
-		return Boolean.valueOf(administrationService.getGlobalProperty(AttachmentsConstants.GP_ASSOCIATE_WITH_VISIT));
+		String associateWithVisitGP = administrationService.getGlobalProperty(AttachmentsConstants.GP_ASSOCIATE_WITH_VISIT);
+		return associateWithVisitGP != null ? Boolean.valueOf(associateWithVisitGP) : true;
 	}
 	
 	/**
