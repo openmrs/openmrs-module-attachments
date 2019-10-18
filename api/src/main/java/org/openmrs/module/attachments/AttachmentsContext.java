@@ -9,13 +9,6 @@
  */
 package org.openmrs.module.attachments;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -44,10 +37,16 @@ import org.openmrs.module.attachments.AttachmentsConstants.ContentFamily;
 import org.openmrs.module.attachments.obs.ComplexDataHelper;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.utils.ModuleProperties;
-import org.openmrs.obs.ComplexObsHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Inject this class to access services and global properties.
@@ -258,8 +257,9 @@ public class AttachmentsContext extends ModuleProperties {
 		return encounterType;
 	}
 	
-	public Boolean associateWithVisitAndEncounter() {
-		return getEncounterType() != null;
+	public Boolean associateWithVisit() {
+		String associateWithVisitGP = administrationService.getGlobalProperty(AttachmentsConstants.GP_ASSOCIATE_WITH_VISIT);
+		return associateWithVisitGP != null ? Boolean.valueOf(associateWithVisitGP) : true;
 	}
 	
 	/**

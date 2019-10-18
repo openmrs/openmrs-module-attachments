@@ -1,6 +1,5 @@
 package org.openmrs.module.attachments.web.controller;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,7 +74,7 @@ public class AttachmentsController {
 				MultipartFile multipartFile = request.getFile(uploadedFileName);
 				
 				Encounter encounter = null;
-				if (context.associateWithVisitAndEncounter()) {
+				if (context.associateWithVisit()) {
 					encounter = context.getAttachmentEncounter(patient, visit, provider);
 				}
 				

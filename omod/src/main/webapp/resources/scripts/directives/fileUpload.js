@@ -68,7 +68,7 @@ angular
                                     var providerUuid = "";
                                     $scope.visitUuid = ""; // In scope for toggling ng-show
                                     $scope.closedVisit = false;
-                                    $scope.associateWithVisitAndEncounter = $scope.config.associateWithVisitAndEncounter;
+                                    $scope.associateWithVisit = $scope.config.associateWithVisit;
 
                                     $rootScope.$on(module.webcamCaptureForUpload, function(event, webcamFile) {
                                         addFileToDropzone(webcamFile);
@@ -89,7 +89,7 @@ angular
                                         sessionInfo.get().$promise.then(function(info) {
                                             providerUuid = info.currentProvider.uuid;
                                         });
-                                        if ($scope.config.visit) {
+                                        if ($scope.config.visit && $scope.associateWithVisit) {
                                             $scope.visitUuid = $scope.config.visit.uuid;
                                             if ($scope.config.visit.stopDatetime) {
                                                 $scope.closedVisit = true;
