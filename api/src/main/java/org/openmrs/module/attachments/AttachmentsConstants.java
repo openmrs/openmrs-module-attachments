@@ -104,6 +104,8 @@ public class AttachmentsConstants {
 	
 	public static final String GP_ENCOUNTER_TYPE_UUID = MODULE_ARTIFACT_ID + ".encounterTypeUuid";
 	
+	public static final String GP_ASSOCIATE_WITH_VISIT = MODULE_ARTIFACT_ID + ".associateWithVisit";
+	
 	public static final String GP_MAX_UPLOAD_FILE_SIZE = MODULE_ARTIFACT_ID + ".maxUploadFileSize";
 	
 	public static final String GP_MAX_STORAGE_FILE_SIZE = MODULE_ARTIFACT_ID + ".maxStorageFileSize";
