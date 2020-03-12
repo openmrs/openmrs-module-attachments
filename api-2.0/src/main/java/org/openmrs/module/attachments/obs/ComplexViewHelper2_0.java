@@ -1,8 +1,8 @@
 package org.openmrs.module.attachments.obs;
 
+import org.openmrs.Obs;
 import org.openmrs.annotation.OpenmrsProfile;
 import org.openmrs.module.attachments.AttachmentsConstants;
-import org.openmrs.module.attachments.obs.ComplexViewHelper;
 import org.openmrs.obs.ComplexObsHandler;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class ComplexViewHelper2_0 implements ComplexViewHelper {
 	
 	@Override
-	public String getView(String view) {
+	public String getView(Obs obs, String view) {
 		
 		return ComplexObsHandler.RAW_VIEW;
 	}
