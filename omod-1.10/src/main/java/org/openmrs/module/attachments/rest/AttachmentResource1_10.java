@@ -72,7 +72,8 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		if (!obs.isComplex())
 			throw new GenericRestException(uniqueId + " does not identify a complex obs.", null);
 		else {
-			obs = Context.getObsService().getComplexObs(obs.getId(), viewHelper.getView(AttachmentsConstants.ATT_VIEW_CRUD));
+			obs = Context.getObsService().getComplexObs(obs.getId(),
+			    viewHelper.getView(obs, AttachmentsConstants.ATT_VIEW_CRUD));
 			return new Attachment(obs);
 		}
 	}

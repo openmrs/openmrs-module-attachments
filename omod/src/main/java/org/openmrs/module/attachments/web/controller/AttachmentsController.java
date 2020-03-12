@@ -114,7 +114,7 @@ public class AttachmentsController {
 		
 		// Getting the Core/Platform complex data object
 		Obs obs = context.getObsService().getObsByUuid(obsUuid);
-		Obs complexObs = context.getObsService().getComplexObs(obs.getObsId(), viewHelper.getView(view));
+		Obs complexObs = context.getObsService().getComplexObs(obs.getObsId(), viewHelper.getView(obs, view));
 		ComplexData complexData = complexObs.getComplexData();
 		
 		// Switching to our complex data object

@@ -48,7 +48,7 @@ public class AttachmentBytesResource1_10 extends BaseRestController {
 		
 		ComplexViewHelper viewHelper = context.getComplexViewHelper();
 		
-		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), viewHelper.getView(null));
+		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), viewHelper.getView(obs, null));
 		ComplexData complexData = complexObs.getComplexData();
 		
 		// Switching to our complex data object
