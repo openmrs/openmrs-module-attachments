@@ -12,11 +12,10 @@ public class ComplexViewHelper2_0 implements ComplexViewHelper {
 	
 	@Override
 	public String getView(Obs obs, String view) {
-		// Obs obs will help the 2.x implementation support fetching the
+		// TODO: Obs obs will help the 2.x implementation support fetching the
 		// supported views for that obs,
-		// using for example:
-		// https://github.com/openmrs/openmrs-core/blob/7da5be1bc34fc4928779f303cd48d42b8a3cae0a/api/src/main/java/org/openmrs/api/ObsService.java#L417-L428
-		// and AbstractHandler derived handlers method getSupportedViews()
+		// See:
+		// https://issues.openmrs.org/browse/ATT-34
 		
 		return ComplexObsHandler.RAW_VIEW;
 	}
