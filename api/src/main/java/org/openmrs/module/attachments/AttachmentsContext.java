@@ -9,6 +9,13 @@
  */
 package org.openmrs.module.attachments;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -35,18 +42,12 @@ import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants.ContentFamily;
 import org.openmrs.module.attachments.obs.ComplexDataHelper;
+import org.openmrs.module.attachments.obs.ComplexViewHelper;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.utils.ModuleProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Inject this class to access services and global properties.
@@ -71,6 +72,10 @@ public class AttachmentsContext extends ModuleProperties {
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXDATA_HELPER)
 	protected ComplexDataHelper complexDataHelper;
+	
+	@Autowired
+	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXVIEW_HELPER)
+	protected ComplexViewHelper complexViewHelper;
 	
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_VISIT_COMPATIBILITY)
@@ -114,6 +119,10 @@ public class AttachmentsContext extends ModuleProperties {
 	
 	public ComplexDataHelper getComplexDataHelper() {
 		return complexDataHelper;
+	}
+	
+	public ComplexViewHelper getComplexViewHelper() {
+		return complexViewHelper;
 	}
 	
 	public AdministrationService getAdministrationService() {
