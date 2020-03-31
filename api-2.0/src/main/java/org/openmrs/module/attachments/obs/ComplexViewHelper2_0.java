@@ -29,25 +29,21 @@ public class ComplexViewHelper2_0 implements ComplexViewHelper {
 		// https://issues.openmrs.org/browse/ATT-34
 		
 		ComplexObsHandler complexObsHandler = context.getObsService().getHandler(obs);
-		String [] supportedViews = complexObsHandler.getSupportedViews();
 		
-		for(int x=0;x<supportedViews.length;x++){
-			if(supportedViews[x].equalsIgnoreCase(view)){
-				return view;
-			}
-		} 
-			log.warn("Supported view for this Obs not found.Obs will now use the default view");
-			return ComplexObsHandler.RAW_VIEW;
-		
-		/*
-		complexObsHandler.getSupportedViews();
 		if (complexObsHandler.supportsView(view)) {
 			return view;
 		} else {
 			log.warn("Supported view for this Obs not found.Obs will now use the default view");
 			return ComplexObsHandler.RAW_VIEW;
 		}
-		*/
 		
+		/*
+		 * String[] supportedViews = complexObsHandler.getSupportedViews();
+		 * 
+		 * for (int x = 0; x < supportedViews.length; x++) { if
+		 * (supportedViews[x].equalsIgnoreCase(view)) { return view; } } log.
+		 * warn("Supported view for this Obs not found.Obs will now use the default view"
+		 * ); return ComplexObsHandler.RAW_VIEW;
+		 */
 	}
 }
