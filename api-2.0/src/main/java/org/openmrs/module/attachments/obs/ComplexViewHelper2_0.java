@@ -33,17 +33,9 @@ public class ComplexViewHelper2_0 implements ComplexViewHelper {
 		if (complexObsHandler.supportsView(view)) {
 			return view;
 		} else {
-			log.warn("Supported view for this Obs not found.Obs will now use the default view");
+			log.warn("'" + view + "' is not a supported view for obs (" + obs.getUuid() + "). Reverting to the default view: '" + ComplexObsHandler.RAW_VIEW + "'");
 			return ComplexObsHandler.RAW_VIEW;
 		}
 		
-		/*
-		 * String[] supportedViews = complexObsHandler.getSupportedViews();
-		 * 
-		 * for (int x = 0; x < supportedViews.length; x++) { if
-		 * (supportedViews[x].equalsIgnoreCase(view)) { return view; } } log.
-		 * warn("Supported view for this Obs not found.Obs will now use the default view"
-		 * ); return ComplexObsHandler.RAW_VIEW;
-		 */
 	}
 }
