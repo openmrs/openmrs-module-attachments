@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openmrs.Obs;
 import org.openmrs.annotation.OpenmrsProfile;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.obs.ComplexObsHandler;
@@ -29,11 +30,12 @@ public class ComplexViewHelper2_0 implements ComplexViewHelper {
 		// https://issues.openmrs.org/browse/ATT-34
 		
 		ComplexObsHandler complexObsHandler = context.getObsService().getHandler(obs);
-		
+				
 		if (complexObsHandler.supportsView(view)) {
 			return view;
 		} else {
-			log.warn("'" + view + "' is not a supported view for obs (" + obs.getUuid() + "). Reverting to the default view: '" + ComplexObsHandler.RAW_VIEW + "'");
+			log.warn("'" + view + "' is not a supported view for complex obs (" + obs.getUuid()
+			        + "). Reverting to the default view: '" + ComplexObsHandler.RAW_VIEW + "'");
 			return ComplexObsHandler.RAW_VIEW;
 		}
 		
