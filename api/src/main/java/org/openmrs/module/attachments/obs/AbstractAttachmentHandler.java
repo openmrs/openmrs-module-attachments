@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Obs;
 import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import static org.openmrs.module.attachments.obs.ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT;
 import static org.openmrs.module.attachments.obs.ImageAttachmentHandler.THUMBNAIL_MAX_WIDTH;
@@ -28,6 +29,9 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	public final static String THUMBNAIL_SUFFIX = "_thumb";
 	
 	protected final Log log = LogFactory.getLog(getClass());
+
+	ComplexViewHelper viewHelper = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXVIEW_HELPER,
+	    ComplexViewHelper.class);
 	
 	private ComplexObsHandler parent;
 	
@@ -160,6 +164,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 		
 		ValueComplex valueComplex = new ValueComplex(obs.getValueComplex());
 		if (valueComplex.isOwnImplementation() == false) { // not our implementation
+			view = viewHelper.getView(obs, view);
 			return getParent().getObs(obs, view);
 		}
 		

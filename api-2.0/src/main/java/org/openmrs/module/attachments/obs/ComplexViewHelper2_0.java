@@ -3,13 +3,22 @@ package org.openmrs.module.attachments.obs;
 import org.openmrs.Obs;
 import org.openmrs.annotation.OpenmrsProfile;
 import org.openmrs.module.attachments.AttachmentsConstants;
+import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.obs.ComplexObsHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component(AttachmentsConstants.COMPONENT_COMPLEXVIEW_HELPER)
 @OpenmrsProfile(openmrsPlatformVersion = "2.0.0")
 public class ComplexViewHelper2_0 implements ComplexViewHelper {
-	
+	@Autowired
+	@Qualifier(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
+	protected AttachmentsContext context;
+
+	private static final Logger log = LoggerFactory.getLogger(ComplexViewHelper2_0.class);
 	@Override
 	public String getView(Obs obs, String view) {
 		// TODO: Obs obs will help the 2.x implementation support fetching the
@@ -17,6 +26,15 @@ public class ComplexViewHelper2_0 implements ComplexViewHelper {
 		// See:
 		// https://issues.openmrs.org/browse/ATT-34
 		
-		return ComplexObsHandler.RAW_VIEW;
+		ComplexObsHandler complexObsHandler = context.getObsService().getHandler(obs);
+
+		if (complexObsHandler.supportsView(view)) {
+			return view;
+		} else {
+			log.warn("'" + view + "' is not a supported view for complex obs (" + obs.getUuid()
+			        + "). Reverting to the default view: '" + ComplexObsHandler.RAW_VIEW + "'");
+			return ComplexObsHandler.RAW_VIEW;
+		}
+
 	}
 }
