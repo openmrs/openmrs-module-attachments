@@ -55,7 +55,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
  <% if(visit == null){ %>
 
-    <h2>${ ui.message("attachments.noActiveVisit") }</h2>
+    <h5>${ ui.message("attachments.noActiveVisit") }</h5>
 
  <% } else{ %>
 
