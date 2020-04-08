@@ -53,6 +53,12 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <div id="att-page-main">
 
+ <% if(visit == null){ %>
+
+    <h5>${ ui.message("attachments.noActiveVisit") }</h5>
+
+ <% } else{ %>
+
   <div ng-controller="FileUploadCtrl" class="att_main-section">
     <att-file-upload config="config"></att-file-upload>
   </div>
@@ -60,11 +66,12 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
   <div ng-controller="GalleryCtrl" class="att_main-section">
     <att-gallery obs-query="obsQuery" options="{canEdit:true}"></att-gallery>
   </div>
-
+ <% } %>
 </div>
 
 
 <script type="text/javascript">
+
   // manually bootstrap angular app, in case there are multiple angular apps on a page
   angular.bootstrap('#att-page-main', ['att.page.main']);
 </script>

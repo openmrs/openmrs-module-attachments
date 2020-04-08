@@ -48,6 +48,7 @@ public class AttachmentsPageController {
 
 		// For Core Apps's patient header.
 		model.put("patient", patient);
+		model.put("visit", visitWrapper);
 	}
 
 	protected VisitDomainWrapper getVisitDomainWrapper(DomainWrapperFactory domainWrapperFactory, Patient patient,
