@@ -52,9 +52,6 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	AttachmentsContext attachmentsContext = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT,
 	    AttachmentsContext.class);
 	
-	ComplexViewHelper viewHelper = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXVIEW_HELPER,
-	    ComplexViewHelper.class);
-	
 	@Override
 	public Attachment newDelegate() {
 		return new Attachment();
@@ -72,8 +69,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		if (!obs.isComplex())
 			throw new GenericRestException(uniqueId + " does not identify a complex obs.", null);
 		else {
-			obs = Context.getObsService().getComplexObs(obs.getId(),
-			    viewHelper.getView(obs, AttachmentsConstants.ATT_VIEW_CRUD));
+			obs = Context.getObsService().getComplexObs(obs.getId(),AttachmentsConstants.ATT_VIEW_CRUD);
 			return new Attachment(obs);
 		}
 	}

@@ -110,11 +110,9 @@ public class AttachmentsController {
 		if (StringUtils.isEmpty(view))
 			view = AttachmentsConstants.ATT_VIEW_ORIGINAL;
 		
-		ComplexViewHelper viewHelper = context.getComplexViewHelper();
-		
 		// Getting the Core/Platform complex data object
 		Obs obs = context.getObsService().getObsByUuid(obsUuid);
-		Obs complexObs = context.getObsService().getComplexObs(obs.getObsId(), viewHelper.getView(obs, view));
+		Obs complexObs = context.getObsService().getComplexObs(obs.getObsId(), view);
 		ComplexData complexData = complexObs.getComplexData();
 		
 		// Switching to our complex data object
