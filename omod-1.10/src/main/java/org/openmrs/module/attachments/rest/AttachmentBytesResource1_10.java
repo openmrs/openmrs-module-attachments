@@ -1,11 +1,5 @@
 package org.openmrs.module.attachments.rest;
 
-import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
-
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,7 +8,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.obs.AttachmentComplexData;
-import org.openmrs.module.attachments.obs.ComplexViewHelper;
 import org.openmrs.module.attachments.obs.ValueComplex;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.response.GenericRestException;
@@ -26,6 +19,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
 @Controller
 @RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + "/" + AttachmentsConstants.ATTACHMENT_URI)
@@ -46,9 +44,7 @@ public class AttachmentBytesResource1_10 extends BaseRestController {
 			        + "Obs UUID: " + obs.getUuid());
 		}
 		
-		ComplexViewHelper viewHelper = context.getComplexViewHelper();
-		
-		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), viewHelper.getView(obs, null));
+		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
 		ComplexData complexData = complexObs.getComplexData();
 		
 		// Switching to our complex data object
