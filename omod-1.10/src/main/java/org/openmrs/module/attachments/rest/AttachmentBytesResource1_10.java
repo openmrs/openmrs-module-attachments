@@ -26,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + "/" + AttachmentsConstants.ATTACHMENT_URI)
@@ -37,7 +38,7 @@ public class AttachmentBytesResource1_10 extends BaseRestController {
 	protected final Log log = LogFactory.getLog(getClass());
 	
 	@RequestMapping(value = AttachmentsConstants.ATTACHMENT_BYTES_URI, method = RequestMethod.GET)
-	public void getFile(@PathVariable("uuid") String uuid, HttpServletResponse response) throws ResponseException {
+	public void getFile(@PathVariable("uuid") String uuid,@RequestParam(required = false, value = "view") String view, HttpServletResponse response) throws ResponseException {
 		// Getting the Core/Platform complex data object
 		Obs obs = context.getObsService().getObsByUuid(uuid);
 		
@@ -48,7 +49,7 @@ public class AttachmentBytesResource1_10 extends BaseRestController {
 		
 		ComplexViewHelper viewHelper = context.getComplexViewHelper();
 		
-		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), viewHelper.getView(obs, null));
+		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), viewHelper.getView(obs, view));
 		ComplexData complexData = complexObs.getComplexData();
 		
 		// Switching to our complex data object
