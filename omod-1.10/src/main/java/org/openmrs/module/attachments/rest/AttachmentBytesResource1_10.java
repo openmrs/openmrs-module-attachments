@@ -38,7 +38,8 @@ public class AttachmentBytesResource1_10 extends BaseRestController {
 	protected final Log log = LogFactory.getLog(getClass());
 	
 	@RequestMapping(value = AttachmentsConstants.ATTACHMENT_BYTES_URI, method = RequestMethod.GET)
-	public void getFile(@PathVariable("uuid") String uuid,@RequestParam(required = false, value = "view") String view, HttpServletResponse response) throws ResponseException {
+	public void getFile(@PathVariable("uuid") String uuid, @RequestParam(required = false, value = "view") String view,
+	        HttpServletResponse response) throws ResponseException {
 		// Getting the Core/Platform complex data object
 		Obs obs = context.getObsService().getObsByUuid(uuid);
 		
