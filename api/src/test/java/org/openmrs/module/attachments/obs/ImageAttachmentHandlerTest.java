@@ -55,7 +55,7 @@ public class ImageAttachmentHandlerTest {
 	
 	private ComplexObsHandler imageHandler = new ImageHandler();
 	
-	private ComplexObsHandler imageDocumentHandler = new ImageAttachmentHandler();
+	private ImageAttachmentHandler imageAttachmentHandler = new ImageAttachmentHandler();
 	
 	@Before
 	public void setUp() throws IOException, APIException, URISyntaxException {
@@ -69,6 +69,8 @@ public class ImageAttachmentHandlerTest {
 		
 		PowerMockito.mockStatic(Context.class);
 		when(Context.getAdministrationService()).thenReturn(adminService);
+		
+		imageAttachmentHandler.setComplexViewHelper(mock(ComplexViewHelper.class));
 	}
 	
 	@Test
@@ -79,7 +81,7 @@ public class ImageAttachmentHandlerTest {
 		Obs savedObs = new Obs();
 		savedObs.setComplexData(
 		    (new AttachmentComplexData1_10(imgFileName, new FileInputStream(imageFile))).asComplexData());
-		imageDocumentHandler.saveObs(savedObs);
+		imageAttachmentHandler.saveObs(savedObs);
 		Obs fetchedObs = imageHandler.getObs(savedObs, randomView);
 		ComplexData complexData = fetchedObs.getComplexData();
 		
@@ -98,7 +100,7 @@ public class ImageAttachmentHandlerTest {
 		Obs savedObs = new Obs();
 		savedObs.setComplexData(new ComplexData(imgFileName, new FileInputStream(imageFile)));
 		imageHandler.saveObs(savedObs); // Saving with core's handler
-		Obs fetchedObs = imageDocumentHandler.getObs(savedObs, randomView);
+		Obs fetchedObs = imageAttachmentHandler.getObs(savedObs, randomView);
 		ComplexData complexData = fetchedObs.getComplexData(); // Fetching with our handler
 		
 		// Verification
