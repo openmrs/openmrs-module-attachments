@@ -80,8 +80,6 @@ public class AttachmentBytesResource1_10Test extends MainResourceControllerTest 
 	public void getAttachmentBytes_shouldGetOriginalFileWhenViewPassedEqualToOriginal() throws Exception {
 		
 		// Setup
-		String fileCaption = "Test file caption";
-		String uuid;
 		String mimeType = "application/octet-stream";
 		String fileExtension = "dat";
 		String fileName = "testFile." + fileExtension;
@@ -93,14 +91,15 @@ public class AttachmentBytesResource1_10Test extends MainResourceControllerTest 
 		
 		uploadRequest.addFile(file);
 		uploadRequest.addParameter("patient", patient.getUuid());
-		uploadRequest.addParameter("fileCaption", fileCaption);
+		uploadRequest.addParameter("fileCaption", "Test file caption");
 		
+		
+		// Replay
 		SimpleObject uploadResponse = deserialize(handle(uploadRequest));
-		uuid = uploadResponse.get("uuid");
+		String uuid = uploadResponse.get("uuid");
         
 		HttpServletRequest downloadRequest = newGetRequest(getURI() + "/" + uuid + "/bytes",new Parameter("view", "complexdata.view.original"));
 		
-		// Replay
 		MockHttpServletResponse downloadResponse = handle(downloadRequest);
 		byte[] bytesContent = downloadResponse.getContentAsByteArray();
 		
@@ -116,8 +115,7 @@ public class AttachmentBytesResource1_10Test extends MainResourceControllerTest 
 	  public void getAttachmentBytes_shouldGetFileWhenViewIsNotPassed() throws Exception {
 	 
 		// Setup
-		String fileCaption = "Test file caption";
-		String uuid;
+	
 		String mimeType = "application/octet-stream";
 		String fileExtension = "dat";
 		String fileName = "testFile." + fileExtension;
@@ -129,14 +127,15 @@ public class AttachmentBytesResource1_10Test extends MainResourceControllerTest 
 		
 		uploadRequest.addFile(file);
 		uploadRequest.addParameter("patient", patient.getUuid());
-		uploadRequest.addParameter("fileCaption", fileCaption);
+		uploadRequest.addParameter("fileCaption", "Test file caption");
 		
+		
+		// Replay
 		SimpleObject uploadResponse = deserialize(handle(uploadRequest));
-		uuid = uploadResponse.get("uuid");
+		String uuid = uploadResponse.get("uuid");
         
 		HttpServletRequest downloadRequest = newGetRequest(getURI() + "/" + uuid + "/bytes");
 		
-		// Replay
 		MockHttpServletResponse downloadResponse = handle(downloadRequest);
 		byte[] bytesContent = downloadResponse.getContentAsByteArray();
 		
@@ -151,8 +150,6 @@ public class AttachmentBytesResource1_10Test extends MainResourceControllerTest 
 		public void getAttachmentBytes_shouldGetOriginalFileWhenViewIsPassedEqualToUnknown() throws Exception {
 			
 			// Setup
-			String fileCaption = "Test file caption";
-			String uuid;
 			String mimeType = "application/octet-stream";
 			String fileExtension = "dat";
 			String fileName = "testFile." + fileExtension;
@@ -164,14 +161,15 @@ public class AttachmentBytesResource1_10Test extends MainResourceControllerTest 
 			
 			uploadRequest.addFile(file);
 			uploadRequest.addParameter("patient", patient.getUuid());
-			uploadRequest.addParameter("fileCaption", fileCaption);
+			uploadRequest.addParameter("fileCaption", "Test file caption");
 			
+			
+			// Replay
 			SimpleObject uploadResponse = deserialize(handle(uploadRequest));
-			uuid = uploadResponse.get("uuid");
+			String uuid = uploadResponse.get("uuid");
 			
 			HttpServletRequest downloadRequest = newGetRequest(getURI() + "/" + uuid + "/bytes",new Parameter("view", "unknown"));
 			
-			// Replay
 			MockHttpServletResponse downloadResponse = handle(downloadRequest);
 			byte[] bytesContent = downloadResponse.getContentAsByteArray();
 			
@@ -186,8 +184,6 @@ public class AttachmentBytesResource1_10Test extends MainResourceControllerTest 
 		public void getAttachmentBytes_shouldGetThumbNailFileWhenViewIsPassedEqualToThumbnail() throws Exception {
 			
 			// Setup
-			String fileCaption = "Test file caption";
-			String uuid;
 			String mimeType = "application/octet-stream";
 			String fileExtension = "dat";
 			String fileName = "testFile." + fileExtension;
@@ -199,14 +195,15 @@ public class AttachmentBytesResource1_10Test extends MainResourceControllerTest 
 			
 			uploadRequest.addFile(file);
 			uploadRequest.addParameter("patient", patient.getUuid());
-			uploadRequest.addParameter("fileCaption", fileCaption);
+			uploadRequest.addParameter("fileCaption", "Test file caption");
 			
+			
+			// Replay
 			SimpleObject uploadResponse = deserialize(handle(uploadRequest));
-			uuid = uploadResponse.get("uuid");
+			String uuid = uploadResponse.get("uuid");
 			
 			HttpServletRequest downloadRequest = newGetRequest(getURI() + "/" + uuid + "/bytes",new Parameter("view", "complexdata.view.thumbnail"));
 			
-			// Replay
 			MockHttpServletResponse downloadResponse = handle(downloadRequest);
 			byte[] bytesContent = downloadResponse.getContentAsByteArray();
 			
