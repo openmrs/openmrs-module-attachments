@@ -1,8 +1,14 @@
 package org.openmrs.module.attachments.obs;
 
+import static org.openmrs.module.attachments.AttachmentsConstants.ATT_VIEW_ORIGINAL;
+import static org.openmrs.module.attachments.AttachmentsConstants.ATT_VIEW_THUMBNAIL;
+import static org.openmrs.module.attachments.obs.ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT;
+import static org.openmrs.module.attachments.obs.ImageAttachmentHandler.THUMBNAIL_MAX_WIDTH;
+
 import java.io.File;
 import java.io.IOException;
-import net.coobird.thumbnailator.Thumbnails;
+import java.util.Arrays;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -10,18 +16,20 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Obs;
 import org.openmrs.api.APIException;
 import org.openmrs.module.attachments.AttachmentsConstants;
-import static org.openmrs.module.attachments.obs.ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT;
-import static org.openmrs.module.attachments.obs.ImageAttachmentHandler.THUMBNAIL_MAX_WIDTH;
 import org.openmrs.obs.ComplexData;
 import org.openmrs.obs.ComplexObsHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 /**
  * Double inheritance class. The actual implementation parent must be set through
  * {@link #setParentComplexObsHandler()}.
  */
 public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
+	
+	private static final String[] supportedViews = { ATT_VIEW_ORIGINAL, ATT_VIEW_THUMBNAIL };
 	
 	public final static String NO_THUMBNAIL_SUFFIX = "___nothumb__";
 	
@@ -63,6 +71,14 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	 * Complex data CRUD - Save (Update)
 	 */
 	abstract protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData);
+	
+	public String[] getSupportedViews() {
+		return supportedViews;
+	}
+	
+	public boolean supportsView(String view) {
+		return Arrays.asList(getSupportedViews()).contains(view);
+	}
 	
 	protected void setParent(ComplexObsHandler complexObsHandler) {
 		this.parent = complexObsHandler;
@@ -167,8 +183,8 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 			view = AttachmentsConstants.ATT_VIEW_ORIGINAL;
 		}
 		
-		ComplexData docData = readComplexData(obs, valueComplex, view);
-		obs.setComplexData(docData);
+		ComplexData attData = readComplexData(obs, valueComplex, view);
+		obs.setComplexData(attData);
 		return obs;
 	}
 	

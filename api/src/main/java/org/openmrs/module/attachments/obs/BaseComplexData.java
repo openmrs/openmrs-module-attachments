@@ -43,6 +43,8 @@ public class BaseComplexData extends ComplexData {
 		}
 		if (data instanceof byte[]) {
 			return (byte[]) data;
+		} else if (data instanceof String) {
+			return ((String) data).getBytes();
 		} else if (RenderedImage.class.isAssignableFrom(data.getClass())) {
 			RenderedImage image = (RenderedImage) data;
 			
