@@ -20,7 +20,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsService;
 import org.openmrs.module.attachments.obs.Attachment;
-import org.openmrs.module.attachments.obs.TestAttachmentsBytesViewHandler;
+import org.openmrs.module.attachments.obs.TestAttachmentBytesViewHandler;
 import org.openmrs.module.attachments.obs.TestHelper;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.resource.impl.BasePageableResult;
@@ -56,8 +56,8 @@ public class AttachmentRestController2_0Test extends MainResourceControllerTest 
 		obs = testHelper.getTestComplexObs();
 		
 		Map<String, ComplexObsHandler> handlers = obsService.getHandlers();
-		handlers.put(TestAttachmentsBytesViewHandler.class.getSimpleName(),
-		    (ComplexObsHandler) new TestAttachmentsBytesViewHandler());
+		handlers.put(TestAttachmentBytesViewHandler.class.getSimpleName(),
+		    (ComplexObsHandler) new TestAttachmentBytesViewHandler());
 		obsService.setHandlers(handlers);
 	}
 	
@@ -150,7 +150,7 @@ public class AttachmentRestController2_0Test extends MainResourceControllerTest 
 		// Requesting the bytes for a specific view
 		{
 			// replay
-			String view = TestAttachmentsBytesViewHandler.DEFAULT_VIEW;
+			String view = TestAttachmentBytesViewHandler.DEFAULT_VIEW;
 			MockHttpServletRequest request = newGetRequest(getURI() + "/" + attUuid + "/bytes", new Parameter("view", view));
 			request.addParameter("patient", patient.getUuid());
 			request.addParameter("v", "full");
@@ -158,13 +158,13 @@ public class AttachmentRestController2_0Test extends MainResourceControllerTest 
 			MockHttpServletResponse response = handle(request);
 			
 			// verif
-			assertEquals(TestAttachmentsBytesViewHandler.DEFAULT_VIEW_DATA, response.getContentAsString());
+			assertEquals(TestAttachmentBytesViewHandler.DEFAULT_VIEW_DATA, response.getContentAsString());
 		}
 		
 		// Requesting the bytes for a specific view
 		{
 			// replay
-			String view = TestAttachmentsBytesViewHandler.ALTERNATE_VIEW;
+			String view = TestAttachmentBytesViewHandler.ALTERNATE_VIEW;
 			MockHttpServletRequest request = newGetRequest(getURI() + "/" + attUuid + "/bytes", new Parameter("view", view));
 			request.addParameter("patient", patient.getUuid());
 			request.addParameter("v", "full");
@@ -172,7 +172,7 @@ public class AttachmentRestController2_0Test extends MainResourceControllerTest 
 			MockHttpServletResponse response = handle(request);
 			
 			// verif
-			assertEquals(TestAttachmentsBytesViewHandler.ALTERNATE_VIEW_DATA, response.getContentAsString());
+			assertEquals(TestAttachmentBytesViewHandler.ALTERNATE_VIEW_DATA, response.getContentAsString());
 		}
 		
 		// Requesting the bytes with no view
@@ -185,7 +185,7 @@ public class AttachmentRestController2_0Test extends MainResourceControllerTest 
 			MockHttpServletResponse response = handle(request);
 			
 			// verif
-			assertEquals(TestAttachmentsBytesViewHandler.DEFAULT_VIEW_DATA, response.getContentAsString());
+			assertEquals(TestAttachmentBytesViewHandler.DEFAULT_VIEW_DATA, response.getContentAsString());
 		}
 		
 		// Requesting the bytes for an unknown view
@@ -199,7 +199,7 @@ public class AttachmentRestController2_0Test extends MainResourceControllerTest 
 			MockHttpServletResponse response = handle(request);
 			
 			// verif
-			assertEquals(TestAttachmentsBytesViewHandler.DEFAULT_VIEW_DATA, response.getContentAsString());
+			assertEquals(TestAttachmentBytesViewHandler.DEFAULT_VIEW_DATA, response.getContentAsString());
 		}
 		
 	}

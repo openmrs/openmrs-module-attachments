@@ -6,7 +6,7 @@ import org.openmrs.Obs;
 import org.openmrs.obs.ComplexData;
 import org.openmrs.obs.handler.BinaryDataHandler;
 
-public class TestAttachmentsBytesViewHandler extends AbstractAttachmentHandler {
+public class TestAttachmentBytesViewHandler extends AbstractAttachmentHandler {
 	
 	public static final String DEFAULT_VIEW = "VIEW_1";
 	
