@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -14,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.attachments.AttachmentsConstants;
@@ -39,9 +37,6 @@ public class AttachmentRestController2_0Test extends MainResourceControllerTest 
 	private ObsService obsService;
 	
 	@Autowired
-	private ConceptService conceptService;
-	
-	@Autowired
 	private PatientService patientService;
 	
 	@Autowired
@@ -55,10 +50,8 @@ public class AttachmentRestController2_0Test extends MainResourceControllerTest 
 		testHelper.init();
 		obs = testHelper.getTestComplexObs();
 		
-		Map<String, ComplexObsHandler> handlers = obsService.getHandlers();
-		handlers.put(TestAttachmentBytesViewHandler.class.getSimpleName(),
+		obsService.registerHandler(TestAttachmentBytesViewHandler.class.getSimpleName(),
 		    (ComplexObsHandler) new TestAttachmentBytesViewHandler());
-		obsService.setHandlers(handlers);
 	}
 	
 	@After
