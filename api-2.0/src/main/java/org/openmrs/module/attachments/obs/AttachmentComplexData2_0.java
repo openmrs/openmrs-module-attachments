@@ -22,8 +22,9 @@ public class AttachmentComplexData2_0 extends BaseComplexData implements Attachm
 		} else {
 			this.setMimeType(AttachmentsConstants.UNKNOWN_MIME_TYPE);
 		}
-		if (!StringUtils.isEmpty(instructions))
+		if (!StringUtils.isEmpty(instructions)) {
 			this.instructions = instructions;
+		}
 	}
 	
 	public AttachmentComplexData2_0(String title, Object data) {
