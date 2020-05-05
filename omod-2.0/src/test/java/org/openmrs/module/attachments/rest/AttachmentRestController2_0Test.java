@@ -116,10 +116,10 @@ public class AttachmentRestController2_0Test extends MainResourceControllerTest 
 	}
 	
 	@Test
-	public void doSearch_shouldReturnResult() {
+	public void doSearch_shouldReturnResults() {
 		
 		// Setup
-		AttachmentResource1_10 res = new AttachmentResource1_10();
+		AttachmentResource2_0 res = new AttachmentResource2_0();
 		Patient patient = patientService.getPatient(2);
 		
 		List<Attachment> attachments = as.getAttachments(patient, false);

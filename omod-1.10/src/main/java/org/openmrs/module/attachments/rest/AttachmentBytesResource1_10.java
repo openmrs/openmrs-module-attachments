@@ -60,7 +60,7 @@ public class AttachmentBytesResource1_10 extends BaseRestController {
 		
 		String mimeType = attComplexData.getMimeType();
 		
-		// The attachment meta data is sent as HTTP headers.
+		// The attachment metadata is sent as HTTP headers.
 		response.setContentType(mimeType);
 		response.addHeader("Content-Family", getContentFamily(mimeType).name());
 		response.addHeader("File-Name", attComplexData.getTitle());

@@ -1,18 +1,26 @@
 package org.openmrs.module.attachments.web.controller;
 
+import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
+
+import java.io.IOException;
+import java.util.Iterator;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
-import org.openmrs.Encounter;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.attachments.VisitCompatibility;
 import org.openmrs.module.attachments.obs.AttachmentComplexData;
+import org.openmrs.module.attachments.obs.ComplexViewHelper;
 import org.openmrs.module.attachments.obs.ValueComplex;
 import org.openmrs.module.attachments.rest.AttachmentBytesResource1_10;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
@@ -27,12 +35,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Iterator;
-
-import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
 /*
  * @Deprecated and replaced by
@@ -55,6 +57,10 @@ public class AttachmentsController {
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER)
 	protected ComplexObsSaver obsSaver;
+	
+	@Autowired
+	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXVIEW_HELPER)
+	protected ComplexViewHelper complexViewHelper;
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
@@ -110,7 +116,7 @@ public class AttachmentsController {
 		
 		// Getting the Core/Platform complex data object
 		Obs obs = context.getObsService().getObsByUuid(obsUuid);
-		Obs complexObs = context.getObsService().getComplexObs(obs.getObsId(), view);
+		Obs complexObs = context.getObsService().getComplexObs(obs.getObsId(), complexViewHelper.getView(obs, view));
 		ComplexData complexData = complexObs.getComplexData();
 		
 		// Switching to our complex data object
