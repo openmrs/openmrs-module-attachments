@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+<dataset>
+  <concept concept_id="84069" retired="false" datatype_id="13" class_id="5" is_set="false" creator="1" date_created="2005-01-01 00:00:00.0" uuid="3fe44002-35b8-445e-9d46-692c56e6bdde"/>
+  <concept_description concept_description_id="84069" concept_id="84069" description="TestBytesViewHandler Concept Complex" locale="en_GB" creator="1" date_created="2004-08-12 00:00:00.0" uuid="3a951971-34e9-4c88-954c-68d188f2c4de"/>
+
+  <concept_complex concept_id="84069" handler="TestAttachmentBytesViewHandler" />
+
+  <concept_name concept_id="84069" name="TestAttachmentBytesViewHandler Concept Complex" locale="en_GB" creator="1" date_created="2008-08-15 13:52:53.0" concept_name_id="8007" concept_name_type="FULLY_SPECIFIED" locale_preferred="0" voided="false" uuid="86f4f6ff-2bfb-4a17-a96b-ca633a96dd13"/>
+
+  <!-- This obs just exists so that there is a reference to an attachment associated with TestAttachmentBytesViewHandler to fetch it via REST -->
+  <obs obs_id="84044" person_id="2" concept_id="84069" obs_datetime="2008-02-09 00:00:00.0" location_id="1" value_complex="m3ks | instructions.none" creator="1" date_created="2006-02-10 15:57:35.0" voided="false" uuid="bbec1b32-dbf1-4b7a-bd2b-8898543c1367"/>
+
+</dataset>

@@ -56,7 +56,7 @@ angular.module('att.widget.modalWebcam')
             $scope.snap = function() {
                 Webcam.snap(function(dataUri) {
                     $scope.dataUri = dataUri;
-                    
+
                 });
             }
 

@@ -34,7 +34,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockMultipartHttpServletRequest;
 
-public class AttachmentController1_10Test extends MainResourceControllerTest {
+public class AttachmentRestController1_10Test extends MainResourceControllerTest {
 	
 	@Autowired
 	protected ObsService obsService;
