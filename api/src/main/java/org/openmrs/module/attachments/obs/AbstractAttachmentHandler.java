@@ -43,6 +43,14 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXDATA_HELPER)
 	private ComplexDataHelper complexDataHelper;
 	
+	@Autowired
+	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXVIEW_HELPER)
+	private ComplexViewHelper complexViewHelper;
+	
+	public void setComplexViewHelper(ComplexViewHelper complexViewHelper) {
+		this.complexViewHelper = complexViewHelper;
+	}
+	
 	public AbstractAttachmentHandler() {
 		super();
 		setParentComplexObsHandler();
@@ -150,7 +158,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	
 	/**
 	 * @param complexData An obs's complex data.
-	 * @return null if this is not our implementation, the custom {@link DocumentComplexData_old}
+	 * @return null if this is not our implementation, the custom {@link AttachmentComplexData}
 	 *         otherwise.
 	 */
 	public static AttachmentComplexData fetchAttachmentComplexData(ComplexData complexData) {
@@ -159,13 +167,13 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 			return null;
 		}
 		
-		AttachmentComplexData docData = (AttachmentComplexData) complexData;
-		String instructions = docData.getInstructions();
+		AttachmentComplexData attData = (AttachmentComplexData) complexData;
+		String instructions = attData.getInstructions();
 		if (instructions.equals(ValueComplex.INSTRUCTIONS_NONE)) {
 			return null;
 		}
 		
-		return docData;
+		return attData;
 	}
 	
 	/*
@@ -176,6 +184,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 		
 		ValueComplex valueComplex = new ValueComplex(obs.getValueComplex());
 		if (valueComplex.isOwnImplementation() == false) { // not our implementation
+			view = complexViewHelper.getView(obs, view);
 			return getParent().getObs(obs, view);
 		}
 		

@@ -1,11 +1,11 @@
 package org.openmrs.module.attachments.obs;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.awt.image.BufferedImage;
+
 import javax.imageio.ImageIO;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+
 import org.openmrs.Obs;
 import org.openmrs.api.APIException;
 import org.openmrs.module.attachments.AttachmentsConstants;
