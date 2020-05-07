@@ -123,7 +123,8 @@ angular.module('att.widget.thumbnail')
 
         var saved = Attachment.save({
           uuid: $scope.obs.uuid,
-          comment: $scope.obs.comment
+          comment: $scope.obs.comment,
+          valueModifier: "instruction.rotate-right"
         });
         saved.$promise.then(function(attachment) {
           $scope.obs.uuid = attachment.uuid;

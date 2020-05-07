@@ -1,5 +1,7 @@
 package org.openmrs.module.attachments.obs;
 
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,14 +16,65 @@ import org.openmrs.obs.handler.AbstractHandler;
 import org.openmrs.obs.handler.ImageHandler;
 
 public class ImageAttachmentHandler extends AbstractAttachmentHandler {
-	
+
 	public final static int THUMBNAIL_MAX_HEIGHT = 200;
-	
+
 	public final static int THUMBNAIL_MAX_WIDTH = THUMBNAIL_MAX_HEIGHT;
-	
+
 	public ImageAttachmentHandler() {
 		super();
 	}
+
+	@Override
+	protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData attComplexData) throws IOException {
+
+		File savedFile = AbstractHandler.getComplexDataFile(obs);
+		String savedFileName = savedFile.getName();
+
+		int imageHeight = Integer.MAX_VALUE;
+		int imageWidth = Integer.MAX_VALUE;
+		String fileName = attComplexData.getTitle();
+		BufferedImage Obs = ImageIO.read(new File(fileName));
+
+
+
+		if (obs.getValueModifier().equals("instructions.rotate-right")) {
+			// rotate the image provided in complex data
+			final double rads = Math.toRadians(90);
+			final double sin = Math.abs(Math.sin(rads));
+			final double cos = Math.abs(Math.cos(rads));
+			imageHeight = (int) Math.floor(Obs.getHeight() * cos + Obs.getWidth() * sin);
+			imageWidth = (int) Math.floor(Obs.getWidth() * cos + Obs.getHeight() * sin);
+			final BufferedImage rotatedImage = new BufferedImage(imageWidth, imageHeight, Obs.getType());
+
+			final AffineTransform at  = new AffineTransform();
+			at.translate(imageWidth / 2, imageHeight / 2);
+			at.rotate(rads, 0, 0);
+			at.translate(-Obs.getWidth() / 2, -Obs.getHeight() / 2);
+			final AffineTransformOp rotateOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+
+			rotateOp.filter(Obs,rotatedImage);
+			ImageIO.write(rotatedImage, "obs", new File(savedFileName));
+		}
+
+		obs.setValueModifier(null);
+		// keep going as usual
+
+		// Get image dimensions
+		try {
+			Obs = ImageIO.read(new File(fileName));
+			imageHeight = Obs.getHeight();
+			imageWidth = Obs.getWidth();
+		}
+		catch (IOException e) {
+			log.warn("The image file '" + fileName
+					+ "' could not be determined, continuing with generating its thumbnail anyway.");
+		}
+
+		return new ValueComplex(attComplexData.getInstructions(), attComplexData.getMimeType(), savedFileName);
+
+	}
+
 	
 	@Override
 	protected void setParentComplexObsHandler() {

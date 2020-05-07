@@ -73,7 +73,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	/*
 	 * Complex data CRUD - Save (Update)
 	 */
-	abstract protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData);
+	abstract protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData) throws IOException;
 	
 	protected void setParent(ComplexObsHandler complexObsHandler) {
 		this.parent = complexObsHandler;
