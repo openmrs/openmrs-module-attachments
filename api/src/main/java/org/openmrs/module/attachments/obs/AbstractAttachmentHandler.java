@@ -123,14 +123,14 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	 * <p>
 	 * The saveThumbnailOrRename method checks image dimension to see if the image is small enough to be
 	 * its own thumbnail. If so, it will rename the image file by appending the
-	 * <b>NO_THUMBNAIL_SUFFIX</b> to the file. Otherewise, it will create a small thumbnail file
+	 * <b>NO_THUMBNAIL_SUFFIX</b> to the file. Otherwise, it will create a small thumbnail file
 	 * alongside the original file to be used as thumbnail image.
 	 * </p>
 	 *
 	 * @param savedFile original file pointer
-	 * @param imageHight image hight
+	 * @param imageHight image height
 	 * @param imageWidth image width
-	 * @return savedFileName new renamed file name or orignal file name
+	 * @return savedFileName new renamed file name or original file name
 	 */
 	public static String saveThumbnailOrRename(File savedFile, int imageHeight, int imageWidth) {
 		
@@ -156,15 +156,11 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 		return savedFileName;
 	}
 	
-	/**
-	 * @param complexData An obs's complex data.
-	 * @return null if this is not our implementation, the custom {@link AttachmentComplexData}
-	 *         otherwise.
-	 */
-	public static AttachmentComplexData fetchAttachmentComplexData(ComplexData complexData) {
+	public AttachmentComplexData getAttachmentComplexData(ComplexData complexData) {
 		
-		if ((complexData instanceof AttachmentComplexData) == false) {
-			return null;
+		if (!(complexData instanceof AttachmentComplexData)) {
+			return complexDataHelper.build(ValueComplex.INSTRUCTIONS_DEFAULT, complexData.getTitle(), complexData.getData(),
+			    complexDataHelper.getContentType(complexData));
 		}
 		
 		AttachmentComplexData attData = (AttachmentComplexData) complexData;
@@ -183,10 +179,6 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	final public Obs getObs(Obs obs, String view) {
 		
 		ValueComplex valueComplex = new ValueComplex(obs.getValueComplex());
-		if (valueComplex.isOwnImplementation() == false) { // not our implementation
-			view = complexViewHelper.getView(obs, view);
-			return getParent().getObs(obs, view);
-		}
 		
 		if (StringUtils.isEmpty(view)) {
 			view = AttachmentsConstants.ATT_VIEW_ORIGINAL;
@@ -203,15 +195,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	@Override
 	final public boolean purgeComplexData(Obs obs) {
 		
-		AttachmentComplexData complexData = fetchAttachmentComplexData(obs.getComplexData());
-		if (complexData == null) { // not our implementation
-			if (obs.getComplexData() == null) {
-				log.error("Complex data was null and hence was not purged for OBS_ID='" + obs.getObsId() + "'.");
-				return false;
-			} else {
-				return getParent().purgeComplexData(obs);
-			}
-		}
+		AttachmentComplexData complexData = getAttachmentComplexData(obs.getComplexData());
 		
 		return deleteComplexData(obs, complexData);
 	}
@@ -222,15 +206,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	@Override
 	final public Obs saveObs(Obs obs) {
 		
-		AttachmentComplexData complexData = fetchAttachmentComplexData(obs.getComplexData());
-		if (complexData == null) { // not our implementation
-			if (obs.getComplexData() == null) {
-				log.error("Complex data was null and hence was not saved for OBS_ID='" + obs.getObsId() + "'.");
-				return obs;
-			} else {
-				return getParent().saveObs(obs);
-			}
-		}
+		AttachmentComplexData complexData = getAttachmentComplexData(obs.getComplexData());
 		
 		ValueComplex valueComplex = saveComplexData(obs, complexData);
 		obs.setValueComplex(valueComplex.getValueComplex());
