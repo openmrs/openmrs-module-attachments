@@ -1,10 +1,13 @@
 package org.openmrs.module.attachments.obs;
 
+import static org.openmrs.module.attachments.AttachmentsConstants.ATT_VIEW_ORIGINAL;
+import static org.openmrs.module.attachments.AttachmentsConstants.ATT_VIEW_THUMBNAIL;
 import static org.openmrs.module.attachments.obs.ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT;
 import static org.openmrs.module.attachments.obs.ImageAttachmentHandler.THUMBNAIL_MAX_WIDTH;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +28,8 @@ import net.coobird.thumbnailator.Thumbnails;
  * {@link #setParentComplexObsHandler()}.
  */
 public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
+	
+	private static final String[] supportedViews = { ATT_VIEW_ORIGINAL, ATT_VIEW_THUMBNAIL };
 	
 	public final static String NO_THUMBNAIL_SUFFIX = "___nothumb__";
 	
@@ -74,6 +79,14 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	 * Complex data CRUD - Save (Update)
 	 */
 	abstract protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData) throws IOException;
+	
+	public String[] getSupportedViews() {
+		return supportedViews;
+	}
+	
+	public boolean supportsView(String view) {
+		return Arrays.asList(getSupportedViews()).contains(view);
+	}
 	
 	protected void setParent(ComplexObsHandler complexObsHandler) {
 		this.parent = complexObsHandler;

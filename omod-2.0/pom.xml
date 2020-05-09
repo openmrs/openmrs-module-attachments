@@ -206,6 +206,9 @@
 
     <testResources>
       <testResource>
+        <directory>../api/src/test/resources</directory>
+      </testResource>
+      <testResource>
         <directory>src/test/resources</directory>
         <includes>
           <include>**/*.properties</include>
