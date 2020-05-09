@@ -232,8 +232,15 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 			}
 		}
 		
-		ValueComplex valueComplex = saveComplexData(obs, complexData);
+		ValueComplex valueComplex = null;
+		try {
+			valueComplex = saveComplexData(obs, complexData);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 		obs.setValueComplex(valueComplex.getValueComplex());
 		return obs;
+		
 	}
 }
