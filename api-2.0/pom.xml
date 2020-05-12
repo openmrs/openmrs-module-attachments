@@ -13,7 +13,7 @@
     <description>API 2.0 project for Attachments</description>
 
     <properties>
-        <openMRSVersion>2.0.0</openMRSVersion>
+        <openMRSVersion>${openMRS2_0Version}</openMRSVersion>
         <emrapiVersion>1.16</emrapiVersion>
         <serialization.xstreamVersion>0.2.11</serialization.xstreamVersion>
         <reportingVersion>1.15.0</reportingVersion>
@@ -146,6 +146,13 @@
             <artifactId>htmlformentry-api</artifactId>
             <version>${htmlformentryVersion}</version>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
             <scope>test</scope>
         </dependency>
 

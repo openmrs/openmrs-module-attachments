@@ -2,37 +2,44 @@ package org.openmrs.module.attachments.hfe;
 
 import static org.hamcrest.CoreMatchers.is;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
+import org.openmrs.module.attachments.AttachmentsMockMultipartFile;
 import org.openmrs.module.attachments.obs.TestHelper;
 import org.openmrs.module.htmlformentry.RegressionTestHelper;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockMultipartHttpServletRequest;
-import org.springframework.web.multipart.MultipartFile;
 
 public class ComplexObsTagTest extends BaseModuleContextSensitiveTest {
 	
 	@Autowired
 	private TestHelper testHelper;
 	
+	private File file;
+	
 	@Before
 	public void setup() throws Exception {
 		testHelper.init();
 		executeDataSet("testdata/test-dataset-2.0.xml");
+		
+		file = File.createTempFile("OpenMRS_banner", ".jpg");
+		FileUtils.copyURLToFile(getClass().getClassLoader().getResource("attachments/OpenMRS_banner.jpg"), file);
 	}
 	
 	@After
@@ -41,6 +48,14 @@ public class ComplexObsTagTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	protected abstract static class ComplexObsHfeTestHelper extends RegressionTestHelper {
+		
+		private FileInputStream fis;
+		
+		private File file;
+		
+		public ComplexObsHfeTestHelper(File file) {
+			this.file = file;
+		}
 		
 		@Override
 		protected String getXmlDatasetPath() {
@@ -59,15 +74,9 @@ public class ComplexObsTagTest extends BaseModuleContextSensitiveTest {
 			request.addParameter(widgets.get("Provider:"), "1");
 			
 			MockMultipartHttpServletRequest mpRequest = (MockMultipartHttpServletRequest) request;
-			try {
-				MultipartFile mpFile = new MockMultipartFile("w8", "OpenMRS_banner.jpg", "image/jpeg", IOUtils
-				        .toByteArray(getClass().getClassLoader().getResourceAsStream("attachments/OpenMRS_banner.jpg")));
-				mpRequest.addFile(mpFile);
-			}
-			catch (IOException e) {
-				Assert.fail();
-				e.printStackTrace();
-			}
+			AttachmentsMockMultipartFile mpFile = new AttachmentsMockMultipartFile("w8", "OpenMRS_banner.jpg", "image/jpeg",
+			        file);
+			mpRequest.addFile(mpFile);
 		}
 		
 		@Override
@@ -88,7 +97,7 @@ public class ComplexObsTagTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void shouldUploadWithAttachmentsImageHandler() throws Exception {
 		
-		new ComplexObsHfeTestHelper() {
+		new ComplexObsHfeTestHelper(file) {
 			
 			@Override
 			public String getFormName() {
@@ -97,16 +106,17 @@ public class ComplexObsTagTest extends BaseModuleContextSensitiveTest {
 			
 			@Override
 			public void assertObs(Obs obs) {
-				// Assert.assertEquals("jpg image |OpenMRS_banner.jpg", obs.getValueComplex());
+				Assert.assertEquals("m3ks | instructions.default | image/jpeg | OpenMRS_banner.jpg", obs.getValueComplex());
 			}
 			
 		}.run();
 	}
 	
+	@Ignore
 	@Test
 	public void shouldUploadWithImageHandler() throws Exception {
 		
-		new ComplexObsHfeTestHelper() {
+		new ComplexObsHfeTestHelper(file) {
 			
 			@Override
 			public String getFormName() {
