@@ -58,11 +58,6 @@ public class ComplexObsTagTest extends BaseModuleContextSensitiveTest {
 		}
 		
 		@Override
-		protected String getXmlDatasetPath() {
-			return "hfe/";
-		}
-		
-		@Override
 		public String[] widgetLabels() {
 			return new String[] { "Date:", "Location:", "Provider:", "Upload:" };
 		}
@@ -94,24 +89,6 @@ public class ComplexObsTagTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void handleSubmission_shouldUploadWithImageAttachmentHandler() throws Exception {
-		
-		new ComplexObsHfeTestHelper(file) {
-			
-			@Override
-			public String getFormName() {
-				return "ComplexObsForm-1";
-			}
-			
-			@Override
-			public void assertObs(Obs obs) {
-				Assert.assertEquals("m3ks | instructions.default | image/jpeg | OpenMRS_banner.jpg", obs.getValueComplex());
-			}
-			
-		}.run();
-	}
-	
-	@Test
 	public void handleSubmission_shouldUploadWithImageHandler() throws Exception {
 		
 		new ComplexObsHfeTestHelper(file) {
@@ -129,6 +106,29 @@ public class ComplexObsTagTest extends BaseModuleContextSensitiveTest {
 			@Override
 			public void assertObs(Obs obs) {
 				Assert.assertEquals("jpg image |OpenMRS_banner.jpg", obs.getValueComplex());
+			}
+			
+		}.run();
+	}
+	
+	@Test
+	public void handleSubmission_shouldUploadWithImageAttachmentHandler() throws Exception {
+		
+		new ComplexObsHfeTestHelper(file) {
+			
+			@Override
+			protected String getXmlDatasetPath() {
+				return "hfe/";
+			}
+			
+			@Override
+			public String getFormName() {
+				return "complexObsForm-att";
+			}
+			
+			@Override
+			public void assertObs(Obs obs) {
+				Assert.assertEquals("m3ks | instructions.default | image/jpeg | OpenMRS_banner.jpg", obs.getValueComplex());
 			}
 			
 		}.run();
