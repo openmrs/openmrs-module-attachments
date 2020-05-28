@@ -163,13 +163,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 			    complexDataHelper.getContentType(complexData));
 		}
 		
-		AttachmentComplexData attData = (AttachmentComplexData) complexData;
-		String instructions = attData.getInstructions();
-		if (instructions.equals(ValueComplex.INSTRUCTIONS_NONE)) {
-			return null;
-		}
-		
-		return attData;
+		return (AttachmentComplexData) complexData;
 	}
 	
 	/*
