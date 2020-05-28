@@ -38,6 +38,7 @@ public class ComplexObsTagTest extends BaseModuleContextSensitiveTest {
 	public void setup() throws Exception {
 		testHelper.init();
 		executeDataSet("testdata/test-dataset-2.0.xml");
+		executeDataSet("org/openmrs/api/include/ObsServiceTest-complex.xml");
 		
 		file = File.createTempFile("OpenMRS_banner", ".jpg");
 		FileUtils.copyURLToFile(getClass().getClassLoader().getResource("attachments/OpenMRS_banner.jpg"), file);
@@ -116,8 +117,13 @@ public class ComplexObsTagTest extends BaseModuleContextSensitiveTest {
 		new ComplexObsHfeTestHelper(file) {
 			
 			@Override
+			protected String getXmlDatasetPath() {
+				return "org/openmrs/module/htmlformentry/include/";
+			}
+			
+			@Override
 			public String getFormName() {
-				return "ComplexObsForm-2";
+				return "complexObsForm";
 			}
 			
 			@Override
