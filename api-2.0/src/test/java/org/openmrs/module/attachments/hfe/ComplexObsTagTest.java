@@ -37,7 +37,6 @@ public class ComplexObsTagTest extends BaseModuleContextSensitiveTest {
 	@Before
 	public void setup() throws Exception {
 		testHelper.init();
-		executeDataSet("testdata/test-dataset-2.0.xml");
 		executeDataSet("org/openmrs/api/include/ObsServiceTest-complex.xml");
 		
 		file = File.createTempFile("OpenMRS_banner", ".jpg");
