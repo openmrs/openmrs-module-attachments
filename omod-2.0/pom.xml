@@ -14,7 +14,7 @@
   <description>OMOD 2.0 project for Attachments</description>
 
   <properties>
-    <openMRSVersion>2.0.0</openMRSVersion>
+    <openMRSVersion>${openMRS2_0Version}</openMRSVersion>
     <emrapiVersion>1.19</emrapiVersion> 
     <webservices.restVersion>2.17</webservices.restVersion>
     <reportingVersion>0.10.4</reportingVersion>
@@ -94,6 +94,13 @@
       <artifactId>openmrs-test</artifactId>
       <version>${openMRSVersion}</version>
       <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>4.0.1</version>
       <scope>test</scope>
     </dependency>
 

@@ -13,7 +13,6 @@ import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.ConceptClass;
 import org.openmrs.ConceptComplex;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptDescription;
@@ -77,7 +76,7 @@ public class AttachmentsActivator extends BaseModuleActivator {
 				ConceptName conceptName = new ConceptName(name, Locale.ENGLISH);
 				conceptComplex.setFullySpecifiedName(conceptName);
 				conceptComplex.setPreferredName(conceptName);
-				conceptComplex.setConceptClass(conceptService.getConceptClassByUuid(ConceptClass.QUESTION_UUID));
+				conceptComplex.setConceptClass(conceptService.getConceptClassByName("Question"));
 				conceptComplex.setDatatype(conceptService.getConceptDatatypeByUuid(ConceptDatatype.COMPLEX_UUID));
 				conceptComplex.addDescription(new ConceptDescription(desc, Locale.ENGLISH));
 				
@@ -99,7 +98,7 @@ public class AttachmentsActivator extends BaseModuleActivator {
 				ConceptName conceptName = new ConceptName(name, Locale.ENGLISH);
 				conceptComplex.setFullySpecifiedName(conceptName);
 				conceptComplex.setPreferredName(conceptName);
-				conceptComplex.setConceptClass(conceptService.getConceptClassByUuid(ConceptClass.QUESTION_UUID));
+				conceptComplex.setConceptClass(conceptService.getConceptClassByName("Question"));
 				conceptComplex.setDatatype(conceptService.getConceptDatatypeByUuid(ConceptDatatype.COMPLEX_UUID));
 				conceptComplex.addDescription(new ConceptDescription(desc, Locale.ENGLISH));
 				

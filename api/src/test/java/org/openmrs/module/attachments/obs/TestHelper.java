@@ -12,7 +12,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.openmrs.Concept;
-import org.openmrs.ConceptClass;
 import org.openmrs.ConceptComplex;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptDescription;
@@ -137,7 +136,7 @@ public class TestHelper {
 			ConceptName conceptName = new ConceptName(OTHER_CONCEPT_COMPLEX_NAME, Locale.ENGLISH);
 			conceptComplex.setFullySpecifiedName(conceptName);
 			conceptComplex.setPreferredName(conceptName);
-			conceptComplex.setConceptClass(context.getConceptService().getConceptClassByUuid(ConceptClass.QUESTION_UUID));
+			conceptComplex.setConceptClass(context.getConceptService().getConceptClassByName("Question"));
 			conceptComplex.setDatatype(context.getConceptService().getConceptDatatypeByUuid(ConceptDatatype.COMPLEX_UUID));
 			conceptComplex.addDescription(new ConceptDescription("Out-of-Attachments test concept complex", Locale.ENGLISH));
 			context.getConceptService().saveConcept(conceptComplex);
