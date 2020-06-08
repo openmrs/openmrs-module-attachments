@@ -151,18 +151,6 @@
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-test</artifactId>
-          <version>3.2.7.RELEASE</version>
-          <scope>compile</scope>
-      </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>3.2.7.RELEASE</version>
-      <scope>compile</scope>
-    </dependency>
 
     <!-- END test dep. -->
 

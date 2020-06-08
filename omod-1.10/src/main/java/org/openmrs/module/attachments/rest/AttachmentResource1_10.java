@@ -2,10 +2,15 @@ package org.openmrs.module.attachments.rest;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -14,6 +19,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
+import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
@@ -37,7 +43,6 @@ import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 @Resource(name = RestConstants.VERSION_1 + "/"
@@ -102,9 +107,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		String image = context.getParameter("cameraImage");
 		
 		if (image != null) {
-			final String encodedString = image.split(",")[1];
-			byte[] data = Base64.getUrlDecoder().decode(encodedString.getBytes());
-			file = new MockMultipartFile(fileCaption, fileCaption, "image/png", data);
+			file = new MultipartFileWrapper(fileCaption, image);
 		}
 		// Verify File Size
 		if (attachmentsContext.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
@@ -256,6 +259,83 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			return new NeedsPaging<Attachment>(attachmentList, context);
 		}
 		return new EmptySearchResult();
+	}
+	
+	/**
+	 * Wrapper class to be passed to ComplexObsSaver#saveImageAttachment
+	 * ComplexObsSaver#saveImageAttachment needs a MultipartFile but the image could either be a
+	 * MultipartFile or a base64 encoded image. This class will only implement the methods used by
+	 * ComplexObsSaver#saveImageAttachment. This way we won't have to make any changes to the
+	 * implementation of ComplexObsSaver#saveImageAttachment and will also make very little change to
+	 * the AttachmentResource1_10#upload implementation. This is also helps us avoid adding an extra
+	 * dependency to MockMultipartFile for converting the base64 encoded String to a MultipartFile
+	 * object.
+	 */
+	class MultipartFileWrapper implements MultipartFile {
+		
+		private String fileName;
+		
+		private String contentType;
+		
+		private long size;
+		
+		private InputStream in;
+		
+		private byte[] bytes;
+		
+		public MultipartFileWrapper(String fileName, String base64Image) {
+			String[] parts = base64Image.split(",");
+			String contentType = parts[0].split(":")[1].split(";")[0].trim();
+			String contents = parts[1].trim();
+			byte[] decodedImage = Base64.getDecoder().decode(contents.getBytes());
+			InputStream in = new ByteArrayInputStream(decodedImage);
+			
+			this.fileName = fileName;
+			this.in = in;
+			this.contentType = contentType;
+			this.bytes = decodedImage;
+			this.size = 100; // temporary
+		}
+		
+		@Override
+		public String getName() {
+			return this.fileName;
+		}
+		
+		@Override
+		public String getOriginalFilename() {
+			return this.fileName;
+		}
+		
+		@Override
+		public String getContentType() {
+			return this.contentType;
+		}
+		
+		@Override
+		public boolean isEmpty() {
+			return false;
+		}
+		
+		@Override
+		public long getSize() {
+			return this.size;
+		}
+		
+		@Override
+		public byte[] getBytes() throws IOException {
+			return this.bytes;
+		}
+		
+		@Override
+		public InputStream getInputStream() throws IOException {
+			return this.in;
+		}
+		
+		@Override
+		public void transferTo(File dest) throws IOException, IllegalStateException {
+			throw new APIException("Operation transferTo is not supported for MultipartFileWrapper");
+		}
 	}
 	
 }
