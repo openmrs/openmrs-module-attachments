@@ -4,6 +4,7 @@ import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -36,6 +37,7 @@ import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 @Resource(name = RestConstants.VERSION_1 + "/"
@@ -97,7 +99,13 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		Provider provider = Context.getProviderService().getProviderByUuid(context.getParameter("provider"));
 		String fileCaption = context.getParameter("fileCaption");
 		String instructions = context.getParameter("instructions");
+		String image = context.getParameter("cameraImage");
 		
+		if (image != null) {
+			final String encodedString = image.split(",")[1];
+			byte[] data = Base64.getUrlDecoder().decode(encodedString.getBytes());
+			file = new MockMultipartFile(fileCaption, fileCaption, "image/png", data);
+		}
 		// Verify File Size
 		if (attachmentsContext.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
 			throw new IllegalRequestException("The file  exceeds the maximum size");

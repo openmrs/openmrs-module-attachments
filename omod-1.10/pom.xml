@@ -151,8 +151,20 @@
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-test</artifactId>
+          <version>3.2.7.RELEASE</version>
+          <scope>compile</scope>
+      </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>3.2.7.RELEASE</version>
+      <scope>compile</scope>
+    </dependency>
 
-      <!-- END test dep. -->
+    <!-- END test dep. -->
 
     <!-- End OpenMRS modules -->
 
@@ -184,6 +196,16 @@
         <filtering>false</filtering>
       </testResource>
     </testResources>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <configuration>
+                  <source>8</source>
+                  <target>8</target>
+              </configuration>
+          </plugin>
+      </plugins>
   </build>
 
 </project>
