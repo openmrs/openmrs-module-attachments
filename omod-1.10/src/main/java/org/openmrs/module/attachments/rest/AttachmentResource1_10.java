@@ -298,7 +298,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			this.in = new FileInputStream(temp);
 			this.contentType = contentType;
 			this.bytes = decodedImage;
-			this.size = 100; // temporary
+			this.size = temp.length();
 		}
 		
 		@Override
