@@ -338,7 +338,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		
 		@Override
 		public void transferTo(File dest) throws IOException, IllegalStateException {
-			throw new APIException("Operation transferTo is not supported for MultipartFileWrapper");
+			throw new APIException("Operation transferTo is not supported for Base64MultipartFile");
 		}
 	}
 	
