@@ -14,13 +14,14 @@ import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
 public class DashboardWidgetFragmentController {
-	
+
 	protected final Log log = LogFactory.getLog(getClass());
-	
-	public void controller(FragmentModel model, @FragmentParam("patient") PatientDomainWrapper patientWrapper, UiUtils ui,
-	        @InjectBeans AttachmentsContext context) {
+
+	public void controller(FragmentModel model, @FragmentParam("patient") PatientDomainWrapper patientWrapper,
+			UiUtils ui, @InjectBeans AttachmentsContext context) {
 		Map<String, Object> jsonConfig = ClientConfigFragmentController.getClientConfig(context, ui);
-		jsonConfig.put("patient", ConversionUtil.convertToRepresentation(patientWrapper.getPatient(), Representation.REF));
+		jsonConfig.put("patient",
+				ConversionUtil.convertToRepresentation(patientWrapper.getPatient(), Representation.REF));
 		jsonConfig.put("thumbnailCount", context.getDashboardThumbnailCount());
 		model.addAttribute("jsonConfig", ui.toJson(jsonConfig));
 	}

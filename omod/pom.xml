@@ -185,6 +185,7 @@
 			<scope>test</scope>
 		</dependency>
 
+
 		<!-- End OpenMRS modules -->
 
 	</dependencies>

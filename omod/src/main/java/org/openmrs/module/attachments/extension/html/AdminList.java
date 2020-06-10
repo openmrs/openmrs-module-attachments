@@ -17,25 +17,22 @@ import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.web.extension.AdministrationSectionExt;
 
 /**
- * This class defines the links that will appear on the administration page under the
- * "patientimages.title" heading.
+ * This class defines the links that will appear on the administration page
+ * under the "patientimages.title" heading.
  */
 public class AdminList extends AdministrationSectionExt {
-	
 	/**
 	 * @see AdministrationSectionExt#getMediaType()
 	 */
 	public Extension.MEDIA_TYPE getMediaType() {
 		return Extension.MEDIA_TYPE.html;
 	}
-	
 	/**
 	 * @see AdministrationSectionExt#getTitle()
 	 */
 	public String getTitle() {
 		return AttachmentsConstants.MODULE_ARTIFACT_ID + ".title";
 	}
-	
 	/**
 	 * @see AdministrationSectionExt#getLinks()
 	 */
@@ -44,5 +41,5 @@ public class AdminList extends AdministrationSectionExt {
 		map.put("/module/patientimages/manage.form", AttachmentsConstants.MODULE_ARTIFACT_ID + ".manage");
 		return map;
 	}
-	
+
 }

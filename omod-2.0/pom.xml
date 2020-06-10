@@ -16,7 +16,7 @@
   <properties>
     <openMRSVersion>${openMRS2_0Version}</openMRSVersion>
     <emrapiVersion>1.19</emrapiVersion> 
-    <webservices.restVersion>2.17</webservices.restVersion>
+    <webservices.restVersion>2.28.0</webservices.restVersion>
     <reportingVersion>0.10.4</reportingVersion>
     <serialization.xstreamVersion>0.2.12</serialization.xstreamVersion>
   </properties>
@@ -121,7 +121,6 @@
       <scope>provided</scope>
       <type>test-jar</type>
     </dependency>
-
     <dependency>
       <groupId>org.openmrs.module</groupId>
       <artifactId>emrapi-api</artifactId>
@@ -196,7 +195,13 @@
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
-
+    
+    <dependency>
+	  <groupId>io.swagger</groupId>
+	  <artifactId>swagger-core</artifactId>
+	  <version>1.5.13</version>
+	  <scope>provided</scope>
+	</dependency>
       <!-- END test dep. -->
 
     <!-- End OpenMRS modules -->

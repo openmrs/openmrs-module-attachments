@@ -151,7 +151,6 @@
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
-
       <!-- END test dep. -->
 
     <!-- End OpenMRS modules -->
