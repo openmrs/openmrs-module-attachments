@@ -2,16 +2,16 @@ package org.openmrs.module.attachments.rest;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
@@ -104,10 +104,10 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		Provider provider = Context.getProviderService().getProviderByUuid(context.getParameter("provider"));
 		String fileCaption = context.getParameter("fileCaption");
 		String instructions = context.getParameter("instructions");
-		String image = context.getParameter("cameraImage");
+		String base64Content = context.getParameter("base64Content");
 		
-		if (image != null) {
-			file = new MultipartFileWrapper(fileCaption, image);
+		if (base64Content != null) {
+			file = new Base64MultipartFile(base64Content);
 		}
 		// Verify File Size
 		if (attachmentsContext.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
@@ -271,7 +271,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	 * dependency to MockMultipartFile for converting the base64 encoded String to a MultipartFile
 	 * object.
 	 */
-	class MultipartFileWrapper implements MultipartFile {
+	class Base64MultipartFile implements MultipartFile {
 		
 		private String fileName;
 		
@@ -283,15 +283,19 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		
 		private byte[] bytes;
 		
-		public MultipartFileWrapper(String fileName, String base64Image) {
+		public Base64MultipartFile(String base64Image) throws IOException {
 			String[] parts = base64Image.split(",");
 			String contentType = parts[0].split(":")[1].split(";")[0].trim();
 			String contents = parts[1].trim();
-			byte[] decodedImage = Base64.getDecoder().decode(contents.getBytes());
-			InputStream in = new ByteArrayInputStream(decodedImage);
+			byte[] decodedImage = Base64.decodeBase64(contents.getBytes());
+			final File temp = File.createTempFile("cameracapture", ".png");
+			try (OutputStream stream = new FileOutputStream(temp)) {
+				stream.write(decodedImage);
+			}
+			temp.deleteOnExit();
 			
-			this.fileName = fileName;
-			this.in = in;
+			this.fileName = temp.getName();
+			this.in = new FileInputStream(temp);
 			this.contentType = contentType;
 			this.bytes = decodedImage;
 			this.size = 100; // temporary
