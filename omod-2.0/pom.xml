@@ -182,13 +182,21 @@
       <scope>test</scope>
     </dependency>
 
+
     <dependency>
-      <groupId>org.openmrs.module</groupId>
-      <artifactId>webservices.rest-omod</artifactId>
-      <version>${webservices.restVersion}</version>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>webservices.rest-omod-common</artifactId>
+      <version>2.28.0</version>
+      <scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>webservices.rest-omod-common</artifactId>
+			<type>test-jar</type>
+      <scope>provided</scope>
+      <version>2.28.0</version>
+    	</dependency>
 
       <!-- END test dep. -->
 
