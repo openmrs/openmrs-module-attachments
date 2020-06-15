@@ -5,13 +5,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -279,6 +283,57 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		Assert.assertEquals(complexData.getTitle(), fileName);
 		Assert.assertArrayEquals(randomData, (byte[]) complexData.getData());
 		Assert.assertEquals(obs.getEncounter().getUuid(), encounter.getUuid());
+	}
+	
+	@Test
+	public void postAttachment_shouldAcceptBase64Content() throws Exception {
+		String fileCaption = "Test file caption";
+		String fileName = "testFile2.dat";
+		String base64Content = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+		Patient patient = Context.getPatientService().getPatient(2);
+		
+		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
+		MockMultipartFile file = new MockMultipartFile("file", fileName, "application/octet-stream", randomData);
+		
+		request.addFile(file);
+		request.addParameter("patient", patient.getUuid());
+		request.addParameter("fileCaption", fileCaption);
+		request.addParameter("base64Content", base64Content);
+		
+		// Replay
+		SimpleObject response = deserialize(handle(request));
+		
+		Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
+		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
+		ComplexData complexData = complexObs.getComplexData();
+		
+		byte[] decodedImage = Base64.decodeBase64(base64Content.split(",")[1].trim().getBytes());
+		BufferedImage imgIn = ImageIO.read(new ByteArrayInputStream(decodedImage));
+		BufferedImage imgOut = (BufferedImage) complexData.getData();
+		
+		// Verify
+		Assert.assertEquals(obs.getComment(), fileCaption);
+		Assert.assertTrue(complexData.getTitle().startsWith("cameracapture"));
+		Assert.assertTrue(compareImages(imgIn, imgOut));
+		Assert.assertNull(obs.getEncounter());
+		
+	}
+	
+	private boolean compareImages(BufferedImage imgIn, BufferedImage imgOut) {
+		if (imgIn.getWidth() != imgOut.getWidth() || imgIn.getHeight() != imgOut.getHeight()) {
+			return false;
+		}
+		int width = imgIn.getWidth();
+		int height = imgIn.getHeight();
+		
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (imgIn.getRGB(x, y) != imgOut.getRGB(x, y)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	@Test(expected = IllegalRequestException.class)
