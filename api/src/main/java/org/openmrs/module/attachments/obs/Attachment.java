@@ -5,6 +5,8 @@ import java.util.Date;
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.attachments.AttachmentsConstants.ContentFamily;
+import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.obs.ComplexData;
 
 /**
@@ -21,6 +23,10 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 	protected Date dateTime = null;
 	
 	protected String comment = "";
+	
+	protected String bytesMimeType = null;
+
+	protected ContentFamily bytesContentFamily = null;
 	
 	protected ComplexData complexData = null;
 	
@@ -46,6 +52,29 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 		setDateTime(obs.getObsDatetime());
 		setComment(obs.getComment());
 		setComplexData(obs.getComplexData());
+	}
+	
+	/**
+	 * @param obs A complex obs
+	 */
+	public Attachment(Obs obs, ComplexDataHelper complexDataHelper) {
+		super();
+
+		setUuid(obs.getUuid());
+		setId(obs.getId());
+		setCreator(obs.getCreator());
+		setDateCreated(obs.getDateCreated());
+		setChangedBy(obs.getChangedBy());
+		setDateChanged(obs.getDateChanged());
+		setVoided(obs.getVoided());
+		setVoidedBy(obs.getVoidedBy());
+		setVoidReason(obs.getVoidReason());
+
+		setDateTime(obs.getObsDatetime());
+		setComment(obs.getComment());
+		setComplexData(obs.getComplexData());
+		setBytesMimeType(complexDataHelper.getContentType(obs.getComplexData()));
+		setBytesContentFamily(AttachmentsContext.getContentFamily(complexDataHelper.getContentType(obs.getComplexData())));
 	}
 	
 	public Obs getObs() {
@@ -100,5 +129,22 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 	
 	public void setComplexData(ComplexData complexData) {
 		this.complexData = complexData;
+	}
+	
+
+	public void setBytesMimeType(String bytesMimeType) {
+		this.bytesMimeType = bytesMimeType;
+	}
+
+	public String getBytesMimeType() {
+		return bytesMimeType;
+	}
+
+	public ContentFamily getBytesContentFamily() {
+		return bytesContentFamily;
+	}
+
+	public void setBytesContentFamily(ContentFamily bytesContentFamily) {
+		this.bytesContentFamily = bytesContentFamily;
 	}
 }

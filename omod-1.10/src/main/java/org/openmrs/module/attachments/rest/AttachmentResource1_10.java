@@ -168,6 +168,8 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		description.addProperty("uuid");
 		description.addProperty("dateTime");
 		description.addProperty("comment");
+		description.addProperty("bytesMimeType");
+		description.addProperty("bytesContentFamily");
 		description.addSelfLink();
 		return description;
 	}
