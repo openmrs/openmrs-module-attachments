@@ -25,7 +25,7 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 	protected String comment = "";
 	
 	protected String bytesMimeType = null;
-
+	
 	protected ContentFamily bytesContentFamily = null;
 	
 	protected ComplexData complexData = null;
@@ -58,21 +58,8 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 	 * @param obs A complex obs
 	 */
 	public Attachment(Obs obs, ComplexDataHelper complexDataHelper) {
-		super();
-
-		setUuid(obs.getUuid());
-		setId(obs.getId());
-		setCreator(obs.getCreator());
-		setDateCreated(obs.getDateCreated());
-		setChangedBy(obs.getChangedBy());
-		setDateChanged(obs.getDateChanged());
-		setVoided(obs.getVoided());
-		setVoidedBy(obs.getVoidedBy());
-		setVoidReason(obs.getVoidReason());
-
-		setDateTime(obs.getObsDatetime());
-		setComment(obs.getComment());
-		setComplexData(obs.getComplexData());
+		this(obs);
+		
 		setBytesMimeType(complexDataHelper.getContentType(obs.getComplexData()));
 		setBytesContentFamily(AttachmentsContext.getContentFamily(complexDataHelper.getContentType(obs.getComplexData())));
 	}
@@ -131,19 +118,18 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 		this.complexData = complexData;
 	}
 	
-
 	public void setBytesMimeType(String bytesMimeType) {
 		this.bytesMimeType = bytesMimeType;
 	}
-
+	
 	public String getBytesMimeType() {
 		return bytesMimeType;
 	}
-
+	
 	public ContentFamily getBytesContentFamily() {
 		return bytesContentFamily;
 	}
-
+	
 	public void setBytesContentFamily(ContentFamily bytesContentFamily) {
 		this.bytesContentFamily = bytesContentFamily;
 	}
