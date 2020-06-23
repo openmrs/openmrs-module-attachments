@@ -27,6 +27,7 @@ import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.AttachmentsService;
 import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.attachments.obs.Attachment;
+import org.openmrs.module.attachments.obs.ComplexDataHelper;
 import org.openmrs.module.attachments.obs.ValueComplex;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
@@ -58,6 +59,8 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	AttachmentsContext attachmentsContext = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT,
 	    AttachmentsContext.class);
 	
+	ComplexDataHelper complexDataHelper;
+	
 	@Override
 	public Attachment newDelegate() {
 		return new Attachment();
@@ -66,7 +69,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	@Override
 	public Attachment save(Attachment delegate) {
 		Obs obs = Context.getObsService().saveObs(delegate.getObs(), REASON);
-		return new Attachment(obs);
+		return new Attachment(obs, complexDataHelper);
 	}
 	
 	@Override
@@ -76,7 +79,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			throw new GenericRestException(uniqueId + " does not identify a complex obs.", null);
 		else {
 			obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
-			return new Attachment(obs);
+			return new Attachment(obs, complexDataHelper);
 		}
 	}
 	
@@ -110,7 +113,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			file = new Base64MultipartFile(base64Content);
 		}
 		// Verify File Size
-		if (attachmentsContext.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
+		if (attachmentsContext.getMaxUploadFileSize() * 1024 * 1024 < file.getSize()) {
 			throw new IllegalRequestException("The file  exceeds the maximum size");
 		}
 		
