@@ -164,7 +164,8 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 	
 	@Test
 	public void deleteAttachment_shouldVoidObs() throws Exception {
-		new File(testHelper.getTestComplexObsFilePath());
+		//Setup
+		File file = new File(testHelper.getTestComplexObsFilePath());
 		
 		// Replay
 		handle(newDeleteRequest(getURI() + "/" + getUuid()));
@@ -388,6 +389,9 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		request.addParameter("encounter", encounter.getUuid());
 		request.addParameter("fileCaption", fileCaption);
 		
+		// Replay
+		SimpleObject response = deserialize(handle(request));
+		
 		deserialize(handle(request));
 	}
 	
@@ -408,6 +412,9 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		request.addParameter("patient", patient.getUuid());
 		request.addParameter("visit", visit.getUuid());
 		request.addParameter("fileCaption", fileCaption);
+		
+		// Replay
+		SimpleObject response = deserialize(handle(request));
 		
 		deserialize(handle(request));
 	}
