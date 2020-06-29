@@ -17,7 +17,7 @@
         <emrapiVersion>1.16</emrapiVersion>
         <serialization.xstreamVersion>0.2.11</serialization.xstreamVersion>
         <reportingVersion>1.15.0</reportingVersion>
-        <htmlformentryVersion>3.11.0-SNAPSHOT</htmlformentryVersion>
+        <htmlformentryVersion>3.11.0</htmlformentryVersion>
     </properties>
 
     <dependencies>
