@@ -30,7 +30,7 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 	
 	protected ComplexData complexData = null;
 	
-	ComplexDataHelper1_10 complexDataHelper1 = new ComplexDataHelper1_10();
+	ComplexDataHelper complexDataHelper1 = new ComplexDataHelper1_10();
 	
 	public Attachment() {
 	}
@@ -61,10 +61,12 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 	 */
 	public Attachment(Obs obs, ComplexDataHelper complexDataHelper) {
 		this(obs);
-			
-		setBytesMimeType(complexDataHelper1.getContentType(obs.getComplexData()));
+		
+	    setBytesMimeType(complexDataHelper1.getContentType(obs.getComplexData()));
 		setBytesContentFamily(AttachmentsContext.getContentFamily(complexDataHelper1.getContentType(obs.getComplexData())));
+		
 	}
+	
 	
 	public Obs getObs() {
 		Obs obs = Context.getObsService().getObsByUuid(getUuid());
