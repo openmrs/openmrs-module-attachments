@@ -62,11 +62,10 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 	public Attachment(Obs obs, ComplexDataHelper complexDataHelper) {
 		this(obs);
 		
-	    setBytesMimeType(complexDataHelper1.getContentType(obs.getComplexData()));
+		setBytesMimeType(complexDataHelper1.getContentType(obs.getComplexData()));
 		setBytesContentFamily(AttachmentsContext.getContentFamily(complexDataHelper1.getContentType(obs.getComplexData())));
 		
 	}
-	
 	
 	public Obs getObs() {
 		Obs obs = Context.getObsService().getObsByUuid(getUuid());
