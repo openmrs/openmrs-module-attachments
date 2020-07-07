@@ -330,23 +330,6 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		Assert.assertNull(obs.getEncounter());
 	}
 	
-	private boolean compareImages(BufferedImage imgIn, BufferedImage imgOut) {
-		if (imgIn.getWidth() != imgOut.getWidth() || imgIn.getHeight() != imgOut.getHeight()) {
-			return false;
-		}
-		int width = imgIn.getWidth();
-		int height = imgIn.getHeight();
-		
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				if (imgIn.getRGB(x, y) != imgOut.getRGB(x, y)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	
 	@Test(expected = IllegalRequestException.class)
 	public void postAttachment_shouldThrowWhenVisitAndEncounterDoNotMatch() throws Exception {
 		// Setup
