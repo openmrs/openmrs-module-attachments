@@ -9,8 +9,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -293,18 +296,15 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 	public void postAttachment_shouldAcceptBase64Content() throws Exception {
 		// Read file OpenMRS_logo.png and copy bytes to baos
 		InputStream inputStream = getClass().getClassLoader().getResourceAsStream("OpenMRS_logo.png");
+		BufferedImage img = ImageIO.read(inputStream);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] buffer = new byte[1024];
-		int len;
-		while ((len = inputStream.read(buffer)) > -1) {
-			baos.write(buffer, 0, len);
-		}
-		baos.flush();
+		ImageIO.write(img, "png", baos);
 		
 		// Build the request parameters
+		byte[] bytesIn = baos.toByteArray();
 		String fileCaption = "Test file caption";
 		String fileName = "testFile2.dat";
-		String base64Content = "data:image/png;base64," + Base64.encodeBase64String(baos.toByteArray());
+		String base64Content = "data:image/png;base64," + Base64.encodeBase64String(bytesIn);
 		Patient patient = Context.getPatientService().getPatient(2);
 		
 		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
@@ -321,14 +321,12 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
 		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
 		ComplexData complexData = complexObs.getComplexData();
-		
-		BufferedImage imageIn = ImageIO.read(new ByteArrayInputStream(baos.toByteArray()));
-		BufferedImage imageOut = (BufferedImage) complexData.getData();
-		
+		byte[] bytesOut = BaseComplexData.getByteArray(complexData);
+
 		// Verify
 		Assert.assertEquals(obs.getComment(), fileCaption);
 		Assert.assertTrue(complexData.getTitle().startsWith("cameracapture"));
-		Assert.assertTrue(compareImages(imageIn, imageOut));
+		Assert.assertArrayEquals(bytesIn, bytesOut);
 		Assert.assertNull(obs.getEncounter());
 	}
 	
