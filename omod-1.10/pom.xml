@@ -152,7 +152,7 @@
       <scope>test</scope>
     </dependency>
 
-      <!-- END test dep. -->
+    <!-- END test dep. -->
 
     <!-- End OpenMRS modules -->
 

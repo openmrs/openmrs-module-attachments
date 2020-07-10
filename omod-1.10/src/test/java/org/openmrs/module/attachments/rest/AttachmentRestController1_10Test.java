@@ -5,13 +5,23 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,6 +34,7 @@ import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
+import org.openmrs.module.attachments.obs.BaseComplexData;
 import org.openmrs.module.attachments.obs.TestHelper;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
@@ -279,6 +290,44 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		Assert.assertEquals(complexData.getTitle(), fileName);
 		Assert.assertArrayEquals(randomData, (byte[]) complexData.getData());
 		Assert.assertEquals(obs.getEncounter().getUuid(), encounter.getUuid());
+	}
+	
+	@Test
+	public void postAttachment_shouldAcceptBase64Content() throws Exception {
+		// Read file OpenMRS_logo.png and copy bytes to baos
+		InputStream inputStream = getClass().getClassLoader().getResourceAsStream("OpenMRS_logo.png");
+		BufferedImage img = ImageIO.read(inputStream);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(img, "png", baos);
+		
+		// Build the request parameters
+		byte[] bytesIn = baos.toByteArray();
+		String fileCaption = "Test file caption";
+		String fileName = "testFile2.dat";
+		String base64Content = "data:image/png;base64," + Base64.encodeBase64String(bytesIn);
+		Patient patient = Context.getPatientService().getPatient(2);
+		
+		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
+		MockMultipartFile file = new MockMultipartFile("file", fileName, "application/octet-stream", randomData);
+		
+		request.addFile(file);
+		request.addParameter("patient", patient.getUuid());
+		request.addParameter("fileCaption", fileCaption);
+		request.addParameter("base64Content", base64Content);
+		
+		// Replay
+		SimpleObject response = deserialize(handle(request));
+		
+		Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
+		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
+		ComplexData complexData = complexObs.getComplexData();
+		byte[] bytesOut = BaseComplexData.getByteArray(complexData);
+
+		// Verify
+		Assert.assertEquals(obs.getComment(), fileCaption);
+		Assert.assertTrue(complexData.getTitle().startsWith("cameracapture"));
+		Assert.assertArrayEquals(bytesIn, bytesOut);
+		Assert.assertNull(obs.getEncounter());
 	}
 	
 	@Test(expected = IllegalRequestException.class)
