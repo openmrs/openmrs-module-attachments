@@ -322,7 +322,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
 		ComplexData complexData = complexObs.getComplexData();
 		byte[] bytesOut = BaseComplexData.getByteArray(complexData);
-
+		
 		// Verify
 		Assert.assertEquals(obs.getComment(), fileCaption);
 		Assert.assertTrue(complexData.getTitle().startsWith("cameracapture"));
