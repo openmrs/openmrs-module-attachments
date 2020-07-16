@@ -53,8 +53,6 @@ public class AttachmentsConstants {
 	
 	public static final String COMPONENT_COMPLEXVIEW_HELPER = MODULE_ARTIFACT_ID + ".ComplexViewHelper";
 	
-	public static final String COMPONENT_ATTACHMENT_SAVER = MODULE_ARTIFACT_ID + ".AttachmentSaver";
-	
 	/*
 	 * Concepts (also used in global prop. in config.xml)
 	 */
