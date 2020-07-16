@@ -59,4 +59,6 @@ public interface AttachmentsService {
 	 * @throws APIException if non-complex obs are mistakenly returned
 	 */
 	List<Attachment> getAttachments(Patient patient, Visit visit, boolean includeVoided);
+	
+	Attachment save(Attachment attachment, String reason);
 }
