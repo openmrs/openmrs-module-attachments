@@ -374,7 +374,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 
 	@Test(expected = IllegalRequestException.class)
 	public void postAttachment_shouldThrowWhenVisitAndEncounterDoNotMatch() throws Exception {
-		// Setup
+		// Setup.
 		String fileCaption = "Test file caption";
 		String fileName = "testFile1.dat";
 		Patient patient = Context.getPatientService().getPatient(2);
