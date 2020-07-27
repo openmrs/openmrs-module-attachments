@@ -14,7 +14,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -26,9 +32,15 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
+import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonAddress;
+import org.openmrs.PersonName;
 import org.openmrs.Visit;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
@@ -371,10 +383,10 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		Assert.assertArrayEquals(bytesIn, bytesOut);
 		Assert.assertNull(obs.getEncounter());
 	}
-
+	
 	@Test(expected = IllegalRequestException.class)
 	public void postAttachment_shouldThrowWhenVisitAndEncounterDoNotMatch() throws Exception {
-		// Setup.
+		// Setup
 		String fileCaption = "Test file caption";
 		String fileName = "testFile1.dat";
 		Patient patient = Context.getPatientService().getPatient(2);
@@ -450,6 +462,83 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		Assert.assertEquals(downloadResponse.getHeader("File-Name"), fileName);
 		Assert.assertEquals(downloadResponse.getHeader("File-Ext"), fileExtension);
 		
+	}
+	
+	@Test
+	public void doSearch() throws Exception {
+	
+		// Setup
+		String fileCaption = "Test file caption";
+		String uuid;
+		String mimeType = "application/octet-stream";
+		String fileExtension = "dat";
+		String fileName = "testFile." + fileExtension;
+
+		Patient patient = createBasicPatient();
+		MockMultipartHttpServletRequest uploadRequest = newUploadRequest(getURI());
+		MockMultipartFile file = new MockMultipartFile("file", fileName, mimeType, randomData);
+
+		uploadRequest.addFile(file);
+		uploadRequest.addParameter("patient", patient.getUuid());
+		uploadRequest.addParameter("fileCaption", fileCaption);
+
+		// Save attachment
+		deserialize(handle(uploadRequest));
+
+		// Search attachments for patient
+		MockHttpServletRequest request = request(RequestMethod.GET, getURI());
+		request.addParameter("patient", patient.getUuid());
+		SimpleObject response = deserialize(handle(request));
+		LinkedHashMap<String, String> result = (LinkedHashMap<String, String>) ((ArrayList<LinkedHashMap>) response
+		        .get("results")).get(0);
+
+		// Verify
+		Context.getPatientService().purgePatient(patient);
+		Assert.assertEquals("application/octet-stream", result.get("bytesMimeType"));
+		Assert.assertEquals(ContentFamily.OTHER.toString(), result.get("bytesContentFamily"));
+	}
+	
+	private Patient createBasicPatient() {
+		Patient patient = new Patient();
+
+		PersonName pName = new PersonName();
+		pName.setGivenName("Tom");
+		pName.setMiddleName("E.");
+		pName.setFamilyName("Patient");
+		patient.addName(pName);
+
+		PersonAddress pAddress = new PersonAddress();
+		pAddress.setAddress1("123 My street");
+		pAddress.setAddress2("Apt 402");
+		pAddress.setCityVillage("Anywhere city");
+		pAddress.setCountry("Some Country");
+		Set<PersonAddress> pAddressList = patient.getAddresses();
+		pAddressList.add(pAddress);
+		patient.setAddresses(pAddressList);
+		patient.addAddress(pAddress);
+		// patient.removeAddress(pAddress);
+
+		patient.setBirthdateEstimated(true);
+		patient.setBirthdate(new Date());
+		patient.setBirthdateEstimated(true);
+		patient.setDeathDate(new Date());
+		patient.setCauseOfDeath(new Concept());
+		patient.setGender("male");
+
+		List<PatientIdentifierType> patientIdTypes = Context.getPatientService().getAllPatientIdentifierTypes();
+
+		PatientIdentifier patientIdentifier = new PatientIdentifier();
+		patientIdentifier.setIdentifier("123-0");
+		patientIdentifier.setIdentifierType(patientIdTypes.get(0));
+		patientIdentifier.setLocation(new Location(1));
+		patientIdentifier.setPreferred(true);
+
+		Set<PatientIdentifier> patientIdentifiers = new LinkedHashSet<>();
+		patientIdentifiers.add(patientIdentifier);
+
+		patient.setIdentifiers(patientIdentifiers);
+
+		return Context.getPatientService().savePatient(patient);
 	}
 	
 }
