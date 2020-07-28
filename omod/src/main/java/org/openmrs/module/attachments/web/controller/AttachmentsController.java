@@ -131,6 +131,7 @@ public class AttachmentsController {
 			response.addHeader("Content-Family", getContentFamily(mimeType).name()); // custom header
 			response.addHeader("File-Name", docComplexData.getTitle()); // custom header
 			response.addHeader("File-Ext", AttachmentBytesResource1_10.getExtension(docComplexData.getTitle(), mimeType)); // custom header
+			response.addHeader("Content-Disposition", "attachment");
 			switch (getContentFamily(mimeType)) {
 				default:
 					response.getOutputStream().write(docComplexData.asByteArray());
