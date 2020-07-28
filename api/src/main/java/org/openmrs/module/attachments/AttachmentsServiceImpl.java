@@ -163,5 +163,5 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		}
 		String view = ctx.getComplexViewHelper().getView(obs, AttachmentsConstants.ATT_VIEW_THUMBNAIL);
 		return ctx.getObsService().getComplexObs(obs.getId(), view);
-		}
+	}
 }

@@ -48,6 +48,7 @@ import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsConstants.ContentFamily;
 import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.obs.BaseComplexData;
+import org.openmrs.module.attachments.obs.ComplexDataHelper;
 import org.openmrs.module.attachments.obs.ComplexDataHelper1_10;
 import org.openmrs.module.attachments.obs.TestHelper;
 import org.openmrs.module.webservices.rest.SimpleObject;
@@ -72,7 +73,8 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 	@Autowired
 	private AttachmentsContext attachmentsContext;
 	
-	ComplexDataHelper1_10 complexDataHelper = new ComplexDataHelper1_10();
+	@Autowired
+	ComplexDataHelper1_10 complexDataHelper;
 	
 	private byte[] randomData = new byte[20];
 	
@@ -140,10 +142,14 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 	}
 	
 	@Test
-	public void shouldGetAttachment() throws Exception {
+	public void getAttachment_shouldGetAttachment() throws Exception {
+		// Setup
 		MockHttpServletRequest req = request(RequestMethod.GET, getURI() + "/" + getUuid());
+		
+		// Replay
 		SimpleObject result = deserialize(handle(req));
 		
+		// Verify
 		Assert.assertEquals(getUuid(), PropertyUtils.getProperty(result, "uuid"));
 		Assert.assertNotNull(PropertyUtils.getProperty(result, "comment"));
 		Assert.assertNotNull(PropertyUtils.getProperty(result, "bytesMimeType"));
@@ -151,25 +157,32 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 	}
 	
 	@Test
-	public void shouldGetBytesMimeTypeOfAttachment() throws Exception {
+	public void getBytesMimeType_shouldGetBytesMimeTypeOfAttachment() throws Exception {
+		// Setup
 		MockHttpServletRequest req = request(RequestMethod.GET, getURI() + "/" + getUuid());
+		
+		// Replay
 		SimpleObject result = deserialize(handle(req));
 		
 		ComplexData complexData = obs.getComplexData();
 		
+		// Verify
 		assertEquals(result.get("bytesMimeType"), complexDataHelper.getContentType(complexData));
 		assertEquals(result.get("bytesMimeType"), "application/octet-stream");
 	}
 	
 	@Test
-	public void shouldGetBytesContentFamilyOfAttachment() throws Exception {
+	public void getBytesContentFamily_getshouldGetBytesContentFamilyOfAttachment() throws Exception {
+		// Setup
 		MockHttpServletRequest req = request(RequestMethod.GET, getURI() + "/" + getUuid());
+		
+		// Replay
 		SimpleObject result = deserialize(handle(req));
 		
 		ComplexData complexData = obs.getComplexData();
-		
 		ContentFamily contentFamily = AttachmentsContext.getContentFamily(complexDataHelper.getContentType(complexData));
 		
+		// Verify
 		assertEquals(result.get("bytesContentFamily"), contentFamily.toString());
 		assertEquals(result.get("bytesContentFamily"), "OTHER");
 	}
@@ -493,7 +506,6 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		        .get("results")).get(0);
 		
 		// Verify
-		Context.getPatientService().purgePatient(patient);
 		Assert.assertEquals("application/octet-stream", result.get("bytesMimeType"));
 		Assert.assertEquals(ContentFamily.OTHER.toString(), result.get("bytesContentFamily"));
 	}

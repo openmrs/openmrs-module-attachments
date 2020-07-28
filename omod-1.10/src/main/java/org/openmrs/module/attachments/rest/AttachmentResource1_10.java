@@ -28,7 +28,6 @@ import org.openmrs.module.attachments.AttachmentsService;
 import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.ComplexDataHelper;
-import org.openmrs.module.attachments.obs.ComplexDataHelper1_10;
 import org.openmrs.module.attachments.obs.ValueComplex;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
@@ -45,6 +44,8 @@ import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.multipart.MultipartFile;
 
 @Resource(name = RestConstants.VERSION_1 + "/"
@@ -54,13 +55,13 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	
 	protected static final String REASON = "REST web service";
 	
-	ComplexObsSaver obsSaver = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER,
+	private ComplexObsSaver obsSaver = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER,
 	    ComplexObsSaver.class);
 	
-	AttachmentsContext attachmentsContext = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT,
-	    AttachmentsContext.class);
+	private AttachmentsContext attachmentsContext = Context
+	        .getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class);
 	
-	ComplexDataHelper complexDataHelper = new ComplexDataHelper1_10();
+	private ComplexDataHelper complexDataHelper = attachmentsContext.getComplexDataHelper();
 	
 	@Override
 	public Attachment newDelegate() {
@@ -114,7 +115,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			file = new Base64MultipartFile(base64Content);
 		}
 		// Verify File Size
-		if (attachmentsContext.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
+		if (attachmentsContext.getMaxUploadFileSize() * 1024 * 1024 < file.getSize()) {
 			throw new IllegalRequestException("The file  exceeds the maximum size");
 		}
 		
