@@ -16,6 +16,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.ComplexDataHelper;
+import org.openmrs.module.attachments.obs.ComplexDataHelper1_10;
 import org.openmrs.module.emrapi.db.DbSessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,10 +33,6 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
 	private AttachmentsContext ctx;
-	
-	@Autowired
-	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXDATA_HELPER)
-	private ComplexDataHelper complexDataHelper;
 	
 	@Override
 	public List<Attachment> getAttachments(Patient patient, boolean includeEncounterless, boolean includeVoided) {
@@ -55,7 +52,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 				continue;
 			}
 			obs = getComplexObs(obs);
-			attachments.add(new Attachment(obs, complexDataHelper));
+			attachments.add(new Attachment(obs, ctx.getComplexDataHelper()));
 		}
 		return attachments;
 	}
@@ -81,7 +78,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			}
 			if (obs.getEncounter() == null) {
 				obs = getComplexObs(obs);
-				attachments.add(new Attachment(obs, complexDataHelper));
+				attachments.add(new Attachment(obs, ctx.getComplexDataHelper()));
 			}
 		}
 		return attachments;
@@ -104,7 +101,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 				throw new APIException(NON_COMPLEX_OBS_ERR);
 			}
 			obs = getComplexObs(obs);
-			attachments.add(new Attachment(obs, complexDataHelper));
+			attachments.add(new Attachment(obs, ctx.getComplexDataHelper()));
 		}
 		return attachments;
 	}

@@ -28,6 +28,7 @@ import org.openmrs.module.attachments.AttachmentsService;
 import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.ComplexDataHelper;
+import org.openmrs.module.attachments.obs.ComplexDataHelper1_10;
 import org.openmrs.module.attachments.obs.ValueComplex;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
@@ -44,8 +45,6 @@ import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.multipart.MultipartFile;
 
 @Resource(name = RestConstants.VERSION_1 + "/"
@@ -58,10 +57,8 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	private ComplexObsSaver obsSaver = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER,
 	    ComplexObsSaver.class);
 	
-	private AttachmentsContext attachmentsContext = Context
+	private AttachmentsContext ctx = Context
 	        .getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class);
-	
-	private ComplexDataHelper complexDataHelper = attachmentsContext.getComplexDataHelper();
 	
 	@Override
 	public Attachment newDelegate() {
@@ -71,7 +68,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	@Override
 	public Attachment save(Attachment delegate) {
 		Obs obs = Context.getObsService().saveObs(delegate.getObs(), REASON);
-		return new Attachment(obs, complexDataHelper);
+		return new Attachment(obs, ctx.getComplexDataHelper());
 	}
 	
 	@Override
@@ -81,7 +78,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			throw new GenericRestException(uniqueId + " does not identify a complex obs.", null);
 		else {
 			obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
-			return new Attachment(obs, complexDataHelper);
+			return new Attachment(obs, ctx.getComplexDataHelper());
 		}
 	}
 	
@@ -115,7 +112,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			file = new Base64MultipartFile(base64Content);
 		}
 		// Verify File Size
-		if (attachmentsContext.getMaxUploadFileSize() * 1024 * 1024 < file.getSize()) {
+		if (ctx.getMaxUploadFileSize() * 1024 * 1024 < (double)file.getSize()) {
 			throw new IllegalRequestException("The file  exceeds the maximum size");
 		}
 		
@@ -136,7 +133,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		}
 		
 		if (visit != null && encounter == null) {
-			encounter = attachmentsContext.getAttachmentEncounter(patient, visit, provider);
+			encounter = ctx.getAttachmentEncounter(patient, visit, provider);
 		}
 		
 		if (encounter != null && visit == null) {
@@ -259,7 +256,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		}
 		
 		// Search Attachments
-		List<Attachment> attachmentList = search(attachmentsContext.getAttachmentsService(), patient, visit, encounter,
+		List<Attachment> attachmentList = search(ctx.getAttachmentsService(), patient, visit, encounter,
 		    includeEncounterless, includeVoided);
 		
 		if (attachmentList != null) {

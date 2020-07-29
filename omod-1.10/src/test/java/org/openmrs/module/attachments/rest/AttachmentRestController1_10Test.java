@@ -71,10 +71,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 	protected TestHelper testHelper;
 	
 	@Autowired
-	private AttachmentsContext attachmentsContext;
-	
-	@Autowired
-	ComplexDataHelper1_10 complexDataHelper;
+	private AttachmentsContext ctx;
 	
 	private byte[] randomData = new byte[20];
 	
@@ -167,7 +164,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		ComplexData complexData = obs.getComplexData();
 		
 		// Verify
-		assertEquals(result.get("bytesMimeType"), complexDataHelper.getContentType(complexData));
+		assertEquals(result.get("bytesMimeType"), ctx.getComplexDataHelper().getContentType(complexData));
 		assertEquals(result.get("bytesMimeType"), "application/octet-stream");
 	}
 	
@@ -180,7 +177,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		SimpleObject result = deserialize(handle(req));
 		
 		ComplexData complexData = obs.getComplexData();
-		ContentFamily contentFamily = AttachmentsContext.getContentFamily(complexDataHelper.getContentType(complexData));
+		ContentFamily contentFamily = AttachmentsContext.getContentFamily(ctx.getComplexDataHelper().getContentType(complexData));
 		
 		// Verify
 		assertEquals(result.get("bytesContentFamily"), contentFamily.toString());
@@ -295,7 +292,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 			Assert.assertEquals(complexData.getTitle(), fileName);
 			Assert.assertArrayEquals(randomData, (byte[]) complexData.getData());
 			Assert.assertNotNull(obs.getEncounter());
-			Assert.assertEquals(obs.getEncounter().getEncounterType(), attachmentsContext.getEncounterType());
+			Assert.assertEquals(obs.getEncounter().getEncounterType(), ctx.getEncounterType());
 		}
 	}
 	
@@ -427,7 +424,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		Patient patient = Context.getPatientService().getPatient(2);
 		Visit visit = Context.getVisitService().getVisit(1);
 		
-		byte[] maxData = new byte[(int) ((attachmentsContext.getMaxUploadFileSize() * 1024 * 1024) + 1)];
+		byte[] maxData = new byte[(int) ((ctx.getMaxUploadFileSize() * 1024 * 1024) + 1)];
 		
 		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
 		MockMultipartFile file = new MockMultipartFile("file", fileName, "application/octet-stream", maxData);
@@ -482,7 +479,6 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		
 		// Setup
 		String fileCaption = "Test file caption";
-		String uuid;
 		String mimeType = "application/octet-stream";
 		String fileExtension = "dat";
 		String fileName = "testFile." + fileExtension;
