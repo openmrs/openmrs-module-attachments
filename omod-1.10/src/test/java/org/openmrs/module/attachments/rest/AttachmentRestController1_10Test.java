@@ -177,7 +177,8 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		SimpleObject result = deserialize(handle(req));
 		
 		ComplexData complexData = obs.getComplexData();
-		ContentFamily contentFamily = AttachmentsContext.getContentFamily(ctx.getComplexDataHelper().getContentType(complexData));
+		ContentFamily contentFamily = AttachmentsContext
+		        .getContentFamily(ctx.getComplexDataHelper().getContentType(complexData));
 		
 		// Verify
 		assertEquals(result.get("bytesContentFamily"), contentFamily.toString());
@@ -483,7 +484,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		String fileExtension = "dat";
 		String fileName = "testFile." + fileExtension;
 		
-		Patient patient = createBasicPatient();
+		Patient patient = Context.getPatientService().getPatient(6);
 		MockMultipartHttpServletRequest uploadRequest = newUploadRequest(getURI());
 		MockMultipartFile file = new MockMultipartFile("file", fileName, mimeType, randomData);
 		
@@ -504,49 +505,6 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		// Verify
 		Assert.assertEquals("application/octet-stream", result.get("bytesMimeType"));
 		Assert.assertEquals(ContentFamily.OTHER.toString(), result.get("bytesContentFamily"));
-	}
-	
-	private Patient createBasicPatient() {
-		Patient patient = new Patient();
-		
-		PersonName pName = new PersonName();
-		pName.setGivenName("Tom");
-		pName.setMiddleName("E.");
-		pName.setFamilyName("Patient");
-		patient.addName(pName);
-		
-		PersonAddress pAddress = new PersonAddress();
-		pAddress.setAddress1("123 My street");
-		pAddress.setAddress2("Apt 402");
-		pAddress.setCityVillage("Anywhere city");
-		pAddress.setCountry("Some Country");
-		Set<PersonAddress> pAddressList = patient.getAddresses();
-		pAddressList.add(pAddress);
-		patient.setAddresses(pAddressList);
-		patient.addAddress(pAddress);
-		// patient.removeAddress(pAddress);
-		
-		patient.setBirthdateEstimated(true);
-		patient.setBirthdate(new Date());
-		patient.setBirthdateEstimated(true);
-		patient.setDeathDate(new Date());
-		patient.setCauseOfDeath(new Concept());
-		patient.setGender("male");
-		
-		List<PatientIdentifierType> patientIdTypes = Context.getPatientService().getAllPatientIdentifierTypes();
-		
-		PatientIdentifier patientIdentifier = new PatientIdentifier();
-		patientIdentifier.setIdentifier("123-0");
-		patientIdentifier.setIdentifierType(patientIdTypes.get(0));
-		patientIdentifier.setLocation(new Location(1));
-		patientIdentifier.setPreferred(true);
-		
-		Set<PatientIdentifier> patientIdentifiers = new LinkedHashSet<>();
-		patientIdentifiers.add(patientIdentifier);
-		
-		patient.setIdentifiers(patientIdentifiers);
-		
-		return Context.getPatientService().savePatient(patient);
 	}
 	
 }
