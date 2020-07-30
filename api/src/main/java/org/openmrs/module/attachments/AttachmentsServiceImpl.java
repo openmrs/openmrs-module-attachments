@@ -15,6 +15,8 @@ import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.obs.Attachment;
+import org.openmrs.module.attachments.obs.ComplexDataHelper;
+import org.openmrs.module.attachments.obs.ComplexDataHelper1_10;
 import org.openmrs.module.emrapi.db.DbSessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,11 +48,11 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			if (!obs.isComplex()) {
 				throw new APIException(NON_COMPLEX_OBS_ERR);
 			}
-			if (includeEncounterless) {
-				attachments.add(new Attachment(obs));
-			} else if (obs.getEncounter() != null) {
-				attachments.add(new Attachment(obs));
+			if (!includeEncounterless && obs.getEncounter() == null) {
+				continue;
 			}
+			obs = getComplexObs(obs);
+			attachments.add(new Attachment(obs, ctx.getComplexDataHelper()));
 		}
 		return attachments;
 	}
@@ -75,7 +77,8 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 				throw new APIException(NON_COMPLEX_OBS_ERR);
 			}
 			if (obs.getEncounter() == null) {
-				attachments.add(new Attachment(obs));
+				obs = getComplexObs(obs);
+				attachments.add(new Attachment(obs, ctx.getComplexDataHelper()));
 			}
 		}
 		return attachments;
@@ -97,7 +100,8 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			if (!obs.isComplex()) {
 				throw new APIException(NON_COMPLEX_OBS_ERR);
 			}
-			attachments.add(new Attachment(obs));
+			obs = getComplexObs(obs);
+			attachments.add(new Attachment(obs, ctx.getComplexDataHelper()));
 		}
 		return attachments;
 	}
@@ -148,5 +152,13 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			DbSessionUtil.setFlushMode(flushMode);
 		}
 		return attachment;
+	}
+	
+	private Obs getComplexObs(Obs obs) {
+		if (obs.getComplexData() != null) {
+			return obs;
+		}
+		String view = ctx.getComplexViewHelper().getView(obs, AttachmentsConstants.ATT_VIEW_THUMBNAIL);
+		return ctx.getObsService().getComplexObs(obs.getId(), view);
 	}
 }
