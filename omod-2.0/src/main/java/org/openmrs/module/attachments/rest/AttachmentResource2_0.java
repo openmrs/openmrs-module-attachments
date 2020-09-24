@@ -161,11 +161,6 @@ public class AttachmentResource2_0 extends AttachmentResource1_10 {
 		return new Attachment();
 	}
 	
-	// @Override
-	// public Attachment save(Attachment delegate) {
-	// Obs obs = Context.getObsService().saveObs(delegate.getObs(), REASON);
-	// return new Attachment(obs);
-	// }
 	@SuppressWarnings("deprecation")
 	@Override
 	public Attachment getByUniqueId(String uniqueId) {
