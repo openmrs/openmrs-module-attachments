@@ -157,36 +157,6 @@ public class AttachmentResource2_0 extends AttachmentResource1_10 {
 		        .required("dead").required("causeOfDeath");
 	}
 	
-	// }
-	
-	// @Override
-	// public Model getCREATEModel(Representation representation) {
-	// ModelImpl model = new ModelImpl()
-	// .property("display", new ArrayProperty(new
-	// RefProperty("#/definitions/AttachmentDisplayCreate")))
-	//
-	// .property("dataTime", new DateProperty())
-	//
-	// .property("comment", new ArrayProperty(new
-	// RefProperty("#/definitions/AttachmentCommentCreate")))
-	// .property("complexData", new ArrayProperty(new
-	// RefProperty("#/definitions/AttachmentComplexDataCreate")));
-	//
-	// model.setRequired(Arrays.asList("comment", "datetime"));
-	// return model;
-	// }
-	
-	// @Override
-	// public Model getUPDATEModel(Representation representation) {
-	// return new ModelImpl().property("uuid", new
-	// BooleanProperty()).property("comment", new StringProperty())
-	// .property("dateTime", new DateProperty())
-	//
-	// .property("complexData", new ArrayProperty(new
-	// RefProperty("#/definitions/AttachmentComplexDataCreate")));
-	//
-	// }
-	
 	/**
 	 * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getPropertiesToExposeAsSubResources()
 	 */
