@@ -26,6 +26,8 @@ import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.BooleanProperty;
 import io.swagger.models.properties.DateProperty;
+import io.swagger.models.properties.DateTimeProperty;
+import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 
@@ -106,21 +108,22 @@ public class AttachmentResource2_0 extends AttachmentResource1_10 {
 		ModelImpl model = (ModelImpl) super.getGETModel(rep);
 		if (rep instanceof DefaultRepresentation || rep instanceof FullRepresentation) {
 			model.property("uuid", new StringProperty()).property("display", new StringProperty())
-			        
-			        .property("comment", new BooleanProperty()).property("Datetime", new DateProperty())
-			        .property("complexData", new StringProperty())
-			        
-			        .addProperty("voided", new BooleanProperty());
+			        .property("gender", new StringProperty()._enum("M")._enum("F")).property("age", new IntegerProperty())
+			        .property("birthdate", new DateTimeProperty()).property("birthdateEstimated", new BooleanProperty())
+			        .property("dead", new BooleanProperty()).property("deathDate", new DateProperty())
+			        .property("causeOfDeath", new StringProperty())
+			        .property("attributes", new ArrayProperty(new RefProperty("#/definitions/AttachmentAttributeGetRef")))
+			        .property("voided", new BooleanProperty());
 		}
 		if (rep instanceof DefaultRepresentation) {
-			model.property("complexData", new RefProperty("#/definitions/AttachmentComplexDataGetRef")).property("comment",
-			    new RefProperty("#/definitions/AttachmentCommentGetRef"));
+			model.property("preferredName", new RefProperty("#/definitions/AttachementNameGetRef"))
+			        .property("preferredAddress", new RefProperty("#/definitions/AttachementAddressGetRef"));
 			
 		} else if (rep instanceof FullRepresentation) {
-			model.property("display", new RefProperty("#/definitions/AttachmentDisplayGet"))
-			        .property("comment", new RefProperty("#/definitions/AttachmentCommentGet"))
-			        .property("datetime", new ArrayProperty(new RefProperty("#/definitions/AttachmentDateTimeGet")))
-			        .property("complexData", new ArrayProperty(new RefProperty("#/definitions/AttachmentComplexDataGet")));
+			model.property("preferredName", new RefProperty("#/definitions/AttachmentNameGet"))
+			        .property("preferredAddress", new RefProperty("#/definitions/AttachmentAddressGet"))
+			        .property("names", new ArrayProperty(new RefProperty("#/definitions/AttachmentNameGet")))
+			        .property("addresses", new ArrayProperty(new RefProperty("#/definitions/AttachmentAddressGet")));
 		}
 		return model;
 	}
@@ -128,32 +131,68 @@ public class AttachmentResource2_0 extends AttachmentResource1_10 {
 	@Override
 	public Model getCREATEModel(Representation representation) {
 		ModelImpl model = new ModelImpl()
-		        .property("display", new ArrayProperty(new RefProperty("#/definitions/AttachmentDisplayCreate")))
-		        
-		        .property("dataTime", new DateProperty())
-		        
-		        .property("comment", new ArrayProperty(new RefProperty("#/definitions/AttachmentCommentCreate")))
-		        .property("complexData", new ArrayProperty(new RefProperty("#/definitions/AttachmentComplexDataCreate")));
+		        .property("names", new ArrayProperty(new RefProperty("#/definitions/AttachmentNameCreate")))
+		        .property("gender", new StringProperty()._enum("M")._enum("F")).property("age", new IntegerProperty())
+		        .property("birthdate", new DateProperty())
+		        .property("birthdateEstimated", new BooleanProperty()._default(false))
+		        .property("dead", new BooleanProperty()._default(false)).property("deathDate", new DateProperty())
+		        .property("causeOfDeath", new StringProperty())
+		        .property("addresses", new ArrayProperty(new RefProperty("#/definitions/AttachmentAddressCreate")))
+		        .property("attributes", new ArrayProperty(new RefProperty("#/definitions/AttachmentAttributeCreate")));
 		
-		model.setRequired(Arrays.asList("comment", "datetime"));
+		model.setRequired(Arrays.asList("names", "gender"));
 		return model;
 	}
 	
 	@Override
 	public Model getUPDATEModel(Representation representation) {
-		return new ModelImpl().property("uuid", new BooleanProperty()).property("comment", new StringProperty())
-		        .property("dateTime", new DateProperty())
+		return new ModelImpl().property("dead", new BooleanProperty()).property("causeOfDeath", new StringProperty())
+		        .property("deathDate", new DateProperty()).property("age", new IntegerProperty())
+		        .property("gender", new StringProperty()._enum("M")._enum("F")).property("birthdate", new DateProperty())
+		        .property("birthdateEstimated", new BooleanProperty()._default(false))
+		        .property("preferredName", new StringProperty().example("uuid"))
+		        .property("preferredAddress", new StringProperty().example("uuid"))
+		        .property("attributes", new ArrayProperty(new RefProperty("#/definitions/AttachmentAttributeCreate")))
 		        
-		        .property("complexData", new ArrayProperty(new RefProperty("#/definitions/AttachmentComplexDataCreate")));
-		
+		        .required("dead").required("causeOfDeath");
 	}
+	
+	// }
+	
+	// @Override
+	// public Model getCREATEModel(Representation representation) {
+	// ModelImpl model = new ModelImpl()
+	// .property("display", new ArrayProperty(new
+	// RefProperty("#/definitions/AttachmentDisplayCreate")))
+	//
+	// .property("dataTime", new DateProperty())
+	//
+	// .property("comment", new ArrayProperty(new
+	// RefProperty("#/definitions/AttachmentCommentCreate")))
+	// .property("complexData", new ArrayProperty(new
+	// RefProperty("#/definitions/AttachmentComplexDataCreate")));
+	//
+	// model.setRequired(Arrays.asList("comment", "datetime"));
+	// return model;
+	// }
+	
+	// @Override
+	// public Model getUPDATEModel(Representation representation) {
+	// return new ModelImpl().property("uuid", new
+	// BooleanProperty()).property("comment", new StringProperty())
+	// .property("dateTime", new DateProperty())
+	//
+	// .property("complexData", new ArrayProperty(new
+	// RefProperty("#/definitions/AttachmentComplexDataCreate")));
+	//
+	// }
 	
 	/**
 	 * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getPropertiesToExposeAsSubResources()
 	 */
 	@Override
 	public List<String> getPropertiesToExposeAsSubResources() {
-		return Arrays.asList("comment", "complexData");
+		return Arrays.asList("comment", "complexData", "Attributes");
 	}
 	
 	@Override
