@@ -2,7 +2,6 @@ package org.openmrs.module.attachments.rest;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.hibernate.FlushMode;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
@@ -20,7 +19,6 @@ import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceD
 import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
-
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.ArrayProperty;
@@ -94,12 +92,11 @@ public class AttachmentResource2_0 extends AttachmentResource1_10 {
 	public DelegatingResourceDescription getUpdatableProperties() throws ResourceDoesNotSupportOperationException {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addProperty("uuid");
+		description.addProperty("gender");
 		description.addProperty("display");
 		description.addProperty("comment");
 		description.addProperty("dateTime");
-		
 		description.addRequiredProperty("complexData");
-		
 		return description;
 	}
 	
@@ -153,7 +150,6 @@ public class AttachmentResource2_0 extends AttachmentResource1_10 {
 		        .property("preferredName", new StringProperty().example("uuid"))
 		        .property("preferredAddress", new StringProperty().example("uuid"))
 		        .property("attributes", new ArrayProperty(new RefProperty("#/definitions/AttachmentAttributeCreate")))
-		        
 		        .required("dead").required("causeOfDeath");
 	}
 	
@@ -174,9 +170,9 @@ public class AttachmentResource2_0 extends AttachmentResource1_10 {
 	@Override
 	public Attachment getByUniqueId(String uniqueId) {
 		Obs obs = Context.getObsService().getObsByUuid(uniqueId);
-		if (!obs.isComplex())
+		if (!obs.isComplex()) {
 			throw new GenericRestException(uniqueId + " does not identify a complex obs.", null);
-		else {
+		} else {
 			obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
 			return new Attachment(obs);
 		}
