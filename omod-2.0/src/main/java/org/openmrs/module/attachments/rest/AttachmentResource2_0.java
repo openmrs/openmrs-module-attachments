@@ -162,37 +162,6 @@ public class AttachmentResource2_0 extends AttachmentResource1_10 {
 	}
 	
 	@Override
-	public Attachment newDelegate() {
-		return new Attachment();
-	}
-	
-	@SuppressWarnings("deprecation")
-	@Override
-	public Attachment getByUniqueId(String uniqueId) {
-		Obs obs = Context.getObsService().getObsByUuid(uniqueId);
-		if (!obs.isComplex()) {
-			throw new GenericRestException(uniqueId + " does not identify a complex obs.", null);
-		} else {
-			obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
-			return new Attachment(obs);
-		}
-	}
-	
-	@Override
-	protected void delete(Attachment delegate, String reason, RequestContext context) throws ResponseException {
-		String encounterUuid = delegate.getObs().getEncounter() != null ? delegate.getObs().getEncounter().getUuid() : null;
-		Context.getObsService().voidObs(delegate.getObs(), REASON);
-		voidEncounterIfEmpty(Context.getEncounterService(), encounterUuid);
-	}
-	
-	@Override
-	public void purge(Attachment delegate, RequestContext context) throws ResponseException {
-		String encounterUuid = delegate.getObs().getEncounter() != null ? delegate.getObs().getEncounter().getUuid() : null;
-		Context.getObsService().purgeObs(delegate.getObs());
-		voidEncounterIfEmpty(Context.getEncounterService(), encounterUuid);
-	}
-	
-	@Override
 	public Attachment save(Attachment delegate) {
 		FlushMode flushMode = DbSessionUtil.getCurrentFlushMode();
 		DbSessionUtil.setManualFlushMode();
