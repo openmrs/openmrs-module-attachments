@@ -43,7 +43,7 @@ public class AttachmentResource2_0Test extends BaseDelegatingResourceTest<Attach
 	
 	@Override
 	public Attachment newObject() {
-		return new Attachment(Context.getObsService().getObsByUuid("9b6639b2-5785-4603-a364-075c2d61cd51"));
+		return new Attachment(Context.getObsService().getObsByUuid(ATTACHMENTRESOURCE_UUID));
 		
 	}
 	

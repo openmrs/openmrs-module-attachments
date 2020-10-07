@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Obs;
@@ -20,13 +22,17 @@ import org.openmrs.module.attachments.AttachmentsService;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.TestAttachmentBytesViewHandler;
 import org.openmrs.module.attachments.obs.TestHelper;
+import org.openmrs.module.webservices.rest.SimpleObject;
+import org.openmrs.module.webservices.rest.test.Util;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.resource.impl.BasePageableResult;
+import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
 import org.openmrs.obs.ComplexObsHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 public class AttachmentRestController2_0Test extends MainResourceControllerTest {
 	
@@ -92,6 +98,93 @@ public class AttachmentRestController2_0Test extends MainResourceControllerTest 
 	@Override
 	@Test
 	public void shouldGetFullByUuid() {
+	}
+	
+	@Test
+	public void createAttachment_shouldCreateANewAttachment() throws Exception {
+		
+		SimpleObject attachment = new SimpleObject();
+		attachment.add("uuid", obs.getUuid());
+		attachment.add("comment", obs.getComment());
+		attachment.add("complexData", obs.getComplexData());
+		
+		String json = "{\"uuid\":\"" + getUuid() + "\",\"attachment\":\"" + attachment + "\"}";
+		
+		try {
+			json = new ObjectMapper().writeValueAsString(attachment);
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		MockHttpServletRequest req = request(RequestMethod.POST, getURI());
+		req.setContent(json.getBytes());
+		
+		SimpleObject result = null;
+		try {
+			result = deserialize(handle(req));
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Util.log("Created attachment", result);
+		
+		// Check existence in database
+		String uuid = (String) attachment.get("uuid");
+		Assert.assertNotNull("uuid", obs.getUuid());
+		Assert.assertNotNull("comment", obs.getComment());
+		Assert.assertEquals("complexData", obs.getComplexData(), null);
+	}
+	
+	@Test
+	public void getAttachment_shouldGetADefaultRepresentationOfAttachment() throws Exception {
+		
+		MockHttpServletRequest req = request(RequestMethod.GET, getURI() + "/" + getUuid());
+		SimpleObject result = deserialize(handle(req));
+		
+		Assert.assertNotNull(result);
+		Util.log("Attachment fetched (default)", result);
+		Assert.assertEquals(getUuid(), result.get("uuid"));
+	}
+	
+	@Test
+	public void updateAttachment_shouldChangeAPropertyOnAttachment() throws Exception {
+		
+		SimpleObject attributes = new SimpleObject();
+		attributes.add("complexData", "update complextData");
+		attributes.add("deathDate", "Updated deathDate");
+		attributes.add("prefferedName", "Updated   prefferedName");
+		attributes.add("gender", "updated gender");
+		attributes.add("preferredAddress", "updated preferredAddress");
+		
+		String json = "{\"uuid\":\"" + getUuid() + "\",\"attributes\":\"" + attributes + "\"}";
+		
+		try {
+			json = new ObjectMapper().writeValueAsString(attributes);
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		MockHttpServletRequest req = request(RequestMethod.POST, getURI() + "/" + getUuid());
+		req.setContent(json.getBytes());
+		
+		SimpleObject result = null;
+		try {
+			result = deserialize(handle(req));
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Assert.assertNull(result);
+		String editedAttachment = obs.getUuid();
+		Assert.assertNotEquals("Updated complexData ", editedAttachment.equalsIgnoreCase(editedAttachment));
 	}
 	
 	@Test
