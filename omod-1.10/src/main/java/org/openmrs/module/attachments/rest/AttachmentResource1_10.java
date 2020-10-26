@@ -2,10 +2,16 @@ package org.openmrs.module.attachments.rest;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
@@ -13,6 +19,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
+import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
@@ -20,6 +27,8 @@ import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.AttachmentsService;
 import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.attachments.obs.Attachment;
+import org.openmrs.module.attachments.obs.ComplexDataHelper;
+import org.openmrs.module.attachments.obs.ComplexDataHelper1_10;
 import org.openmrs.module.attachments.obs.ValueComplex;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
@@ -45,11 +54,11 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	
 	protected static final String REASON = "REST web service";
 	
-	ComplexObsSaver obsSaver = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER,
+	private ComplexObsSaver obsSaver = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER,
 	    ComplexObsSaver.class);
 	
-	AttachmentsContext attachmentsContext = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT,
-	    AttachmentsContext.class);
+	private AttachmentsContext ctx = Context
+	        .getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class);
 	
 	@Override
 	public Attachment newDelegate() {
@@ -59,7 +68,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	@Override
 	public Attachment save(Attachment delegate) {
 		Obs obs = Context.getObsService().saveObs(delegate.getObs(), REASON);
-		return new Attachment(obs);
+		return new Attachment(obs, ctx.getComplexDataHelper());
 	}
 	
 	@Override
@@ -69,7 +78,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			throw new GenericRestException(uniqueId + " does not identify a complex obs.", null);
 		else {
 			obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
-			return new Attachment(obs);
+			return new Attachment(obs, ctx.getComplexDataHelper());
 		}
 	}
 	
@@ -97,9 +106,13 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		Provider provider = Context.getProviderService().getProviderByUuid(context.getParameter("provider"));
 		String fileCaption = context.getParameter("fileCaption");
 		String instructions = context.getParameter("instructions");
+		String base64Content = context.getParameter("base64Content");
 		
+		if (base64Content != null) {
+			file = new Base64MultipartFile(base64Content);
+		}
 		// Verify File Size
-		if (attachmentsContext.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
+		if (ctx.getMaxUploadFileSize() * 1024 * 1024 < (double)file.getSize()) {
 			throw new IllegalRequestException("The file  exceeds the maximum size");
 		}
 		
@@ -120,7 +133,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		}
 		
 		if (visit != null && encounter == null) {
-			encounter = attachmentsContext.getAttachmentEncounter(patient, visit, provider);
+			encounter = ctx.getAttachmentEncounter(patient, visit, provider);
 		}
 		
 		if (encounter != null && visit == null) {
@@ -157,6 +170,8 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		description.addProperty("uuid");
 		description.addProperty("dateTime");
 		description.addProperty("comment");
+		description.addProperty("bytesMimeType");
+		description.addProperty("bytesContentFamily");
 		description.addSelfLink();
 		return description;
 	}
@@ -241,13 +256,94 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		}
 		
 		// Search Attachments
-		List<Attachment> attachmentList = search(attachmentsContext.getAttachmentsService(), patient, visit, encounter,
+		List<Attachment> attachmentList = search(ctx.getAttachmentsService(), patient, visit, encounter,
 		    includeEncounterless, includeVoided);
 		
 		if (attachmentList != null) {
 			return new NeedsPaging<Attachment>(attachmentList, context);
 		}
 		return new EmptySearchResult();
+	}
+	
+	/**
+	 * Wrapper class to be passed to ComplexObsSaver#saveImageAttachment
+	 * ComplexObsSaver#saveImageAttachment needs a MultipartFile but the image could either be a
+	 * MultipartFile or a base64 encoded image. This class will only implement the methods used by
+	 * ComplexObsSaver#saveImageAttachment. This way we won't have to make any changes to the
+	 * implementation of ComplexObsSaver#saveImageAttachment and will also make very little change to
+	 * the AttachmentResource1_10#upload implementation. This is also helps us avoid adding an extra
+	 * dependency to MockMultipartFile for converting the base64 encoded String to a MultipartFile
+	 * object.
+	 */
+	class Base64MultipartFile implements MultipartFile {
+		
+		private String fileName;
+		
+		private String contentType;
+		
+		private long size;
+		
+		private InputStream in;
+		
+		private byte[] bytes;
+		
+		public Base64MultipartFile(String base64Image) throws IOException {
+			String[] parts = base64Image.split(",");
+			String contentType = parts[0].split(":")[1].split(";")[0].trim();
+			String contents = parts[1].trim();
+			byte[] decodedImage = Base64.decodeBase64(contents.getBytes());
+			final File temp = File.createTempFile("cameracapture", ".png");
+			try (OutputStream stream = new FileOutputStream(temp)) {
+				stream.write(decodedImage);
+			}
+			temp.deleteOnExit();
+			
+			this.fileName = temp.getName();
+			this.in = new FileInputStream(temp);
+			this.contentType = contentType;
+			this.bytes = decodedImage;
+			this.size = temp.length();
+		}
+		
+		@Override
+		public String getName() {
+			return this.fileName;
+		}
+		
+		@Override
+		public String getOriginalFilename() {
+			return this.fileName;
+		}
+		
+		@Override
+		public String getContentType() {
+			return this.contentType;
+		}
+		
+		@Override
+		public boolean isEmpty() {
+			return false;
+		}
+		
+		@Override
+		public long getSize() {
+			return this.size;
+		}
+		
+		@Override
+		public byte[] getBytes() throws IOException {
+			return this.bytes;
+		}
+		
+		@Override
+		public InputStream getInputStream() throws IOException {
+			return this.in;
+		}
+		
+		@Override
+		public void transferTo(File dest) throws IOException, IllegalStateException {
+			throw new APIException("Operation transferTo is not supported for Base64MultipartFile");
+		}
 	}
 	
 }

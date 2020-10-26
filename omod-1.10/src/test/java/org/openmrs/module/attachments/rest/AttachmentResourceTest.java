@@ -1,5 +1,12 @@
 package org.openmrs.module.attachments.rest;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,13 +14,13 @@ import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.attachments.AttachmentsConstants;
+import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.AttachmentsService;
+import org.openmrs.module.attachments.obs.ComplexDataHelper1_10;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
@@ -23,6 +30,10 @@ public class AttachmentResourceTest {
 	public void setup() {
 		initMocks(this);
 		PowerMockito.mockStatic(Context.class);
+		AttachmentsContext ctx = mock(AttachmentsContext.class);
+		when(ctx.getComplexDataHelper()).thenReturn(new ComplexDataHelper1_10());
+		when(Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class))
+		        .thenReturn(ctx);
 	}
 	
 	@Test

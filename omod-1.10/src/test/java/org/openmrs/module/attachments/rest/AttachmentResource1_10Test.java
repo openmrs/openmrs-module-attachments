@@ -34,5 +34,7 @@ public class AttachmentResource1_10Test extends BaseDelegatingResourceTest<Attac
 		assertPropEquals("dateTime", getObject().getDateTime());
 		assertPropEquals("comment", getObject().getComment());
 		assertPropEquals("complexData", getObject().getComplexData());
+		assertPropEquals("bytesMimeType", getObject().getBytesMimeType());
+		assertPropEquals("bytesContentFamily", getObject().getBytesContentFamily());
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.FlushMode;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -12,11 +13,17 @@ import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.obs.Attachment;
+import org.openmrs.module.attachments.obs.ComplexDataHelper;
+import org.openmrs.module.attachments.obs.ComplexDataHelper1_10;
+import org.openmrs.module.emrapi.db.DbSessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+@Transactional(readOnly = true)
 public class AttachmentsServiceImpl implements AttachmentsService {
 	
 	private final Log log = LogFactory.getLog(getClass());
@@ -41,11 +48,11 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			if (!obs.isComplex()) {
 				throw new APIException(NON_COMPLEX_OBS_ERR);
 			}
-			if (includeEncounterless) {
-				attachments.add(new Attachment(obs));
-			} else if (obs.getEncounter() != null) {
-				attachments.add(new Attachment(obs));
+			if (!includeEncounterless && obs.getEncounter() == null) {
+				continue;
 			}
+			obs = getComplexObs(obs);
+			attachments.add(new Attachment(obs, ctx.getComplexDataHelper()));
 		}
 		return attachments;
 	}
@@ -70,7 +77,8 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 				throw new APIException(NON_COMPLEX_OBS_ERR);
 			}
 			if (obs.getEncounter() == null) {
-				attachments.add(new Attachment(obs));
+				obs = getComplexObs(obs);
+				attachments.add(new Attachment(obs, ctx.getComplexDataHelper()));
 			}
 		}
 		return attachments;
@@ -92,7 +100,8 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			if (!obs.isComplex()) {
 				throw new APIException(NON_COMPLEX_OBS_ERR);
 			}
-			attachments.add(new Attachment(obs));
+			obs = getComplexObs(obs);
+			attachments.add(new Attachment(obs, ctx.getComplexDataHelper()));
 		}
 		return attachments;
 	}
@@ -127,5 +136,29 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			log.warn("No concepts complex are configured to fetch attachments.");
 		}
 		return questionConcepts;
+	}
+	
+	@Transactional
+	@Override
+	public Attachment save(Attachment delegate, String reason) {
+		FlushMode flushMode = DbSessionUtil.getCurrentFlushMode();
+		DbSessionUtil.setManualFlushMode();
+		Attachment attachment = new Attachment();
+		try {
+			Obs obs = Context.getObsService().saveObs(delegate.getObs(), reason);
+			attachment = new Attachment(obs);
+		}
+		finally {
+			DbSessionUtil.setFlushMode(flushMode);
+		}
+		return attachment;
+	}
+	
+	private Obs getComplexObs(Obs obs) {
+		if (obs.getComplexData() != null) {
+			return obs;
+		}
+		String view = ctx.getComplexViewHelper().getView(obs, AttachmentsConstants.ATT_VIEW_THUMBNAIL);
+		return ctx.getObsService().getComplexObs(obs.getId(), view);
 	}
 }
