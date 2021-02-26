@@ -8,7 +8,7 @@
   ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
   ui.includeJavascript("attachments", "directives/modalImage.js")
   ui.includeCss("attachments", "icon.css")
-  ui.includeJavascript("attachments", "date/moment.min.js")
+  ui.includeJavascript("uicommons", "moment-with-locales.min.js")
   ui.includeJavascript("attachments", "image/exif.js")
   ui.includeJavascript("attachments", "image/angular-fix-image-orientation.js")
 %>
