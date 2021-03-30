@@ -30,7 +30,6 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 	
 	protected ComplexData complexData = null;
 	
-	
 	public Attachment() {
 	}
 	

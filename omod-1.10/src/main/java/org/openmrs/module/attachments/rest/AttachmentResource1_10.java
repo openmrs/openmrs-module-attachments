@@ -14,6 +14,7 @@ import java.util.List;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -57,8 +58,8 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	private ComplexObsSaver obsSaver = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER,
 	    ComplexObsSaver.class);
 	
-	private AttachmentsContext ctx = Context
-	        .getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class);
+	private AttachmentsContext ctx = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT,
+	    AttachmentsContext.class);
 	
 	@Override
 	public Attachment newDelegate() {
@@ -104,6 +105,8 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		Visit visit = Context.getVisitService().getVisitByUuid(context.getParameter("visit"));
 		Encounter encounter = Context.getEncounterService().getEncounterByUuid(context.getParameter("encounter"));
 		Provider provider = Context.getProviderService().getProviderByUuid(context.getParameter("provider"));
+		final String conceptComplexUuid = context.getParameter("concept");
+		Concept conceptComplex = null;
 		String fileCaption = context.getParameter("fileCaption");
 		String instructions = context.getParameter("instructions");
 		String base64Content = context.getParameter("base64Content");
@@ -112,7 +115,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			file = new Base64MultipartFile(base64Content);
 		}
 		// Verify File Size
-		if (ctx.getMaxUploadFileSize() * 1024 * 1024 < (double)file.getSize()) {
+		if (ctx.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
 			throw new IllegalRequestException("The file  exceeds the maximum size");
 		}
 		
@@ -132,6 +135,17 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			}
 		}
 		
+		// Verify concept complex
+		if (StringUtils.isNotBlank(conceptComplexUuid)) {
+			conceptComplex = Context.getConceptService().getConceptByUuid(context.getParameter("concept"));
+			if (conceptComplex == null) {
+				throw new IllegalArgumentException("Cannot find concept with UUID: " + conceptComplexUuid);
+			}
+			if (!conceptComplex.isComplex()) {
+				throw new IllegalArgumentException("A complex concept must be set in order to create complex obs.");
+			}
+		}
+		
 		if (visit != null && encounter == null) {
 			encounter = ctx.getAttachmentEncounter(patient, visit, provider);
 		}
@@ -144,7 +158,8 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		Obs obs;
 		switch (getContentFamily(file.getContentType())) {
 			case IMAGE:
-				obs = obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, file, instructions);
+				obs = obsSaver.saveImageAttachment(visit, patient, encounter, conceptComplex, fileCaption, file,
+				    instructions);
 				break;
 			
 			case OTHER:
@@ -200,7 +215,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	 * @param includeVoided
 	 */
 	public List<Attachment> search(AttachmentsService as, Patient patient, Visit visit, Encounter encounter,
-	        String includeEncounterless, boolean includeVoided) {
+	        String includeEncounterless, Concept concept, boolean includeVoided) {
 		
 		List<Attachment> attachmentList = new ArrayList<>();
 		
@@ -218,10 +233,12 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			if (visit != null && encounter == null) {
 				attachmentList = as.getAttachments(patient, visit, includeVoided);
 			}
-			if (encounter == null && visit == null) {
+			if (encounter == null && visit == null && concept == null) {
 				attachmentList = as.getAttachments(patient, includeVoided);
 			}
-			
+			if (concept != null) {
+				attachmentList = as.getAttachments(patient, concept);
+			}
 		}
 		return attachmentList;
 	}
@@ -245,6 +262,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		Encounter encounter = Context.getEncounterService().getEncounterByUuid(context.getParameter("encounter"));
 		String includeEncounterless = context.getParameter("includeEncounterless");
 		Boolean includeVoided = BooleanUtils.toBoolean(context.getParameter("includeVoided"));
+		Concept concept = Context.getConceptService().getConceptByUuid(context.getParameter("includeVoided"));
 		
 		// Verify Parameters
 		if (patient == null) {
@@ -257,7 +275,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		
 		// Search Attachments
 		List<Attachment> attachmentList = search(ctx.getAttachmentsService(), patient, visit, encounter,
-		    includeEncounterless, includeVoided);
+		    includeEncounterless, concept, includeVoided);
 		
 		if (attachmentList != null) {
 			return new NeedsPaging<Attachment>(attachmentList, context);

@@ -50,6 +50,7 @@ import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.obs.BaseComplexData;
 import org.openmrs.module.attachments.obs.ComplexDataHelper;
 import org.openmrs.module.attachments.obs.ComplexDataHelper1_10;
+import org.openmrs.module.attachments.obs.ImageAttachmentHandler;
 import org.openmrs.module.attachments.obs.TestHelper;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
@@ -359,14 +360,10 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 	
 	@Test
 	public void postAttachment_shouldAcceptBase64Content() throws Exception {
-		// Read file OpenMRS_logo.png and copy bytes to baos
-		InputStream inputStream = getClass().getClassLoader().getResourceAsStream("OpenMRS_logo.png");
-		BufferedImage img = ImageIO.read(inputStream);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ImageIO.write(img, "png", baos);
+		// Read file OpenMRS_logo.png and copy bytes to a buffer
+		byte[] bytesIn = TestHelper.loadImageResourceToByteArray(getClass().getClassLoader(), "OpenMRS_logo.png", "png");
 		
 		// Build the request parameters
-		byte[] bytesIn = baos.toByteArray();
 		String fileCaption = "Test file caption";
 		String fileName = "testFile2.dat";
 		String base64Content = "data:image/png;base64," + Base64.encodeBase64String(bytesIn);
@@ -393,6 +390,78 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		Assert.assertTrue(complexData.getTitle().startsWith("cameracapture"));
 		Assert.assertArrayEquals(bytesIn, bytesOut);
 		Assert.assertNull(obs.getEncounter());
+	}
+	
+	@Test
+	public void postAttachment_shouldSupportConceptParam() throws Exception {
+		String fileCaption = "Openmrs Standard logo";
+		final String conceptUuid = "c66422cd-2bf5-49c8-a530-689590134b3f";
+		
+		// Setup
+		String fileName = "OpenMRS_logo.png";
+		Patient patient = Context.getPatientService().getPatient(2);
+		Encounter encounter = testHelper.getTestEncounter();
+		Concept complexConcept = testHelper.createComplexConcept(conceptUuid, "Patient Avatar",
+		    ImageAttachmentHandler.class.getSimpleName(), "Patient Avatar");
+		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
+		MockMultipartFile file = new MockMultipartFile("file", fileName, "image/png",
+		        TestHelper.loadImageResourceToByteArray(getClass().getClassLoader(), "OpenMRS_logo.png", "png"));
+		
+		request.addFile(file);
+		request.addParameter("patient", patient.getUuid());
+		request.addParameter("encounter", encounter.getUuid());
+		request.addParameter("fileCaption", fileCaption);
+		request.addParameter("concept", complexConcept.getUuid());
+		
+		// Replay
+		SimpleObject response = deserialize(handle(request));
+		
+		Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
+		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
+		ComplexData complexData = complexObs.getComplexData();
+		
+		// Verify
+		Assert.assertEquals(conceptUuid, obs.getConcept().getUuid());
+		Assert.assertEquals(fileCaption, obs.getComment());
+		Assert.assertEquals(fileName, complexData.getTitle());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void postAttachment_shouldFailIfConceptIsNotFound() throws Exception {
+		// Setup
+		final String NON_EXISTING_CONCEPT_UUID = "d42c6057-1a16-4ba6-b6e9-6b3c760618af";
+		Patient patient = Context.getPatientService().getPatient(2);
+		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
+		MockMultipartFile file = new MockMultipartFile("file", "OpenMRS_logo.png", "image/png",
+		        TestHelper.loadImageResourceToByteArray(getClass().getClassLoader(), "OpenMRS_logo.png", "png"));
+		
+		request.addFile(file);
+		request.addParameter("patient", patient.getUuid());
+		request.addParameter("encounter", testHelper.getTestEncounter().getUuid());
+		request.addParameter("fileCaption", "Openmrs Standard logo");
+		request.addParameter("concept", NON_EXISTING_CONCEPT_UUID);
+		
+		// Replay
+		deserialize(handle(request));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void postAttachment_shouldFailIfConceptIsNotComplex() throws Exception {
+		// Setup
+		final String NON_CONCEPT_COMPLEX_UUID = Context.getConceptService().getConcept(3).getUuid();
+		Patient patient = Context.getPatientService().getPatient(2);
+		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
+		MockMultipartFile file = new MockMultipartFile("file", "OpenMRS_logo.png", "image/png",
+		        TestHelper.loadImageResourceToByteArray(getClass().getClassLoader(), "OpenMRS_logo.png", "png"));
+		
+		request.addFile(file);
+		request.addParameter("patient", patient.getUuid());
+		request.addParameter("encounter", testHelper.getTestEncounter().getUuid());
+		request.addParameter("fileCaption", "Openmrs Standard logo");
+		request.addParameter("concept", NON_CONCEPT_COMPLEX_UUID);
+		
+		// Replay
+		deserialize(handle(request));
 	}
 	
 	@Test(expected = IllegalRequestException.class)

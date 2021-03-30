@@ -12,6 +12,7 @@ package org.openmrs.module.attachments;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.ConceptComplex;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -64,10 +65,23 @@ public class ComplexObsSaver {
 		obs.setComment(fileCaption);
 	}
 	
+	/**
+	 * @deprecated as of 2.5.0, use
+	 *             {@link #saveImageAttachment(Visit, Person, Encounter, Concept, String, MultipartFile, String)}
+	 */
 	public Obs saveImageAttachment(Visit visit, Person person, Encounter encounter, String fileCaption,
 	        MultipartFile multipartFile, String instructions) throws IOException {
-		
-		conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
+		return saveImageAttachment(visit, person, encounter, null, fileCaption, multipartFile, instructions);
+	}
+	
+	public Obs saveImageAttachment(Visit visit, Person person, Encounter encounter, Concept conceptComplex,
+	        String fileCaption, MultipartFile multipartFile, String instructions) throws IOException {
+		if (conceptComplex != null) {
+			this.conceptComplex = (ConceptComplex) conceptComplex;
+			
+		} else {
+			this.conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
+		}
 		prepareComplexObs(visit, person, encounter, fileCaption);
 		
 		Object image = multipartFile.getInputStream();

@@ -120,6 +120,21 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		return attachments;
 	}
 	
+	@Override
+	public List<Attachment> getAttachments(Patient patient, Concept concept) {
+		List<Obs> obsList = ctx.getObsService().getObservationsByPersonAndConcept(patient, concept);
+		List<Attachment> attachments = new ArrayList<>();
+		for (Obs obs : obsList) {
+			if (!obs.isComplex()) {
+				throw new APIException(NON_COMPLEX_OBS_ERR);
+			}
+			obs = getComplexObs(obs);
+			attachments.add(new Attachment(obs, ctx.getComplexDataHelper()));
+		}
+		
+		return attachments;
+	}
+	
 	// Get list of attachment complex concepts
 	protected List<Concept> getAttachmentConcepts() {
 		List<String> conceptsComplex = ctx.getConceptComplexList();
@@ -161,4 +176,5 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		String view = ctx.getComplexViewHelper().getView(obs, AttachmentsConstants.ATT_VIEW_THUMBNAIL);
 		return ctx.getObsService().getComplexObs(obs.getId(), view);
 	}
+	
 }
