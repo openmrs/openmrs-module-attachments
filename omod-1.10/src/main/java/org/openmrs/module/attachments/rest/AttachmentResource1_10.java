@@ -262,7 +262,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		Encounter encounter = Context.getEncounterService().getEncounterByUuid(context.getParameter("encounter"));
 		String includeEncounterless = context.getParameter("includeEncounterless");
 		Boolean includeVoided = BooleanUtils.toBoolean(context.getParameter("includeVoided"));
-		Concept concept = Context.getConceptService().getConceptByUuid(context.getParameter("includeVoided"));
+		Concept concept = Context.getConceptService().getConceptByUuid(context.getParameter("concept"));
 		
 		// Verify Parameters
 		if (patient == null) {
