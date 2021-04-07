@@ -16,7 +16,7 @@
   <properties>
     <openMRSVersion>${openMRS2_0Version}</openMRSVersion>
     <emrapiVersion>1.19</emrapiVersion> 
-    <webservices.restVersion>2.17</webservices.restVersion>
+    <webservices.restVersion>2.21.0</webservices.restVersion>
     <reportingVersion>0.10.4</reportingVersion>
     <serialization.xstreamVersion>0.2.12</serialization.xstreamVersion>
   </properties>
@@ -110,7 +110,7 @@
 
     <dependency>
       <groupId>org.openmrs.module</groupId>
-      <artifactId>webservices.rest-omod</artifactId>
+      <artifactId>webservices.rest-omod-common</artifactId>
       <version>${webservices.restVersion}</version>
       <scope>provided</scope>
     </dependency>
