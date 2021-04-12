@@ -71,7 +71,7 @@
 
   <script type="text/template" id="complexObsEncounterTemplate">
   <li>
-    <div class="encounter-date ${ui.handleTimeZones() ? 'rfc3339-date' : ''}">
+    <div class="encounter-date ${ui.convertTimezones() ? 'rfc3339-date' : ''}">
       <i class="icon-time"></i>
       <strong class="encounter-time">
         {{- encounter.encounterTime }}
