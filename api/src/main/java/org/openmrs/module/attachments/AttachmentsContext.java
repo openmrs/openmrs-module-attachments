@@ -345,6 +345,10 @@ public class AttachmentsContext extends ModuleProperties {
 	 */
 	public static ContentFamily getContentFamily(String mimeType) {
 		ContentFamily contentFamily = ContentFamily.OTHER;
+		if (AttachmentsConstants.EXECUTABLE_MIME_TYPES.contains(mimeType)) {
+			contentFamily = ContentFamily.EXECUTABLE;
+		}
+		
 		if (StringUtils.equals(mimeType, "application/pdf")) {
 			contentFamily = ContentFamily.PDF;
 		}

@@ -439,6 +439,27 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		SimpleObject response = deserialize(handle(request));
 	}
 	
+	@Test(expected = IllegalRequestException.class)
+	public void postAttachment_shouldThrowOnExecutableFile() throws Exception {
+		// Setup
+		String dotExeMimeType = "application/vnd.microsoft.portable-executable";
+		String fileCaption = "Test file caption";
+		String fileName = "testFile1.dat";
+		Patient patient = Context.getPatientService().getPatient(2);
+		Visit visit = Context.getVisitService().getVisit(1);
+		
+		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
+		MockMultipartFile dotExeFile = new MockMultipartFile("file", fileName, dotExeMimeType, randomData);
+		
+		request.addFile(dotExeFile);
+		request.addParameter("patient", patient.getUuid());
+		request.addParameter("visit", visit.getUuid());
+		request.addParameter("fileCaption", fileCaption);
+		
+		// Replay
+		SimpleObject response = deserialize(handle(request));
+	}
+	
 	@Test
 	public void getAttachmentBytes_shouldDownloadFile() throws Exception {
 		

@@ -9,9 +9,13 @@
  */
 package org.openmrs.module.attachments;
 
+import java.util.List;
+import java.util.Arrays;
+
 public class AttachmentsConstants {
 	
 	public static enum ContentFamily {
+		EXECUTABLE,
 		IMAGE,
 		PDF,
 		OTHER
@@ -68,6 +72,12 @@ public class AttachmentsConstants {
 	public static final String INSTRUCTIONS_PREFIX = "instructions";
 	
 	public static final String UNKNOWN_MIME_TYPE = "application/octet-stream";
+	
+	public static final List<String> EXECUTABLE_MIME_TYPES = Arrays.asList("application/vnd.microsoft.portable-executable",
+	    "type/javascript", "application/javascrip", "application/x-sh", "application/java-archive",
+	    "application/x-httpd-php", "application/xhtml+xml", "application/x-vbs", "text/vbscript", "text/x-python",
+	    "application/x-ms-installer", "application/x-elf", "application/x-applescript", "application/x-ruby",
+	    "application/x-perl", "application/wasm");
 	
 	public static final String ATT_VIEW_ORIGINAL = "complexdata.view.original";
 	
