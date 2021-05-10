@@ -57,8 +57,8 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	private ComplexObsSaver obsSaver = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER,
 	    ComplexObsSaver.class);
 	
-	private AttachmentsContext ctx = Context
-	        .getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class);
+	private AttachmentsContext ctx = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT,
+	    AttachmentsContext.class);
 	
 	@Override
 	public Attachment newDelegate() {
@@ -112,7 +112,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			file = new Base64MultipartFile(base64Content);
 		}
 		// Verify File Size
-		if (ctx.getMaxUploadFileSize() * 1024 * 1024 < (double)file.getSize()) {
+		if (ctx.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
 			throw new IllegalRequestException("The file  exceeds the maximum size");
 		}
 		
