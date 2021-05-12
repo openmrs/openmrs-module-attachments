@@ -164,7 +164,8 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			
 			case OTHER:
 			default:
-				obs = obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, file, instructions);
+				obs = obsSaver.saveOtherAttachment(visit, patient, encounter, conceptComplex, fileCaption, file,
+				    instructions);
 				break;
 		}
 		

@@ -316,7 +316,7 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		Concept concept = testHelper.createComplexConcept("f4fab86d-4a1d-4245-8aa2-19f49b5ab07a", "Random files",
 		    DefaultAttachmentHandler.class.getSimpleName(), "Random binary files");
 		Patient patient = ctx.getPatientService().getPatient(2);
-		Obs obs = testHelper.saveComplexObs(patient, concept);
+		Obs obs = testHelper.saveComplexObs(null, concept, null, 1, 0).get(0);
 		
 		//
 		// replay

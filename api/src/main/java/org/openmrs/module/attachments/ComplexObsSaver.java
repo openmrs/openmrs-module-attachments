@@ -65,13 +65,10 @@ public class ComplexObsSaver {
 		obs.setComment(fileCaption);
 	}
 	
-	/**
-	 * @deprecated as of 2.5.0, use
-	 *             {@link #saveImageAttachment(Visit, Person, Encounter, Concept, String, MultipartFile, String)}
-	 */
 	public Obs saveImageAttachment(Visit visit, Person person, Encounter encounter, String fileCaption,
 	        MultipartFile multipartFile, String instructions) throws IOException {
-		return saveImageAttachment(visit, person, encounter, null, fileCaption, multipartFile, instructions);
+		conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
+		return saveImageAttachment(visit, person, encounter, conceptComplex, fileCaption, multipartFile, instructions);
 	}
 	
 	public Obs saveImageAttachment(Visit visit, Person person, Encounter encounter, Concept conceptComplex,
@@ -99,6 +96,16 @@ public class ComplexObsSaver {
 	public Obs saveOtherAttachment(Visit visit, Person person, Encounter encounter, String fileCaption,
 	        MultipartFile multipartFile, String instructions) throws IOException {
 		conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
+		return saveOtherAttachment(visit, person, encounter, conceptComplex, fileCaption, multipartFile, instructions);
+	}
+	
+	public Obs saveOtherAttachment(Visit visit, Person person, Encounter encounter, Concept conceptComplex,
+	        String fileCaption, MultipartFile multipartFile, String instructions) throws IOException {
+		if (conceptComplex != null) {
+			this.conceptComplex = (ConceptComplex) conceptComplex;
+		} else {
+			this.conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
+		}
 		prepareComplexObs(visit, person, encounter, fileCaption);
 		
 		obs.setComplexData(complexDataHelper.build(instructions, multipartFile.getOriginalFilename(),

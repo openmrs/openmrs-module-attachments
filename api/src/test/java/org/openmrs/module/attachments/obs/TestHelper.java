@@ -213,7 +213,7 @@ public class TestHelper {
 		        mimeType, IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream(imagePath)));
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
-		return obsSaver.saveImageAttachment(visit, patient, encounter, null, fileCaption, lastSavedMultipartImageFile,
+		return obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, lastSavedMultipartImageFile,
 		    ValueComplex.INSTRUCTIONS_DEFAULT);
 	}
 	
@@ -263,6 +263,22 @@ public class TestHelper {
 	 * @return List of saved attachments/complex obs.
 	 */
 	public List<Obs> saveComplexObs(Encounter encounter, int count, int otherCount) throws IOException {
+		return saveComplexObs(encounter, null, null, count, otherCount);
+	}
+	
+	/**
+	 * Boilerplate method to save a collection of complex obs based on the encounter.
+	 *
+	 * @param encounter target encounter for save the complex obs. Leave null to save encounter-less
+	 *            complex obs.
+	 * @param concept The concept that will be associated with attachment obs to be saved.
+	 * @param otherConcept The concept that will be associated with other complex obs to be saved.
+	 * @param count The number of the attachments/complex obs to be saved.
+	 * @param otherCount The number of other complex obs to be saved.
+	 * @return List of saved attachments/complex obs.
+	 */
+	public List<Obs> saveComplexObs(Encounter encounter, Concept concept, Concept otherConcept, int count, int otherCount)
+	        throws IOException {
 		List<Obs> obsList = new ArrayList<>();
 		byte[] randomData = new byte[20];
 		Patient patient = (encounter == null) ? context.getPatientService().getPatient(2) : encounter.getPatient();
@@ -276,14 +292,14 @@ public class TestHelper {
 			String filename = RandomStringUtils.randomAlphabetic(7) + ".ext";
 			MockMultipartFile multipartRandomFile = new MockMultipartFile(FilenameUtils.getBaseName(filename), filename,
 			        "application/octet-stream", randomData);
-			obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartRandomFile,
+			obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, concept, fileCaption, multipartRandomFile,
 			    ValueComplex.INSTRUCTIONS_DEFAULT));
 		}
 		
 		// Saves a complex obs as if they had been saved outside of Attachments
 		for (int i = 0; i < otherCount; i++) {
 			Obs obs = new Obs();
-			obs.setConcept(otherConceptComplex);
+			obs.setConcept(otherConcept != null ? otherConcept : otherConceptComplex);
 			obs.setObsDatetime(new Date());
 			obs.setPerson(patient);
 			obs.setEncounter(encounter);
@@ -299,32 +315,6 @@ public class TestHelper {
 			
 		}
 		return obsList;
-	}
-	
-	/**
-	 * Boilerplate method to construct and save a complex obs with random data.
-	 * 
-	 * @param patient the patient
-	 * @param concept the associated concept
-	 * @return obs
-	 */
-	public Obs saveComplexObs(Patient patient, Concept concept) throws IOException {
-		Obs obs = new Obs();
-		byte[] randomData = new byte[20];
-		obs.setConcept(concept);
-		obs.setObsDatetime(new Date());
-		obs.setPerson(patient);
-		
-		new Random().nextBytes(randomData);
-		
-		String filename = RandomStringUtils.randomAlphabetic(7) + ".ext";
-		MockMultipartFile multipartRandomFile = new MockMultipartFile(FilenameUtils.getBaseName(filename), filename,
-		        "application/octet-stream", randomData);
-		obs.setComplexData(
-		    complexDataHelper.build(ValueComplex.INSTRUCTIONS_DEFAULT, multipartRandomFile.getOriginalFilename(),
-		        multipartRandomFile.getBytes(), multipartRandomFile.getContentType()).asComplexData());
-		
-		return context.getObsService().saveObs(obs, null);
 	}
 	
 	/**
