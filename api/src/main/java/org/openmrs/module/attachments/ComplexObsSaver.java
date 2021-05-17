@@ -9,28 +9,29 @@
  */
 package org.openmrs.module.attachments;
 
-import net.coobird.thumbnailator.Thumbnails;
+import static org.openmrs.module.attachments.AttachmentsConstants.ContentFamily.IMAGE;
+import static org.openmrs.module.attachments.AttachmentsConstants.ContentFamily.OTHER;
+import static org.openmrs.module.attachments.AttachmentsContext.getCompressionRatio;
+
+import java.io.IOException;
+import java.util.Date;
+
+import javax.imageio.ImageIO;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Concept;
 import org.openmrs.ConceptComplex;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Person;
 import org.openmrs.Visit;
-import org.openmrs.module.attachments.AttachmentsConstants.ContentFamily;
 import org.openmrs.module.attachments.obs.ComplexDataHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-
-import static org.openmrs.module.attachments.AttachmentsContext.getCompressionRatio;
-
-import java.io.IOException;
-import java.util.Date;
+import net.coobird.thumbnailator.Thumbnails;
 
 @Component(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER)
 public class ComplexObsSaver {
@@ -49,38 +50,29 @@ public class ComplexObsSaver {
 	@Qualifier(AttachmentsConstants.COMPONENT_VISIT_COMPATIBILITY)
 	protected VisitCompatibility visitCompatibility;
 	
-	protected Obs obs = new Obs();
-	
-	protected ConceptComplex conceptComplex;
-	
-	public Obs getObs() {
-		return obs;
-	}
-	
-	protected void prepareComplexObs(Visit visit, Person person, Encounter encounter, String fileCaption) {
-		obs = new Obs(person, conceptComplex,
+	protected Obs newObs(ConceptComplex conceptComplex, Visit visit, Person person, Encounter encounter, String comment) {
+		Obs obs = new Obs(person, conceptComplex,
 		        visit == null || visit.getStopDatetime() == null ? new Date() : visit.getStopDatetime(),
 		        encounter != null ? encounter.getLocation() : null);
 		obs.setEncounter(encounter); // may be null
-		obs.setComment(fileCaption);
+		obs.setComment(comment);
+		return obs;
 	}
 	
-	public Obs saveImageAttachment(Visit visit, Person person, Encounter encounter, String fileCaption,
-	        MultipartFile multipartFile, String instructions) throws IOException {
-		conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
-		return saveImageAttachment(visit, person, encounter, conceptComplex, fileCaption, multipartFile, instructions);
+	public Obs saveImageObs(Visit visit, Person person, Encounter encounter, String comment, MultipartFile multipartFile,
+	        String instructions) throws IOException {
+		return saveImageObs(visit, person, encounter, context.getConceptComplex(IMAGE), comment, multipartFile,
+		    instructions);
 	}
 	
-	public Obs saveImageAttachment(Visit visit, Person person, Encounter encounter, Concept conceptComplex,
+	public Obs saveImageObs(Visit visit, Person person, Encounter encounter, ConceptComplex conceptComplex,
 	        String fileCaption, MultipartFile multipartFile, String instructions) throws IOException {
-		if (conceptComplex != null) {
-			this.conceptComplex = (ConceptComplex) conceptComplex;
-			
-		} else {
-			this.conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
-		}
-		prepareComplexObs(visit, person, encounter, fileCaption);
 		
+		if (conceptComplex == null) {
+			conceptComplex = context.getConceptComplex(IMAGE);
+		}
+		
+		Obs obs = newObs(conceptComplex, visit, person, encounter, fileCaption);
 		Object image = multipartFile.getInputStream();
 		double compressionRatio = getCompressionRatio(multipartFile.getSize(), 1000000 * context.getMaxStorageFileSize());
 		if (compressionRatio < 1) {
@@ -89,28 +81,27 @@ public class ComplexObsSaver {
 		obs.setComplexData(
 		    complexDataHelper.build(instructions, multipartFile.getOriginalFilename(), image, multipartFile.getContentType())
 		            .asComplexData());
-		obs = context.getObsService().saveObs(obs, getClass().toString());
-		return obs;
-	}
-	
-	public Obs saveOtherAttachment(Visit visit, Person person, Encounter encounter, String fileCaption,
-	        MultipartFile multipartFile, String instructions) throws IOException {
-		conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
-		return saveOtherAttachment(visit, person, encounter, conceptComplex, fileCaption, multipartFile, instructions);
-	}
-	
-	public Obs saveOtherAttachment(Visit visit, Person person, Encounter encounter, Concept conceptComplex,
-	        String fileCaption, MultipartFile multipartFile, String instructions) throws IOException {
-		if (conceptComplex != null) {
-			this.conceptComplex = (ConceptComplex) conceptComplex;
-		} else {
-			this.conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
-		}
-		prepareComplexObs(visit, person, encounter, fileCaption);
 		
+		return context.getObsService().saveObs(obs, getClass().toString());
+	}
+	
+	public Obs saveOtherObs(Visit visit, Person person, Encounter encounter, String comment, MultipartFile multipartFile,
+	        String instructions) throws IOException {
+		return saveOtherObs(visit, person, encounter, context.getConceptComplex(OTHER), comment, multipartFile,
+		    instructions);
+	}
+	
+	public Obs saveOtherObs(Visit visit, Person person, Encounter encounter, ConceptComplex conceptComplex, String comment,
+	        MultipartFile multipartFile, String instructions) throws IOException {
+		
+		if (conceptComplex == null) {
+			conceptComplex = context.getConceptComplex(OTHER);
+		}
+		
+		Obs obs = newObs(conceptComplex, visit, person, encounter, comment);
 		obs.setComplexData(complexDataHelper.build(instructions, multipartFile.getOriginalFilename(),
 		    multipartFile.getBytes(), multipartFile.getContentType()).asComplexData());
-		obs = context.getObsService().saveObs(obs, getClass().toString());
-		return obs;
+		
+		return context.getObsService().saveObs(obs, getClass().toString());
 	}
 }
