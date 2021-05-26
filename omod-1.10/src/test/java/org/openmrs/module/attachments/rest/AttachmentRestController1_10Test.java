@@ -401,7 +401,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		String fileName = "OpenMRS_logo.png";
 		Patient patient = Context.getPatientService().getPatient(2);
 		Encounter encounter = testHelper.getTestEncounter();
-		Concept complexConcept = testHelper.createComplexConcept(conceptUuid, "Patient Avatar",
+		Concept complexConcept = testHelper.createConceptComplex(conceptUuid, "Patient Avatar",
 		    ImageAttachmentHandler.class.getSimpleName(), "Patient Avatar");
 		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
 		MockMultipartFile file = new MockMultipartFile("file", fileName, "image/png",

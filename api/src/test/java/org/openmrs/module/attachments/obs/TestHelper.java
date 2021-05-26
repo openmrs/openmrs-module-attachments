@@ -188,7 +188,7 @@ public class TestHelper {
 		Encounter encounter = context.getAttachmentEncounter(patient, visit, provider);
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
-		return obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, getTestDefaultFile(),
+		return obsSaver.saveOtherObs(visit, patient, encounter, fileCaption, getTestDefaultFile(),
 		    ValueComplex.INSTRUCTIONS_DEFAULT);
 	}
 	
@@ -213,7 +213,7 @@ public class TestHelper {
 		        mimeType, IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream(imagePath)));
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
-		return obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, lastSavedMultipartImageFile,
+		return obsSaver.saveImageObs(visit, patient, encounter, fileCaption, lastSavedMultipartImageFile,
 		    ValueComplex.INSTRUCTIONS_DEFAULT);
 	}
 	
@@ -238,7 +238,7 @@ public class TestHelper {
 		Patient patient = Context.getPatientService().getPatient(2);
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
-		return obsSaver.saveOtherAttachment(null, patient, null, fileCaption, getTestDefaultFile(),
+		return obsSaver.saveOtherObs(null, patient, null, fileCaption, getTestDefaultFile(),
 		    ValueComplex.INSTRUCTIONS_DEFAULT);
 	}
 	
@@ -271,14 +271,14 @@ public class TestHelper {
 	 *
 	 * @param encounter target encounter for save the complex obs. Leave null to save encounter-less
 	 *            complex obs.
-	 * @param concept The concept that will be associated with attachment obs to be saved.
+	 * @param conceptComplex The concept that will be associated with attachment obs to be saved.
 	 * @param otherConcept The concept that will be associated with other complex obs to be saved.
 	 * @param count The number of the attachments/complex obs to be saved.
 	 * @param otherCount The number of other complex obs to be saved.
 	 * @return List of saved attachments/complex obs.
 	 */
-	public List<Obs> saveComplexObs(Encounter encounter, Concept concept, Concept otherConcept, int count, int otherCount)
-	        throws IOException {
+	public List<Obs> saveComplexObs(Encounter encounter, ConceptComplex conceptComplex, Concept otherConcept, int count,
+	        int otherCount) throws IOException {
 		List<Obs> obsList = new ArrayList<>();
 		byte[] randomData = new byte[20];
 		Patient patient = (encounter == null) ? context.getPatientService().getPatient(2) : encounter.getPatient();
@@ -292,7 +292,7 @@ public class TestHelper {
 			String filename = RandomStringUtils.randomAlphabetic(7) + ".ext";
 			MockMultipartFile multipartRandomFile = new MockMultipartFile(FilenameUtils.getBaseName(filename), filename,
 			        "application/octet-stream", randomData);
-			obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, concept, fileCaption, multipartRandomFile,
+			obsList.add(obsSaver.saveOtherObs(visit, patient, encounter, conceptComplex, fileCaption, multipartRandomFile,
 			    ValueComplex.INSTRUCTIONS_DEFAULT));
 		}
 		
@@ -318,11 +318,9 @@ public class TestHelper {
 	}
 	
 	/**
-	 * Factory method that constructs and persists a ComplexConcept object
-	 * 
-	 * @return complexConcept
+	 * Convenience method that constructs and saves a ConceptComplex object.
 	 */
-	public Concept createComplexConcept(String uuid, String name, String handler, String description) {
+	public ConceptComplex createConceptComplex(String uuid, String name, String handler, String description) {
 		ConceptService conceptService = Context.getConceptService();
 		ConceptComplex conceptComplex = new ConceptComplex();
 		conceptComplex.setUuid(uuid);
@@ -334,7 +332,7 @@ public class TestHelper {
 		conceptComplex.setDatatype(conceptService.getConceptDatatypeByUuid(ConceptDatatype.COMPLEX_UUID));
 		conceptComplex.addDescription(new ConceptDescription(description, Locale.ENGLISH));
 		
-		return conceptService.saveConcept(conceptComplex);
+		return (ConceptComplex) conceptService.saveConcept(conceptComplex);
 	}
 	
 	public static byte[] loadImageResourceToByteArray(ClassLoader loader, String imageName, String contentType)
