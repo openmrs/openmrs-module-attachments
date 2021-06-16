@@ -42,7 +42,7 @@
     <openMRSVersion>1.10.5</openMRSVersion>
     <openMRS2_0Version>2.0.0</openMRS2_0Version>
     <appframeworkVersion>2.2.1</appframeworkVersion>
-    <uiframeworkVersion>3.21.0-SNAPSHOT</uiframeworkVersion>
+    <uiframeworkVersion>3.21.0</uiframeworkVersion>
     <uicommonsVersion>2.16.0</uicommonsVersion>
     <webservices.restVersion>2.17</webservices.restVersion>
     <emrapiVersion>1.19</emrapiVersion>
