@@ -12,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
+import org.openmrs.ConceptComplex;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -19,6 +20,7 @@ import org.openmrs.Provider;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.module.attachments.obs.Attachment;
+import org.openmrs.module.attachments.obs.DefaultAttachmentHandler;
 import org.openmrs.module.attachments.obs.TestHelper;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -304,5 +306,28 @@ public class AttachmentsServiceTest extends BaseModuleContextSensitiveTest {
 		// replay
 		//
 		as.getAttachments(patient, encounter, true);
+	}
+	
+	@Test
+	public void getAttachments_shouldReturnAttachmentsAssociatedWithSpecifiedConcept() throws Exception {
+		//
+		// setup
+		//
+		ConceptComplex conceptComplex = testHelper.createConceptComplex("f4fab86d-4a1d-4245-8aa2-19f49b5ab07a",
+		    "Random files", DefaultAttachmentHandler.class.getSimpleName(), "Random binary files");
+		Patient patient = ctx.getPatientService().getPatient(2);
+		Obs obs = testHelper.saveComplexObs(null, conceptComplex, null, 1, 0).get(0);
+		
+		//
+		// replay
+		//
+		List<Attachment> attachments = as.getAttachments(patient, conceptComplex);
+		
+		//
+		// verify
+		//
+		Assert.assertEquals(1, attachments.size());
+		Assert.assertEquals(obs.getUuid(), attachments.get(0).getUuid());
+		
 	}
 }

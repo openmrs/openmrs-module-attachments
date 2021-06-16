@@ -10,6 +10,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
@@ -45,7 +46,7 @@ public class AttachmentResourceTest {
 		Encounter encounter = new Encounter();
 		
 		// Replay
-		res.search(attachmentsService, patient, null, encounter, null, true);
+		res.search(attachmentsService, patient, null, encounter, null, null, true);
 		
 		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, encounter, true);
@@ -61,7 +62,7 @@ public class AttachmentResourceTest {
 		Visit visit = new Visit();
 		
 		// Replay
-		res.search(attachmentsService, patient, visit, null, null, true);
+		res.search(attachmentsService, patient, visit, null, null, null, true);
 		
 		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, visit, true);
@@ -76,7 +77,7 @@ public class AttachmentResourceTest {
 		Patient patient = new Patient();
 		
 		// Replay
-		res.search(attachmentsService, patient, null, null, null, true);
+		res.search(attachmentsService, patient, null, null, null, null, true);
 		
 		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, true);
@@ -91,7 +92,7 @@ public class AttachmentResourceTest {
 		Patient patient = new Patient();
 		
 		// Replay
-		res.search(attachmentsService, patient, null, null, "only", true);
+		res.search(attachmentsService, patient, null, null, "only", null, true);
 		
 		// Verify
 		verify(attachmentsService, times(1)).getEncounterlessAttachments(patient, true);
@@ -106,10 +107,26 @@ public class AttachmentResourceTest {
 		Patient patient = new Patient();
 		
 		// Replay
-		res.search(attachmentsService, patient, null, null, "false", true);
+		res.search(attachmentsService, patient, null, null, "false", null, true);
 		
 		// Verify
 		verify(attachmentsService, times(1)).getAttachments(patient, false, true);
+		verifyNoMoreInteractions(attachmentsService);
+	}
+	
+	@Test
+	public void search_shouldInvokeApiForConceptAttachments() {
+		// Setup
+		AttachmentResource1_10 res = new AttachmentResource1_10();
+		AttachmentsService attachmentsService = mock(AttachmentsService.class);
+		Patient patient = new Patient();
+		Concept concept = new Concept();
+		
+		// Replay
+		res.search(attachmentsService, patient, null, null, null, concept, true);
+		
+		// Verify
+		verify(attachmentsService, times(1)).getAttachments(patient, concept);
 		verifyNoMoreInteractions(attachmentsService);
 	}
 }

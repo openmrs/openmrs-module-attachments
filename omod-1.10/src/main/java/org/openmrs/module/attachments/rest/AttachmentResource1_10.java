@@ -14,12 +14,15 @@ import java.util.List;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openmrs.Concept;
+import org.openmrs.ConceptComplex;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
@@ -27,8 +30,6 @@ import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.AttachmentsService;
 import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.attachments.obs.Attachment;
-import org.openmrs.module.attachments.obs.ComplexDataHelper;
-import org.openmrs.module.attachments.obs.ComplexDataHelper1_10;
 import org.openmrs.module.attachments.obs.ValueComplex;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
@@ -104,6 +105,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		Visit visit = Context.getVisitService().getVisitByUuid(context.getParameter("visit"));
 		Encounter encounter = Context.getEncounterService().getEncounterByUuid(context.getParameter("encounter"));
 		Provider provider = Context.getProviderService().getProviderByUuid(context.getParameter("provider"));
+		final String conceptUuid = context.getParameter("concept");
 		String fileCaption = context.getParameter("fileCaption");
 		String instructions = context.getParameter("instructions");
 		String base64Content = context.getParameter("base64Content");
@@ -128,8 +130,23 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		if (encounter != null && visit != null) {
 			if (encounter.getVisit() != visit) {
 				throw new IllegalRequestException(
-				        "The specified encounter does not belong to the provided visit, upload aborted.");
+				        "The specified encounter does not belong to the provided visit, the upload was aborted.");
 			}
+		}
+		
+		ConceptComplex conceptComplex = null;
+		
+		// Verify concept complex
+		if (StringUtils.isNotBlank(conceptUuid)) {
+			ConceptService cs = Context.getConceptService();
+			Concept concept = cs.getConceptByUuid(context.getParameter("concept"));
+			if (conceptComplex == null) {
+				throw new IllegalArgumentException("Cannot find concept with UUID: " + conceptUuid);
+			}
+			if (!conceptComplex.isComplex()) {
+				throw new IllegalArgumentException("A concept complex must be set in order to create complex obs.");
+			}
+			conceptComplex = cs.getConceptComplex(concept.getConceptId());
 		}
 		
 		if (visit != null && encounter == null) {
@@ -144,12 +161,12 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		Obs obs;
 		switch (getContentFamily(file.getContentType())) {
 			case IMAGE:
-				obs = obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, file, instructions);
+				obs = obsSaver.saveImageObs(visit, patient, encounter, conceptComplex, fileCaption, file, instructions);
 				break;
 			
 			case OTHER:
 			default:
-				obs = obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, file, instructions);
+				obs = obsSaver.saveOtherObs(visit, patient, encounter, conceptComplex, fileCaption, file, instructions);
 				break;
 		}
 		
@@ -200,7 +217,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	 * @param includeVoided
 	 */
 	public List<Attachment> search(AttachmentsService as, Patient patient, Visit visit, Encounter encounter,
-	        String includeEncounterless, boolean includeVoided) {
+	        String includeEncounterless, Concept concept, boolean includeVoided) {
 		
 		List<Attachment> attachmentList = new ArrayList<>();
 		
@@ -218,10 +235,12 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			if (visit != null && encounter == null) {
 				attachmentList = as.getAttachments(patient, visit, includeVoided);
 			}
-			if (encounter == null && visit == null) {
+			if (encounter == null && visit == null && concept == null) {
 				attachmentList = as.getAttachments(patient, includeVoided);
 			}
-			
+			if (concept != null) {
+				attachmentList = as.getAttachments(patient, concept);
+			}
 		}
 		return attachmentList;
 	}
@@ -245,6 +264,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		Encounter encounter = Context.getEncounterService().getEncounterByUuid(context.getParameter("encounter"));
 		String includeEncounterless = context.getParameter("includeEncounterless");
 		Boolean includeVoided = BooleanUtils.toBoolean(context.getParameter("includeVoided"));
+		Concept concept = Context.getConceptService().getConceptByUuid(context.getParameter("concept"));
 		
 		// Verify Parameters
 		if (patient == null) {
@@ -257,7 +277,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		
 		// Search Attachments
 		List<Attachment> attachmentList = search(ctx.getAttachmentsService(), patient, visit, encounter,
-		    includeEncounterless, includeVoided);
+		    includeEncounterless, concept, includeVoided);
 		
 		if (attachmentList != null) {
 			return new NeedsPaging<Attachment>(attachmentList, context);

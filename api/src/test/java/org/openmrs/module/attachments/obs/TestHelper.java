@@ -1,12 +1,17 @@
 package org.openmrs.module.attachments.obs;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -23,6 +28,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsActivator;
@@ -182,7 +188,7 @@ public class TestHelper {
 		Encounter encounter = context.getAttachmentEncounter(patient, visit, provider);
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
-		return obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, getTestDefaultFile(),
+		return obsSaver.saveOtherObs(visit, patient, encounter, fileCaption, getTestDefaultFile(),
 		    ValueComplex.INSTRUCTIONS_DEFAULT);
 	}
 	
@@ -207,7 +213,7 @@ public class TestHelper {
 		        mimeType, IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream(imagePath)));
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
-		return obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, lastSavedMultipartImageFile,
+		return obsSaver.saveImageObs(visit, patient, encounter, fileCaption, lastSavedMultipartImageFile,
 		    ValueComplex.INSTRUCTIONS_DEFAULT);
 	}
 	
@@ -232,7 +238,7 @@ public class TestHelper {
 		Patient patient = Context.getPatientService().getPatient(2);
 		
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
-		return obsSaver.saveOtherAttachment(null, patient, null, fileCaption, getTestDefaultFile(),
+		return obsSaver.saveOtherObs(null, patient, null, fileCaption, getTestDefaultFile(),
 		    ValueComplex.INSTRUCTIONS_DEFAULT);
 	}
 	
@@ -257,6 +263,22 @@ public class TestHelper {
 	 * @return List of saved attachments/complex obs.
 	 */
 	public List<Obs> saveComplexObs(Encounter encounter, int count, int otherCount) throws IOException {
+		return saveComplexObs(encounter, null, null, count, otherCount);
+	}
+	
+	/**
+	 * Boilerplate method to save a collection of complex obs based on the encounter.
+	 *
+	 * @param encounter target encounter for save the complex obs. Leave null to save encounter-less
+	 *            complex obs.
+	 * @param conceptComplex The concept that will be associated with attachment obs to be saved.
+	 * @param otherConcept The concept that will be associated with other complex obs to be saved.
+	 * @param count The number of the attachments/complex obs to be saved.
+	 * @param otherCount The number of other complex obs to be saved.
+	 * @return List of saved attachments/complex obs.
+	 */
+	public List<Obs> saveComplexObs(Encounter encounter, ConceptComplex conceptComplex, Concept otherConcept, int count,
+	        int otherCount) throws IOException {
 		List<Obs> obsList = new ArrayList<>();
 		byte[] randomData = new byte[20];
 		Patient patient = (encounter == null) ? context.getPatientService().getPatient(2) : encounter.getPatient();
@@ -270,14 +292,14 @@ public class TestHelper {
 			String filename = RandomStringUtils.randomAlphabetic(7) + ".ext";
 			MockMultipartFile multipartRandomFile = new MockMultipartFile(FilenameUtils.getBaseName(filename), filename,
 			        "application/octet-stream", randomData);
-			obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartRandomFile,
+			obsList.add(obsSaver.saveOtherObs(visit, patient, encounter, conceptComplex, fileCaption, multipartRandomFile,
 			    ValueComplex.INSTRUCTIONS_DEFAULT));
 		}
 		
 		// Saves a complex obs as if they had been saved outside of Attachments
 		for (int i = 0; i < otherCount; i++) {
 			Obs obs = new Obs();
-			obs.setConcept(otherConceptComplex);
+			obs.setConcept(otherConcept != null ? otherConcept : otherConceptComplex);
 			obs.setObsDatetime(new Date());
 			obs.setPerson(patient);
 			obs.setEncounter(encounter);
@@ -293,5 +315,33 @@ public class TestHelper {
 			
 		}
 		return obsList;
+	}
+	
+	/**
+	 * Convenience method that constructs and saves a ConceptComplex object.
+	 */
+	public ConceptComplex createConceptComplex(String uuid, String name, String handler, String description) {
+		ConceptService conceptService = Context.getConceptService();
+		ConceptComplex conceptComplex = new ConceptComplex();
+		conceptComplex.setUuid(uuid);
+		conceptComplex.setHandler(handler);
+		ConceptName conceptName = new ConceptName(name, Locale.ENGLISH);
+		conceptComplex.setFullySpecifiedName(conceptName);
+		conceptComplex.setPreferredName(conceptName);
+		conceptComplex.setConceptClass(conceptService.getConceptClassByName("Question"));
+		conceptComplex.setDatatype(conceptService.getConceptDatatypeByUuid(ConceptDatatype.COMPLEX_UUID));
+		conceptComplex.addDescription(new ConceptDescription(description, Locale.ENGLISH));
+		
+		return (ConceptComplex) conceptService.saveConcept(conceptComplex);
+	}
+	
+	public static byte[] loadImageResourceToByteArray(ClassLoader loader, String imageName, String contentType)
+	        throws IOException {
+		InputStream inputStream = loader.getResourceAsStream(imageName);
+		BufferedImage img = ImageIO.read(inputStream);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(img, contentType, baos);
+		
+		return baos.toByteArray();
 	}
 }

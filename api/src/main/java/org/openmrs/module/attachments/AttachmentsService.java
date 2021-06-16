@@ -2,6 +2,7 @@ package org.openmrs.module.attachments;
 
 import java.util.List;
 
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
@@ -59,6 +60,14 @@ public interface AttachmentsService {
 	 * @throws APIException if non-complex obs are mistakenly returned
 	 */
 	List<Attachment> getAttachments(Patient patient, Visit visit, boolean includeVoided);
+	
+	/**
+	 * Get a patient's attachments that are associated with a specified concept.
+	 * 
+	 * @param concept
+	 * @throws APIException if non-complex obs are mistakenly returned
+	 */
+	List<Attachment> getAttachments(Patient patient, Concept concept);
 	
 	Attachment save(Attachment attachment, String reason);
 }
