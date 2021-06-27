@@ -147,6 +147,9 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 				obs = obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, file, instructions);
 				break;
 			
+			case EXECUTABLE:
+				throw new IllegalRequestException("File type is not allowed as attachment.");
+				
 			case OTHER:
 			default:
 				obs = obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, file, instructions);
