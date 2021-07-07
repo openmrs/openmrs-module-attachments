@@ -78,7 +78,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	/*
 	 * Complex data CRUD - Save (Update)
 	 */
-	abstract protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData);
+	abstract protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData) throws IOException;
 	
 	public String[] getSupportedViews() {
 		return supportedViews;
@@ -202,8 +202,15 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 		
 		AttachmentComplexData complexData = getAttachmentComplexData(obs.getComplexData());
 		
-		ValueComplex valueComplex = saveComplexData(obs, complexData);
+		ValueComplex valueComplex = null;
+		try {
+			valueComplex = saveComplexData(obs, complexData);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 		obs.setValueComplex(valueComplex.getValueComplex());
 		return obs;
+		
 	}
 }
