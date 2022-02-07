@@ -24,7 +24,7 @@ public class AttachmentsContextTest {
 	
 	@Before
 	public void setup() {
-		context.setAdministrationService(adminService);
+		context.administrationService = adminService;
 	}
 	
 	@Test

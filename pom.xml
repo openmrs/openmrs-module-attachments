@@ -31,16 +31,12 @@
 
   <modules>
     <module>api</module>
-    <module>api-1.11</module>
-    <module>api-2.0</module>
     <module>omod-1.10</module>
-    <module>omod-2.0</module>
     <module>omod</module>
   </modules>
 
   <properties>
-    <openMRSVersion>1.10.5</openMRSVersion>
-    <openMRS2_0Version>2.0.0</openMRS2_0Version>
+    <openMRSVersion>2.4.0</openMRSVersion>
     <appframeworkVersion>2.2.1</appframeworkVersion>
     <uiframeworkVersion>3.21.0</uiframeworkVersion>
     <uicommonsVersion>2.16.0</uicommonsVersion>
@@ -92,19 +88,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.openmrs.module</groupId>
-      <artifactId>appframework-api</artifactId>
-      <version>${appframeworkVersion}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openmrs.module</groupId>
-      <artifactId>uiframework-api</artifactId>
-      <version>${uiframeworkVersion}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
       <groupId>net.coobird</groupId>
       <artifactId>thumbnailator</artifactId>
       <version>0.4.14</version>
@@ -145,8 +128,8 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
-            <target>1.7</target>
-            <source>1.7</source>
+            <target>1.8</target>
+            <source>1.8</source>
           </configuration>
         </plugin>
         <plugin>

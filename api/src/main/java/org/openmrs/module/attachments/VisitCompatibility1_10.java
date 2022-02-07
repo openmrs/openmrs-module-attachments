@@ -10,7 +10,7 @@ import org.openmrs.annotation.OpenmrsProfile;
 import org.springframework.stereotype.Component;
 
 @Component(AttachmentsConstants.COMPONENT_VISIT_COMPATIBILITY)
-@OpenmrsProfile(openmrsPlatformVersion = "1.10.2 - 1.10.*")
+@OpenmrsProfile(openmrsPlatformVersion = "2.*")
 public class VisitCompatibility1_10 implements VisitCompatibility {
 	
 	@Override

@@ -85,6 +85,7 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
 		File thumbnail = new File(testHelper.getComplexObsDir() + "/"
 		        + ImageAttachmentHandler.buildThumbnailFileName(mpFile.getOriginalFilename()));
+		
 		Assert.assertTrue(thumbnail.exists());
 		byte[] expectedBytes = new BaseComplexData(thumbnail.getName(), ImageIO.read(thumbnail)).asByteArray();
 		

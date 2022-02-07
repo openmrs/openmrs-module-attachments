@@ -11,7 +11,6 @@ import javax.imageio.stream.ImageOutputStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.openmrs.obs.ComplexData;
-import org.openmrs.web.servlet.ComplexObsServlet;
 
 /**
  * Extends {@link ComplexData} so that it provides a method to extract the underlying byte array.
@@ -28,8 +27,7 @@ public class BaseComplexData extends ComplexData {
 	}
 	
 	/**
-	 * This returns the byte array out of a complex data's inner data. This is borrowed from
-	 * {@link ComplexObsServlet}.
+	 * This returns the byte array out of a complex data's inner data.
 	 * 
 	 * @return The byte array, or an empty array if an error occurred.
 	 */

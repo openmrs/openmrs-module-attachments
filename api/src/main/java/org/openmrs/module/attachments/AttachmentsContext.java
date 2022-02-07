@@ -43,8 +43,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants.ContentFamily;
 import org.openmrs.module.attachments.obs.ComplexDataHelper;
 import org.openmrs.module.attachments.obs.ComplexViewHelper;
-import org.openmrs.module.emrapi.adt.AdtService;
-import org.openmrs.module.emrapi.utils.ModuleProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -53,7 +51,7 @@ import org.springframework.stereotype.Component;
  * Inject this class to access services and global properties.
  */
 @Component(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
-public class AttachmentsContext extends ModuleProperties {
+public class AttachmentsContext {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
@@ -62,12 +60,32 @@ public class AttachmentsContext extends ModuleProperties {
 	protected ObsService obsService;
 	
 	@Autowired
-	@Qualifier("adtService")
-	protected AdtService adtService;
-	
-	@Autowired
 	@Qualifier("locationService")
 	protected LocationService locationService;
+	
+	@Autowired
+	@Qualifier("conceptService")
+	protected ConceptService conceptService;
+	
+	@Autowired
+	@Qualifier("encounterService")
+	protected EncounterService encounterService;
+	
+	@Autowired
+	@Qualifier("visitService")
+	protected VisitService visitService;
+	
+	@Autowired
+	@Qualifier("patientService")
+	protected PatientService patientService;
+	
+	@Autowired
+	@Qualifier("providerService")
+	protected ProviderService providerService;
+	
+	@Autowired
+	@Qualifier("adminService")
+	protected AdministrationService administrationService;
 	
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXDATA_HELPER)
@@ -107,10 +125,6 @@ public class AttachmentsContext extends ModuleProperties {
 	
 	public EncounterService getEncounterService() {
 		return encounterService;
-	}
-	
-	public AdtService getAdtService() {
-		return adtService;
 	}
 	
 	public LocationService getLocationService() {
@@ -194,6 +208,43 @@ public class AttachmentsContext extends ModuleProperties {
 	protected Boolean getBooleanByGlobalProperty(String globalPropertyName) {
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
 		return BooleanUtils.toBoolean(globalProperty);
+	}
+	
+	protected Concept getConceptByGlobalProperty(String globalPropertyName) {
+		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
+		Concept concept = conceptService.getConceptByUuid(globalProperty);
+		if (concept == null) {
+			throw new IllegalStateException("Configuration required: " + globalPropertyName);
+		}
+		return concept;
+	}
+	
+	protected EncounterType getEncounterTypeByGlobalProperty(String globalPropertyName, boolean required) {
+		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
+		EncounterType encounterType = encounterService.getEncounterTypeByUuid(globalProperty);
+		if (required && encounterType == null) {
+			throw new IllegalStateException("Configuration required: " + globalPropertyName);
+		}
+		return encounterType;
+	}
+	
+	protected Integer getIntegerByGlobalProperty(String globalPropertyName) {
+		String globalProperty = getGlobalProperty(globalPropertyName, true);
+		try {
+			return Integer.valueOf(globalProperty);
+		}
+		catch (Exception e) {
+			throw new IllegalStateException("Global property " + globalPropertyName + " value of " + globalProperty
+			        + " is not parsable as an Integer");
+		}
+	}
+	
+	protected String getGlobalProperty(String globalPropertyName, boolean required) {
+		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
+		if (required && StringUtils.isEmpty(globalProperty)) {
+			throw new IllegalStateException("Configuration required: " + globalPropertyName);
+		}
+		return globalProperty;
 	}
 	
 	/**

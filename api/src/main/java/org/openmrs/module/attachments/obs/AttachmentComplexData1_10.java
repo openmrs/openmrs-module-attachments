@@ -42,7 +42,8 @@ public class AttachmentComplexData1_10 extends BaseComplexData implements Attach
 		return this;
 	}
 	
-	private void setMimeType(String mimeType) {
+	@Override
+	public void setMimeType(String mimeType) {
 		this.mimeType = mimeType;
 	}
 	
