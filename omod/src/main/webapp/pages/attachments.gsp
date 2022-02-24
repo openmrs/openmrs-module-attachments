@@ -6,7 +6,7 @@ ui.includeJavascript("uicommons", "angular-resource.min.js")
 ui.includeJavascript("uicommons", "angular-common.js")
 ui.includeJavascript("uicommons", "angular-app.js")
 
-ui.includeJavascript("attachments", "app.js")  
+ui.includeJavascript("attachments", "app.js")
 ui.includeJavascript("attachments", "attachments.js")
 %>
 
@@ -53,12 +53,6 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <div id="att-page-main">
 
- <% if(visit == null){ %>
-
-    <h5>${ ui.message("attachments.noActiveVisit") }</h5>
-
- <% } else{ %>
-
   <div ng-controller="FileUploadCtrl" class="att_main-section">
     <att-file-upload config="config"></att-file-upload>
   </div>
@@ -66,7 +60,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
   <div ng-controller="GalleryCtrl" class="att_main-section">
     <att-gallery obs-query="obsQuery" options="{canEdit:true}"></att-gallery>
   </div>
- <% } %>
+
 </div>
 
 
