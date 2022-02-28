@@ -60,7 +60,8 @@ angular
                                             module.getProvider() + ".attachmentspage.commentTitle",
                                             module.getProvider() + ".misc.label.enterCaption",
                                             module.getProvider() + ".attachmentspage.uploadButton",
-                                            module.getProvider() + ".attachmentspage.clearFormsButton" ]
+                                            module.getProvider() + ".attachmentspage.clearFormsButton",
+                                            module.getProvider() + ".noActiveVisit" ]
                                     emr.loadMessages(msgCodes.toString(), function(msgs) {
                                         $scope.msgs = msgs;
                                     });

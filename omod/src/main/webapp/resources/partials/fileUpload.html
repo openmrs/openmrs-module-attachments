@@ -67,7 +67,7 @@
     z-index: 0;
   }
 
-  .att_past-visit {
+  .att_past-visit, .att_no-active-visit {
     text-align: left;
     padding: 10px 0;
     padding-left: 10px;
@@ -92,6 +92,10 @@
 
 <div ng-show="visitUuid && closedVisit" class="att_past-visit">
   <p><i class="icon-warning-sign small"></i>{{msgs["attachments.fileUpload.attentionPastVisit"]}}</p>
+</div>
+
+<div ng-show="!visitUuid && associateWithVisit" class="att_no-active-visit">
+    <p><i class="icon-warning-sign small"></i>{{msgs["attachments.noActiveVisit"]}}</p>
 </div>
 
 <div ng-show="visitUuid || !associateWithVisit" class="att_file-upload-container" ng-init="init()">
