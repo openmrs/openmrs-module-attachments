@@ -7,7 +7,7 @@ import org.openmrs.module.attachments.obs.TestHelper;
 import org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResourceTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class AttachmentResource1_10Test extends BaseDelegatingResourceTest<AttachmentResource1_10, Attachment> {
+public class AttachmentResourceIntegrationTest extends BaseDelegatingResourceTest<AttachmentResource, Attachment> {
 	
 	@Autowired
 	protected TestHelper testHelper;

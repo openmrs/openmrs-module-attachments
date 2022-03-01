@@ -27,8 +27,6 @@ import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.AttachmentsService;
 import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.attachments.obs.Attachment;
-import org.openmrs.module.attachments.obs.ComplexDataHelper;
-import org.openmrs.module.attachments.obs.ComplexDataHelper1_10;
 import org.openmrs.module.attachments.obs.ValueComplex;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
@@ -50,7 +48,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Resource(name = RestConstants.VERSION_1 + "/"
         + AttachmentsConstants.ATTACHMENT_URI, supportedClass = Attachment.class, supportedOpenmrsVersions = { "2.4.*",
                 "2.5.*" })
-public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachment> implements Uploadable {
+public class AttachmentResource extends DataDelegatingCrudResource<Attachment> implements Uploadable {
 	
 	protected static final String REASON = "REST web service";
 	

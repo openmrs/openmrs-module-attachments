@@ -41,7 +41,7 @@ public class AttachmentResourceTest {
 	@Test
 	public void search_shouldInvokeApiForEncounterAttachments() {
 		// Setup
-		AttachmentResource1_10 res = new AttachmentResource1_10();
+		AttachmentResource res = new AttachmentResource();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
 		Encounter encounter = new Encounter();
@@ -57,7 +57,7 @@ public class AttachmentResourceTest {
 	@Test
 	public void search_shouldInvokeApiForVisitAttachments() {
 		// Setup
-		AttachmentResource1_10 res = new AttachmentResource1_10();
+		AttachmentResource res = new AttachmentResource();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
 		Visit visit = new Visit();
@@ -73,7 +73,7 @@ public class AttachmentResourceTest {
 	@Test
 	public void search_shouldInvokeApiForAllAttachments() {
 		// Setup
-		AttachmentResource1_10 res = new AttachmentResource1_10();
+		AttachmentResource res = new AttachmentResource();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
 		
@@ -88,7 +88,7 @@ public class AttachmentResourceTest {
 	@Test
 	public void search_shouldInvokeApiForEncounterlessAttachments() {
 		// Setup
-		AttachmentResource1_10 res = new AttachmentResource1_10();
+		AttachmentResource res = new AttachmentResource();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
 		
@@ -103,7 +103,7 @@ public class AttachmentResourceTest {
 	@Test
 	public void search_shouldInvokeApiForAllAttachmentsButEncounterless() {
 		// Setup
-		AttachmentResource1_10 res = new AttachmentResource1_10();
+		AttachmentResource res = new AttachmentResource();
 		AttachmentsService attachmentsService = mock(AttachmentsService.class);
 		Patient patient = new Patient();
 		
