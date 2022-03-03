@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
  * All Rights Reserved.
  */
 @Component
-public class ObsByConceptListSearchHandler1_10 implements SearchHandler {
+public class ObsByConceptListSearchHandler implements SearchHandler {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	

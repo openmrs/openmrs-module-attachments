@@ -22,7 +22,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @SuppressWarnings("unchecked")
-public class ObsByConceptListSearchHandler1_10Test extends MainResourceControllerTest {
+public class ObsByConceptListSearchHandlerTest extends MainResourceControllerTest {
 	
 	private String PATIENT_UUID = "5946f880-b197-400b-9caa-a3c661d23041";
 	
@@ -123,7 +123,7 @@ public class ObsByConceptListSearchHandler1_10Test extends MainResourceControlle
 		when(conceptServiceMock.getConceptByUuid(CONCEPT_3_UUID))
 		        .thenReturn(conceptService.getConceptByUuid(CONCEPT_3_UUID));
 		
-		ObsByConceptListSearchHandler1_10 searchHandler = new ObsByConceptListSearchHandler1_10();
+		ObsByConceptListSearchHandler searchHandler = new ObsByConceptListSearchHandler();
 		List<Concept> conceptList = searchHandler.parseConceptList(conceptListStr, conceptServiceMock);
 		
 		Assert.assertEquals(3, conceptList.size());

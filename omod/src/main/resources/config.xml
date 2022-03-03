@@ -10,8 +10,14 @@
 	<author>${project.parent.organization.name}</author>
 	<description>${project.parent.description}</description>
 	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
-	<require_version>${openMRSVersion}</require_version>
+	<require_version>2.3.0</require_version>
 	<!-- / Module Properties -->
+	
+	<require_modules>
+		<require_module version="${webservices.restVersion}">
+			org.openmrs.module.webservices.rest
+		</require_module>
+	</require_modules>
 
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.AttachmentsActivator</activator>
