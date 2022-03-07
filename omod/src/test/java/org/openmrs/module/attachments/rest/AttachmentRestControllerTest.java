@@ -29,8 +29,6 @@ import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.UnchangeableObjectException;
-import org.opentest4j.MultipleFailuresError;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsConstants.ContentFamily;
 import org.openmrs.module.attachments.AttachmentsContext;
