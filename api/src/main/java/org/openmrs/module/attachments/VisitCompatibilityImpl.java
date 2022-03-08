@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component(AttachmentsConstants.COMPONENT_VISIT_COMPATIBILITY)
 @OpenmrsProfile(openmrsPlatformVersion = "2.*")
-public class VisitCompatibility1_10 implements VisitCompatibility {
+public class VisitCompatibilityImpl implements VisitCompatibility {
 	
 	@Override
 	public List<Encounter> getNonVoidedEncounters(Visit visit) {

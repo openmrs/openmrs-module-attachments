@@ -16,11 +16,11 @@ import org.springframework.stereotype.Component;
 
 @Component(AttachmentsConstants.COMPONENT_COMPLEXDATA_HELPER)
 @OpenmrsProfile(openmrsPlatformVersion = "2.*")
-public class ComplexDataHelper1_10 implements ComplexDataHelper {
+public class ComplexDataHelperImpl implements ComplexDataHelper {
 	
 	@Override
 	public AttachmentComplexData build(String instructions, String title, Object data, String mimeType) {
-		return new AttachmentComplexData1_10(instructions, title, data, mimeType);
+		return new AttachmentComplexDataImpl(instructions, title, data, mimeType);
 	}
 	
 	@Override

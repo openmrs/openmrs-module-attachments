@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.obs.ComplexData;
 
-public class AttachmentComplexData1_10 extends BaseComplexData implements AttachmentComplexData {
+public class AttachmentComplexDataImpl extends BaseComplexData implements AttachmentComplexData {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -17,7 +17,7 @@ public class AttachmentComplexData1_10 extends BaseComplexData implements Attach
 	 * @param mimeType Same as HTTP content type, @see
 	 *            <a href= "http://www.sitepoint.com/web-foundations/mime-types-complete-list/"/>
 	 */
-	public AttachmentComplexData1_10(String instructions, String title, Object data, String mimeType) {
+	public AttachmentComplexDataImpl(String instructions, String title, Object data, String mimeType) {
 		super(title, data);
 		if (!StringUtils.isEmpty(mimeType)) {
 			this.setMimeType(mimeType);
@@ -28,7 +28,7 @@ public class AttachmentComplexData1_10 extends BaseComplexData implements Attach
 			this.instructions = instructions;
 	}
 	
-	public AttachmentComplexData1_10(String title, Object data) {
+	public AttachmentComplexDataImpl(String title, Object data) {
 		this("", title, data, "");
 	}
 	

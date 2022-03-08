@@ -17,7 +17,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.AttachmentsService;
-import org.openmrs.module.attachments.obs.ComplexDataHelper1_10;
+import org.openmrs.module.attachments.obs.ComplexDataHelperImpl;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -33,7 +33,7 @@ public class AttachmentResourceTest {
 		initMocks(this);
 		PowerMockito.mockStatic(Context.class);
 		AttachmentsContext ctx = mock(AttachmentsContext.class);
-		when(ctx.getComplexDataHelper()).thenReturn(new ComplexDataHelper1_10());
+		when(ctx.getComplexDataHelper()).thenReturn(new ComplexDataHelperImpl());
 		when(Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class))
 		        .thenReturn(ctx);
 	}
