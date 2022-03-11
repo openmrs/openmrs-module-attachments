@@ -15,7 +15,7 @@ New UI behaviours and backend handlers can be added for further content types.
 When a content type is not yet provided a bespoke implementation, it can still be accessed generically as on a 'drive':
 
 ### How to try it out?
-Build the master branch and install the built OMOD to your instance running the OpenMRS with the Openmrs rest web-services module installed.
+Build the master branch and install the built OMOD to your instance running the OpenMRS with the REST web-services module installed.
 ```
 git clone https://github.com/openmrs/openmrs-module-attachments/tree/master
 cd openmrs-module-attachments
