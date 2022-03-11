@@ -37,4 +37,4 @@ Find us on [OpenMRS Talk](https://talk.openmrs.org/): sign up, start a conversat
 
 #### Version 3.0.0
 ##### New features
-* This module nolonger supports the 2.x UI framework functionalities, i.e. it is headless with only rest endpoints for the management of attachments. For support of the removed features please refer to the 2.x branch of this project.
+* This module no longer supports the 2.x UI framework functionalities, i.e. it is headless with only REST endpoints for the management of attachments. For support of the removed features please refer to the 2.x branch of this project.
