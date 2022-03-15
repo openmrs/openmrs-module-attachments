@@ -27,7 +27,8 @@ public class BaseComplexData extends ComplexData {
 	}
 	
 	/**
-	 * This returns the byte array out of a complex data's inner data.
+	 * This returns the byte array out of a complex data's inner data. This is borrowed from
+	 * {@link ComplexObsServlet}.
 	 * 
 	 * @return The byte array, or an empty array if an error occurred.
 	 */

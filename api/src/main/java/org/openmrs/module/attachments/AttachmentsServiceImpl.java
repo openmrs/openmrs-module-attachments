@@ -138,12 +138,13 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	@Override
 	public Attachment save(Attachment delegate, String reason) {
 		Attachment attachment = new Attachment();
+		Obs obs = null;
 		try {
-			Obs obs = Context.getObsService().saveObs(delegate.getObs(), reason);
+			obs = Context.getObsService().saveObs(delegate.getObs(), reason);
 			attachment = new Attachment(obs);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException("Failed to save the complex obs: " + obs, e);
 		}
 		return attachment;
 	}

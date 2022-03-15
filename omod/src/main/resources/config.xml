@@ -10,7 +10,7 @@
 	<author>${project.parent.organization.name}</author>
 	<description>${project.parent.description}</description>
 	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
-	<require_version>2.3.0</require_version>
+	<require_version>${openMRSVersion}</require_version>
 	<!-- / Module Properties -->
 	
 	<require_modules>

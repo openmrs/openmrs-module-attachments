@@ -6,7 +6,7 @@ import org.openmrs.module.attachments.AttachmentsConstants;
 import org.springframework.stereotype.Component;
 
 @Component(AttachmentsConstants.COMPONENT_COMPLEXVIEW_HELPER)
-@OpenmrsProfile(openmrsPlatformVersion = "2.*")
+@OpenmrsProfile(openmrsPlatformVersion = "2.4.* - 2.6.*")
 public class ComplexViewHelperImpl implements ComplexViewHelper {
 	
 	public String getView(Obs obs, String view) {

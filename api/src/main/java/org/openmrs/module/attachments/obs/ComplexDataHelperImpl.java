@@ -15,7 +15,7 @@ import org.openmrs.obs.ComplexData;
 import org.springframework.stereotype.Component;
 
 @Component(AttachmentsConstants.COMPONENT_COMPLEXDATA_HELPER)
-@OpenmrsProfile(openmrsPlatformVersion = "2.*")
+@OpenmrsProfile(openmrsPlatformVersion = "2.4.* - 2.6.*")
 public class ComplexDataHelperImpl implements ComplexDataHelper {
 	
 	@Override

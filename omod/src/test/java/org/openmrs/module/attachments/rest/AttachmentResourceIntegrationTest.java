@@ -1,6 +1,10 @@
 package org.openmrs.module.attachments.rest;
 
+import java.io.IOException;
+
+import org.junit.After;
 import org.junit.Before;
+import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.TestHelper;
@@ -12,14 +16,22 @@ public class AttachmentResourceIntegrationTest extends BaseDelegatingResourceTes
 	@Autowired
 	protected TestHelper testHelper;
 	
+	private Obs obs;
+	
 	@Before
 	public void before() throws Exception {
-		executeDataSet("org/openmrs/api/include/ObsServiceTest-complex.xml");
+		testHelper.init();
+		obs = testHelper.saveNormalSizeImageAttachment();
+	}
+	
+	@After
+	public void tearDown() throws IOException {
+		testHelper.tearDown();
 	}
 	
 	@Override
 	public Attachment newObject() {
-		return new Attachment(Context.getObsService().getObsByUuid("9b6639b2-5785-4603-a364-075c2d61cd51"));
+		return new Attachment(obs);
 	}
 	
 	@Override
@@ -29,7 +41,7 @@ public class AttachmentResourceIntegrationTest extends BaseDelegatingResourceTes
 	
 	@Override
 	public String getUuidProperty() {
-		return "9b6639b2-5785-4603-a364-075c2d61cd51";
+		return obs.getUuid();
 	}
 	
 	@Override
@@ -37,6 +49,7 @@ public class AttachmentResourceIntegrationTest extends BaseDelegatingResourceTes
 		super.validateDefaultRepresentation();
 		assertPropEquals("dateTime", getObject().getDateTime());
 		assertPropEquals("comment", getObject().getComment());
+		assertPropEquals("complexData", getObject().getComplexData());
 		assertPropEquals("bytesMimeType", getObject().getBytesMimeType());
 		assertPropEquals("bytesContentFamily", getObject().getBytesContentFamily());
 	}

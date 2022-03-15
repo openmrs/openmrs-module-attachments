@@ -31,6 +31,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
@@ -197,8 +198,8 @@ public class AttachmentsContext {
 			return Double.valueOf(globalProperty);
 		}
 		catch (Exception e) {
-			throw new IllegalStateException("Global property " + globalPropertyName + " value of " + globalProperty
-			        + " is not parsable as a Double");
+			throw new APIException("Global property " + globalPropertyName + " with value " + globalProperty
+			        + " is not parsable as a Double", e);
 		}
 	}
 	
@@ -214,7 +215,7 @@ public class AttachmentsContext {
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
 		Concept concept = conceptService.getConceptByUuid(globalProperty);
 		if (concept == null) {
-			throw new IllegalStateException("Configuration required: " + globalPropertyName);
+			throw new APIException("Configuration required: " + globalPropertyName);
 		}
 		return concept;
 	}
@@ -223,26 +224,26 @@ public class AttachmentsContext {
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
 		EncounterType encounterType = encounterService.getEncounterTypeByUuid(globalProperty);
 		if (required && encounterType == null) {
-			throw new IllegalStateException("Configuration required: " + globalPropertyName);
+			throw new APIException("Configuration required: " + globalPropertyName);
 		}
 		return encounterType;
 	}
 	
-	protected Integer getIntegerByGlobalProperty(String globalPropertyName) {
+	protected int getIntegerByGlobalProperty(String globalPropertyName) {
 		String globalProperty = getGlobalProperty(globalPropertyName, true);
 		try {
-			return Integer.valueOf(globalProperty);
+			return Integer.parseInt(globalProperty);
 		}
 		catch (Exception e) {
-			throw new IllegalStateException("Global property " + globalPropertyName + " value of " + globalProperty
-			        + " is not parsable as an Integer");
+			throw new APIException("Global property " + globalPropertyName + " with value " + globalProperty
+			        + " is not parsable as an Integer", e);
 		}
 	}
 	
 	protected String getGlobalProperty(String globalPropertyName, boolean required) {
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
 		if (required && StringUtils.isEmpty(globalProperty)) {
-			throw new IllegalStateException("Configuration required: " + globalPropertyName);
+			throw new APIException("Configuration required: " + globalPropertyName);
 		}
 		return globalProperty;
 	}
@@ -255,7 +256,7 @@ public class AttachmentsContext {
 		Concept concept = getConceptByGlobalProperty(globalPropertyName);
 		ConceptComplex conceptComplex = getConceptService().getConceptComplex(concept.getConceptId());
 		if (conceptComplex == null) {
-			throw new IllegalStateException("Configuration required: " + globalPropertyName);
+			throw new APIException("Configuration required: " + globalPropertyName);
 		}
 		return conceptComplex;
 	}
@@ -361,7 +362,7 @@ public class AttachmentsContext {
 	public EncounterRole getEncounterRole() {
 		EncounterRole unknownRole = getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
 		if (unknownRole == null) {
-			throw new IllegalStateException(
+			throw new APIException(
 			        "No 'Unknown' encounter role with uuid " + EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID + ".");
 		}
 		return unknownRole;

@@ -107,7 +107,7 @@
 		<dependency>
 	    	<groupId>javax.servlet</groupId>
 	    	<artifactId>javax.servlet-api</artifactId>
-	    	<version>3.0.1</version>
+	    	<version>${javaxVersion}</version>
 	    	<scope>provided</scope>
 	    </dependency>
 
@@ -256,60 +256,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>Fetch SASS sources from uicommons</id>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<phase>generate-resources</phase>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>org.openmrs.module</groupId>
-									<artifactId>uicommons-scss</artifactId>
-									<version>${uicommonsVersion}</version>
-									<type>zip</type>
-									<overWrite>true</overWrite>
-									<outputDirectory>src/main/compass/sass-external</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>watch-sass</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>de.saumya.mojo</groupId>
-						<artifactId>gem-maven-plugin</artifactId>
-						<extensions>true</extensions>
-						<executions>
-							<execution>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-								<phase>generate-resources</phase>
-							</execution>
-						</executions>
-						<configuration>
-							<jrubyVersion>1.7.10</jrubyVersion>
-							<execArgs>${project.build.directory}/rubygems/bin/compass watch
-							${basedir}/src/main/compass</execArgs>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
 </project>
