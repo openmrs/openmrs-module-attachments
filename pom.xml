@@ -35,7 +35,7 @@
   </modules>
 
   <properties>
-    <openMRSVersion>2.4.0</openMRSVersion>
+    <openMRSVersion>2.2.0</openMRSVersion>
     <webservices.restVersion>2.33.0</webservices.restVersion>
     <serialization.xstreamVersion>0.2.8</serialization.xstreamVersion>
     <javaxVersion>3.0.1</javaxVersion>

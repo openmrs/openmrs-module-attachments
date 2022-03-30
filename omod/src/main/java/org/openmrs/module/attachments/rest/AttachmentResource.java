@@ -46,8 +46,8 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.springframework.web.multipart.MultipartFile;
 
 @Resource(name = RestConstants.VERSION_1 + "/"
-        + AttachmentsConstants.ATTACHMENT_URI, supportedClass = Attachment.class, supportedOpenmrsVersions = { "2.3.*",
-                "2.4.*", "2.5.*" })
+        + AttachmentsConstants.ATTACHMENT_URI, supportedClass = Attachment.class, supportedOpenmrsVersions = { "2.2.*",
+                "2.3.*", "2.4.*", "2.5.*", "2.6.*" })
 public class AttachmentResource extends DataDelegatingCrudResource<Attachment> implements Uploadable {
 	
 	protected static final String REASON = "REST web service";
