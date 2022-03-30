@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.FlushMode;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -15,9 +14,6 @@ import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.obs.Attachment;
-import org.openmrs.module.attachments.obs.ComplexDataHelper;
-import org.openmrs.module.attachments.obs.ComplexDataHelper1_10;
-import org.openmrs.module.emrapi.db.DbSessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -141,15 +137,14 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	@Transactional
 	@Override
 	public Attachment save(Attachment delegate, String reason) {
-		FlushMode flushMode = DbSessionUtil.getCurrentFlushMode();
-		DbSessionUtil.setManualFlushMode();
 		Attachment attachment = new Attachment();
+		Obs obs = null;
 		try {
-			Obs obs = Context.getObsService().saveObs(delegate.getObs(), reason);
+			obs = Context.getObsService().saveObs(delegate.getObs(), reason);
 			attachment = new Attachment(obs);
 		}
-		finally {
-			DbSessionUtil.setFlushMode(flushMode);
+		catch (Exception e) {
+			throw new RuntimeException("Failed to save the complex obs: " + obs, e);
 		}
 		return attachment;
 	}

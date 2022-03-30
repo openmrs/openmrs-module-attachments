@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>attachments</artifactId>
-		<version>2.7.0-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>attachments-omod</artifactId>
@@ -29,30 +29,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>${project.parent.artifactId}-api-1.11</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>${project.parent.artifactId}-api-2.0</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>${project.parent.artifactId}-omod-1.10</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>${project.parent.artifactId}-omod-2.0</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-
 		<!-- Begin OpenMRS core -->
 
 		<dependency>
@@ -64,12 +40,18 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.openmrs.web</groupId>
-			<artifactId>openmrs-web</artifactId>
-			<version>${openMRSVersion}</version>
-			<scope>provided</scope>
-			<type>jar</type>
-		</dependency>
+	    	<groupId>org.openmrs.web</groupId>
+	    	<artifactId>openmrs-web</artifactId>
+	    	<version>${openMRSVersion}</version>
+	    	<exclusions>
+	        	<exclusion>
+	            	<groupId>javax.servlet</groupId>
+	                	<artifactId>servlet-api</artifactId>
+	                </exclusion>
+	            </exclusions>
+	    	<scope>provided</scope>
+	    	<type>jar</type>
+	    </dependency>
 
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
@@ -101,20 +83,6 @@
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
-			<artifactId>appui-omod</artifactId>
-			<version>${appuiVersion}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>uicommons-omod</artifactId>
-			<version>${uicommonsVersion}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
 			<artifactId>webservices.rest-omod</artifactId>
 			<version>${webservices.restVersion}</version>
 			<scope>provided</scope>
@@ -127,63 +95,21 @@
 			<scope>provided</scope>
 			<type>test-jar</type>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
-			<artifactId>emrapi-api</artifactId>
-			<version>${emrapiVersion}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>emrapi-api-1.10</artifactId>
-			<version>${emrapiVersion}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>providermanagement-api</artifactId>
-			<version>${providermanagementVersion}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>reporting-api</artifactId>
-			<version>${reportingVersion}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>calculation-api</artifactId>
-			<version>${calculationVersion}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>serialization.xstream-api</artifactId>
-			<version>${serialization.xstreamVersion}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>serialization.xstream-api-1.10</artifactId>
-			<version>${serialization.xstreamVersion}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>webservices.rest-omod</artifactId>
+			<artifactId>webservices.rest-omod-1.8</artifactId>
 			<version>${webservices.restVersion}</version>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+	    	<groupId>javax.servlet</groupId>
+	    	<artifactId>javax.servlet-api</artifactId>
+	    	<version>${javaxVersion}</version>
+	    	<scope>provided</scope>
+	    </dependency>
 
 		<!-- End OpenMRS modules -->
 
@@ -330,60 +256,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>Fetch SASS sources from uicommons</id>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<phase>generate-resources</phase>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>org.openmrs.module</groupId>
-									<artifactId>uicommons-scss</artifactId>
-									<version>${uicommonsVersion}</version>
-									<type>zip</type>
-									<overWrite>true</overWrite>
-									<outputDirectory>src/main/compass/sass-external</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>watch-sass</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>de.saumya.mojo</groupId>
-						<artifactId>gem-maven-plugin</artifactId>
-						<extensions>true</extensions>
-						<executions>
-							<execution>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-								<phase>generate-resources</phase>
-							</execution>
-						</executions>
-						<configuration>
-							<jrubyVersion>1.7.10</jrubyVersion>
-							<execArgs>${project.build.directory}/rubygems/bin/compass watch
-							${basedir}/src/main/compass</execArgs>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
 </project>

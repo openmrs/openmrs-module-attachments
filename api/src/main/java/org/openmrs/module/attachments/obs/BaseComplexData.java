@@ -11,7 +11,6 @@ import javax.imageio.stream.ImageOutputStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.openmrs.obs.ComplexData;
-import org.openmrs.web.servlet.ComplexObsServlet;
 
 /**
  * Extends {@link ComplexData} so that it provides a method to extract the underlying byte array.

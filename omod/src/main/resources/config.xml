@@ -12,19 +12,12 @@
 	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
 	<require_version>${openMRSVersion}</require_version>
 	<!-- / Module Properties -->
-
+	
 	<require_modules>
-		<require_module version="${uiframeworkVersion}">
-			org.openmrs.module.uiframework
-		</require_module>
-		<require_module version="${emrapiVersion}">
-			org.openmrs.module.emrapi
-		</require_module>
-		<require_module version="${appuiVersion}">
-			org.openmrs.module.appui
+		<require_module version="${webservices.restVersion}">
+			org.openmrs.module.webservices.rest
 		</require_module>
 	</require_modules>
-
 
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.AttachmentsActivator</activator>

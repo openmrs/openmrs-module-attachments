@@ -30,7 +30,6 @@ import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.obs.handler.BinaryDataHandler;
-import org.openmrs.ui.framework.WebConstants;
 import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,8 +108,6 @@ public class TestHelper {
 		complexObsDir = OpenmrsUtil.getDirectoryInApplicationDataDirectory("complex_obs");
 		context.getAdministrationService().saveGlobalProperty(
 		    new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_COMPLEX_OBS_DIR, getComplexObsDir()));
-		
-		WebConstants.CONTEXT_PATH = "openmrs";
 		
 		context.getAdministrationService()
 		        .saveGlobalProperty(new GlobalProperty(AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_LIST,
