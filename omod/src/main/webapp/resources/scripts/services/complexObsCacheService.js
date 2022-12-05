@@ -30,21 +30,21 @@ angular.module('att.service.complexObsCacheService')
             $http.get(url, {
                 cache : true,
                 responseType : "arraybuffer"
-            }).then(function(response) {
-                setComplexData(uuid, response.data, view);
+            }).success(function(data, status, headers) {
+                setComplexData(uuid, data, view);
 
-                obs.mimeType = response.headers('Content-Type');
-                obs.contentFamily = response.headers('Content-Family'); // Custom header
-                obs.fileName = response.headers('File-Name'); // Custom header
-                obs.fileExt = response.headers('File-Ext'); // Custom header
+                obs.mimeType = headers('Content-Type');
+                obs.contentFamily = headers('Content-Family'); // Custom header
+                obs.fileName = headers('File-Name'); // Custom header
+                obs.fileExt = headers('File-Ext'); // Custom header
                 setComplexObs(obs);
 
                 deferred.resolve({
                     obs : obs,
-                    complexData : response.data
+                    complexData : data
                 });
-            }, function(error) {
-                deferred.reject(error);
+            }).error(function(msg, code) {
+                deferred.reject(null);
             });
         } else {
             deferred.resolve({
