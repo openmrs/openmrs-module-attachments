@@ -190,6 +190,17 @@ public class AttachmentsContext {
 	}
 	
 	/*
+	 * return String array with global property values
+	 */
+	protected String[] getArrayGlobalProperty(String globalPropertyName, boolean required) {
+		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
+		if (required && StringUtils.isEmpty(globalProperty)) {
+			throw new APIException("Configuration required: " + globalPropertyName);
+		}
+		return globalProperty == null ? null : globalProperty.split(",");
+	}
+	
+	/*
 	 * See super#getIntegerByGlobalProperty(String globalPropertyName)
 	 */
 	protected Double getDoubleByGlobalProperty(String globalPropertyName) {
@@ -328,6 +339,13 @@ public class AttachmentsContext {
 	 */
 	public Double getMaxUploadFileSize() {
 		return getDoubleByGlobalProperty(AttachmentsConstants.GP_MAX_UPLOAD_FILE_SIZE);
+	}
+	
+	/**
+	 * @return The allowed file extensions.
+	 */
+	public String[] getAllowedFileExtensions() {
+		return getArrayGlobalProperty(AttachmentsConstants.GP_ALLOWED_FILE_EXTENSIONS, false);
 	}
 	
 	/**
