@@ -106,6 +106,14 @@
 	</globalProperty>
 
 	<globalProperty>
+		<property>${project.parent.artifactId}.allowedFileExtensions</property>
+		<defaultValue/>
+		<description>
+			Allowed File Extensions
+		</description>
+	</globalProperty>
+
+	<globalProperty>
 		<property>${project.parent.artifactId}.encounterSavingFlow</property>
 		<defaultValue></defaultValue>
 		<description>
