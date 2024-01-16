@@ -114,6 +114,8 @@ public class AttachmentsConstants {
 	
 	public static final String GP_ALLOWED_FILE_EXTENSIONS = MODULE_ARTIFACT_ID + ".allowedFileExtensions";
 	
+	public static final String GP_DENIED_FILE_NAMES = MODULE_ARTIFACT_ID + ".deniedFileNames";
+	
 	public static final String GP_WEBCAM_ALLOWED = MODULE_ARTIFACT_ID + ".allowWebcam";
 	
 	public static final String GP_ENCOUNTER_SAVING_FLOW = MODULE_ARTIFACT_ID + ".encounterSavingFlow";

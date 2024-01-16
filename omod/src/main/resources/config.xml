@@ -114,6 +114,14 @@
 	</globalProperty>
 
 	<globalProperty>
+		<property>${project.parent.artifactId}.deniedFileNames</property>
+		<defaultValue>eicar.txt</defaultValue>
+		<description>
+			Denied File names
+		</description>
+	</globalProperty>
+
+	<globalProperty>
 		<property>${project.parent.artifactId}.encounterSavingFlow</property>
 		<defaultValue></defaultValue>
 		<description>

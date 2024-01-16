@@ -349,6 +349,13 @@ public class AttachmentsContext {
 	}
 	
 	/**
+	 * @return The denied file names.
+	 */
+	public String[] getDeniedFileNames() {
+		return getArrayGlobalProperty(AttachmentsConstants.GP_DENIED_FILE_NAMES, false);
+	}
+	
+	/**
 	 * @return The max file size allowed to be stored (in Megabytes).
 	 */
 	public Double getMaxStorageFileSize() {
