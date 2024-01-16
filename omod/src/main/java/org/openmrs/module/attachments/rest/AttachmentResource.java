@@ -124,6 +124,13 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 			throw new IllegalRequestException("The extension is not valid");
 		}
 		
+		// Verify file name
+		String fileName = file.getOriginalFilename();
+		if (!ArrayUtils.isEmpty(ctx.getDeniedFileNames()) && !Arrays.stream(ctx.getAllowedFileExtensions())
+		        .filter(e -> e.equalsIgnoreCase(fileName)).findAny().isPresent()) {
+			throw new IllegalRequestException("The file name is not valid");
+		}
+		
 		// Verify Parameters
 		if (patient == null) {
 			throw new IllegalRequestException("A patient parameter must be provided when uploading an attachment.");
