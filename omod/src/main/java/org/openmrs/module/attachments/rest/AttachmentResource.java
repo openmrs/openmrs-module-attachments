@@ -117,8 +117,8 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		}
 		
 		// Verify file extension
-		String[] split = file.getOriginalFilename().split(".");
-		String fileExtension = ArrayUtils.isEmpty(split) ? null : split[file.getOriginalFilename().split(".").length - 1];
+		String[] split = file.getOriginalFilename().split("\\.");
+		String fileExtension = ArrayUtils.isEmpty(split) ? null : split[split.length - 1];
 		if (!ArrayUtils.isEmpty(ctx.getAllowedFileExtensions()) && !Arrays.stream(ctx.getAllowedFileExtensions())
 		        .filter(e -> e.equalsIgnoreCase(fileExtension)).findAny().isPresent()) {
 			throw new IllegalRequestException("The extension is not valid");
