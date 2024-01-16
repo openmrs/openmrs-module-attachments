@@ -197,7 +197,7 @@ public class AttachmentsContext {
 		if (required && StringUtils.isEmpty(globalProperty)) {
 			throw new APIException("Configuration required: " + globalPropertyName);
 		}
-		return globalProperty == null ? null : globalProperty.split(",");
+		return StringUtils.isEmpty(globalProperty) ? null : globalProperty.split(",");
 	}
 	
 	/*
