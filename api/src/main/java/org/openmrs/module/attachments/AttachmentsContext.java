@@ -190,7 +190,7 @@ public class AttachmentsContext {
 	}
 	
 	/*
-	 * return String array with global property values
+	 * @return An array of comma-separated values for the named global property
 	 */
 	protected String[] getArrayGlobalProperty(String globalPropertyName, boolean required) {
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
