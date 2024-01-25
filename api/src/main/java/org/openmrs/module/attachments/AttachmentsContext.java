@@ -192,11 +192,8 @@ public class AttachmentsContext {
 	/*
 	 * @return An array of comma-separated values for the named global property
 	 */
-	protected String[] getArrayGlobalProperty(String globalPropertyName, boolean required) {
+	protected String[] getCommaSeparatedGlobalPropertyValues(String globalPropertyName) {
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
-		if (required && StringUtils.isEmpty(globalProperty)) {
-			throw new APIException("Configuration required: " + globalPropertyName);
-		}
 		return StringUtils.isEmpty(globalProperty) ? new String[0] : globalProperty.split(",");
 	}
 	
@@ -345,14 +342,14 @@ public class AttachmentsContext {
 	 * @return The allowed file extensions.
 	 */
 	public String[] getAllowedFileExtensions() {
-		return getArrayGlobalProperty(AttachmentsConstants.GP_ALLOWED_FILE_EXTENSIONS, false);
+		return getCommaSeparatedGlobalPropertyValues(AttachmentsConstants.GP_ALLOWED_FILE_EXTENSIONS);
 	}
 	
 	/**
 	 * @return The denied file names.
 	 */
 	public String[] getDeniedFileNames() {
-		return getArrayGlobalProperty(AttachmentsConstants.GP_DENIED_FILE_NAMES, false);
+		return getCommaSeparatedGlobalPropertyValues(AttachmentsConstants.GP_DENIED_FILE_NAMES);
 	}
 	
 	/**
