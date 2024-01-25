@@ -125,7 +125,6 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		}
 		
 		// Verify file name
-		String fileName = file.getOriginalFilename();
 		if (Arrays.stream(ctx.getAllowedFileExtensions())
 		        .filter(e -> e.equalsIgnoreCase(fileName)).findAny().isPresent()) {
 			throw new IllegalRequestException("The file name is not valid");
