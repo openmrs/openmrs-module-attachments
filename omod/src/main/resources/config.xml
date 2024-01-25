@@ -117,7 +117,7 @@
 		<property>${project.parent.artifactId}.deniedFileNames</property>
 		<defaultValue>eicar.txt</defaultValue>
 		<description>
-			Denied File names
+			Comma-separated list of case-insensitive file names that will be rejected if the attached file has this name.
 		</description>
 	</globalProperty>
 
