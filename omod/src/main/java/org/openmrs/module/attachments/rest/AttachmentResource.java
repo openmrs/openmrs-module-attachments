@@ -117,7 +117,9 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		}
 		
 		// Verify file extension
-		String[] split = file.getOriginalFilename().split("\\.");
+		String fileName = file.getOriginalFilename();
+		int idx = fileName.lastIndexOf(".");
+		String fileExtension = idx > 0 && idx < fileName.length() - 1 ? fileName.substring(idx + 1) : "";
 		String fileExtension = ArrayUtils.isEmpty(split) ? null : split[split.length - 1];
 		if (!Arrays.stream(ctx.getAllowedFileExtensions())
 		        .filter(e -> e.equalsIgnoreCase(fileExtension)).findAny().isPresent()) {
