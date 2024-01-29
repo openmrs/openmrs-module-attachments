@@ -120,13 +120,14 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		String fileName = file.getOriginalFilename();
 		int idx = fileName.lastIndexOf(".");
 		String fileExtension = idx > 0 && idx < fileName.length() - 1 ? fileName.substring(idx + 1) : "";
-		if (!Arrays.stream(ctx.getAllowedFileExtensions()).filter(e -> e.equalsIgnoreCase(fileExtension)).findAny()
-		        .isPresent()) {
+		if (!ArrayUtils.isEmpty(ctx.getAllowedFileExtensions()) && !Arrays.stream(ctx.getAllowedFileExtensions())
+		        .filter(e -> e.equalsIgnoreCase(fileExtension)).findAny().isPresent()) {
 			throw new IllegalRequestException("The extension is not valid");
 		}
 		
 		// Verify file name
-		if (Arrays.stream(ctx.getAllowedFileExtensions()).filter(e -> e.equalsIgnoreCase(fileName)).findAny().isPresent()) {
+		if (!ArrayUtils.isEmpty(ctx.getDeniedFileNames())
+		        && Arrays.stream(ctx.getDeniedFileNames()).filter(e -> e.equalsIgnoreCase(fileName)).findAny().isPresent()) {
 			throw new IllegalRequestException("The file name is not valid");
 		}
 		
