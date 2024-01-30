@@ -9,9 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
@@ -112,6 +114,21 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		// Verify File Size
 		if (ctx.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
 			throw new IllegalRequestException("The file  exceeds the maximum size");
+		}
+		
+		// Verify file extension
+		String fileName = file.getOriginalFilename();
+		int idx = fileName.lastIndexOf(".");
+		String fileExtension = idx > 0 && idx < fileName.length() - 1 ? fileName.substring(idx + 1) : "";
+		if (!ArrayUtils.isEmpty(ctx.getAllowedFileExtensions()) && !Arrays.stream(ctx.getAllowedFileExtensions())
+		        .filter(e -> e.equalsIgnoreCase(fileExtension)).findAny().isPresent()) {
+			throw new IllegalRequestException("The extension is not valid");
+		}
+		
+		// Verify file name
+		if (!ArrayUtils.isEmpty(ctx.getDeniedFileNames())
+		        && Arrays.stream(ctx.getDeniedFileNames()).filter(e -> e.equalsIgnoreCase(fileName)).findAny().isPresent()) {
+			throw new IllegalRequestException("The file name is not valid");
 		}
 		
 		// Verify Parameters

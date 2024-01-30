@@ -106,6 +106,22 @@
 	</globalProperty>
 
 	<globalProperty>
+		<property>${project.parent.artifactId}.allowedFileExtensions</property>
+		<defaultValue/>
+		<description>
+			Comma-separated list of case-insensitive file extensions that are allowed to be uploaded.
+		</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.deniedFileNames</property>
+		<defaultValue>eicar.txt</defaultValue>
+		<description>
+			Comma-separated list of case-insensitive file names that will be rejected if the attached file has this name.
+		</description>
+	</globalProperty>
+
+	<globalProperty>
 		<property>${project.parent.artifactId}.encounterSavingFlow</property>
 		<defaultValue></defaultValue>
 		<description>
