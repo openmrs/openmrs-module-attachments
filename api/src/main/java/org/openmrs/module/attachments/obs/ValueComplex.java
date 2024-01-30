@@ -33,7 +33,7 @@ public class ValueComplex {
 	
 	public ValueComplex(String valueComplex) {
 		
-		if (StringUtils.substringBefore(valueComplex, SEP).equals(UNIQUE_PREFIX) == false) {
+		if (!StringUtils.substringBefore(valueComplex, SEP).equals(UNIQUE_PREFIX)) {
 			this.instructions = INSTRUCTIONS_NONE;
 			return;
 		}

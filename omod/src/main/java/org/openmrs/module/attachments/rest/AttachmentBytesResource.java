@@ -10,6 +10,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Obs;
+import org.openmrs.annotation.OpenmrsProfile;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
@@ -29,17 +30,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@OpenmrsProfile(openmrsPlatformVersion = "2.2.* - 9.*")
 @RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + "/" + AttachmentsConstants.ATTACHMENT_URI)
 public class AttachmentBytesResource extends BaseRestController {
-	
-	protected AttachmentsContext context = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT,
-	    AttachmentsContext.class);
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
 	@RequestMapping(value = AttachmentsConstants.ATTACHMENT_BYTES_URI, method = RequestMethod.GET)
 	public void getFile(@PathVariable("uuid") String uuid, @RequestParam(required = false, value = "view") String view,
 	        HttpServletResponse response) throws ResponseException {
+		AttachmentsContext context = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT,
+		    AttachmentsContext.class);
+		
 		// Getting the Core/Platform complex data object
 		Obs obs = context.getObsService().getObsByUuid(uuid);
 		
