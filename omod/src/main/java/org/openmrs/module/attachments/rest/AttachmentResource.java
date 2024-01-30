@@ -48,17 +48,11 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.springframework.web.multipart.MultipartFile;
 
 @Resource(name = RestConstants.VERSION_1 + "/"
-        + AttachmentsConstants.ATTACHMENT_URI, supportedClass = Attachment.class, supportedOpenmrsVersions = { "2.2.*",
-                "2.3.*", "2.4.*", "2.5.*", "2.6.*" })
+        + AttachmentsConstants.ATTACHMENT_URI, supportedClass = Attachment.class, supportedOpenmrsVersions = {
+                "2.2.* - 9.*" })
 public class AttachmentResource extends DataDelegatingCrudResource<Attachment> implements Uploadable {
 	
 	protected static final String REASON = "REST web service";
-	
-	private ComplexObsSaver obsSaver = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER,
-	    ComplexObsSaver.class);
-	
-	private AttachmentsContext ctx = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT,
-	    AttachmentsContext.class);
 	
 	@Override
 	public Attachment newDelegate() {
@@ -68,7 +62,9 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 	@Override
 	public Attachment save(Attachment delegate) {
 		Obs obs = Context.getObsService().saveObs(delegate.getObs(), REASON);
-		return new Attachment(obs, ctx.getComplexDataHelper());
+		return new Attachment(obs,
+		        Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class)
+		                .getComplexDataHelper());
 	}
 	
 	@Override
@@ -78,7 +74,9 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 			throw new GenericRestException(uniqueId + " does not identify a complex obs.", null);
 		else {
 			obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
-			return new Attachment(obs, ctx.getComplexDataHelper());
+			return new Attachment(obs,
+			        Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class)
+			                .getComplexDataHelper());
 		}
 	}
 	
@@ -98,7 +96,6 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 	
 	@Override
 	public Object upload(MultipartFile file, RequestContext context) throws ResponseException, IOException {
-		
 		// Prepare Parameters
 		Patient patient = Context.getPatientService().getPatientByUuid(context.getParameter("patient"));
 		Visit visit = Context.getVisitService().getVisitByUuid(context.getParameter("visit"));
@@ -107,6 +104,9 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		String fileCaption = context.getParameter("fileCaption");
 		String instructions = context.getParameter("instructions");
 		String base64Content = context.getParameter("base64Content");
+		
+		AttachmentsContext ctx = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT,
+		    AttachmentsContext.class);
 		
 		if (base64Content != null) {
 			file = new Base64MultipartFile(base64Content);
@@ -159,12 +159,14 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		Obs obs;
 		switch (getContentFamily(file.getContentType())) {
 			case IMAGE:
-				obs = obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, file, instructions);
+				obs = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER, ComplexObsSaver.class)
+				        .saveImageAttachment(visit, patient, encounter, fileCaption, file, instructions);
 				break;
 			
 			case OTHER:
 			default:
-				obs = obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, file, instructions);
+				obs = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER, ComplexObsSaver.class)
+				        .saveOtherAttachment(visit, patient, encounter, fileCaption, file, instructions);
 				break;
 		}
 		
@@ -184,6 +186,7 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addProperty("uuid");
 		description.addProperty("dateTime");
+		description.addProperty("filename");
 		description.addProperty("comment");
 		description.addProperty("bytesMimeType");
 		description.addProperty("bytesContentFamily");
@@ -199,7 +202,7 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 	 */
 	public static void voidEncounterIfEmpty(EncounterService encounterService, String encounterUuid) {
 		Encounter encounter = encounterService.getEncounterByUuid(encounterUuid);
-		if (encounter != null && encounter.getAllObs().size() == 0) {
+		if (encounter != null && encounter.getAllObs().isEmpty()) {
 			encounterService.voidEncounter(encounter, "foo");
 		}
 	}
@@ -259,23 +262,21 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		Visit visit = Context.getVisitService().getVisitByUuid(context.getParameter("visit"));
 		Encounter encounter = Context.getEncounterService().getEncounterByUuid(context.getParameter("encounter"));
 		String includeEncounterless = context.getParameter("includeEncounterless");
-		Boolean includeVoided = BooleanUtils.toBoolean(context.getParameter("includeVoided"));
+		boolean includeVoided = BooleanUtils.toBoolean(context.getParameter("includeVoided"));
 		
 		// Verify Parameters
 		if (patient == null) {
 			throw new IllegalRequestException("A patient parameter must be provided when searching the attachments.");
 		}
 		
-		if (includeVoided == null) {
-			includeVoided = false;
-		}
-		
 		// Search Attachments
-		List<Attachment> attachmentList = search(ctx.getAttachmentsService(), patient, visit, encounter,
-		    includeEncounterless, includeVoided);
+		List<Attachment> attachmentList = search(
+		    Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class)
+		            .getAttachmentsService(),
+		    patient, visit, encounter, includeEncounterless, includeVoided);
 		
 		if (attachmentList != null) {
-			return new NeedsPaging<Attachment>(attachmentList, context);
+			return new NeedsPaging<>(attachmentList, context);
 		}
 		return new EmptySearchResult();
 	}
