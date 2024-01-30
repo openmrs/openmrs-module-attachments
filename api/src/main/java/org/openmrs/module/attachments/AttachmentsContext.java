@@ -175,6 +175,14 @@ public class AttachmentsContext extends ModuleProperties {
 	}
 	
 	/*
+	 * @return An array of comma-separated values for the named global property
+	 */
+	protected String[] getCommaSeparatedGlobalPropertyValues(String globalPropertyName) {
+		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
+		return StringUtils.isEmpty(globalProperty) ? new String[0] : globalProperty.split(",");
+	}
+	
+	/*
 	 * See super#getIntegerByGlobalProperty(String globalPropertyName)
 	 */
 	protected Double getDoubleByGlobalProperty(String globalPropertyName) {
@@ -276,6 +284,20 @@ public class AttachmentsContext extends ModuleProperties {
 	 */
 	public Double getMaxUploadFileSize() {
 		return getDoubleByGlobalProperty(AttachmentsConstants.GP_MAX_UPLOAD_FILE_SIZE);
+	}
+	
+	/**
+	 * @return The allowed file extensions.
+	 */
+	public String[] getAllowedFileExtensions() {
+		return getCommaSeparatedGlobalPropertyValues(AttachmentsConstants.GP_ALLOWED_FILE_EXTENSIONS);
+	}
+	
+	/**
+	 * @return The denied file names.
+	 */
+	public String[] getDeniedFileNames() {
+		return getCommaSeparatedGlobalPropertyValues(AttachmentsConstants.GP_DENIED_FILE_NAMES);
 	}
 	
 	/**
