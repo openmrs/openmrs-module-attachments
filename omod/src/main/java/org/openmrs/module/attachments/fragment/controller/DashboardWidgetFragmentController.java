@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.PersonName;
 import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
@@ -20,12 +19,6 @@ public class DashboardWidgetFragmentController {
 	
 	public void controller(FragmentModel model, @FragmentParam("patient") PatientDomainWrapper patientWrapper, UiUtils ui,
 	        @InjectBeans AttachmentsContext context) {
-		// Ensure name is HTML-safe to prevent XSS in info messages
-		PersonName htmlSafePersonName = new PersonName(ui.escapeHtml(patientWrapper.getPatient().getGivenName()),
-		        ui.escapeHtml(patientWrapper.getPatient().getMiddleName()),
-		        ui.escapeHtml(patientWrapper.getPatient().getFamilyName()));
-		patientWrapper.getPatient().removeName(patientWrapper.getPersonName());
-		patientWrapper.getPatient().addName(htmlSafePersonName);
 		Map<String, Object> jsonConfig = ClientConfigFragmentController.getClientConfig(context, ui);
 		jsonConfig.put("patient", ConversionUtil.convertToRepresentation(patientWrapper.getPatient(), Representation.REF));
 		jsonConfig.put("thumbnailCount", context.getDashboardThumbnailCount());
