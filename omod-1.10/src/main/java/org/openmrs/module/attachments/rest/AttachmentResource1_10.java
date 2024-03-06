@@ -122,26 +122,15 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		String fileName = file.getOriginalFilename();
 		int idx = fileName.lastIndexOf(".");
 		String fileExtension = idx > 0 && idx < fileName.length() - 1 ? fileName.substring(idx + 1) : "";
-		if (!ArrayUtils.isEmpty(ctx.getAllowedFileExtensions())) {
-			boolean isValidExtension = false;
-			for (String extension : ctx.getAllowedFileExtensions()) {
-				if (extension.equalsIgnoreCase(fileExtension)) {
-					isValidExtension = true;
-					break;
-				}
-			}
-			if (!isValidExtension) {
-				throw new IllegalRequestException("The extension is not valid");
-			}
+		if (!ArrayUtils.isEmpty(ctx.getAllowedFileExtensions()) && !Arrays.stream(ctx.getAllowedFileExtensions())
+		        .filter(e -> e.equalsIgnoreCase(fileExtension)).findAny().isPresent()) {
+			throw new IllegalRequestException("The extension is not valid");
 		}
 		
 		// Verify file name
-		if (!ArrayUtils.isEmpty(ctx.getDeniedFileNames())) {
-			for (String deniedFileName : ctx.getDeniedFileNames()) {
-				if (deniedFileName.equalsIgnoreCase(fileName)) {
-					throw new IllegalRequestException("The file name is not valid");
-				}
-			}
+		if (!ArrayUtils.isEmpty(ctx.getDeniedFileNames())
+		        && Arrays.stream(ctx.getDeniedFileNames()).filter(e -> e.equalsIgnoreCase(fileName)).findAny().isPresent()) {
+			throw new IllegalRequestException("The file name is not valid");
 		}
 		
 		// Verify Parameters
