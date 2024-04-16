@@ -24,6 +24,8 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 	
 	protected String comment = "";
 	
+	protected String filename = "";
+	
 	protected String bytesMimeType = null;
 	
 	protected ContentFamily bytesContentFamily = null;
@@ -51,6 +53,22 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 		
 		setDateTime(obs.getObsDatetime());
 		setComment(obs.getComment());
+		
+		// Chomp the UUID off the end of the obs if any
+		String filename = new ValueComplex(obs.getValueComplex()).getFileName();
+		if (filename != null) {
+			int uuidIdx = filename.lastIndexOf("_" + obs.getUuid());
+			if (uuidIdx > 0) {
+				int extIdx = filename.lastIndexOf(".");
+				String extension = "";
+				if (extIdx > 0 && extIdx > uuidIdx) {
+					extension = filename.substring(extIdx);
+				}
+				filename = filename.substring(0, uuidIdx) + extension;
+			}
+		}
+		
+		setFilename(filename);
 		setComplexData(obs.getComplexData());
 	}
 	
@@ -109,6 +127,14 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 	
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+	
+	public String getFilename() {
+		return filename;
+	}
+	
+	public void setFilename(String filename) {
+		this.filename = filename;
 	}
 	
 	public ComplexData getComplexData() {
