@@ -197,6 +197,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addProperty("uuid");
 		description.addProperty("dateTime");
+		description.addProperty("filename");
 		description.addProperty("comment");
 		description.addProperty("bytesMimeType");
 		description.addProperty("bytesContentFamily");
