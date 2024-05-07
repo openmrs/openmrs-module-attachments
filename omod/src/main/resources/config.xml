@@ -163,4 +163,13 @@
 		<description>Allowed to access the main attachments page</description>
 	</privilege>
 
+	<privilege>
+		<name>Create Attachment</name>
+		<description>Allowed to create attachments</description>
+	</privilege>
+
+	<privilege>
+		<name>View Attachments</name>
+		<description>Allowed to view attachments</description>
+	</privilege>
 </module>
