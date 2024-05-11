@@ -5,8 +5,10 @@ import java.util.List;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
+import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.module.attachments.obs.Attachment;
+import org.openmrs.module.attachments.AttachmentsConstants;
 
 public interface AttachmentsService {
 	
@@ -18,6 +20,7 @@ public interface AttachmentsService {
 	 *            voided ones or not.
 	 * @throws APIException if non-complex obs are mistakenly returned
 	 */
+	@Authorized(AttachmentsConstants.VIEW_ATTACHMENTS)
 	List<Attachment> getAttachments(Patient patient, boolean includeVoided);
 	
 	/**
@@ -29,6 +32,7 @@ public interface AttachmentsService {
 	 *            include attachments that are not associated with any visits or encounters.
 	 * @throws APIException if non-complex obs are mistakenly returned
 	 */
+	@Authorized(AttachmentsConstants.VIEW_ATTACHMENTS)
 	List<Attachment> getAttachments(Patient patient, boolean includeEncounterless, boolean includeVoided);
 	
 	/**
@@ -38,6 +42,7 @@ public interface AttachmentsService {
 	 *            voided ones or not.
 	 * @throws APIException if non-complex obs are mistakenly returned
 	 */
+	@Authorized(AttachmentsConstants.VIEW_ATTACHMENTS)
 	List<Attachment> getEncounterlessAttachments(Patient patient, boolean includeVoided);
 	
 	/**
@@ -48,6 +53,7 @@ public interface AttachmentsService {
 	 *            voided ones or not.
 	 * @throws APIException if non-complex obs are mistakenly returned
 	 */
+	@Authorized(AttachmentsConstants.VIEW_ATTACHMENTS)
 	List<Attachment> getAttachments(Patient patient, Encounter encounter, boolean includeVoided);
 	
 	/**
@@ -58,7 +64,9 @@ public interface AttachmentsService {
 	 *            voided ones or not.
 	 * @throws APIException if non-complex obs are mistakenly returned
 	 */
+	@Authorized(AttachmentsConstants.VIEW_ATTACHMENTS)
 	List<Attachment> getAttachments(Patient patient, Visit visit, boolean includeVoided);
 	
+	@Authorized(AttachmentsConstants.CREATE_ATTACHMENTS)
 	Attachment save(Attachment attachment, String reason);
 }
