@@ -3,6 +3,7 @@ package org.openmrs.module.attachments.rest;
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,6 +23,7 @@ import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.BaseRestController;
 import org.openmrs.obs.ComplexData;
+import org.openmrs.web.WebUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,7 +69,12 @@ public class AttachmentBytesResource1_10 extends BaseRestController {
 		response.addHeader("File-Ext", getExtension(attComplexData.getTitle(), mimeType));
 		
 		try {
-			response.getOutputStream().write(attComplexData.asByteArray());
+			byte[] bytes = attComplexData.asByteArray();
+			if (mimeType != null && mimeType.startsWith("text")) {
+				String byteString = WebUtil.encodeForHtmlContent(new String(bytes, StandardCharsets.UTF_8));
+				bytes = byteString.getBytes(StandardCharsets.UTF_8);
+			}
+			response.getOutputStream().write(bytes);
 		}
 		catch (IOException ex) {
 			response.setStatus(500);
