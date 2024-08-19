@@ -134,4 +134,10 @@ public class AttachmentsConstants {
 	public static final String REPRESENTATION_OBS = "(uuid:ref,comment:ref,obsDatetime:ref)";
 	
 	public static final String REPRESENTATION_VISIT = "(uuid:ref,stopDatetime:ref)";
+	
+	/**
+	 * PRIVILEGES
+	 */
+	public static final String CREATE_ATTACHMENTS = "Create Attachments";
+	public static final String VIEW_ATTACHMENTS = "View Attachments";
 }
