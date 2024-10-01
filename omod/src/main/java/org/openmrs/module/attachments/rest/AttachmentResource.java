@@ -12,6 +12,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.properties.ByteArrayProperty;
+import io.swagger.models.properties.DateProperty;
+import io.swagger.models.properties.StringProperty;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -182,6 +187,16 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 	}
 	
 	@Override
+	public Model getCREATEModel(Representation rep) {
+		return new ModelImpl().property("comment", new StringProperty());
+	}
+	
+	@Override
+	public Model getUPDATEModel(Representation rep) {
+		return getCREATEModel(rep);
+	}
+	
+	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addProperty("uuid");
@@ -192,6 +207,14 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		description.addProperty("bytesContentFamily");
 		description.addSelfLink();
 		return description;
+	}
+	
+	@Override
+	public Model getGETModel(Representation rep) {
+		ModelImpl model = (ModelImpl) super.getGETModel(rep);
+		return model.property("uuid", new StringProperty()).property("dateTime", new DateProperty())
+		        .property("filename", new StringProperty()).property("comment", new StringProperty())
+		        .property("bytesMimeType", new ByteArrayProperty()).property("bytesContentFamily", new ByteArrayProperty());
 	}
 	
 	/**

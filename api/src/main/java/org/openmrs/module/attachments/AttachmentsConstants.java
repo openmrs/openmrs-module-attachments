@@ -139,5 +139,6 @@ public class AttachmentsConstants {
 	 * PRIVILEGES
 	 */
 	public static final String CREATE_ATTACHMENTS = "Create Attachments";
+	
 	public static final String VIEW_ATTACHMENTS = "View Attachments";
 }
