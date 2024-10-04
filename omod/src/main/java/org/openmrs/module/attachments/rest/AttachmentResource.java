@@ -16,6 +16,7 @@ import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.ByteArrayProperty;
 import io.swagger.models.properties.DateProperty;
+import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.ArrayUtils;
@@ -35,6 +36,7 @@ import org.openmrs.module.attachments.AttachmentsService;
 import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.ValueComplex;
+import org.openmrs.module.webservices.docs.swagger.core.property.EnumProperty;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
@@ -183,12 +185,21 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addProperty("comment");
+		description.addProperty("dateTime");
+		description.addProperty("filename");
+		description.addProperty("bytesMimeType");
+		description.addProperty("bytesContentFamily");
+		description.addProperty("complexData");
 		return description;
 	}
 	
 	@Override
 	public Model getCREATEModel(Representation rep) {
-		return new ModelImpl().property("comment", new StringProperty());
+		return new ModelImpl().property("comment", new StringProperty()).property("dateTime", new DateProperty())
+		        .property("filename", new StringProperty()).property("bytesMimeType", new StringProperty())
+		        
+		        .property("bytesContentFamily", new EnumProperty(AttachmentsConstants.ContentFamily.class))
+		        .property("complexData", new StringProperty(StringProperty.Format.URI));
 	}
 	
 	@Override
@@ -214,7 +225,8 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		ModelImpl model = (ModelImpl) super.getGETModel(rep);
 		return model.property("uuid", new StringProperty()).property("dateTime", new DateProperty())
 		        .property("filename", new StringProperty()).property("comment", new StringProperty())
-		        .property("bytesMimeType", new ByteArrayProperty()).property("bytesContentFamily", new ByteArrayProperty());
+		        .property("bytesMimeType", new StringProperty())
+		        .property("bytesContentFamily", new EnumProperty(AttachmentsConstants.ContentFamily.class));
 	}
 	
 	/**
