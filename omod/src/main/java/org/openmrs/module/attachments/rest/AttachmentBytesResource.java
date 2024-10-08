@@ -72,7 +72,7 @@ public class AttachmentBytesResource extends BaseRestController {
 		
 		try {
 			byte[] bytes = attComplexData.asByteArray();
-			if (mimeType != null && mimeType.startsWith("text")) {
+			if (mimeType != null && mimeType.startsWith("text/html")) {
 				String byteString = WebUtil.encodeForHtmlContent(new String(bytes, StandardCharsets.UTF_8));
 				bytes = byteString.getBytes(StandardCharsets.UTF_8);
 			}

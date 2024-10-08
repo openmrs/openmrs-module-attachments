@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -256,8 +257,7 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 			SimpleObject response = deserialize(handle(request));
 			fileName = "testFile1_" + (String) response.get("uuid") + ".dat";
 			Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
-			Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
-			ComplexData complexData = complexObs.getComplexData();
+			ComplexData complexData = obs.getComplexData();
 			
 			// Verify
 			Assert.assertEquals(obs.getComment(), fileCaption);
@@ -286,10 +286,9 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 		// Replay
 		SimpleObject response = deserialize(handle(request));
 		
-		Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
-		fileName = "testFile2_" + (String) response.get("uuid") + ".dat";
-		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
-		ComplexData complexData = complexObs.getComplexData();
+		Obs obs = Context.getObsService().getObsByUuid(response.get("uuid"));
+		fileName = "testFile2_" + response.get("uuid") + ".dat";
+		ComplexData complexData = obs.getComplexData();
 		
 		// Verify
 		Assert.assertEquals(obs.getComment(), fileCaption);
@@ -319,8 +318,7 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 		SimpleObject response = deserialize(handle(request));
 		fileName = "testFile3_" + (String) response.get("uuid") + ".dat";
 		Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
-		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
-		ComplexData complexData = complexObs.getComplexData();
+		ComplexData complexData = obs.getComplexData();
 		
 		// Verify
 		Assert.assertEquals(obs.getComment(), fileCaption);
@@ -332,15 +330,19 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 	@Test
 	public void postAttachment_shouldAcceptBase64Content() throws Exception {
 		// Read file OpenMRS_logo.png and copy bytes to baos
-		InputStream inputStream = getClass().getClassLoader().getResourceAsStream("OpenMRS_logo.png");
-		BufferedImage img = ImageIO.read(inputStream);
+		BufferedImage img;
+		try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("OpenMRS_logo.png")) {
+			Objects.requireNonNull(inputStream);
+			img = ImageIO.read(inputStream);
+		}
+		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ImageIO.write(img, "png", baos);
 		
 		// Build the request parameters
 		byte[] bytesIn = baos.toByteArray();
 		String fileCaption = "Test file caption";
-		String fileName = "testFile2.dat";
+		String fileName = "testFile2.png";
 		String base64Content = "data:image/png;base64," + Base64.encodeBase64String(bytesIn);
 		Patient patient = Context.getPatientService().getPatient(2);
 		
@@ -355,14 +357,13 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 		// Replay
 		SimpleObject response = deserialize(handle(request));
 		
-		Obs obs = Context.getObsService().getObsByUuid((String) response.get("uuid"));
-		Obs complexObs = Context.getObsService().getComplexObs(obs.getObsId(), null);
-		ComplexData complexData = complexObs.getComplexData();
+		Obs obs = Context.getObsService().getObsByUuid(response.get("uuid"));
+		ComplexData complexData = obs.getComplexData();
 		byte[] bytesOut = BaseComplexData.getByteArray(complexData);
 		
 		// Verify
 		Assert.assertEquals(obs.getComment(), fileCaption);
-		Assert.assertTrue(complexData.getTitle().startsWith("cameracapture"));
+		Assert.assertTrue(complexData.getTitle().startsWith("testFile2"));
 		Assert.assertArrayEquals(bytesIn, bytesOut);
 		Assert.assertNull(obs.getEncounter());
 	}

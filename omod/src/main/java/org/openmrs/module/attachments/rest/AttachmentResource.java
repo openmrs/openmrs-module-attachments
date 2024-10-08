@@ -2,26 +2,21 @@ package org.openmrs.module.attachments.rest;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
-import io.swagger.models.properties.ByteArrayProperty;
 import io.swagger.models.properties.DateProperty;
-import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -80,7 +75,6 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		if (!obs.isComplex())
 			throw new GenericRestException(uniqueId + " does not identify a complex obs.", null);
 		else {
-			obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
 			return new Attachment(obs,
 			        Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class)
 			                .getComplexDataHelper());
@@ -116,7 +110,7 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		    AttachmentsContext.class);
 		
 		if (base64Content != null) {
-			file = new Base64MultipartFile(base64Content);
+			file = new Base64MultipartFile(base64Content, file.getName(), file.getOriginalFilename());
 		}
 		// Verify File Size
 		if (ctx.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
@@ -127,14 +121,17 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		String fileName = file.getOriginalFilename();
 		int idx = fileName.lastIndexOf(".");
 		String fileExtension = idx > 0 && idx < fileName.length() - 1 ? fileName.substring(idx + 1) : "";
-		if (!ArrayUtils.isEmpty(ctx.getAllowedFileExtensions()) && !Arrays.stream(ctx.getAllowedFileExtensions())
-		        .filter(e -> e.equalsIgnoreCase(fileExtension)).findAny().isPresent()) {
-			throw new IllegalRequestException("The extension is not valid");
+		
+		String[] allowedExtensions = ctx.getAllowedFileExtensions();
+		if (allowedExtensions != null && allowedExtensions.length > 0 && Arrays.stream(allowedExtensions)
+		        .filter(s -> s != null && !s.isEmpty()).noneMatch(fileExtension::equalsIgnoreCase)) {
+			throw new IllegalRequestException("The extension " + fileExtension + " is not valid");
 		}
 		
 		// Verify file name
-		if (!ArrayUtils.isEmpty(ctx.getDeniedFileNames())
-		        && Arrays.stream(ctx.getDeniedFileNames()).filter(e -> e.equalsIgnoreCase(fileName)).findAny().isPresent()) {
+		String[] deniedFileNames = ctx.getDeniedFileNames();
+		if (deniedFileNames != null && deniedFileNames.length > 0 && Arrays.stream(deniedFileNames)
+		        .filter(s -> s != null && !s.isEmpty()).anyMatch(fileName::equalsIgnoreCase)) {
 			throw new IllegalRequestException("The file name is not valid");
 		}
 		
@@ -326,34 +323,32 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 	 * dependency to MockMultipartFile for converting the base64 encoded String to a MultipartFile
 	 * object.
 	 */
-	class Base64MultipartFile implements MultipartFile {
+	static final class Base64MultipartFile implements MultipartFile {
 		
-		private String fileName;
+		private final String fileName;
 		
-		private String contentType;
+		private final String originalFileName;
 		
-		private long size;
+		private final String contentType;
 		
-		private InputStream in;
+		private final long size;
 		
-		private byte[] bytes;
+		private final InputStream in;
 		
-		public Base64MultipartFile(String base64Image) throws IOException {
-			String[] parts = base64Image.split(",");
+		private final byte[] bytes;
+		
+		public Base64MultipartFile(String base64Image, String fileName, String originalFileName) throws IOException {
+			String[] parts = base64Image.split(",", 2);
 			String contentType = parts[0].split(":")[1].split(";")[0].trim();
 			String contents = parts[1].trim();
 			byte[] decodedImage = Base64.decodeBase64(contents.getBytes());
-			final File temp = File.createTempFile("cameracapture", ".png");
-			try (OutputStream stream = new FileOutputStream(temp)) {
-				stream.write(decodedImage);
-			}
-			temp.deleteOnExit();
 			
-			this.fileName = temp.getName();
-			this.in = new FileInputStream(temp);
+			this.fileName = fileName;
+			this.originalFileName = originalFileName;
+			this.in = new ByteArrayInputStream(decodedImage);
 			this.contentType = contentType;
 			this.bytes = decodedImage;
-			this.size = temp.length();
+			this.size = decodedImage.length;
 		}
 		
 		@Override
@@ -363,7 +358,7 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		
 		@Override
 		public String getOriginalFilename() {
-			return this.fileName;
+			return this.originalFileName;
 		}
 		
 		@Override
@@ -382,17 +377,17 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		}
 		
 		@Override
-		public byte[] getBytes() throws IOException {
+		public byte[] getBytes() {
 			return this.bytes;
 		}
 		
 		@Override
-		public InputStream getInputStream() throws IOException {
+		public InputStream getInputStream() {
 			return this.in;
 		}
 		
 		@Override
-		public void transferTo(File dest) throws IOException, IllegalStateException {
+		public void transferTo(File dest) throws IllegalStateException {
 			throw new APIException("Operation transferTo is not supported for Base64MultipartFile");
 		}
 	}
