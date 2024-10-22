@@ -114,7 +114,7 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		}
 		// Verify File Size
 		if (ctx.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
-			throw new IllegalRequestException("The file  exceeds the maximum size");
+			throw new IllegalRequestException("The file exceeds the maximum size");
 		}
 		
 		// Verify file extension
