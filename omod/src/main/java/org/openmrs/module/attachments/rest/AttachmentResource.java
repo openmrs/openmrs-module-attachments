@@ -15,8 +15,13 @@ import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.DateProperty;
 import io.swagger.models.properties.StringProperty;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.Tika;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -148,6 +153,21 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 			if (encounter.getVisit() != visit) {
 				throw new IllegalRequestException(
 				        "The specified encounter does not belong to the provided visit, upload aborted.");
+			}
+		}
+		
+		// Verify Content Type
+		if (allowedExtensions != null && allowedExtensions.length > 0) {
+			Tika tika = new Tika();
+			String fileType = tika.detect(file.getInputStream());
+			try {
+				MimeType mimeType = MimeTypes.getDefaultMimeTypes().forName(fileType);
+				if (!CollectionUtils.containsAny(mimeType.getExtensions(), Arrays.asList(allowedExtensions))) {
+					throw new IllegalRequestException("The file content type " + fileType + " is not allowed");
+				}
+			}
+			catch (MimeTypeException ex) {
+				throw new APIException("Failed to detect the file content type", ex);
 			}
 		}
 		
