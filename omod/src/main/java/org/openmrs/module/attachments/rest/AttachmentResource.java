@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
@@ -162,7 +163,11 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 			String fileType = tika.detect(file.getInputStream());
 			try {
 				MimeType mimeType = MimeTypes.getDefaultMimeTypes().forName(fileType);
-				if (!CollectionUtils.containsAny(mimeType.getExtensions(), Arrays.asList(allowedExtensions))) {
+				
+				List<String> mimeTypeExtensions = mimeType.getExtensions().stream()
+				        .map(extension -> extension.replace(".", "")).collect(Collectors.toList());
+				
+				if (!CollectionUtils.containsAny(mimeTypeExtensions, Arrays.asList(allowedExtensions))) {
 					throw new IllegalRequestException("The file content type " + fileType + " is not allowed");
 				}
 			}
