@@ -11,10 +11,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.properties.DateProperty;
-import io.swagger.models.properties.StringProperty;
+import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.ObjectSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.UUIDSchema;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -37,7 +38,6 @@ import org.openmrs.module.attachments.AttachmentsService;
 import org.openmrs.module.attachments.ComplexObsSaver;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.ValueComplex;
-import org.openmrs.module.webservices.docs.swagger.core.property.EnumProperty;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
@@ -216,17 +216,18 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 	}
 	
 	@Override
-	public Model getCREATEModel(Representation rep) {
-		return new ModelImpl().property("comment", new StringProperty()).property("dateTime", new DateProperty())
-		        .property("filename", new StringProperty()).property("bytesMimeType", new StringProperty())
-		        
-		        .property("bytesContentFamily", new EnumProperty(AttachmentsConstants.ContentFamily.class))
-		        .property("complexData", new StringProperty(StringProperty.Format.URI));
+	public Schema<?> getCREATESchema(Representation rep) {
+		return new ObjectSchema().addProperty("comment", new StringSchema()).addProperty("dateTime", new DateTimeSchema())
+		        .addProperty("filename", new StringSchema()).addProperty("bytesMimeType", new StringSchema())
+		        .addProperty("bytesContentFamily",
+		            new Schema<AttachmentsConstants.ContentFamily>()
+		                    ._enum(Arrays.asList(AttachmentsConstants.ContentFamily.values())))
+		        .addProperty("complexData", new Schema<String>().format("uri"));
 	}
 	
 	@Override
-	public Model getUPDATEModel(Representation rep) {
-		return getCREATEModel(rep);
+	public Schema<?> getUPDATESchema(Representation rep) {
+		return getCREATESchema(rep);
 	}
 	
 	@Override
@@ -243,12 +244,13 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 	}
 	
 	@Override
-	public Model getGETModel(Representation rep) {
-		ModelImpl model = (ModelImpl) super.getGETModel(rep);
-		return model.property("uuid", new StringProperty()).property("dateTime", new DateProperty())
-		        .property("filename", new StringProperty()).property("comment", new StringProperty())
-		        .property("bytesMimeType", new StringProperty())
-		        .property("bytesContentFamily", new EnumProperty(AttachmentsConstants.ContentFamily.class));
+	public Schema<?> getGETSchema(Representation rep) {
+		Schema<?> model = super.getGETSchema(rep);
+		return model.addProperty("uuid", new UUIDSchema()).addProperty("dateTime", new DateTimeSchema())
+		        .addProperty("filename", new StringSchema()).addProperty("comment", new StringSchema())
+		        .addProperty("bytesMimeType", new StringSchema())
+		        .addProperty("bytesContentFamily", new Schema<AttachmentsConstants.ContentFamily>()
+		                ._enum(Arrays.asList(AttachmentsConstants.ContentFamily.values())));
 	}
 	
 	/**
