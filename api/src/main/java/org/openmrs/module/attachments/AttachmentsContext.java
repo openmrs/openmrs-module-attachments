@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -310,7 +311,7 @@ public class AttachmentsContext {
 		ObjectMapper mapper = new ObjectMapper();
 		TypeReference<ArrayList<String>> typeRef = new TypeReference<ArrayList<String>>() {};
 		try {
-			list = mapper.readValue(globalProperty, typeRef);
+			list = mapper.readValue(StringEscapeUtils.unescapeHtml(globalProperty), typeRef);
 		}
 		catch (Exception e) {
 			log.error("Could not parse global property '" + globalPropertyName + "' into a List<String>.", e);

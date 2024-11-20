@@ -2,6 +2,7 @@ package org.openmrs.module.attachments.rest;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.activation.MimetypesFileTypeMap;
+import javax.imageio.ImageIO;
 
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
@@ -176,6 +180,14 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 			}
 		}
 		
+		// Verify the file contents
+		// Just in case the magic bytes are manipulated, we are using the submitted file
+		// extension to get the mime type
+		String mimeType = new MimetypesFileTypeMap().getContentType(fileName);
+		if (mimeType.startsWith("image/") && !isValidImage(file.getInputStream())) {
+			throw new IllegalRequestException("The file has invalid content");
+		}
+		
 		if (visit != null && encounter == null) {
 			encounter = ctx.getAttachmentEncounter(patient, visit, provider);
 		}
@@ -201,6 +213,26 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		
 		return ConversionUtil.convertToRepresentation(obs,
 		    new CustomRepresentation(AttachmentsConstants.REPRESENTATION_OBS));
+	}
+	
+	private boolean isValidImage(InputStream fileStream) {
+		try {
+			BufferedImage image = ImageIO.read(fileStream);
+			image.getHeight();
+			image.getWidth();
+			return true;
+		}
+		catch (IOException e) {
+			return false;
+		}
+		finally {
+			if (fileStream.markSupported()) {
+				try {
+					fileStream.reset();
+				}
+				catch (IOException e) {}
+			}
+		}
 	}
 	
 	@Override
