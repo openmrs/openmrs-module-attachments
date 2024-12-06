@@ -36,7 +36,7 @@
 
   <properties>
     <openMRSVersion>2.2.0</openMRSVersion>
-    <webservices.restVersion>2.33.0</webservices.restVersion>
+    <webservices.restVersion>2.47.0-SNAPSHOT</webservices.restVersion>
     <serialization.xstreamVersion>0.2.8</serialization.xstreamVersion>
     <javaxVersion>3.0.1</javaxVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
