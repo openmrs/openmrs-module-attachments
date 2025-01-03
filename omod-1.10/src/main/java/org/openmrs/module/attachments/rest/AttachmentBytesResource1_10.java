@@ -24,6 +24,7 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.BaseRestController;
 import org.openmrs.obs.ComplexData;
 import org.openmrs.web.WebUtil;
+import org.owasp.encoder.Encode;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,7 +72,7 @@ public class AttachmentBytesResource1_10 extends BaseRestController {
 		try {
 			byte[] bytes = attComplexData.asByteArray();
 			if (mimeType != null && mimeType.startsWith("text")) {
-				String byteString = WebUtil.encodeForHtmlContent(new String(bytes, StandardCharsets.UTF_8));
+				String byteString = Encode.forHtmlContent(new String(bytes, StandardCharsets.UTF_8));
 				bytes = byteString.getBytes(StandardCharsets.UTF_8);
 			}
 			response.getOutputStream().write(bytes);
