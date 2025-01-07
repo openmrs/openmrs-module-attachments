@@ -10,37 +10,39 @@ import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.obs.ComplexData;
 
 /**
- * Attachment represents all the parts of a complex obs that make an "attachment".
+ * Attachment represents all the parts of a complex obs that make an
+ * "attachment".
  *
  * @author Mekom Solutions
  */
 public class Attachment extends BaseOpenmrsData implements java.io.Serializable {
-	
+
 	private static final long serialVersionUID = -3552798988737497690L;
-	
+
 	protected Integer id = null;
-	
+
 	protected Date dateTime = null;
-	
+
 	protected String comment = "";
-	
+
 	protected String filename = "";
-	
+
 	protected String bytesMimeType = null;
-	
+
 	protected ContentFamily bytesContentFamily = null;
-	
+
 	protected ComplexData complexData = null;
-	
+
 	public Attachment() {
 	}
-	
+
 	/**
-	 * @param obs A complex obs
+	 * @param obs
+	 *            A complex obs
 	 */
 	public Attachment(Obs obs) {
 		super();
-		
+
 		setUuid(obs.getUuid());
 		setId(obs.getId());
 		setCreator(obs.getCreator());
@@ -50,10 +52,10 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 		setVoided(obs.getVoided());
 		setVoidedBy(obs.getVoidedBy());
 		setVoidReason(obs.getVoidReason());
-		
+
 		setDateTime(obs.getObsDatetime());
 		setComment(obs.getComment());
-		
+
 		// Chomp the UUID off the end of the obs if any
 		String filename = new ValueComplex(obs.getValueComplex()).getFileName();
 		if (filename != null) {
@@ -67,21 +69,23 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 				filename = filename.substring(0, uuidIdx) + extension;
 			}
 		}
-		
+
 		setFilename(filename);
 		setComplexData(obs.getComplexData());
 	}
-	
+
 	/**
-	 * @param obs A complex obs
+	 * @param obs
+	 *            A complex obs
 	 */
 	public Attachment(Obs obs, ComplexDataHelper complexDataHelper) {
 		this(obs);
-		
+
 		setBytesMimeType(complexDataHelper.getContentType(obs.getComplexData()));
-		setBytesContentFamily(AttachmentsContext.getContentFamily(complexDataHelper.getContentType(obs.getComplexData())));
+		setBytesContentFamily(
+				AttachmentsContext.getContentFamily(complexDataHelper.getContentType(obs.getComplexData())));
 	}
-	
+
 	public Obs getObs() {
 		Obs obs = Context.getObsService().getObsByUuid(getUuid());
 		if (obs == null) {
@@ -101,61 +105,61 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 		obs.setComplexData(getComplexData());
 		return obs;
 	}
-	
+
 	@Override
 	public Integer getId() {
 		return id;
 	}
-	
+
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
+
 	public Date getDateTime() {
 		return dateTime;
 	}
-	
+
 	public void setDateTime(Date dateTime) {
 		this.dateTime = dateTime;
 	}
-	
+
 	public String getComment() {
 		return comment;
 	}
-	
+
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	
+
 	public String getFilename() {
 		return filename;
 	}
-	
+
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
-	
+
 	public ComplexData getComplexData() {
 		return complexData;
 	}
-	
+
 	public void setComplexData(ComplexData complexData) {
 		this.complexData = complexData;
 	}
-	
+
 	public void setBytesMimeType(String bytesMimeType) {
 		this.bytesMimeType = bytesMimeType;
 	}
-	
+
 	public String getBytesMimeType() {
 		return bytesMimeType;
 	}
-	
+
 	public ContentFamily getBytesContentFamily() {
 		return bytesContentFamily;
 	}
-	
+
 	public void setBytesContentFamily(ContentFamily bytesContentFamily) {
 		this.bytesContentFamily = bytesContentFamily;
 	}

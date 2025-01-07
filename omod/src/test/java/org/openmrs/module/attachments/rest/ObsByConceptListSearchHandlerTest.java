@@ -23,81 +23,81 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @SuppressWarnings("unchecked")
 public class ObsByConceptListSearchHandlerTest extends MainResourceControllerTest {
-	
+
 	private String PATIENT_UUID = "5946f880-b197-400b-9caa-a3c661d23041";
-	
+
 	private String CONCEPT_1_UUID = "a09ab2c5-878e-4905-b25d-5784167d0216";
-	
+
 	private String CONCEPT_2_UUID = "c607c80f-1ea9-4da3-bb88-6276ce8868dd";
-	
+
 	private String CONCEPT_2_SOURCE = "CIEL";
-	
+
 	private String CONCEPT_2_NUMBER = "5089";
-	
+
 	private String CONCEPT_3_UUID = "96408258-000b-424e-af1a-403919332938";
-	
+
 	private ObsService obsService;
-	
+
 	private ConceptService conceptService;
-	
+
 	@Autowired
 	private AttachmentsContext context;
-	
+
 	@Before
 	public void init() throws Exception {
 		obsService = context.getObsService();
 		conceptService = context.getConceptService();
 	}
-	
+
 	@Test
 	public void search_shouldReturnObsByPatientAndConceptList() throws Exception {
 		MockHttpServletRequest req = request(RequestMethod.GET, getURI());
-		
+
 		req.addParameter("patient", PATIENT_UUID);
 		req.addParameter("conceptList", CONCEPT_1_UUID + "," + CONCEPT_2_UUID + "," + CONCEPT_3_UUID);
-		
+
 		SimpleObject result = deserialize(handle(req));
 		List<Object> hits = (List<Object>) result.get("results");
-		
+
 		Assert.assertEquals(6, hits.size());
 	}
-	
+
 	@Test
 	public void search_shouldReturnEmptyWhenPatientIsNotFound() throws Exception {
 		MockHttpServletRequest req = request(RequestMethod.GET, getURI());
-		
+
 		req.addParameter("patient", "abcd-e");
 		req.addParameter("conceptList", CONCEPT_1_UUID + "," + CONCEPT_2_UUID + "," + CONCEPT_3_UUID);
-		
+
 		SimpleObject result = deserialize(handle(req));
 		List<Object> hits = (List<Object>) result.get("results");
-		
+
 		Assert.assertEquals(0, hits.size());
 	}
-	
+
 	@Test
 	public void search_shouldIgnoreNonExisitingConcept() throws Exception {
 		MockHttpServletRequest req = request(RequestMethod.GET, getURI());
-		
+
 		req.addParameter("patient", PATIENT_UUID);
 		req.addParameter("conceptList", CONCEPT_1_UUID + "," + "abc1-mks-123a" + "," + CONCEPT_3_UUID);
-		
+
 		SimpleObject result = deserialize(handle(req));
 		List<Object> hits = (List<Object>) result.get("results");
-		
+
 		Assert.assertEquals(3, hits.size());
 	}
-	
+
 	@Test
 	public void search_shouldSortByDescendingOrder() throws Exception {
 		MockHttpServletRequest req = request(RequestMethod.GET, getURI());
-		
+
 		req.addParameter("patient", PATIENT_UUID);
 		req.addParameter("conceptList", CONCEPT_1_UUID + "," + CONCEPT_2_UUID + "," + CONCEPT_3_UUID);
-		
+
 		SimpleObject result = deserialize(handle(req));
 		List<Object> hits = (List<Object>) result.get("results");
-		
+
 		for (int i = 0; i < hits.size(); i++) {
 			Obs obs1 = obsService.getObsByUuid((String) PropertyUtils.getProperty(hits.get(i), "uuid"));
 			if (i > 0) {
@@ -106,34 +106,34 @@ public class ObsByConceptListSearchHandlerTest extends MainResourceControllerTes
 			}
 		}
 	}
-	
+
 	// @Ignore("The standardTestDataset.xml does not create mappings. Skipping this
 	// test")
 	@Test
 	public void parseConceptList_shouldHandleMappingsAndUuids() throws Exception {
-		
+
 		String conceptListStr = CONCEPT_1_UUID + "," + CONCEPT_2_SOURCE + ":" + CONCEPT_2_NUMBER + "," + CONCEPT_3_UUID;
-		
+
 		ConceptService conceptServiceMock = mock(ConceptService.class);
-		
+
 		when(conceptServiceMock.getConceptByMapping(CONCEPT_2_NUMBER, CONCEPT_2_SOURCE))
-		        .thenReturn(conceptService.getConceptByUuid(CONCEPT_2_UUID));
+				.thenReturn(conceptService.getConceptByUuid(CONCEPT_2_UUID));
 		when(conceptServiceMock.getConceptByUuid(CONCEPT_1_UUID))
-		        .thenReturn(conceptService.getConceptByUuid(CONCEPT_1_UUID));
+				.thenReturn(conceptService.getConceptByUuid(CONCEPT_1_UUID));
 		when(conceptServiceMock.getConceptByUuid(CONCEPT_3_UUID))
-		        .thenReturn(conceptService.getConceptByUuid(CONCEPT_3_UUID));
-		
+				.thenReturn(conceptService.getConceptByUuid(CONCEPT_3_UUID));
+
 		ObsByConceptListSearchHandler searchHandler = new ObsByConceptListSearchHandler();
 		List<Concept> conceptList = searchHandler.parseConceptList(conceptListStr, conceptServiceMock);
-		
+
 		Assert.assertEquals(3, conceptList.size());
 	}
-	
+
 	@Override
 	public String getUuid() {
 		return "be48cdcb-6a76-47e3-9f2e-2635032f3a9a";
 	}
-	
+
 	/**
 	 * @see org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest#shouldGetAll()
 	 */
@@ -142,12 +142,12 @@ public class ObsByConceptListSearchHandlerTest extends MainResourceControllerTes
 	public void shouldGetAll() throws Exception {
 		super.shouldGetAll();
 	}
-	
+
 	@Override
 	public String getURI() {
 		return "obs";
 	}
-	
+
 	@Override
 	public long getAllCount() {
 		// This method is never called since the 'shouldGetAll' test is overridden and

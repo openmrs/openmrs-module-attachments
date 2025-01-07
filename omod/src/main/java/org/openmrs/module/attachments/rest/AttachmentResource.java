@@ -60,25 +60,25 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.springframework.web.multipart.MultipartFile;
 
 @Resource(name = RestConstants.VERSION_1 + "/"
-        + AttachmentsConstants.ATTACHMENT_URI, supportedClass = Attachment.class, supportedOpenmrsVersions = {
-                "2.2.* - 9.*" })
+		+ AttachmentsConstants.ATTACHMENT_URI, supportedClass = Attachment.class, supportedOpenmrsVersions = {
+				"2.2.* - 9.*"})
 public class AttachmentResource extends DataDelegatingCrudResource<Attachment> implements Uploadable {
-	
+
 	protected static final String REASON = "REST web service";
-	
+
 	@Override
 	public Attachment newDelegate() {
 		return new Attachment();
 	}
-	
+
 	@Override
 	public Attachment save(Attachment delegate) {
 		Obs obs = Context.getObsService().saveObs(delegate.getObs(), REASON);
 		return new Attachment(obs,
-		        Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class)
-		                .getComplexDataHelper());
+				Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class)
+						.getComplexDataHelper());
 	}
-	
+
 	@Override
 	public Attachment getByUniqueId(String uniqueId) {
 		Obs obs = Context.getObsService().getObsByUuid(uniqueId);
@@ -86,25 +86,29 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 			throw new GenericRestException(uniqueId + " does not identify a complex obs.", null);
 		else {
 			return new Attachment(obs,
-			        Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class)
-			                .getComplexDataHelper());
+					Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class)
+							.getComplexDataHelper());
 		}
 	}
-	
+
 	@Override
 	protected void delete(Attachment delegate, String reason, RequestContext context) throws ResponseException {
-		String encounterUuid = delegate.getObs().getEncounter() != null ? delegate.getObs().getEncounter().getUuid() : null;
+		String encounterUuid = delegate.getObs().getEncounter() != null
+				? delegate.getObs().getEncounter().getUuid()
+				: null;
 		Context.getObsService().voidObs(delegate.getObs(), REASON);
 		voidEncounterIfEmpty(Context.getEncounterService(), encounterUuid);
 	}
-	
+
 	@Override
 	public void purge(Attachment delegate, RequestContext context) throws ResponseException {
-		String encounterUuid = delegate.getObs().getEncounter() != null ? delegate.getObs().getEncounter().getUuid() : null;
+		String encounterUuid = delegate.getObs().getEncounter() != null
+				? delegate.getObs().getEncounter().getUuid()
+				: null;
 		Context.getObsService().purgeObs(delegate.getObs());
 		voidEncounterIfEmpty(Context.getEncounterService(), encounterUuid);
 	}
-	
+
 	@Override
 	public Object upload(MultipartFile file, RequestContext context) throws ResponseException, IOException {
 		// Prepare Parameters
@@ -115,10 +119,10 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		String fileCaption = context.getParameter("fileCaption");
 		String instructions = context.getParameter("instructions");
 		String base64Content = context.getParameter("base64Content");
-		
+
 		AttachmentsContext ctx = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT,
-		    AttachmentsContext.class);
-		
+				AttachmentsContext.class);
+
 		if (base64Content != null) {
 			file = new Base64MultipartFile(base64Content, file.getName(), file.getOriginalFilename());
 		}
@@ -126,60 +130,59 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		if (ctx.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
 			throw new IllegalRequestException("The file exceeds the maximum size");
 		}
-		
+
 		// Verify file extension
 		String fileName = file.getOriginalFilename();
 		int idx = fileName.lastIndexOf(".");
 		String fileExtension = idx > 0 && idx < fileName.length() - 1 ? fileName.substring(idx + 1) : "";
-		
+
 		String[] allowedExtensions = ctx.getAllowedFileExtensions();
 		if (allowedExtensions != null && allowedExtensions.length > 0 && Arrays.stream(allowedExtensions)
-		        .filter(s -> s != null && !s.isEmpty()).noneMatch(fileExtension::equalsIgnoreCase)) {
+				.filter(s -> s != null && !s.isEmpty()).noneMatch(fileExtension::equalsIgnoreCase)) {
 			throw new IllegalRequestException("The extension " + fileExtension + " is not valid");
 		}
-		
+
 		// Verify file name
 		String[] deniedFileNames = ctx.getDeniedFileNames();
 		if (deniedFileNames != null && deniedFileNames.length > 0 && Arrays.stream(deniedFileNames)
-		        .filter(s -> s != null && !s.isEmpty()).anyMatch(fileName::equalsIgnoreCase)) {
+				.filter(s -> s != null && !s.isEmpty()).anyMatch(fileName::equalsIgnoreCase)) {
 			throw new IllegalRequestException("The file name is not valid");
 		}
-		
+
 		// Verify Parameters
 		if (patient == null) {
 			throw new IllegalRequestException("A patient parameter must be provided when uploading an attachment.");
 		}
-		
+
 		if (StringUtils.isEmpty(instructions))
 			instructions = ValueComplex.INSTRUCTIONS_DEFAULT;
-		
+
 		// Verify Parameters
 		if (encounter != null && visit != null) {
 			if (encounter.getVisit() != visit) {
 				throw new IllegalRequestException(
-				        "The specified encounter does not belong to the provided visit, upload aborted.");
+						"The specified encounter does not belong to the provided visit, upload aborted.");
 			}
 		}
-		
+
 		// Verify Content Type
 		if (allowedExtensions != null && allowedExtensions.length > 0) {
 			Tika tika = new Tika();
 			String fileType = tika.detect(file.getInputStream());
 			try {
 				MimeType mimeType = MimeTypes.getDefaultMimeTypes().forName(fileType);
-				
+
 				List<String> mimeTypeExtensions = mimeType.getExtensions().stream()
-				        .map(extension -> extension.replace(".", "")).collect(Collectors.toList());
-				
+						.map(extension -> extension.replace(".", "")).collect(Collectors.toList());
+
 				if (!CollectionUtils.containsAny(mimeTypeExtensions, Arrays.asList(allowedExtensions))) {
 					throw new IllegalRequestException("The file content type " + fileType + " is not allowed");
 				}
-			}
-			catch (MimeTypeException ex) {
+			} catch (MimeTypeException ex) {
 				throw new APIException("Failed to detect the file content type", ex);
 			}
 		}
-		
+
 		// Verify the file contents
 		// Just in case the magic bytes are manipulated, we are using the submitted file
 		// extension to get the mime type
@@ -187,54 +190,54 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		if (mimeType.startsWith("image/") && !isValidImage(file.getInputStream())) {
 			throw new IllegalRequestException("The file has invalid content");
 		}
-		
+
 		if (visit != null && encounter == null) {
 			encounter = ctx.getAttachmentEncounter(patient, visit, provider);
 		}
-		
+
 		if (encounter != null && visit == null) {
 			visit = encounter.getVisit();
 		}
-		
+
 		// Save Obs
 		Obs obs;
 		switch (getContentFamily(file.getContentType())) {
-			case IMAGE:
-				obs = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER, ComplexObsSaver.class)
-				        .saveImageAttachment(visit, patient, encounter, fileCaption, file, instructions);
+			case IMAGE :
+				obs = Context
+						.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER, ComplexObsSaver.class)
+						.saveImageAttachment(visit, patient, encounter, fileCaption, file, instructions);
 				break;
-			
-			case OTHER:
-			default:
-				obs = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER, ComplexObsSaver.class)
-				        .saveOtherAttachment(visit, patient, encounter, fileCaption, file, instructions);
+
+			case OTHER :
+			default :
+				obs = Context
+						.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER, ComplexObsSaver.class)
+						.saveOtherAttachment(visit, patient, encounter, fileCaption, file, instructions);
 				break;
 		}
-		
+
 		return ConversionUtil.convertToRepresentation(obs,
-		    new CustomRepresentation(AttachmentsConstants.REPRESENTATION_OBS));
+				new CustomRepresentation(AttachmentsConstants.REPRESENTATION_OBS));
 	}
-	
+
 	private boolean isValidImage(InputStream fileStream) {
 		try {
 			BufferedImage image = ImageIO.read(fileStream);
 			image.getHeight();
 			image.getWidth();
 			return true;
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			return false;
-		}
-		finally {
+		} finally {
 			if (fileStream.markSupported()) {
 				try {
 					fileStream.reset();
+				} catch (IOException e) {
 				}
-				catch (IOException e) {}
 			}
 		}
 	}
-	
+
 	@Override
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
@@ -246,21 +249,21 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		description.addProperty("complexData");
 		return description;
 	}
-	
+
 	@Override
 	public Model getCREATEModel(Representation rep) {
 		return new ModelImpl().property("comment", new StringProperty()).property("dateTime", new DateProperty())
-		        .property("filename", new StringProperty()).property("bytesMimeType", new StringProperty())
-		        
-		        .property("bytesContentFamily", new EnumProperty(AttachmentsConstants.ContentFamily.class))
-		        .property("complexData", new StringProperty(StringProperty.Format.URI));
+				.property("filename", new StringProperty()).property("bytesMimeType", new StringProperty())
+
+				.property("bytesContentFamily", new EnumProperty(AttachmentsConstants.ContentFamily.class))
+				.property("complexData", new StringProperty(StringProperty.Format.URI));
 	}
-	
+
 	@Override
 	public Model getUPDATEModel(Representation rep) {
 		return getCREATEModel(rep);
 	}
-	
+
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
@@ -273,16 +276,16 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		description.addSelfLink();
 		return description;
 	}
-	
+
 	@Override
 	public Model getGETModel(Representation rep) {
 		ModelImpl model = (ModelImpl) super.getGETModel(rep);
 		return model.property("uuid", new StringProperty()).property("dateTime", new DateProperty())
-		        .property("filename", new StringProperty()).property("comment", new StringProperty())
-		        .property("bytesMimeType", new StringProperty())
-		        .property("bytesContentFamily", new EnumProperty(AttachmentsConstants.ContentFamily.class));
+				.property("filename", new StringProperty()).property("comment", new StringProperty())
+				.property("bytesMimeType", new StringProperty())
+				.property("bytesContentFamily", new EnumProperty(AttachmentsConstants.ContentFamily.class));
 	}
-	
+
 	/**
 	 * Voids the encounter if it contains no non-voided obs.
 	 *
@@ -295,11 +298,12 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 			encounterService.voidEncounter(encounter, "foo");
 		}
 	}
-	
+
 	/**
 	 * Get the Attachments using AttachmentService.
 	 *
-	 * @param as specifies the AttachmentService instance.
+	 * @param as
+	 *            specifies the AttachmentService instance.
 	 * @param patient
 	 * @param visit
 	 * @param encounter
@@ -307,16 +311,17 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 	 * @param includeVoided
 	 */
 	public List<Attachment> search(AttachmentsService as, Patient patient, Visit visit, Encounter encounter,
-	        String includeEncounterless, boolean includeVoided) {
-		
+			String includeEncounterless, boolean includeVoided) {
+
 		List<Attachment> attachmentList = new ArrayList<>();
-		
+
 		if (includeEncounterless != null) {
 			if (includeEncounterless.equals("only")) {
 				attachmentList = as.getEncounterlessAttachments(patient, includeVoided);
-				
+
 			} else {
-				attachmentList = as.getAttachments(patient, BooleanUtils.toBoolean(includeEncounterless), includeVoided);
+				attachmentList = as.getAttachments(patient, BooleanUtils.toBoolean(includeEncounterless),
+						includeVoided);
 			}
 		} else {
 			if (encounter != null && visit == null) {
@@ -328,16 +333,16 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 			if (encounter == null && visit == null) {
 				attachmentList = as.getAttachments(patient, includeVoided);
 			}
-			
+
 		}
 		return attachmentList;
 	}
-	
+
 	/**
-	 * Get Attachments by given parameters (paged according to context if necessary) only if a patient
-	 * parameter exists in the request set on the {@link RequestContext}, optional encounter, visit ,
-	 * includeEncounterless , includeVoided request parameters can be specified to filter the
-	 * attachments.
+	 * Get Attachments by given parameters (paged according to context if necessary)
+	 * only if a patient parameter exists in the request set on the
+	 * {@link RequestContext}, optional encounter, visit , includeEncounterless ,
+	 * includeVoided request parameters can be specified to filter the attachments.
 	 *
 	 * @param context
 	 * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource#doSearch(org.openmrs.module.webservices.rest.web.RequestContext)
@@ -345,61 +350,62 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 	 */
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
-		
+
 		// Prepare Parameters
 		Patient patient = Context.getPatientService().getPatientByUuid(context.getParameter("patient"));
 		Visit visit = Context.getVisitService().getVisitByUuid(context.getParameter("visit"));
 		Encounter encounter = Context.getEncounterService().getEncounterByUuid(context.getParameter("encounter"));
 		String includeEncounterless = context.getParameter("includeEncounterless");
 		boolean includeVoided = BooleanUtils.toBoolean(context.getParameter("includeVoided"));
-		
+
 		// Verify Parameters
 		if (patient == null) {
 			throw new IllegalRequestException("A patient parameter must be provided when searching the attachments.");
 		}
-		
+
 		// Search Attachments
 		List<Attachment> attachmentList = search(
-		    Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class)
-		            .getAttachmentsService(),
-		    patient, visit, encounter, includeEncounterless, includeVoided);
-		
+				Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class)
+						.getAttachmentsService(),
+				patient, visit, encounter, includeEncounterless, includeVoided);
+
 		if (attachmentList != null) {
 			return new NeedsPaging<>(attachmentList, context);
 		}
 		return new EmptySearchResult();
 	}
-	
+
 	/**
 	 * Wrapper class to be passed to ComplexObsSaver#saveImageAttachment
-	 * ComplexObsSaver#saveImageAttachment needs a MultipartFile but the image could either be a
-	 * MultipartFile or a base64 encoded image. This class will only implement the methods used by
-	 * ComplexObsSaver#saveImageAttachment. This way we won't have to make any changes to the
-	 * implementation of ComplexObsSaver#saveImageAttachment and will also make very little change to
-	 * the AttachmentResource1_10#upload implementation. This is also helps us avoid adding an extra
-	 * dependency to MockMultipartFile for converting the base64 encoded String to a MultipartFile
-	 * object.
+	 * ComplexObsSaver#saveImageAttachment needs a MultipartFile but the image could
+	 * either be a MultipartFile or a base64 encoded image. This class will only
+	 * implement the methods used by ComplexObsSaver#saveImageAttachment. This way
+	 * we won't have to make any changes to the implementation of
+	 * ComplexObsSaver#saveImageAttachment and will also make very little change to
+	 * the AttachmentResource1_10#upload implementation. This is also helps us avoid
+	 * adding an extra dependency to MockMultipartFile for converting the base64
+	 * encoded String to a MultipartFile object.
 	 */
 	static final class Base64MultipartFile implements MultipartFile {
-		
+
 		private final String fileName;
-		
+
 		private final String originalFileName;
-		
+
 		private final String contentType;
-		
+
 		private final long size;
-		
+
 		private final InputStream in;
-		
+
 		private final byte[] bytes;
-		
+
 		public Base64MultipartFile(String base64Image, String fileName, String originalFileName) throws IOException {
 			String[] parts = base64Image.split(",", 2);
 			String contentType = parts[0].split(":")[1].split(";")[0].trim();
 			String contents = parts[1].trim();
 			byte[] decodedImage = Base64.decodeBase64(contents.getBytes());
-			
+
 			this.fileName = fileName;
 			this.originalFileName = originalFileName;
 			this.in = new ByteArrayInputStream(decodedImage);
@@ -407,46 +413,46 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 			this.bytes = decodedImage;
 			this.size = decodedImage.length;
 		}
-		
+
 		@Override
 		public String getName() {
 			return this.fileName;
 		}
-		
+
 		@Override
 		public String getOriginalFilename() {
 			return this.originalFileName;
 		}
-		
+
 		@Override
 		public String getContentType() {
 			return this.contentType;
 		}
-		
+
 		@Override
 		public boolean isEmpty() {
 			return false;
 		}
-		
+
 		@Override
 		public long getSize() {
 			return this.size;
 		}
-		
+
 		@Override
 		public byte[] getBytes() {
 			return this.bytes;
 		}
-		
+
 		@Override
 		public InputStream getInputStream() {
 			return this.in;
 		}
-		
+
 		@Override
 		public void transferTo(File dest) throws IllegalStateException {
 			throw new APIException("Operation transferTo is not supported for Base64MultipartFile");
 		}
 	}
-	
+
 }

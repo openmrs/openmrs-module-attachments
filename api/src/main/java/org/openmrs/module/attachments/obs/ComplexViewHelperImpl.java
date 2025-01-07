@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 @Component(AttachmentsConstants.COMPONENT_COMPLEXVIEW_HELPER)
 @OpenmrsProfile(openmrsPlatformVersion = "2.2.* - 9.*")
 public class ComplexViewHelperImpl implements ComplexViewHelper {
-	
+
 	public String getView(Obs obs, String view) {
-		
+
 		return view;
 	}
 }

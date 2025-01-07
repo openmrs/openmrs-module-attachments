@@ -21,24 +21,24 @@ import org.springframework.util.CollectionUtils;
 
 @Transactional(readOnly = true)
 public class AttachmentsServiceImpl implements AttachmentsService {
-	
+
 	private final Log log = LogFactory.getLog(getClass());
-	
+
 	protected final static String NON_COMPLEX_OBS_ERR = "A non-complex obs was returned while fetching attachments, are the concepts complex configured properly?";
-	
+
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
 	private AttachmentsContext ctx;
-	
+
 	@Override
 	public List<Attachment> getAttachments(Patient patient, boolean includeEncounterless, boolean includeVoided) {
 		List<Person> persons = new ArrayList<>();
 		List<Concept> questionConcepts = getAttachmentConcepts();
 		persons.add(patient);
-		
+
 		List<Obs> obsList = ctx.getObsService().getObservations(persons, null, questionConcepts, null, null, null, null,
-		    null, null, null, null, includeVoided);
-		
+				null, null, null, null, includeVoided);
+
 		List<Attachment> attachments = new ArrayList<>();
 		for (Obs obs : obsList) {
 			if (!obs.isComplex()) {
@@ -52,21 +52,21 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		}
 		return attachments;
 	}
-	
+
 	@Override
 	public List<Attachment> getAttachments(Patient patient, boolean includeVoided) {
 		return getAttachments(patient, true, includeVoided);
 	}
-	
+
 	@Override
 	public List<Attachment> getEncounterlessAttachments(Patient patient, boolean includeVoided) {
 		List<Person> persons = new ArrayList<>();
 		List<Concept> questionConcepts = getAttachmentConcepts();
 		persons.add(patient);
-		
+
 		List<Obs> obsList = ctx.getObsService().getObservations(persons, null, questionConcepts, null, null, null, null,
-		    null, null, null, null, includeVoided);
-		
+				null, null, null, null, includeVoided);
+
 		List<Attachment> attachments = new ArrayList<>();
 		for (Obs obs : obsList) {
 			if (!obs.isComplex()) {
@@ -79,7 +79,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		}
 		return attachments;
 	}
-	
+
 	@Override
 	public List<Attachment> getAttachments(Patient patient, Encounter encounter, boolean includeVoided) {
 		List<Person> persons = new ArrayList<>();
@@ -87,10 +87,10 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		List<Concept> questionConcepts = getAttachmentConcepts();
 		persons.add(patient);
 		encounters.add(encounter);
-		
+
 		List<Obs> obsList = ctx.getObsService().getObservations(persons, encounters, questionConcepts, null, null, null,
-		    null, null, null, null, null, includeVoided);
-		
+				null, null, null, null, null, includeVoided);
+
 		List<Attachment> attachments = new ArrayList<>();
 		for (Obs obs : obsList) {
 			if (!obs.isComplex()) {
@@ -101,21 +101,21 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		}
 		return attachments;
 	}
-	
+
 	@Override
 	public List<Attachment> getAttachments(Patient patient, final Visit visit, boolean includeVoided) {
 		List<Visit> visits = new ArrayList<>();
 		visits.add(visit);
-		List<Encounter> encounters = ctx.getEncounterService().getEncounters(patient, null, null, null, null, null, null,
-		    null, visits, includeVoided);
-		
+		List<Encounter> encounters = ctx.getEncounterService().getEncounters(patient, null, null, null, null, null,
+				null, null, visits, includeVoided);
+
 		List<Attachment> attachments = new ArrayList<>();
 		for (Encounter encounter : encounters) {
 			attachments.addAll(getAttachments(patient, encounter, includeVoided));
 		}
 		return attachments;
 	}
-	
+
 	// Get list of attachment complex concepts
 	protected List<Concept> getAttachmentConcepts() {
 		List<String> conceptsComplex = ctx.getConceptComplexList();
@@ -133,7 +133,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		}
 		return questionConcepts;
 	}
-	
+
 	@Transactional
 	@Override
 	public Attachment save(Attachment delegate, String reason) {
@@ -142,13 +142,12 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		try {
 			obs = Context.getObsService().saveObs(delegate.getObs(), reason);
 			attachment = new Attachment(obs);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to save the complex obs: " + obs, e);
 		}
 		return attachment;
 	}
-	
+
 	private Obs getComplexObs(Obs obs) {
 		if (obs.getComplexData() != null) {
 			return obs;

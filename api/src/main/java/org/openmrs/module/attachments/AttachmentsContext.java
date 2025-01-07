@@ -54,117 +54,117 @@ import org.springframework.stereotype.Component;
  */
 @Component(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
 public class AttachmentsContext {
-	
+
 	protected final Log log = LogFactory.getLog(getClass());
-	
+
 	@Autowired
 	@Qualifier("obsService")
 	protected ObsService obsService;
-	
+
 	@Autowired
 	@Qualifier("locationService")
 	protected LocationService locationService;
-	
+
 	@Autowired
 	@Qualifier("conceptService")
 	protected ConceptService conceptService;
-	
+
 	@Autowired
 	@Qualifier("encounterService")
 	protected EncounterService encounterService;
-	
+
 	@Autowired
 	@Qualifier("visitService")
 	protected VisitService visitService;
-	
+
 	@Autowired
 	@Qualifier("patientService")
 	protected PatientService patientService;
-	
+
 	@Autowired
 	@Qualifier("providerService")
 	protected ProviderService providerService;
-	
+
 	@Autowired
 	@Qualifier("adminService")
 	protected AdministrationService administrationService;
-	
+
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXDATA_HELPER)
 	protected ComplexDataHelper complexDataHelper;
-	
+
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXVIEW_HELPER)
 	protected ComplexViewHelper complexViewHelper;
-	
+
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_VISIT_COMPATIBILITY)
 	protected VisitCompatibility visitCompatibility;
-	
+
 	/*
 	 * Exposing all needed services through OUR context
 	 */
-	
+
 	public ConceptService getConceptService() {
 		return conceptService;
 	}
-	
+
 	public ObsService getObsService() {
 		return obsService;
 	}
-	
+
 	public VisitService getVisitService() {
 		return visitService;
 	}
-	
+
 	public ProviderService getProviderService() {
 		return providerService;
 	}
-	
+
 	public PatientService getPatientService() {
 		return patientService;
 	}
-	
+
 	public EncounterService getEncounterService() {
 		return encounterService;
 	}
-	
+
 	public LocationService getLocationService() {
 		return locationService;
 	}
-	
+
 	public ComplexDataHelper getComplexDataHelper() {
 		return complexDataHelper;
 	}
-	
+
 	public ComplexViewHelper getComplexViewHelper() {
 		return complexViewHelper;
 	}
-	
+
 	public AdministrationService getAdministrationService() {
 		return administrationService;
 	}
-	
+
 	public AttachmentsService getAttachmentsService() {
 		return Context.getService(AttachmentsService.class);
 	}
-	
+
 	public boolean doAllowEmptyCaption() {
 		return this.getBooleanByGlobalProperty(AttachmentsConstants.GP_ALLOW_NO_CAPTION);
 	}
-	
+
 	public boolean isOneEncounterPerVisit() {
 		String flowStr = getAdministrationService().getGlobalProperty(AttachmentsConstants.GP_ENCOUNTER_SAVING_FLOW);
 		return StringUtils.equalsIgnoreCase(flowStr, "unique");
 	}
-	
+
 	public Encounter getAttachmentEncounter(Patient patient, Visit visit, Provider provider) {
 		Encounter encounter = new Encounter();
 		encounter.setVisit(visit);
 		encounter.setEncounterType(getEncounterType());
 		encounter.setPatient(patient);
 		encounter.setLocation(visit != null ? visit.getLocation() : null);
-		
+
 		boolean saveEncounter = true;
 		if (visit != null && isOneEncounterPerVisit()) {
 			List<Encounter> encounters = visitCompatibility.getNonVoidedEncounters(visit);
@@ -189,7 +189,7 @@ public class AttachmentsContext {
 		}
 		return encounter;
 	}
-	
+
 	/*
 	 * @return An array of comma-separated values for the named global property
 	 */
@@ -197,7 +197,7 @@ public class AttachmentsContext {
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
 		return StringUtils.isEmpty(globalProperty) ? new String[0] : globalProperty.split(",");
 	}
-	
+
 	/*
 	 * See super#getIntegerByGlobalProperty(String globalPropertyName)
 	 */
@@ -205,13 +205,12 @@ public class AttachmentsContext {
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
 		try {
 			return Double.valueOf(globalProperty);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new APIException("Global property " + globalPropertyName + " with value " + globalProperty
-			        + " is not parsable as a Double", e);
+					+ " is not parsable as a Double", e);
 		}
 	}
-	
+
 	/*
 	 * See super#getIntegerByGlobalProperty(String globalPropertyName)
 	 */
@@ -219,7 +218,7 @@ public class AttachmentsContext {
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
 		return BooleanUtils.toBoolean(globalProperty);
 	}
-	
+
 	protected Concept getConceptByGlobalProperty(String globalPropertyName) {
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
 		Concept concept = conceptService.getConceptByUuid(globalProperty);
@@ -228,7 +227,7 @@ public class AttachmentsContext {
 		}
 		return concept;
 	}
-	
+
 	protected EncounterType getEncounterTypeByGlobalProperty(String globalPropertyName, boolean required) {
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
 		EncounterType encounterType = encounterService.getEncounterTypeByUuid(globalProperty);
@@ -237,18 +236,17 @@ public class AttachmentsContext {
 		}
 		return encounterType;
 	}
-	
+
 	protected int getIntegerByGlobalProperty(String globalPropertyName) {
 		String globalProperty = getGlobalProperty(globalPropertyName, true);
 		try {
 			return Integer.parseInt(globalProperty);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new APIException("Global property " + globalPropertyName + " with value " + globalProperty
-			        + " is not parsable as an Integer", e);
+					+ " is not parsable as an Integer", e);
 		}
 	}
-	
+
 	protected String getGlobalProperty(String globalPropertyName, boolean required) {
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
 		if (required && StringUtils.isEmpty(globalProperty)) {
@@ -256,7 +254,7 @@ public class AttachmentsContext {
 		}
 		return globalProperty;
 	}
-	
+
 	/**
 	 * @return The default concept complex used to save uploaded documents.
 	 */
@@ -269,30 +267,32 @@ public class AttachmentsContext {
 		}
 		return conceptComplex;
 	}
-	
+
 	/**
-	 * Returns a simple String-String map from its JSON representation saved as a global property.
+	 * Returns a simple String-String map from its JSON representation saved as a
+	 * global property.
 	 */
 	protected Map<String, String> getMapByGlobalProperty(String globalPropertyName) {
-		Map<String, String> map = Collections.<String, String> emptyMap();
+		Map<String, String> map = Collections.<String, String>emptyMap();
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-		TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {};
+		TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
+		};
 		try {
 			map = mapper.readValue(globalProperty, typeRef);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			log.error("Could not parse global property '" + globalPropertyName + "' into a Map<String, String>.", e);
 		}
 		return map;
 	}
-	
+
 	/**
-	 * @param contentFamily The content family ('IMAGE', 'PDF', 'OTHER', ... etc).
-	 * @return The concept complex configured to save files belonging to the content family, and if none
-	 *         is found the default concept complex is returned.
+	 * @param contentFamily
+	 *            The content family ('IMAGE', 'PDF', 'OTHER', ... etc).
+	 * @return The concept complex configured to save files belonging to the content
+	 *         family, and if none is found the default concept complex is returned.
 	 */
 	public ConceptComplex getConceptComplex(ContentFamily contentFamily) {
 		Map<String, String> map = getMapByGlobalProperty(AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_MAP);
@@ -302,68 +302,70 @@ public class AttachmentsContext {
 		}
 		return getDefaultConceptComplex();
 	}
-	
+
 	public List<String> getConceptComplexList() {
-		List<String> list = Collections.<String> emptyList();
+		List<String> list = Collections.<String>emptyList();
 		final String globalPropertyName = AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_LIST;
 		String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
-		
+
 		ObjectMapper mapper = new ObjectMapper();
-		TypeReference<ArrayList<String>> typeRef = new TypeReference<ArrayList<String>>() {};
+		TypeReference<ArrayList<String>> typeRef = new TypeReference<ArrayList<String>>() {
+		};
 		try {
 			list = mapper.readValue(StringEscapeUtils.unescapeHtml(globalProperty), typeRef);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			log.error("Could not parse global property '" + globalPropertyName + "' into a List<String>.", e);
 		}
 		return list;
 	}
-	
+
 	/**
 	 * @return The encounter type for encounters recording the upload of an image.
 	 */
 	public EncounterType getEncounterType() {
-		EncounterType encounterType = getEncounterTypeByGlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID, false);
+		EncounterType encounterType = getEncounterTypeByGlobalProperty(AttachmentsConstants.GP_ENCOUNTER_TYPE_UUID,
+				false);
 		return encounterType;
 	}
-	
+
 	public Boolean associateWithVisit() {
-		String associateWithVisitGP = administrationService.getGlobalProperty(AttachmentsConstants.GP_ASSOCIATE_WITH_VISIT);
+		String associateWithVisitGP = administrationService
+				.getGlobalProperty(AttachmentsConstants.GP_ASSOCIATE_WITH_VISIT);
 		return associateWithVisitGP != null ? Boolean.valueOf(associateWithVisitGP) : true;
 	}
-	
+
 	/**
 	 * @return The max file size allowed to be uploaded (in Megabytes).
 	 */
 	public Double getMaxUploadFileSize() {
 		return getDoubleByGlobalProperty(AttachmentsConstants.GP_MAX_UPLOAD_FILE_SIZE);
 	}
-	
+
 	/**
 	 * @return The allowed file extensions.
 	 */
 	public String[] getAllowedFileExtensions() {
 		return getCommaSeparatedGlobalPropertyValues(AttachmentsConstants.GP_ALLOWED_FILE_EXTENSIONS);
 	}
-	
+
 	/**
 	 * @return The denied file names.
 	 */
 	public String[] getDeniedFileNames() {
 		return getCommaSeparatedGlobalPropertyValues(AttachmentsConstants.GP_DENIED_FILE_NAMES);
 	}
-	
+
 	/**
 	 * @return The max file size allowed to be stored (in Megabytes).
 	 */
 	public Double getMaxStorageFileSize() {
 		return getDoubleByGlobalProperty(AttachmentsConstants.GP_MAX_STORAGE_FILE_SIZE);
 	}
-	
+
 	public boolean isWebcamAllowed() {
 		return getBooleanByGlobalProperty(AttachmentsConstants.GP_WEBCAM_ALLOWED);
 	}
-	
+
 	public double getMaxCompressionRatio() {
 		double maxStorageSize = getMaxStorageFileSize();
 		double maxUploadSize = getMaxUploadFileSize();
@@ -372,25 +374,26 @@ public class AttachmentsContext {
 		else
 			return 1;
 	}
-	
+
 	public Integer getDashboardThumbnailCount() {
 		return getIntegerByGlobalProperty(AttachmentsConstants.GP_DASHBOARD_THUMBNAIL_COUNT);
 	}
-	
+
 	public Integer getMaxRestResultsCount() {
 		return getIntegerByGlobalProperty(AttachmentsConstants.GP_RESTWS_MAX_RESULTS_DEFAULT_GLOBAL_PROPERTY_NAME);
 	}
-	
+
 	// TODO: Figure out if this is good enough
 	public EncounterRole getEncounterRole() {
-		EncounterRole unknownRole = getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
+		EncounterRole unknownRole = getEncounterService()
+				.getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
 		if (unknownRole == null) {
 			throw new APIException(
-			        "No 'Unknown' encounter role with uuid " + EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID + ".");
+					"No 'Unknown' encounter role with uuid " + EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID + ".");
 		}
 		return unknownRole;
 	}
-	
+
 	public static String getExtension(String mimeType) {
 		String ext = "bin";
 		if (mimeTypes.containsKey(mimeType)) {
@@ -398,14 +401,15 @@ public class AttachmentsContext {
 		}
 		return ext;
 	}
-	
+
 	/**
-	 * @return The 'view' that should be affected when performing CRUD operation on complex obs.
+	 * @return The 'view' that should be affected when performing CRUD operation on
+	 *         complex obs.
 	 */
 	public String getCRUDDocumentView() {
 		return AttachmentsConstants.ATT_VIEW_ORIGINAL;
 	}
-	
+
 	public static double getCompressionRatio(double fileByteSize, double maxByteSize) {
 		double compressionRatio = 1;
 		if (fileByteSize > 0) {
@@ -413,9 +417,10 @@ public class AttachmentsContext {
 		}
 		return compressionRatio;
 	}
-	
+
 	/**
-	 * @param mimeType The MIME type of the uploaded content.
+	 * @param mimeType
+	 *            The MIME type of the uploaded content.
 	 * @return The type/family of uploaded content based on the MIME type.
 	 */
 	public static ContentFamily getContentFamily(String mimeType) {
@@ -428,7 +433,7 @@ public class AttachmentsContext {
 		}
 		return contentFamily;
 	}
-	
+
 	public static Map<String, ContentFamily> getContentFamilyMap() {
 		Map<String, ContentFamily> map = new HashMap<String, ContentFamily>();
 		for (String mimeType : mimeTypes.keySet()) {
@@ -436,11 +441,11 @@ public class AttachmentsContext {
 		}
 		return map;
 	}
-	
+
 	public static boolean isMimeTypeHandled(String mimeType) {
 		return mimeTypes.containsKey(mimeType);
 	}
-	
+
 	private static final Map<String, String> mimeTypes;
 	static {
 		mimeTypes = new HashMap<String, String>();
