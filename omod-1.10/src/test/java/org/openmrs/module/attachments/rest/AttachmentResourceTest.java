@@ -43,7 +43,7 @@ public class AttachmentResourceTest {
 		when(Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class))
 		        .thenReturn(ctx);
 	}
-
+	
 	@Test
 	public void get_shouldReturnFilenameProperty() {
 		// Arrange
@@ -61,14 +61,14 @@ public class AttachmentResourceTest {
 		attachmentObs.setValueComplex("m3ks | instructions.default | text/plain | filename.png");
 		when(service.getObsByUuid("1234")).thenReturn(attachmentObs);
 		when(service.getComplexObs(1, AttachmentsConstants.ATT_VIEW_CRUD)).thenReturn(attachmentObs);
-
+		
 		// Act
 		Attachment attachment = res.getByUniqueId("1234");
-
+		
 		// Assert
 		assertThat(attachment.getFilename(), equalTo("filename.png"));
 	}
-
+	
 	@Test
 	public void search_shouldInvokeApiForEncounterAttachments() {
 		// Setup

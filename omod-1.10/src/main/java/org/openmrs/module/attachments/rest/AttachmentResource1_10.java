@@ -2,6 +2,7 @@ package org.openmrs.module.attachments.rest;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,6 +49,9 @@ import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.IllegalRequestException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.activation.MimetypesFileTypeMap;
+import javax.imageio.ImageIO;
 
 @Resource(name = RestConstants.VERSION_1 + "/"
         + AttachmentsConstants.ATTACHMENT_URI, supportedClass = Attachment.class, supportedOpenmrsVersions = { "1.10.*",
@@ -160,6 +164,14 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 			}
 		}
 		
+		// Verify the file contents
+		// Just in case the magic bytes are manipulated, we are using the submitted file
+		// extension to get the mime type
+		String mimeType = new MimetypesFileTypeMap().getContentType(fileName);
+		if (mimeType.startsWith("image/") && !isValidImage(file.getInputStream())) {
+			throw new IllegalRequestException("The file has invalid content");
+		}
+		
 		if (visit != null && encounter == null) {
 			encounter = ctx.getAttachmentEncounter(patient, visit, provider);
 		}
@@ -183,6 +195,26 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		
 		return ConversionUtil.convertToRepresentation(obs,
 		    new CustomRepresentation(AttachmentsConstants.REPRESENTATION_OBS));
+	}
+	
+	private boolean isValidImage(InputStream fileStream) {
+		try {
+			BufferedImage image = ImageIO.read(fileStream);
+			image.getHeight();
+			image.getWidth();
+			return true;
+		}
+		catch (IOException e) {
+			return false;
+		}
+		finally {
+			if (fileStream.markSupported()) {
+				try {
+					fileStream.reset();
+				}
+				catch (IOException e) {}
+			}
+		}
 	}
 	
 	@Override
