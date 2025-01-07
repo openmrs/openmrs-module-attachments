@@ -23,10 +23,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Controller
 public class AttachmentsManageController {
-	
+
 	protected final Log log = LogFactory.getLog(getClass());
-	
-	@RequestMapping(value = "/module/" + AttachmentsConstants.MODULE_ARTIFACT_ID + "/manage", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/module/" + AttachmentsConstants.MODULE_ARTIFACT_ID
+			+ "/manage", method = RequestMethod.GET)
 	public void manage(ModelMap model) {
 		model.addAttribute("user", Context.getAuthenticatedUser());
 	}

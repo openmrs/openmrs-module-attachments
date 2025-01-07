@@ -45,105 +45,105 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 @Deprecated
 @Controller
 public class AttachmentsController {
-	
+
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
 	protected AttachmentsContext context;
-	
+
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_VISIT_COMPATIBILITY)
 	protected VisitCompatibility visitCompatibility;
-	
+
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER)
 	protected ComplexObsSaver obsSaver;
-	
+
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXVIEW_HELPER)
 	protected ComplexViewHelper complexViewHelper;
-	
+
 	protected final Log log = LogFactory.getLog(getClass());
-	
+
 	@RequestMapping(value = AttachmentsConstants.LEGACY_UPLOAD_ATTACHMENT_URL, method = RequestMethod.POST)
 	@ResponseBody
 	public Object uploadDocuments(@RequestParam("patient") Patient patient,
-	        @RequestParam(value = "visit", required = false) Visit visit,
-	        @RequestParam(value = "provider", required = false) Provider provider,
-	        @RequestParam("fileCaption") String fileCaption,
-	        @RequestParam(value = "instructions", required = false) String instructions,
-	        MultipartHttpServletRequest request) {
+			@RequestParam(value = "visit", required = false) Visit visit,
+			@RequestParam(value = "provider", required = false) Provider provider,
+			@RequestParam("fileCaption") String fileCaption,
+			@RequestParam(value = "instructions", required = false) String instructions,
+			MultipartHttpServletRequest request) {
 		try {
 			Iterator<String> fileNameIterator = request.getFileNames(); // Looping through the uploaded file names.
-			
+
 			while (fileNameIterator.hasNext()) {
 				String uploadedFileName = fileNameIterator.next();
 				MultipartFile multipartFile = request.getFile(uploadedFileName);
-				
+
 				Encounter encounter = null;
 				if (context.associateWithVisit()) {
 					encounter = context.getAttachmentEncounter(patient, visit, provider);
 				}
-				
+
 				if (StringUtils.isEmpty(instructions))
 					instructions = ValueComplex.INSTRUCTIONS_DEFAULT;
-				
+
 				switch (getContentFamily(multipartFile.getContentType())) {
-					case IMAGE:
-						obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, multipartFile, instructions);
+					case IMAGE :
+						obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, multipartFile,
+								instructions);
 						break;
-					
-					case OTHER:
-					default:
-						obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartFile, instructions);
+
+					case OTHER :
+					default :
+						obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartFile,
+								instructions);
 						break;
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new AttachmentNotSavedException(e.getMessage(), e);
 		}
-		
+
 		return ConversionUtil.convertToRepresentation(obsSaver.getObs(),
-		    new CustomRepresentation(AttachmentsConstants.REPRESENTATION_OBS));
+				new CustomRepresentation(AttachmentsConstants.REPRESENTATION_OBS));
 	}
-	
+
 	@RequestMapping(value = AttachmentsConstants.DOWNLOAD_ATTACHMENT_URL, method = RequestMethod.GET)
 	public void downloadDocument(@RequestParam("obs") String obsUuid,
-	        @RequestParam(value = "view", required = false) String view, HttpServletResponse response) {
+			@RequestParam(value = "view", required = false) String view, HttpServletResponse response) {
 		if (StringUtils.isEmpty(view))
 			view = AttachmentsConstants.ATT_VIEW_ORIGINAL;
-		
+
 		// Getting the Core/Platform complex data object
 		Obs obs = context.getObsService().getObsByUuid(obsUuid);
 		Obs complexObs = context.getObsService().getComplexObs(obs.getObsId(), complexViewHelper.getView(obs, view));
 		ComplexData complexData = complexObs.getComplexData();
-		
+
 		// Switching to our complex data object
 		ValueComplex valueComplex = new ValueComplex(obs.getValueComplex());
 		AttachmentComplexData docComplexData = context.getComplexDataHelper().build(valueComplex.getInstructions(),
-		    complexData);
-		
+				complexData);
+
 		String mimeType = docComplexData.getMimeType();
 		try {
 			// The document meta data is sent as HTTP headers.
 			response.setContentType(mimeType);
 			response.addHeader("Content-Family", getContentFamily(mimeType).name()); // custom header
 			response.addHeader("File-Name", docComplexData.getTitle()); // custom header
-			response.addHeader("File-Ext", AttachmentBytesResource1_10.getExtension(docComplexData.getTitle(), mimeType)); // custom header
+			response.addHeader("File-Ext",
+					AttachmentBytesResource1_10.getExtension(docComplexData.getTitle(), mimeType)); // custom header
 			response.addHeader("Content-Disposition", "attachment");
 			switch (getContentFamily(mimeType)) {
-				default:
+				default :
 					response.getOutputStream().write(docComplexData.asByteArray());
 					break;
 			}
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			response.setStatus(500);
 			log.error("Could not write to HTTP response for when fetching obs with" + " VALUE_COMPLEX='"
-			        + complexObs.getValueComplex() + "'," + " OBS_ID='" + complexObs.getId() + "'," + " OBS_UUID='"
-			        + complexObs.getUuid() + "'",
-			    e);
+					+ complexObs.getValueComplex() + "'," + " OBS_ID='" + complexObs.getId() + "'," + " OBS_UUID='"
+					+ complexObs.getUuid() + "'", e);
 		}
 	}
 }

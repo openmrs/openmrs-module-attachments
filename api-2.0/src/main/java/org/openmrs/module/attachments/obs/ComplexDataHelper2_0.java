@@ -9,17 +9,17 @@ import org.springframework.stereotype.Component;
 @Component(AttachmentsConstants.COMPONENT_COMPLEXDATA_HELPER)
 @OpenmrsProfile(openmrsPlatformVersion = "2.0.0")
 public class ComplexDataHelper2_0 extends ComplexDataHelper1_10 implements ComplexDataHelper {
-	
+
 	@Override
 	public AttachmentComplexData build(String instructions, String title, Object data, String mimeType) {
 		return new AttachmentComplexData2_0(instructions, title, data, mimeType);
 	}
-	
+
 	@Override
 	public AttachmentComplexData build(String instructions, ComplexData complexData) {
 		return build(instructions, complexData.getTitle(), complexData.getData(), getContentType(complexData));
 	}
-	
+
 	@Override
 	public String getContentType(ComplexData complexData) {
 		if (StringUtils.isEmpty(complexData.getMimeType())) {

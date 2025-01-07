@@ -26,32 +26,32 @@ import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily
 
 @Component
 public class AttachmentsPageController {
-	
+
 	public void controller(@RequestParam("patient") Patient patient,
-	        @RequestParam(value = "visit", required = false) Visit visit, UiSessionContext sessionContext, UiUtils ui,
-	        @InjectBeans AttachmentsContext context, @SpringBean DomainWrapperFactory domainWrapperFactory,
-	        PageModel model) {
+			@RequestParam(value = "visit", required = false) Visit visit, UiSessionContext sessionContext, UiUtils ui,
+			@InjectBeans AttachmentsContext context, @SpringBean DomainWrapperFactory domainWrapperFactory,
+			PageModel model) {
 		//
 		// The client-side config specific to the page
 		//
 		Map<String, Object> jsonConfig = ClientConfigFragmentController.getClientConfig(context, ui);
 		jsonConfig.put("patient", convertToRef(patient));
-		
+
 		VisitDomainWrapper visitWrapper = getVisitDomainWrapper(domainWrapperFactory, patient, visit,
-		    context.getAdtService(), sessionContext.getSessionLocation());
+				context.getAdtService(), sessionContext.getSessionLocation());
 		jsonConfig.put("visit", visitWrapper == null ? null : convertVisit(visitWrapper.getVisit()));
-		
+
 		jsonConfig.put("contentFamilyMap", getContentFamilyMap());
 		jsonConfig.put("associateWithVisit", context.associateWithVisit());
-		
+
 		model.put("jsonConfig", ui.toJson(jsonConfig));
-		
+
 		// For Core Apps's patient header.
 		model.put("patient", patient);
 	}
-	
+
 	protected VisitDomainWrapper getVisitDomainWrapper(DomainWrapperFactory domainWrapperFactory, Patient patient,
-	        Visit visit, AdtService adtService, Location sessionLocation) {
+			Visit visit, AdtService adtService, Location sessionLocation) {
 		VisitDomainWrapper visitWrapper = null;
 		if (visit == null) {
 			// Fetching the active visit, if any.
@@ -62,13 +62,14 @@ public class AttachmentsPageController {
 		}
 		return visitWrapper;
 	}
-	
+
 	protected Object convertVisit(Object object) {
-		return object == null ? null
-		        : ConversionUtil.convertToRepresentation(object,
-		            new CustomRepresentation(AttachmentsConstants.REPRESENTATION_VISIT));
+		return object == null
+				? null
+				: ConversionUtil.convertToRepresentation(object,
+						new CustomRepresentation(AttachmentsConstants.REPRESENTATION_VISIT));
 	}
-	
+
 	protected Object convertToRef(Object object) {
 		return object == null ? null : ConversionUtil.convertToRepresentation(object, Representation.REF);
 	}

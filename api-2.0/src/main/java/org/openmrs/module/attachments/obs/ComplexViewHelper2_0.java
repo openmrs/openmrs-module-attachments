@@ -15,25 +15,25 @@ import org.springframework.stereotype.Component;
 @Component(AttachmentsConstants.COMPONENT_COMPLEXVIEW_HELPER)
 @OpenmrsProfile(openmrsPlatformVersion = "2.0.0")
 public class ComplexViewHelper2_0 implements ComplexViewHelper {
-	
+
 	private final Log log = LogFactory.getLog(getClass());
-	
+
 	@Autowired
 	private ObsService obsService;
-	
+
 	@Override
 	public String getView(Obs obs, String view) {
-		
+
 		ComplexObsHandler handler = obsService.getHandler(obs);
-		
+
 		if (handler.supportsView(view)) {
 			return view;
 		} else {
 			log.warn("The requested view '" + view + "' is not supported by the complex obs handler '"
-			        + handler.getClass().getCanonicalName() + "', reverting to the default view '" + RAW_VIEW + "'.");
+					+ handler.getClass().getCanonicalName() + "', reverting to the default view '" + RAW_VIEW + "'.");
 		}
-		
+
 		return RAW_VIEW;
-		
+
 	}
 }
