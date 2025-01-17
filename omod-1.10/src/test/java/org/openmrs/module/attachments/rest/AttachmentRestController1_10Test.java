@@ -269,7 +269,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		String fileCaption = "Test file caption";
 		{
 			// Setup
-			String fileName = "testFile1.dat";
+			String fileName = "testFile1.png";
 			Patient patient = Context.getPatientService().getPatient(2);
 			Visit visit = Context.getVisitService().getVisit(1);
 
@@ -302,7 +302,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		String fileCaption = "Test file caption";
 
 		// Setup
-		String fileName = "testFile2.dat";
+		String fileName = "testFile2.png";
 		Patient patient = Context.getPatientService().getPatient(2);
 
 		MockMultipartHttpServletRequest request = newUploadRequest(getURI());
@@ -331,7 +331,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 	public void postAttachment_shouldUploadFileToEncounter() throws Exception {
 		String fileCaption = "Test file caption";
 		// Setup
-		String fileName = "testFile3.dat";
+		String fileName = "testFile3.png";
 		Patient patient = Context.getPatientService().getPatient(2);
 		Encounter encounter = testHelper.getTestEncounter();
 
@@ -368,7 +368,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 		// Build the request parameters
 		byte[] bytesIn = baos.toByteArray();
 		String fileCaption = "Test file caption";
-		String fileName = "testFile2.dat";
+		String fileName = "testFile2.png";
 		String base64Content = "data:image/png;base64," + Base64.encodeBase64String(bytesIn);
 		Patient patient = Context.getPatientService().getPatient(2);
 
@@ -390,7 +390,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 
 		// Verify
 		Assert.assertEquals(obs.getComment(), fileCaption);
-		Assert.assertTrue(complexData.getTitle().startsWith("cameracapture"));
+		Assert.assertTrue(complexData.getTitle().startsWith("testFile2"));
 		Assert.assertArrayEquals(bytesIn, bytesOut);
 		Assert.assertNull(obs.getEncounter());
 	}
@@ -399,7 +399,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 	public void postAttachment_shouldThrowWhenVisitAndEncounterDoNotMatch() throws Exception {
 		// Setup
 		String fileCaption = "Test file caption";
-		String fileName = "testFile1.dat";
+		String fileName = "testFile1.png";
 		Patient patient = Context.getPatientService().getPatient(2);
 		Visit visit = Context.getVisitService().getVisit(1);
 		Encounter encounter = Context.getEncounterService().getEncounter(3);
@@ -421,7 +421,7 @@ public class AttachmentRestController1_10Test extends MainResourceControllerTest
 	public void postAttachment_shouldNotUploadFileAboveSizeLimit() throws Exception {
 		// Setup
 		String fileCaption = "Test file caption";
-		String fileName = "testFile1.dat";
+		String fileName = "testFile1.png";
 		Patient patient = Context.getPatientService().getPatient(2);
 		Visit visit = Context.getVisitService().getVisit(1);
 

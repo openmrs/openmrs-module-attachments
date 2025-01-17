@@ -3,6 +3,7 @@ package org.openmrs.module.attachments.rest;
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -119,7 +120,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		String base64Content = context.getParameter("base64Content");
 
 		if (base64Content != null) {
-			file = new Base64MultipartFile(base64Content);
+			file = new Base64MultipartFile(base64Content, file.getName(), file.getOriginalFilename());
 		}
 		// Verify File Size
 		if (ctx.getMaxUploadFileSize() * 1024 * 1024 < (double) file.getSize()) {
@@ -341,34 +342,32 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 	 * adding an extra dependency to MockMultipartFile for converting the base64
 	 * encoded String to a MultipartFile object.
 	 */
-	class Base64MultipartFile implements MultipartFile {
+	static final class Base64MultipartFile implements MultipartFile {
 
-		private String fileName;
+		private final String fileName;
 
-		private String contentType;
+		private final String originalFileName;
 
-		private long size;
+		private final String contentType;
 
-		private InputStream in;
+		private final long size;
 
-		private byte[] bytes;
+		private final InputStream in;
 
-		public Base64MultipartFile(String base64Image) throws IOException {
-			String[] parts = base64Image.split(",");
+		private final byte[] bytes;
+
+		public Base64MultipartFile(String base64Image, String fileName, String originalFileName) throws IOException {
+			String[] parts = base64Image.split(",", 2);
 			String contentType = parts[0].split(":")[1].split(";")[0].trim();
 			String contents = parts[1].trim();
 			byte[] decodedImage = Base64.decodeBase64(contents.getBytes());
-			final File temp = File.createTempFile("cameracapture", ".png");
-			try (OutputStream stream = new FileOutputStream(temp)) {
-				stream.write(decodedImage);
-			}
-			temp.deleteOnExit();
 
-			this.fileName = temp.getName();
-			this.in = new FileInputStream(temp);
+			this.fileName = fileName;
+			this.originalFileName = originalFileName;
+			this.in = new ByteArrayInputStream(decodedImage);
 			this.contentType = contentType;
 			this.bytes = decodedImage;
-			this.size = temp.length();
+			this.size = decodedImage.length;
 		}
 
 		@Override
@@ -378,7 +377,7 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 
 		@Override
 		public String getOriginalFilename() {
-			return this.fileName;
+			return this.originalFileName;
 		}
 
 		@Override
@@ -397,19 +396,18 @@ public class AttachmentResource1_10 extends DataDelegatingCrudResource<Attachmen
 		}
 
 		@Override
-		public byte[] getBytes() throws IOException {
+		public byte[] getBytes() {
 			return this.bytes;
 		}
 
 		@Override
-		public InputStream getInputStream() throws IOException {
+		public InputStream getInputStream() {
 			return this.in;
 		}
 
 		@Override
-		public void transferTo(File dest) throws IOException, IllegalStateException {
+		public void transferTo(File dest) throws IllegalStateException {
 			throw new APIException("Operation transferTo is not supported for Base64MultipartFile");
 		}
 	}
-
 }
