@@ -7,4 +7,34 @@
 	<!-- See http://www.liquibase.org/manual/home#available_database_refactorings 
 		for a list of supported elements and attributes -->
 
+	<changeSet id="20250128-1-ATT-56-insert-new-create-attachments-privilege" author="mgoodrich">
+		<comment>
+			ATT-56: Inconsistent permission to create attachments
+		</comment>
+		<insert tableName="privilege">
+			<column name="privilege" value="Create Attachments"/>
+			<column name="description" value="Allowed to create attachments"/>
+			<column name="uuid" value="550e8400-e29b-41d4-a716-446655440000"/>
+		</insert>
+	</changeSet>
+
+	<changeSet id="20250128-2-ATT-56-update-create-attachments-privilege" author="mgoodrich">
+		<comment>
+			ATT-56: Inconsistent permission to create attachments
+		</comment>
+		<update tableName="role_privilege">
+			<column name="privilege" value="Create Attachments"/>
+			<where>privilege='Create Attachment'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="20250128-3-ATT-56-remove-old-create-attachment-privilege" author="mgoodrich">
+		<comment>
+			ATT-56: Inconsistent permission to create attachments
+		</comment>
+		<delete tableName="privilege">
+			<where>privilege='Create Attachment'</where>
+		</delete>
+	</changeSet>
+
 </databaseChangeLog>
