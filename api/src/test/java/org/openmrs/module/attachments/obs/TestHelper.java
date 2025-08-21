@@ -184,7 +184,7 @@ public class TestHelper {
 
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
 		return obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, getTestDefaultFile(),
-				ValueComplex.INSTRUCTIONS_DEFAULT);
+				ValueComplex.INSTRUCTIONS_DEFAULT, null, null);
 	}
 
 	/**
@@ -210,7 +210,7 @@ public class TestHelper {
 
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
 		return obsSaver.saveImageAttachment(visit, patient, encounter, fileCaption, lastSavedMultipartImageFile,
-				ValueComplex.INSTRUCTIONS_DEFAULT);
+				ValueComplex.INSTRUCTIONS_DEFAULT, null, null);
 	}
 
 	/**
@@ -237,7 +237,7 @@ public class TestHelper {
 
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
 		return obsSaver.saveOtherAttachment(null, patient, null, fileCaption, getTestDefaultFile(),
-				ValueComplex.INSTRUCTIONS_DEFAULT);
+				ValueComplex.INSTRUCTIONS_DEFAULT, null, null);
 	}
 
 	public String getComplexObsDir() {
@@ -279,7 +279,7 @@ public class TestHelper {
 			MockMultipartFile multipartRandomFile = new MockMultipartFile(FilenameUtils.getBaseName(filename), filename,
 					"application/octet-stream", randomData);
 			obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartRandomFile,
-					ValueComplex.INSTRUCTIONS_DEFAULT));
+					ValueComplex.INSTRUCTIONS_DEFAULT, null, null));
 		}
 
 		// Saves a complex obs as if they had been saved outside of Attachments

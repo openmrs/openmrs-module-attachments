@@ -10,6 +10,7 @@
 package org.openmrs.module.attachments;
 
 import net.coobird.thumbnailator.Thumbnails;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.ConceptComplex;
@@ -56,19 +57,24 @@ public class ComplexObsSaver {
 		return obs;
 	}
 
-	protected void prepareComplexObs(Visit visit, Person person, Encounter encounter, String fileCaption) {
+	protected void prepareComplexObs(Visit visit, Person person, Encounter encounter, String fileCaption,
+			String formFieldNamespace, String formFieldPath) {
 		obs = new Obs(person, conceptComplex,
 				visit == null || visit.getStopDatetime() == null ? new Date() : visit.getStopDatetime(),
 				encounter != null ? encounter.getLocation() : null);
 		obs.setEncounter(encounter); // may be null
 		obs.setComment(fileCaption);
+		if (StringUtils.isNotBlank(formFieldNamespace) && StringUtils.isNotBlank(formFieldPath)) {
+			obs.setFormField(formFieldNamespace, formFieldPath);
+		}
 	}
 
 	public Obs saveImageAttachment(Visit visit, Person person, Encounter encounter, String fileCaption,
-			MultipartFile multipartFile, String instructions) throws IOException {
+			MultipartFile multipartFile, String instructions, String formFieldNamespace, String formFieldPath)
+			throws IOException {
 
 		conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
-		prepareComplexObs(visit, person, encounter, fileCaption);
+		prepareComplexObs(visit, person, encounter, fileCaption, formFieldNamespace, formFieldPath);
 
 		Object image = multipartFile.getInputStream();
 		double compressionRatio = getCompressionRatio(multipartFile.getSize(),
@@ -85,9 +91,10 @@ public class ComplexObsSaver {
 	}
 
 	public Obs saveOtherAttachment(Visit visit, Person person, Encounter encounter, String fileCaption,
-			MultipartFile multipartFile, String instructions) throws IOException {
+			MultipartFile multipartFile, String instructions, String formFieldNamespace, String formFieldPath)
+			throws IOException {
 		conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
-		prepareComplexObs(visit, person, encounter, fileCaption);
+		prepareComplexObs(visit, person, encounter, fileCaption, formFieldNamespace, formFieldPath);
 
 		obs.setComplexData(complexDataHelper.build(instructions, multipartFile.getOriginalFilename(),
 				multipartFile.getBytes(), multipartFile.getContentType()).asComplexData());
