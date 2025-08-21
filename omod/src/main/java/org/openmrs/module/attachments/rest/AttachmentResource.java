@@ -117,6 +117,8 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 		Encounter encounter = Context.getEncounterService().getEncounterByUuid(context.getParameter("encounter"));
 		Provider provider = Context.getProviderService().getProviderByUuid(context.getParameter("provider"));
 		String fileCaption = context.getParameter("fileCaption");
+		String formFieldNamespace = context.getParameter("formFieldNamespace");
+		String formFieldPath = context.getParameter("formFieldPath");
 		String instructions = context.getParameter("instructions");
 		String base64Content = context.getParameter("base64Content");
 
@@ -205,14 +207,16 @@ public class AttachmentResource extends DataDelegatingCrudResource<Attachment> i
 			case IMAGE :
 				obs = Context
 						.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER, ComplexObsSaver.class)
-						.saveImageAttachment(visit, patient, encounter, fileCaption, file, instructions);
+						.saveImageAttachment(visit, patient, encounter, fileCaption, file, instructions,
+								formFieldNamespace, formFieldPath);
 				break;
 
 			case OTHER :
 			default :
 				obs = Context
 						.getRegisteredComponent(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER, ComplexObsSaver.class)
-						.saveOtherAttachment(visit, patient, encounter, fileCaption, file, instructions);
+						.saveOtherAttachment(visit, patient, encounter, fileCaption, file, instructions,
+								formFieldNamespace, formFieldPath);
 				break;
 		}
 
