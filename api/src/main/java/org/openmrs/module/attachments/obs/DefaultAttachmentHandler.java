@@ -1,11 +1,9 @@
 package org.openmrs.module.attachments.obs;
 
-import java.io.File;
-
 import org.openmrs.Obs;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.obs.ComplexData;
-import org.openmrs.obs.handler.AbstractHandler;
 import org.openmrs.obs.handler.BinaryDataHandler;
 
 public class DefaultAttachmentHandler extends AbstractAttachmentHandler {
@@ -15,7 +13,7 @@ public class DefaultAttachmentHandler extends AbstractAttachmentHandler {
 	}
 
 	protected void setParentComplexObsHandler() {
-		setParent(new BinaryDataHandler());
+		setParent(Context.getRegisteredComponents(BinaryDataHandler.class).get(0));
 	}
 
 	protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view) {
@@ -28,9 +26,8 @@ public class DefaultAttachmentHandler extends AbstractAttachmentHandler {
 			// This handler doesn't have data for thumbnails, we return a null content
 			complexData = new ComplexData(valueComplex.getFileName(), null);
 		} else {
-			tmpObs = getParent().getObs(tmpObs, AttachmentsConstants.BINARYDATA_HANDLER_VIEW); // BinaryDataHandler
-																								// doesn't handle
-																								// several views
+			tmpObs = getParent().getObs(tmpObs, AttachmentsConstants.BINARYDATA_HANDLER_VIEW); // BinaryDataHan doesn't
+																								// handle several views
 			complexData = tmpObs.getComplexData();
 		}
 
@@ -39,20 +36,13 @@ public class DefaultAttachmentHandler extends AbstractAttachmentHandler {
 				complexData.getData(), valueComplex.getMimeType()).asComplexData();
 	}
 
-	protected boolean deleteComplexData(Obs obs, AttachmentComplexData complexData) {
-		// We use a temp obs whose value complex points to the file name
-		Obs tmpObs = new Obs();
-		tmpObs.setValueComplex(complexData.asComplexData().getTitle()); // Temp obs used as a safety
-		return getParent().purgeComplexData(tmpObs);
+	protected boolean deleteComplexData(Obs obs) {
+		return getParent().purgeComplexData(obs);
 	}
 
 	protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData) {
 		// We invoke the parent to inherit from the file saving routines.
 		obs = getParent().saveObs(obs);
-
-		File savedFile = AbstractHandler.getComplexDataFile(obs);
-		String savedFileName = savedFile.getName();
-
-		return new ValueComplex(complexData.getInstructions(), complexData.getMimeType(), savedFileName);
+		return new ValueComplex(complexData.getInstructions(), complexData.getMimeType(), obs.getValueComplex());
 	}
 }

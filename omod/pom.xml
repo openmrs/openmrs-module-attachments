@@ -49,13 +49,17 @@
 	    	<groupId>org.openmrs.web</groupId>
 	    	<artifactId>openmrs-web</artifactId>
 	    	<version>${openMRSVersion}</version>
-	    	<exclusions>
-	        	<exclusion>
-	            	<groupId>javax.servlet</groupId>
-	                	<artifactId>servlet-api</artifactId>
-	                </exclusion>
-	            </exclusions>
 	    	<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>jsp-api</artifactId>
+				</exclusion>
+			</exclusions>
 	    	<type>jar</type>
 	    </dependency>
 
@@ -73,6 +77,16 @@
 			<version>${openMRSVersion}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>jsp-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -102,27 +116,35 @@
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
+			<artifactId>webservices.rest-omod</artifactId>
+			<version>${webservices.restVersion}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
 			<artifactId>webservices.rest-omod-common</artifactId>
 			<version>${webservices.restVersion}</version>
 			<scope>provided</scope>
-			<type>test-jar</type>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
-			<artifactId>webservices.rest-omod-1.8</artifactId>
+			<artifactId>webservices.rest-omod-common</artifactId>
 			<version>${webservices.restVersion}</version>
-			<classifier>tests</classifier>
+			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-		
+		<!-- End OpenMRS modules -->
+
 		<dependency>
 	    	<groupId>javax.servlet</groupId>
 	    	<artifactId>javax.servlet-api</artifactId>
 	    	<version>${javaxVersion}</version>
 	    	<scope>provided</scope>
 	    </dependency>
-	    
+
 	    <dependency>
 		    <groupId>org.apache.tika</groupId>
 		    <artifactId>tika-core</artifactId>
@@ -141,7 +163,12 @@
 		    <version>2.17.0</version>
 		</dependency>
 
-		<!-- End OpenMRS modules -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-inline</artifactId>
+			<version>4.8.0</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 

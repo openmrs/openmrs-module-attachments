@@ -1,24 +1,27 @@
 package org.openmrs.module.attachments.obs;
 
 import static org.hamcrest.Matchers.lessThan;
+import static org.openmrs.module.attachments.obs.ImageAttachmentHandler.appendThumbnailSuffix;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.FilenameUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockMultipartFile;
 
 public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 
@@ -30,6 +33,11 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		testHelper.init();
 	}
 
+	@AfterEach
+	public void cleanupAfterEachTest() throws IOException {
+		testHelper.cleanup();
+	}
+
 	@After
 	public void tearDown() throws IOException {
 		testHelper.tearDown();
@@ -38,50 +46,46 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void saveComplexData_shouldSaveThumbnailToDisk() throws IOException {
 
-		// Replay
+		// Setup
 		Obs obs = testHelper.saveNormalSizeImageAttachment();
 
-		// Verif
-		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
-		File file = new File(
-				testHelper.getComplexObsDir() + "/" + FilenameUtils.removeExtension(mpFile.getOriginalFilename()) + "_"
-						+ obs.getUuid() + "." + FilenameUtils.getExtension(mpFile.getOriginalFilename()));
-		Assert.assertTrue(file.exists());
-		File thumbnail = new File(testHelper.getComplexObsDir() + "/"
-				+ ImageAttachmentHandler
-						.buildThumbnailFileName(FilenameUtils.removeExtension(mpFile.getOriginalFilename()) + "_"
-								+ obs.getUuid() + "." + FilenameUtils.getExtension(mpFile.getOriginalFilename())));
+		// Verify
+		String originalFilePath = testHelper.getFilePathFromObs(obs);
+		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
+
+		File originalFile = new File(encode(originalFilePath));;
+		Assert.assertTrue(originalFile.exists());
+
+		File thumbnail = new File(encode(thumbnailFilePath));
 		Assert.assertTrue(thumbnail.exists());
 
-		Assert.assertThat(thumbnail.length(), lessThan(file.length()));
+		Assert.assertThat(thumbnail.length(), lessThan(originalFile.length()));
 		BufferedImage img = ImageIO.read(thumbnail);
 		Assert.assertEquals(ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT, Math.max(img.getHeight(), img.getWidth()));
-
-		File noThumbnailFile = new File(testHelper.getComplexObsDir() + "/"
-				+ ImageAttachmentHandler
-						.buildNoThumbnailFileFileName(FilenameUtils.removeExtension(mpFile.getOriginalFilename()) + "_"
-								+ obs.getUuid() + "." + FilenameUtils.getExtension(mpFile.getOriginalFilename())));
-		Assert.assertFalse(noThumbnailFile.exists());
 	}
 
 	@Test
-	public void deleteComplexData_shouldDeleteThumbnailFromDisk() throws IOException {
+	public void deleteComplexData_shouldDeleteMainImageAndThumbnailFromDisk() throws IOException {
 
 		// Setup
 		Obs obs = testHelper.saveNormalSizeImageAttachment();
-		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
 
-		// Replay
+		// Sanity check
+		String originalFilePath = testHelper.getFilePathFromObs(obs);
+		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
+
+		File originalFile = new File(encode(originalFilePath));;
+		Assert.assertTrue(originalFile.exists());
+
+		File thumbnail = new File(encode(thumbnailFilePath));
+		Assert.assertTrue(thumbnail.exists());
+
+		// Purge Obs
 		obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
 		Context.getObsService().purgeObs(obs);
 
-		// Verif
-		File file = new File(testHelper.getComplexObsDir() + "/" + mpFile.getOriginalFilename());
-		Assert.assertFalse(file.exists());
-		File thumbnail = new File(testHelper.getComplexObsDir() + "/"
-				+ ImageAttachmentHandler
-						.buildThumbnailFileName(FilenameUtils.removeExtension(mpFile.getOriginalFilename()) + "_"
-								+ obs.getUuid() + "." + FilenameUtils.getExtension(mpFile.getOriginalFilename())));
+		// Verify Deleted
+		Assert.assertFalse(originalFile.exists());
 		Assert.assertFalse(thumbnail.exists());
 	}
 
@@ -90,19 +94,23 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 
 		// Setup
 		Obs obs = testHelper.saveNormalSizeImageAttachment();
-		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
-		File thumbnail = new File(testHelper.getComplexObsDir() + "/"
-				+ ImageAttachmentHandler
-						.buildThumbnailFileName(FilenameUtils.removeExtension(mpFile.getOriginalFilename()) + "_"
-								+ obs.getUuid() + "." + FilenameUtils.getExtension(mpFile.getOriginalFilename())));
+
+		// Verify
+		String originalFilePath = testHelper.getFilePathFromObs(obs);
+		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
+		File thumbnail = new File(encode(thumbnailFilePath));
 		Assert.assertTrue(thumbnail.exists());
-		byte[] expectedBytes = new BaseComplexData(thumbnail.getName(), ImageIO.read(thumbnail)).asByteArray();
+
+		String thumbnailName = thumbnail.getName();
+		byte[] expectedBytes = new BaseComplexData(decode(thumbnailName), ImageIO.read(thumbnail)).asByteArray();
 
 		// Replay
 		obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_THUMBNAIL);
 
-		// Verif
-		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obs.getComplexData()));
+		byte[] actualBytes = BaseComplexData.getByteArray(obs.getComplexData());
+
+		// Verify
+		Assert.assertArrayEquals(expectedBytes, actualBytes);
 	}
 
 	@Test
@@ -110,47 +118,44 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 
 		// Setup
 		Obs obs = testHelper.saveSmallSizeImageAttachment();
-		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
-		String originalFileName = mpFile.getOriginalFilename();
 
-		// Verif the buildNotThumbnailFileFileName()
-		File noThumbnailFile = new File(testHelper.getComplexObsDir() + "/"
-				+ ImageAttachmentHandler.buildNoThumbnailFileFileName(FilenameUtils.removeExtension(originalFileName)
-						+ "_" + obs.getUuid() + "." + FilenameUtils.getExtension(originalFileName)));
-		Assert.assertTrue(noThumbnailFile.exists());
-		// Not create new file name since it contained NO_THUMBNAIL_SUFFIX
-		noThumbnailFile = new File(testHelper.getComplexObsDir() + "/"
-				+ ImageAttachmentHandler.buildNoThumbnailFileFileName(noThumbnailFile.getName()));
-		Assert.assertTrue(noThumbnailFile.exists());
+		// Verify
+		String originalFilePath = testHelper.getFilePathFromObs(obs);
+		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 
-		// Verif the thumbnail file was NOT created
-		File thumbnail = new File(
-				testHelper.getComplexObsDir() + "/" + ImageAttachmentHandler.buildThumbnailFileName(originalFileName));
+		File originalFile = new File(encode(originalFilePath));;
+		Assert.assertTrue(originalFile.exists());
+
+		File thumbnail = new File(encode(thumbnailFilePath));
 		Assert.assertFalse(thumbnail.exists());
 
-		// Assert.assertThat(thumbnail.length(), lessThan(file.length()));
-		BufferedImage img = ImageIO.read(noThumbnailFile);
+		BufferedImage img = ImageIO.read(originalFile);
 		Assert.assertTrue(ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT >= Math.max(img.getHeight(), img.getWidth()));
 
-		// Check that the file name contains the no thumbnail suffix
-		Assert.assertTrue(ImageAttachmentHandler.isThumbnail(FilenameUtils.removeExtension(noThumbnailFile.getName())));
 	}
 
 	@Test
-	public void deleteComplexData_shouldDeleteNoThumbnailFromDisk() throws IOException {
+	public void deleteComplexData_shouldDeleteRegularFileFromDisk() throws IOException {
 
 		// Setup
 		Obs obs = testHelper.saveSmallSizeImageAttachment();
-		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
-		String originalFileName = mpFile.getOriginalFilename();
-		// Replay
+
+		// Sanity check
+		String originalFilePath = testHelper.getFilePathFromObs(obs);
+		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
+
+		File originalFile = new File(encode(originalFilePath));;
+		Assert.assertTrue(originalFile.exists());
+
+		File thumbnail = new File(encode(thumbnailFilePath));
+		Assert.assertFalse(thumbnail.exists()); // thumbnail should never have been created
+
+		// Purge Obs
 		obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
 		Context.getObsService().purgeObs(obs);
 
-		// Verif
-		File noThumbnailFile = new File(testHelper.getComplexObsDir() + "/"
-				+ ImageAttachmentHandler.buildNoThumbnailFileFileName(originalFileName));
-		Assert.assertFalse(noThumbnailFile.exists());
+		// Verify Deleted
+		Assert.assertFalse(originalFile.exists());
 	}
 
 	@Test
@@ -158,13 +163,12 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 
 		// Setup
 		Obs obs = testHelper.saveSmallSizeImageAttachment();
-		MockMultipartFile mpFile = testHelper.getLastSavedTestImageFile();
-		String originalFileName = mpFile.getOriginalFilename();
-		File noThumbnailFile = new File(testHelper.getComplexObsDir() + "/"
-				+ ImageAttachmentHandler.buildNoThumbnailFileFileName(FilenameUtils.removeExtension(originalFileName)
-						+ "_" + obs.getUuid() + "." + FilenameUtils.getExtension(originalFileName)));
-		Assert.assertTrue(noThumbnailFile.exists());
-		byte[] expectedBytes = new BaseComplexData(noThumbnailFile.getName(), ImageIO.read(noThumbnailFile))
+
+		String originalFilePath = testHelper.getFilePathFromObs(obs);
+		File originalFile = new File(encode(originalFilePath));
+		Assert.assertTrue(originalFile.exists());
+
+		byte[] expectedBytes = new BaseComplexData(decode(originalFile.getName()), ImageIO.read(originalFile))
 				.asByteArray();
 
 		// Replay
@@ -173,8 +177,25 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		Obs obsOriginalView = Context.getObsService().getComplexObs(obs.getId(),
 				AttachmentsConstants.ATT_VIEW_ORIGINAL);
 
-		// Verif
+		// Verify
 		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obsThumbnailView.getComplexData()));
 		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obsOriginalView.getComplexData()));
 	}
+
+	private String decode(String key) {
+		try {
+			return URLDecoder.decode(key, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private String encode(String key) {
+		try {
+			return URLEncoder.encode(key, "UTF-8").replace(".", "%2E").replace("*", "%2A").replace("%2F", "/");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }
