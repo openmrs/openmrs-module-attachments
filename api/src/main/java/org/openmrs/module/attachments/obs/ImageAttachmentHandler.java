@@ -120,8 +120,10 @@ public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 					Thumbnails.of(image).size(THUMBNAIL_MAX_HEIGHT, THUMBNAIL_MAX_WIDTH)
 							.outputFormat(obs.getComplexData().getMimeType().split("/")[1].toLowerCase())
 							.toOutputStream(outputStream);
-				}, null, null, key); // TODO explain why this is a bit of a hack
-
+				}, null, null, key);
+				// the above is a bit of hack... we pass in the entire value we want use as a key instead of specifying the filename,
+				// module ID and key suffix and having the storage service to generate the full key for us
+				// this is because we need to be able to recreate the key based on the key of the main image
 			} catch (IOException e) {
 				log.error("Failed to save thumbnail file: " + key, e);
 			}
