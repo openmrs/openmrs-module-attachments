@@ -50,8 +50,9 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	 * Appends THUMBNAIL_SUFFIX to a file name or storage service key
 	 */
 	public static String appendThumbnailSuffix(String fileNameOrKey) {
-		return FilenameUtils.removeExtension(fileNameOrKey) + THUMBNAIL_SUFFIX + "."
-				+ FilenameUtils.getExtension(fileNameOrKey);
+		String fileName = FilenameUtils.removeExtension(fileNameOrKey);
+		String ext = FilenameUtils.getExtension(fileNameOrKey);
+		return fileName + THUMBNAIL_SUFFIX + (StringUtils.isEmpty(ext) ? "" : "." + ext);
 	}
 
 	public void setComplexViewHelper(ComplexViewHelper complexViewHelper) {
