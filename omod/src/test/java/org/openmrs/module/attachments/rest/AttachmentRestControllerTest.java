@@ -158,20 +158,20 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 	public void deleteAttachment_shouldVoidObs() throws Exception {
 
 		// Setup
-		File file = new File(testHelper.getFilePathFromObs(obs));
+		File file = new File(testHelper.encode(testHelper.getFilePathFromObs(obs)));
 
 		// Replay
 		handle(newDeleteRequest(getURI() + "/" + getUuid()));
 
 		// Verify
 		assertTrue(obsService.getObsByUuid(getUuid()).isVoided());
-		assertTrue(file.exists());  // voiding does not delete file
+		assertTrue(file.exists()); // voiding does not delete file
 	}
 
 	@Test
 	public void purgeAttachment_shouldPurgeObsAndRemoveFile() throws Exception {
 		// Setup
-		File file = new File(testHelper.getFilePathFromObs(obs));
+		File file = new File(testHelper.encode(testHelper.getFilePathFromObs(obs)));
 		assertTrue(file.exists()); // sanity check
 
 		// Replay

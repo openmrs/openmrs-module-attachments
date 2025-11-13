@@ -156,8 +156,8 @@ public class TestHelper {
 
 	public String getFilePathFromObs(Obs obs) {
 		// storage directory + everything after the last | in the value complex
-		return encodeKey(getTestStorageDirPath() + File.separator
-				+ obs.getValueComplex().split("\\|")[obs.getValueComplex().split("\\|").length - 1]);
+		return getTestStorageDirPath() + File.separator
+				+ obs.getValueComplex().split("\\|")[obs.getValueComplex().split("\\|").length - 1];
 	}
 
 	/**
@@ -247,7 +247,15 @@ public class TestHelper {
 				ValueComplex.INSTRUCTIONS_DEFAULT, null, null);
 	}
 
-	private String encodeKey(String key) {
+	public String decode(String key) {
+		try {
+			return URLDecoder.decode(key, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public String encode(String key) {
 		try {
 			return URLEncoder.encode(key, "UTF-8").replace(".", "%2E").replace("*", "%2A").replace("%2F", "/");
 		} catch (UnsupportedEncodingException e) {

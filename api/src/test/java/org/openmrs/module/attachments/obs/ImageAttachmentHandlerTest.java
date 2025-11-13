@@ -6,9 +6,6 @@ import static org.openmrs.module.attachments.obs.ImageAttachmentHandler.appendTh
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 
 import javax.imageio.ImageIO;
 
@@ -53,10 +50,10 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		String originalFilePath = testHelper.getFilePathFromObs(obs);
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 
-		File originalFile = new File(encode(originalFilePath));;
+		File originalFile = new File(testHelper.encode(originalFilePath));;
 		Assert.assertTrue(originalFile.exists());
 
-		File thumbnail = new File(encode(thumbnailFilePath));
+		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
 		Assert.assertTrue(thumbnail.exists());
 
 		Assert.assertThat(thumbnail.length(), lessThan(originalFile.length()));
@@ -74,10 +71,10 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		String originalFilePath = testHelper.getFilePathFromObs(obs);
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 
-		File originalFile = new File(encode(originalFilePath));;
+		File originalFile = new File(testHelper.encode(originalFilePath));;
 		Assert.assertTrue(originalFile.exists());
 
-		File thumbnail = new File(encode(thumbnailFilePath));
+		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
 		Assert.assertTrue(thumbnail.exists());
 
 		// Purge Obs
@@ -98,11 +95,11 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		// Verify
 		String originalFilePath = testHelper.getFilePathFromObs(obs);
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
-		File thumbnail = new File(encode(thumbnailFilePath));
+		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
 		Assert.assertTrue(thumbnail.exists());
 
 		String thumbnailName = thumbnail.getName();
-		byte[] expectedBytes = new BaseComplexData(decode(thumbnailName), ImageIO.read(thumbnail)).asByteArray();
+		byte[] expectedBytes = new BaseComplexData(testHelper.decode(thumbnailName), ImageIO.read(thumbnail)).asByteArray();
 
 		// Replay
 		obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_THUMBNAIL);
@@ -123,10 +120,10 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		String originalFilePath = testHelper.getFilePathFromObs(obs);
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 
-		File originalFile = new File(encode(originalFilePath));;
+		File originalFile = new File(testHelper.encode(originalFilePath));;
 		Assert.assertTrue(originalFile.exists());
 
-		File thumbnail = new File(encode(thumbnailFilePath));
+		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
 		Assert.assertFalse(thumbnail.exists());
 
 		BufferedImage img = ImageIO.read(originalFile);
@@ -144,10 +141,10 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		String originalFilePath = testHelper.getFilePathFromObs(obs);
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 
-		File originalFile = new File(encode(originalFilePath));;
+		File originalFile = new File(testHelper.encode(originalFilePath));;
 		Assert.assertTrue(originalFile.exists());
 
-		File thumbnail = new File(encode(thumbnailFilePath));
+		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
 		Assert.assertFalse(thumbnail.exists()); // thumbnail should never have been created
 
 		// Purge Obs
@@ -165,10 +162,10 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		Obs obs = testHelper.saveSmallSizeImageAttachment();
 
 		String originalFilePath = testHelper.getFilePathFromObs(obs);
-		File originalFile = new File(encode(originalFilePath));
+		File originalFile = new File(testHelper.encode(originalFilePath));
 		Assert.assertTrue(originalFile.exists());
 
-		byte[] expectedBytes = new BaseComplexData(decode(originalFile.getName()), ImageIO.read(originalFile))
+		byte[] expectedBytes = new BaseComplexData(testHelper.decode(originalFile.getName()), ImageIO.read(originalFile))
 				.asByteArray();
 
 		// Replay
@@ -180,22 +177,6 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		// Verify
 		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obsThumbnailView.getComplexData()));
 		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obsOriginalView.getComplexData()));
-	}
-
-	private String decode(String key) {
-		try {
-			return URLDecoder.decode(key, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private String encode(String key) {
-		try {
-			return URLEncoder.encode(key, "UTF-8").replace(".", "%2E").replace("*", "%2A").replace("%2F", "/");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 }
