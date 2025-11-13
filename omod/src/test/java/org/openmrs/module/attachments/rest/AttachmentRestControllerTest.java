@@ -357,6 +357,7 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 
 		// Verify
 		Assert.assertEquals(obs.getComment(), fileCaption);
+		System.out.println(complexData.getTitle());  // TEMP to debug
 		Assert.assertTrue(complexData.getTitle().startsWith("testFile2"));
 		Assert.assertArrayEquals(bytesIn, bytesOut);
 		Assert.assertNull(obs.getEncounter());
