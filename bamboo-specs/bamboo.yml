@@ -65,7 +65,7 @@ Release to Maven:
   - checkout:
       repository: Release scripts
       path: release-scripts
-      force-clean-build: false
+      force-clean-build: true
       description: Checkout Release Scripts Repository
   - script:
       interpreter: SHELL
