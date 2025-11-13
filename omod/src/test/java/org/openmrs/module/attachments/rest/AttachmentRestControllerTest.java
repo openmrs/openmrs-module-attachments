@@ -165,49 +165,21 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 
 		// Verify
 		assertTrue(obsService.getObsByUuid(getUuid()).isVoided());
+		assertTrue(file.exists());  // voiding does not delete file
 	}
 
 	@Test
-	public void deleteAttachmentWithMissingFile_shouldVoidObs() throws Exception {
+	public void purgeAttachment_shouldPurgeObsAndRemoveFile() throws Exception {
 		// Setup
 		File file = new File(testHelper.getFilePathFromObs(obs));
-		file.delete();
-		assertFalse(file.exists());
+		assertTrue(file.exists()); // sanity check
 
 		// Replay
-		handle(newDeleteRequest(getURI() + "/" + getUuid()));
-
-		// Verify
-		assertTrue(obsService.getObsByUuid(getUuid()).isVoided());
-	}
-
-	/*
-	 * @Test public void purgeAttachment_shouldPurgeObsAndRemoveFile() throws
-	 * Exception { // Setup String testComplexObsFilePath =
-	 * FilenameUtils.removeExtension(testHelper.getTestComplexObsFilePath()) + "_" +
-	 * obs.getUuid() + "." +
-	 * FilenameUtils.getExtension(testHelper.getTestComplexObsFilePath()); File file
-	 * = new File(testComplexObsFilePath); assertTrue(file.exists());
-	 * 
-	 * // Replay handle(newDeleteRequest(getURI() + "/" + getUuid(), new
-	 * Parameter("purge", "true")));
-	 * 
-	 * // Verify assertNull(obsService.getObsByUuid(getUuid()));
-	 * assertFalse(file.exists()); }
-	 */
-
-	@Test
-	public void purgeAttachmentWithMissingFile_shouldPurgeObs() throws Exception {
-		// Setup
-		File file = new File(testHelper.getFilePathFromObs(obs));
-		file.delete();
-		assertFalse(file.exists());
-
-		// Replay
-		handle(newDeleteRequest(getURI() + "/" + getUuid(), new Parameter("purge", "true")));
+		handle(newDeleteRequest(getURI() + "/" + obs.getUuid(), new Parameter("purge", "true")));
 
 		// Verify
 		assertNull(obsService.getObsByUuid(getUuid()));
+		assertFalse(file.exists());
 	}
 
 	@Test
@@ -357,6 +329,7 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 
 		// Verify
 		Assert.assertEquals(obs.getComment(), fileCaption);
+		System.out.println(complexData.getTitle());
 		Assert.assertTrue(complexData.getTitle().startsWith("testFile2"));
 		Assert.assertArrayEquals(bytesIn, bytesOut);
 		Assert.assertNull(obs.getEncounter());

@@ -2,6 +2,9 @@ package org.openmrs.module.attachments.obs;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -153,8 +156,8 @@ public class TestHelper {
 
 	public String getFilePathFromObs(Obs obs) {
 		// storage directory + everything after the last | in the value complex
-		return getTestStorageDirPath() + File.separator
-				+ obs.getValueComplex().split("\\|")[obs.getValueComplex().split("\\|").length - 1];
+		return encodeKey(getTestStorageDirPath() + File.separator
+				+ obs.getValueComplex().split("\\|")[obs.getValueComplex().split("\\|").length - 1]);
 	}
 
 	/**
@@ -242,5 +245,13 @@ public class TestHelper {
 		String fileCaption = RandomStringUtils.randomAlphabetic(12);
 		return obsSaver.saveOtherAttachment(null, patient, null, fileCaption, getTestDefaultFile(),
 				ValueComplex.INSTRUCTIONS_DEFAULT, null, null);
+	}
+
+	private String encodeKey(String key) {
+		try {
+			return URLEncoder.encode(key, "UTF-8").replace(".", "%2E").replace("*", "%2A").replace("%2F", "/");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
