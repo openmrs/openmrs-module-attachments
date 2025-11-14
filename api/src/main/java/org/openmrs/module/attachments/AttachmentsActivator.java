@@ -36,28 +36,28 @@ public class AttachmentsActivator extends BaseModuleActivator {
 	protected Log log = LogFactory.getLog(getClass());
 
 	/**
-	 * @see ModuleActivator${symbol_pound}willRefreshContext()
+	 * see core ModuleActivator#willRefreshContext()
 	 */
 	public void willRefreshContext() {
 		log.info("Refreshing " + AttachmentsConstants.MODULE_NAME + " Module");
 	}
 
 	/**
-	 * @see ModuleActivator${symbol_pound}contextRefreshed()
+	 * see core ModuleActivator#contextRefreshed()
 	 */
 	public void contextRefreshed() {
 		log.info(AttachmentsConstants.MODULE_NAME + " Module refreshed");
 	}
 
 	/**
-	 * @see ModuleActivator${symbol_pound}willStart()
+	 * see core ModuleActivator#willStart()
 	 */
 	public void willStart() {
 		log.info("Starting " + AttachmentsConstants.MODULE_NAME + " Module");
 	}
 
 	/**
-	 * @see ModuleActivator${symbol_pound}started()
+	 * see core ModuleActivator#started()
 	 */
 	public void started() {
 
@@ -128,14 +128,14 @@ public class AttachmentsActivator extends BaseModuleActivator {
 	}
 
 	/**
-	 * @see ModuleActivator${symbol_pound}willStop()
+	 * see core ModuleActivator#willStop()
 	 */
 	public void willStop() {
 		log.info("Stopping " + AttachmentsConstants.MODULE_NAME + " Module");
 	}
 
 	/**
-	 * @see ModuleActivator${symbol_pound}stopped()
+	 * see core ModuleActivator#stopped()
 	 */
 	public void stopped() {
 		log.info(AttachmentsConstants.MODULE_NAME + " Module stopped");
