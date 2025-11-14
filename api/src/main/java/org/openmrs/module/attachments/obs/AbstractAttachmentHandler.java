@@ -130,7 +130,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	 *
 	 * @param savedFile
 	 *            original file pointer
-	 * @param imageHight
+	 * @param imageHeight
 	 *            image height
 	 * @param imageWidth
 	 *            image width
