@@ -137,10 +137,6 @@ public class TestHelper {
 		}
 	}
 
-	public void cleanup() throws IOException {
-		OpenmrsUtil.deleteDirectory(OpenmrsUtil.getDirectoryInApplicationDataDirectory("storage/complex_obs"));
-	}
-
 	/**
 	 * This method should be invoked when tearing down unit tests.
 	 */

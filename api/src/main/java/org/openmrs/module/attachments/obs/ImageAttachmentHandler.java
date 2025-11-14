@@ -5,11 +5,9 @@ import java.io.IOException;
 
 import net.coobird.thumbnailator.Thumbnails;
 import org.openmrs.Obs;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.obs.ComplexData;
 import org.openmrs.obs.ComplexObsHandler;
-import org.openmrs.obs.handler.BinaryDataHandler;
 import org.openmrs.obs.handler.ImageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -83,13 +81,10 @@ public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 		// (since that is what ImageHandler getObs in Core returns)
 		obs = getParent().getObs(obs, AttachmentsConstants.IMAGE_HANDLER_VIEW);
 
-		int imageHeight = Integer.MAX_VALUE;
-		int imageWidth = Integer.MAX_VALUE;
-
 		// Get image dimensions
 		BufferedImage image = (BufferedImage) obs.getComplexData().getData();
-		imageHeight = image.getHeight();
-		imageWidth = image.getWidth();
+		int imageHeight = image.getHeight();
+		int imageWidth = image.getWidth();
 		saveThumbnailIfNeeded(obs, imageHeight, imageWidth);
 
 		// We invoke the parent to inherit from the file saving routines.

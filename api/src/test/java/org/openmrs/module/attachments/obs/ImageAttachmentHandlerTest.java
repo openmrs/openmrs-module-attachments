@@ -13,7 +13,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
@@ -28,11 +27,6 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 	@Before
 	public void setup() throws IOException {
 		testHelper.init();
-	}
-
-	@AfterEach
-	public void cleanupAfterEachTest() throws IOException {
-		testHelper.cleanup();
 	}
 
 	@After
@@ -50,7 +44,7 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		String originalFilePath = testHelper.getFilePathFromObs(obs);
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 
-		File originalFile = new File(testHelper.encode(originalFilePath));;
+		File originalFile = new File(testHelper.encode(originalFilePath));
 		Assert.assertTrue(originalFile.exists());
 
 		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
@@ -71,7 +65,7 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		String originalFilePath = testHelper.getFilePathFromObs(obs);
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 
-		File originalFile = new File(testHelper.encode(originalFilePath));;
+		File originalFile = new File(testHelper.encode(originalFilePath));
 		Assert.assertTrue(originalFile.exists());
 
 		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
@@ -121,7 +115,7 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		String originalFilePath = testHelper.getFilePathFromObs(obs);
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 
-		File originalFile = new File(testHelper.encode(originalFilePath));;
+		File originalFile = new File(testHelper.encode(originalFilePath));
 		Assert.assertTrue(originalFile.exists());
 
 		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
@@ -142,7 +136,7 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		String originalFilePath = testHelper.getFilePathFromObs(obs);
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 
-		File originalFile = new File(testHelper.encode(originalFilePath));;
+		File originalFile = new File(testHelper.encode(originalFilePath));
 		Assert.assertTrue(originalFile.exists());
 
 		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
