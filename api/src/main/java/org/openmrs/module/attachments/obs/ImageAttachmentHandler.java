@@ -8,7 +8,10 @@ import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.obs.ComplexData;
+import org.openmrs.obs.ComplexObsHandler;
+import org.openmrs.obs.handler.BinaryDataHandler;
 import org.openmrs.obs.handler.ImageHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 
@@ -16,9 +19,12 @@ public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 		super();
 	}
 
+	@Autowired
+	protected ImageHandler imageHandler;
+
 	@Override
-	protected void setParentComplexObsHandler() {
-		setParent(Context.getRegisteredComponents(ImageHandler.class).get(0));
+	protected ComplexObsHandler getParent() {
+		return imageHandler;
 	}
 
 	@Override

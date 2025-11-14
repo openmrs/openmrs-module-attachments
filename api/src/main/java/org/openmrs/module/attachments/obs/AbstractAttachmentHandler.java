@@ -33,8 +33,6 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 
 	protected final Log log = LogFactory.getLog(getClass());
 
-	private ComplexObsHandler parent;
-
 	@Autowired
 	protected StorageService storageService;
 
@@ -61,17 +59,11 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 
 	public AbstractAttachmentHandler() {
 		super();
-		setParentComplexObsHandler();
 	}
 
 	protected ComplexDataHelper getComplexDataHelper() {
 		return complexDataHelper;
 	}
-
-	/*
-	 * To set the "real" implementation parent.
-	 */
-	abstract protected void setParentComplexObsHandler();
 
 	/*
 	 * Complex data CRUD - Read
@@ -88,20 +80,14 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	 */
 	abstract protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData);
 
+	abstract protected ComplexObsHandler getParent();
+
 	public String[] getSupportedViews() {
 		return supportedViews;
 	}
 
 	public boolean supportsView(String view) {
 		return Arrays.asList(getSupportedViews()).contains(view);
-	}
-
-	protected void setParent(ComplexObsHandler complexObsHandler) {
-		this.parent = complexObsHandler;
-	}
-
-	final protected ComplexObsHandler getParent() {
-		return parent;
 	}
 
 	public AttachmentComplexData getAttachmentComplexData(ComplexData complexData) {

@@ -4,16 +4,22 @@ import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.obs.ComplexData;
+import org.openmrs.obs.ComplexObsHandler;
 import org.openmrs.obs.handler.BinaryDataHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DefaultAttachmentHandler extends AbstractAttachmentHandler {
+
+	@Autowired
+	protected BinaryDataHandler binaryDataHandler;
 
 	public DefaultAttachmentHandler() {
 		super();
 	}
 
-	protected void setParentComplexObsHandler() {
-		setParent(Context.getRegisteredComponents(BinaryDataHandler.class).get(0));
+	@Override
+	protected ComplexObsHandler getParent() {
+		return binaryDataHandler;
 	}
 
 	protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view) {

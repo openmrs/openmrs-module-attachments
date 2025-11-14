@@ -99,7 +99,8 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		Assert.assertTrue(thumbnail.exists());
 
 		String thumbnailName = thumbnail.getName();
-		byte[] expectedBytes = new BaseComplexData(testHelper.decode(thumbnailName), ImageIO.read(thumbnail)).asByteArray();
+		byte[] expectedBytes = new BaseComplexData(testHelper.decode(thumbnailName), ImageIO.read(thumbnail))
+				.asByteArray();
 
 		// Replay
 		obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_THUMBNAIL);
@@ -165,8 +166,8 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		File originalFile = new File(testHelper.encode(originalFilePath));
 		Assert.assertTrue(originalFile.exists());
 
-		byte[] expectedBytes = new BaseComplexData(testHelper.decode(originalFile.getName()), ImageIO.read(originalFile))
-				.asByteArray();
+		byte[] expectedBytes = new BaseComplexData(testHelper.decode(originalFile.getName()),
+				ImageIO.read(originalFile)).asByteArray();
 
 		// Replay
 		Obs obsThumbnailView = Context.getObsService().getComplexObs(obs.getId(),
