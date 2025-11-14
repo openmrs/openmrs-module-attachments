@@ -35,10 +35,10 @@
   </modules>
 
   <properties>
-    <openMRSVersion>2.2.0</openMRSVersion>
-    <webservices.restVersion>2.33.0</webservices.restVersion>
-    <serialization.xstreamVersion>0.2.8</serialization.xstreamVersion>
-    <javaxVersion>3.0.1</javaxVersion>
+    <openMRSVersion>2.8.2-SNAPSHOT</openMRSVersion>
+    <webservices.restVersion>3.0.0</webservices.restVersion>
+    <serialization.xstreamVersion>0.3.0</serialization.xstreamVersion>
+    <javaxVersion>4.0.1</javaxVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 

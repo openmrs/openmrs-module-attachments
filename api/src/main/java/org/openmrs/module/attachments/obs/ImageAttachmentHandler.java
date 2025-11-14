@@ -1,39 +1,39 @@
 package org.openmrs.module.attachments.obs;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-
+import net.coobird.thumbnailator.Thumbnails;
 import org.openmrs.Obs;
-import org.openmrs.api.APIException;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.obs.ComplexData;
-import org.openmrs.obs.handler.AbstractHandler;
+import org.openmrs.obs.ComplexObsHandler;
 import org.openmrs.obs.handler.ImageHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ImageAttachmentHandler extends AbstractAttachmentHandler {
-
-	public final static int THUMBNAIL_MAX_HEIGHT = 200;
-
-	public final static int THUMBNAIL_MAX_WIDTH = THUMBNAIL_MAX_HEIGHT;
 
 	public ImageAttachmentHandler() {
 		super();
 	}
 
+	@Autowired
+	protected ImageHandler imageHandler;
+
 	@Override
-	protected void setParentComplexObsHandler() {
-		setParent(new ImageHandler());
+	protected ComplexObsHandler getParent() {
+		return imageHandler;
 	}
 
 	@Override
 	protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view) {
 
+		String dataKey = ((ImageHandler) getParent()).parseDataKey(obs);
 		String fileName = valueComplex.getFileName();
-		if (view.equals(AttachmentsConstants.ATT_VIEW_THUMBNAIL) && !isThumbnail(fileName)) {
-			fileName = buildThumbnailFileName(fileName);
+
+		if (view.equals(AttachmentsConstants.ATT_VIEW_THUMBNAIL)
+				&& storageService.exists(appendThumbnailSuffix(dataKey))) {
+			fileName = appendThumbnailSuffix(fileName);
 		}
 
 		// We invoke the parent to inherit from the file reading routines.
@@ -49,54 +49,87 @@ public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 	}
 
 	@Override
-	protected boolean deleteComplexData(Obs obs, AttachmentComplexData complexData) {
+	protected boolean deleteComplexData(Obs obs) {
 
-		// We use a temp obs whose complex data points to the file names
-		String fileName = complexData.getTitle();
-		boolean isThumbNailPurged = true;
-		Obs tmpObs = new Obs();
+		// first delete the thumbnail if it exists
+		Boolean isThumbnailPurged = null;
+		String thumbnailDataKey = appendThumbnailSuffix(((ImageHandler) getParent()).parseDataKey(obs));
 
-		if (!isThumbnail(fileName)) {
-			String thumbnailFileName = buildThumbnailFileName(fileName);
-			tmpObs.setValueComplex(thumbnailFileName);
-			isThumbNailPurged = getParent().purgeComplexData(tmpObs);
+		try {
+			if (storageService.exists(thumbnailDataKey)) {
+				isThumbnailPurged = storageService.purgeData(thumbnailDataKey);
+			} else {
+				isThumbnailPurged = true;
+			}
+		} catch (IOException e) {
+			log.error("Failed to purge thumbnail file: " + thumbnailDataKey, e);
+			isThumbnailPurged = false;
 		}
 
-		tmpObs.setValueComplex(fileName);
-		boolean isImagePurged = getParent().purgeComplexData(tmpObs);
-
-		return isThumbNailPurged && isImagePurged;
+		boolean isImagePurged = getParent().purgeComplexData(obs);
+		return isThumbnailPurged && isImagePurged;
 	}
 
 	@Override
 	protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData) {
-		int imageHeight = Integer.MAX_VALUE;
-		int imageWidth = Integer.MAX_VALUE;
 
-		// We invoke the parent to inherit from the file saving routines.
+		// We invoke the parent to inherit from the file saving routines
 		obs = getParent().saveObs(obs);
 
-		File savedFile = AbstractHandler.getComplexDataFile(obs);
-		String savedFileName = savedFile.getName();
+		// now use the parent method to fetch the complex data, the assumption is it
+		// will return a BufferedImage
+		// (since that is what ImageHandler getObs in Core returns)
+		obs = getParent().getObs(obs, AttachmentsConstants.IMAGE_HANDLER_VIEW);
 
 		// Get image dimensions
-		try {
-			BufferedImage image = ImageIO.read(savedFile);
-			imageHeight = image.getHeight();
-			imageWidth = image.getWidth();
-		} catch (IOException e) {
-			log.warn("The dimensions of image file '" + savedFileName
-					+ "' could not be determined, continuing with generating its thumbnail anyway.");
-		}
+		BufferedImage image = (BufferedImage) obs.getComplexData().getData();
+		int imageHeight = image.getHeight();
+		int imageWidth = image.getWidth();
+		saveThumbnailIfNeeded(obs, imageHeight, imageWidth);
 
-		try {
-			savedFileName = saveThumbnailOrRename(savedFile, imageHeight, imageWidth);
-		} catch (APIException e) {
-			getParent().purgeComplexData(obs);
-			throw new APIException("A thumbnail file could not be saved for obs with" + "OBS_ID='" + obs.getObsId()
-					+ "', " + "FILE='" + complexData.getTitle() + "'.", e);
-		}
+		// We invoke the parent to inherit from the file saving routines.
+		return new ValueComplex(complexData.getInstructions(), complexData.getMimeType(), obs.getValueComplex());
+	}
 
-		return new ValueComplex(complexData.getInstructions(), complexData.getMimeType(), savedFileName);
+	/**
+	 * <p>
+	 * If the image is over a certain dimension, it will create a small thumbnail
+	 * file alongside the original file to be used as thumbnail image.
+	 * </p>
+	 *
+	 * @param obs
+	 *            original obs
+	 * @param imageHeight
+	 *            image height
+	 * @param imageWidth
+	 *            image width
+	 * @return savedFileName new renamed file name or original file name
+	 */
+	public void saveThumbnailIfNeeded(Obs obs, int imageHeight, int imageWidth) {
+		if ((imageHeight <= THUMBNAIL_MAX_HEIGHT) && (imageWidth <= THUMBNAIL_MAX_WIDTH)) {
+			return;
+		} else {
+			String key = appendThumbnailSuffix(((ImageHandler) getParent()).parseDataKey(obs));
+			try {
+				storageService.saveData(outputStream -> {
+					Object data = obs.getComplexData().getData();
+					if (!(data instanceof BufferedImage)) {
+						throw new IllegalArgumentException(
+								"Expected a BufferedImage, but got " + data.getClass().getName());
+					}
+					BufferedImage image = (BufferedImage) data;
+					Thumbnails.of(image).size(THUMBNAIL_MAX_HEIGHT, THUMBNAIL_MAX_WIDTH)
+							.outputFormat(obs.getComplexData().getMimeType().split("/")[1].toLowerCase())
+							.toOutputStream(outputStream);
+				}, null, null, key);
+				// the above is a bit of hack... we pass in the entire value we want use as a
+				// key instead of specifying the filename, module ID and key suffix and having
+				// the storage service to generate the full key for us
+				// this is because we need to be able to recreate the key based on the key of
+				// the main image
+			} catch (IOException e) {
+				log.error("Failed to save thumbnail file: " + key, e);
+			}
+		}
 	}
 }

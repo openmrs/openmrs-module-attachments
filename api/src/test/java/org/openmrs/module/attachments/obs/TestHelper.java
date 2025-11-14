@@ -2,6 +2,9 @@ package org.openmrs.module.attachments.obs;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,8 +60,6 @@ public class TestHelper {
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER)
 	protected ComplexObsSaver obsSaver;
 
-	protected File complexObsDir;
-
 	protected String fileName = "mock_file_name";
 
 	protected String fileExt = "ext";
@@ -75,9 +76,6 @@ public class TestHelper {
 	/**
 	 * @return The last saved test image file, null if none was ever saved.
 	 */
-	public MockMultipartFile getLastSavedTestImageFile() {
-		return lastSavedMultipartImageFile;
-	}
 
 	public MockMultipartFile getTestDefaultFile() {
 		return multipartDefaultFile;
@@ -85,10 +83,6 @@ public class TestHelper {
 
 	public String getTestFileName() {
 		return fileName;
-	}
-
-	public String getTestFileNameWithExt() {
-		return getTestFileName() + "." + fileExt;
 	}
 
 	/**
@@ -106,9 +100,8 @@ public class TestHelper {
 		context.getAdministrationService().saveGlobalProperty(
 				new GlobalProperty(AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_MAP, conceptComplexUuidMap));
 
-		complexObsDir = OpenmrsUtil.getDirectoryInApplicationDataDirectory("complex_obs");
 		context.getAdministrationService().saveGlobalProperty(
-				new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_COMPLEX_OBS_DIR, getComplexObsDir()));
+				new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_COMPLEX_OBS_DIR, "complex_obs"));
 
 		context.getAdministrationService()
 				.saveGlobalProperty(new GlobalProperty(AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_LIST,
@@ -150,7 +143,17 @@ public class TestHelper {
 	public void tearDown() throws IOException {
 		context.getConceptService()
 				.purgeConcept(context.getConceptService().getConceptByName(OTHER_CONCEPT_COMPLEX_NAME));
-		OpenmrsUtil.deleteDirectory(complexObsDir);
+		OpenmrsUtil.deleteDirectory(OpenmrsUtil.getDirectoryInApplicationDataDirectory("storage"));
+	}
+
+	public String getTestStorageDirPath() {
+		return OpenmrsUtil.getDirectoryInApplicationDataDirectory("storage").getAbsolutePath();
+	}
+
+	public String getFilePathFromObs(Obs obs) {
+		// storage directory + everything after the last | in the value complex
+		return getTestStorageDirPath() + File.separator
+				+ obs.getValueComplex().split("\\|")[obs.getValueComplex().split("\\|").length - 1];
 	}
 
 	/**
@@ -214,7 +217,7 @@ public class TestHelper {
 	}
 
 	/**
-	 * Boilerplate method to save an 'normal sized' image attachment. This method
+	 * Boilerplate method to save a 'normal sized' image attachment. This method
 	 * doesn't ensure that the size is normal, the method just uses an image file
 	 * that is assumed to fit.
 	 */
@@ -240,68 +243,19 @@ public class TestHelper {
 				ValueComplex.INSTRUCTIONS_DEFAULT, null, null);
 	}
 
-	public String getComplexObsDir() {
-		return complexObsDir.getAbsolutePath();
+	public String decode(String key) {
+		try {
+			return URLDecoder.decode(key, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	/**
-	 * @return The file path of the file 'behind' the complex obs.
-	 */
-	public String getTestComplexObsFilePath() {
-		return getComplexObsDir() + "/" + getTestFileNameWithExt();
-	}
-
-	/**
-	 * Boilerplate method to save a collection of complex obs based on the
-	 * encounter.
-	 *
-	 * @param encounter
-	 *            target encounter for save the complex obs. Leave null to save
-	 *            encounter-less complex obs.
-	 * @param count
-	 *            The number of the attachments/complex obs to be saved.
-	 * @param otherCount
-	 *            The number of other complex obs to be saved.
-	 * @return List of saved attachments/complex obs.
-	 */
-	public List<Obs> saveComplexObs(Encounter encounter, int count, int otherCount) throws IOException {
-		List<Obs> obsList = new ArrayList<>();
-		byte[] randomData = new byte[20];
-		Patient patient = (encounter == null) ? context.getPatientService().getPatient(2) : encounter.getPatient();
-		Visit visit = (encounter == null) ? null : encounter.getVisit();
-
-		// Saves a complex obs as if they had been saved relevant to the attachment.
-		for (int i = 0; i < count; i++) {
-			String fileCaption = RandomStringUtils.randomAlphabetic(12);
-			new Random().nextBytes(randomData);
-
-			String filename = RandomStringUtils.randomAlphabetic(7) + ".ext";
-			MockMultipartFile multipartRandomFile = new MockMultipartFile(FilenameUtils.getBaseName(filename), filename,
-					"application/octet-stream", randomData);
-			obsList.add(obsSaver.saveOtherAttachment(visit, patient, encounter, fileCaption, multipartRandomFile,
-					ValueComplex.INSTRUCTIONS_DEFAULT, null, null));
+	public String encode(String key) {
+		try {
+			return URLEncoder.encode(key, "UTF-8").replace(".", "%2E").replace("*", "%2A").replace("%2F", "/");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
 		}
-
-		// Saves a complex obs as if they had been saved outside of Attachments
-		for (int i = 0; i < otherCount; i++) {
-			Obs obs = new Obs();
-			obs.setConcept(otherConceptComplex);
-			obs.setObsDatetime(new Date());
-			obs.setPerson(patient);
-			obs.setEncounter(encounter);
-
-			new Random().nextBytes(randomData);
-			String filename = RandomStringUtils.randomAlphabetic(7) + ".ext";
-			MockMultipartFile multipartRandomFile = new MockMultipartFile(FilenameUtils.getBaseName(filename), filename,
-					"application/octet-stream", randomData);
-			obs.setComplexData(
-					complexDataHelper
-							.build(ValueComplex.INSTRUCTIONS_DEFAULT, multipartRandomFile.getOriginalFilename(),
-									multipartRandomFile.getBytes(), multipartRandomFile.getContentType())
-							.asComplexData());
-			obs = context.getObsService().saveObs(obs, null);
-
-		}
-		return obsList;
 	}
 }
