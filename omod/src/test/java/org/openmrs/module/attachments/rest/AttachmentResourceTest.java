@@ -31,7 +31,6 @@ import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.ComplexDataHelperImpl;
 
 // TOOD fix this?
-@Ignore
 public class AttachmentResourceTest {
 
 	private MockedStatic<Context> mockedContext;
