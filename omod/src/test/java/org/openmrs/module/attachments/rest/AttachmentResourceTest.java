@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.mockito.MockedStatic;
@@ -30,7 +29,7 @@ import org.openmrs.module.attachments.AttachmentsService;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.ComplexDataHelperImpl;
 
-// TOOD fix this?
+// TOOD these tests fail for me running locally, not sure why
 public class AttachmentResourceTest {
 
 	private MockedStatic<Context> mockedContext;
