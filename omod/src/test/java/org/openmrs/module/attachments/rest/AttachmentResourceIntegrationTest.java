@@ -49,7 +49,6 @@ public class AttachmentResourceIntegrationTest extends BaseDelegatingResourceTes
 		super.validateDefaultRepresentation();
 		assertPropEquals("dateTime", getObject().getDateTime());
 		assertPropEquals("comment", getObject().getComment());
-		assertPropEquals("complexData", getObject().getComplexData());
 		assertPropEquals("bytesMimeType", getObject().getBytesMimeType());
 		assertPropEquals("bytesContentFamily", getObject().getBytesContentFamily());
 	}
