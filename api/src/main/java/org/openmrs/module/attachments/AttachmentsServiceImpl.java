@@ -1,8 +1,5 @@
 package org.openmrs.module.attachments;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -14,10 +11,11 @@ import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.obs.Attachment;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Transactional(readOnly = true)
 public class AttachmentsServiceImpl implements AttachmentsService {
@@ -26,9 +24,14 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 
 	protected final static String NON_COMPLEX_OBS_ERR = "A non-complex obs was returned while fetching attachments, are the concepts complex configured properly?";
 
-	@Autowired
-	@Qualifier(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
 	private AttachmentsContext ctx;
+
+	private AttachmentsContext getCtx() {
+		if (ctx == null) {
+			ctx = Context.getRegisteredComponent(AttachmentsConstants.COMPONENT_ATT_CONTEXT, AttachmentsContext.class);
+		}
+		return ctx;
+	}
 
 	@Override
 	public List<Attachment> getAttachments(Patient patient, boolean includeEncounterless, boolean includeVoided) {
@@ -36,8 +39,8 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		List<Concept> questionConcepts = getAttachmentConcepts();
 		persons.add(patient);
 
-		List<Obs> obsList = ctx.getObsService().getObservations(persons, null, questionConcepts, null, null, null, null,
-				null, null, null, null, includeVoided);
+		List<Obs> obsList = getCtx().getObsService().getObservations(persons, null, questionConcepts, null, null, null,
+				null, null, null, null, null, includeVoided);
 
 		List<Attachment> attachments = new ArrayList<>();
 		for (Obs obs : obsList) {
@@ -48,7 +51,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 				continue;
 			}
 			obs = getComplexObs(obs);
-			attachments.add(new Attachment(obs, ctx.getComplexDataHelper()));
+			attachments.add(new Attachment(obs, getCtx().getComplexDataHelper()));
 		}
 		return attachments;
 	}
@@ -64,8 +67,8 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		List<Concept> questionConcepts = getAttachmentConcepts();
 		persons.add(patient);
 
-		List<Obs> obsList = ctx.getObsService().getObservations(persons, null, questionConcepts, null, null, null, null,
-				null, null, null, null, includeVoided);
+		List<Obs> obsList = getCtx().getObsService().getObservations(persons, null, questionConcepts, null, null, null,
+				null, null, null, null, null, includeVoided);
 
 		List<Attachment> attachments = new ArrayList<>();
 		for (Obs obs : obsList) {
@@ -74,7 +77,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 			}
 			if (obs.getEncounter() == null) {
 				obs = getComplexObs(obs);
-				attachments.add(new Attachment(obs, ctx.getComplexDataHelper()));
+				attachments.add(new Attachment(obs, getCtx().getComplexDataHelper()));
 			}
 		}
 		return attachments;
@@ -88,8 +91,8 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		persons.add(patient);
 		encounters.add(encounter);
 
-		List<Obs> obsList = ctx.getObsService().getObservations(persons, encounters, questionConcepts, null, null, null,
-				null, null, null, null, null, includeVoided);
+		List<Obs> obsList = getCtx().getObsService().getObservations(persons, encounters, questionConcepts, null, null,
+				null, null, null, null, null, null, includeVoided);
 
 		List<Attachment> attachments = new ArrayList<>();
 		for (Obs obs : obsList) {
@@ -97,7 +100,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 				throw new APIException(NON_COMPLEX_OBS_ERR);
 			}
 			obs = getComplexObs(obs);
-			attachments.add(new Attachment(obs, ctx.getComplexDataHelper()));
+			attachments.add(new Attachment(obs, getCtx().getComplexDataHelper()));
 		}
 		return attachments;
 	}
@@ -106,7 +109,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 	public List<Attachment> getAttachments(Patient patient, final Visit visit, boolean includeVoided) {
 		List<Visit> visits = new ArrayList<>();
 		visits.add(visit);
-		List<Encounter> encounters = ctx.getEncounterService().getEncounters(patient, null, null, null, null, null,
+		List<Encounter> encounters = getCtx().getEncounterService().getEncounters(patient, null, null, null, null, null,
 				null, null, visits, includeVoided);
 
 		List<Attachment> attachments = new ArrayList<>();
@@ -118,10 +121,10 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 
 	// Get list of attachment complex concepts
 	protected List<Concept> getAttachmentConcepts() {
-		List<String> conceptsComplex = ctx.getConceptComplexList();
+		List<String> conceptsComplex = getCtx().getConceptComplexList();
 		List<Concept> questionConcepts = new ArrayList<>();
 		for (String uuid : conceptsComplex) {
-			Concept concept = ctx.getConceptService().getConceptByUuid(uuid);
+			Concept concept = getCtx().getConceptService().getConceptByUuid(uuid);
 			if (concept == null) {
 				log.error("The Concept with UUID " + uuid + " was not found");
 			} else {
@@ -152,7 +155,7 @@ public class AttachmentsServiceImpl implements AttachmentsService {
 		if (obs.getComplexData() != null) {
 			return obs;
 		}
-		String view = ctx.getComplexViewHelper().getView(obs, AttachmentsConstants.ATT_VIEW_THUMBNAIL);
-		return ctx.getObsService().getComplexObs(obs.getId(), view);
+		String view = getCtx().getComplexViewHelper().getView(obs, AttachmentsConstants.ATT_VIEW_THUMBNAIL);
+		return getCtx().getObsService().getComplexObs(obs.getId(), view);
 	}
 }
