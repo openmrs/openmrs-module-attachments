@@ -9,6 +9,7 @@ import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
+import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Transactional(readOnly = true)
-public class AttachmentsServiceImpl implements AttachmentsService {
+public class AttachmentsServiceImpl extends BaseOpenmrsService implements AttachmentsService {
 
 	private final Log log = LogFactory.getLog(getClass());
 

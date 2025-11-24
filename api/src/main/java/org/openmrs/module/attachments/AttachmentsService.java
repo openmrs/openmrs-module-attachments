@@ -7,10 +7,11 @@ import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
+import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.AttachmentsConstants;
 
-public interface AttachmentsService {
+public interface AttachmentsService extends OpenmrsService {
 
 	/**
 	 * Get a patient's attachments including attachments that are not associated

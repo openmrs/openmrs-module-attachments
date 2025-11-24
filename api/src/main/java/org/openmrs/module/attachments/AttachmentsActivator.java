@@ -24,13 +24,11 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.attachments.obs.DefaultAttachmentHandler;
 import org.openmrs.module.attachments.obs.ImageAttachmentHandler;
-import org.springframework.stereotype.Component;
 
 /**
  * This class contains the logic that is run every time this module is either
  * started or stopped.
  */
-@Component(AttachmentsConstants.COMPONENT_ATT_ACTIVATOR)
 public class AttachmentsActivator extends BaseModuleActivator {
 
 	protected Log log = LogFactory.getLog(getClass());
