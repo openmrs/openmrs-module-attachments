@@ -45,8 +45,7 @@ public class TestHelper {
 
 	public static final String ATTACHMENTS_FOLDER = "attachments";
 
-	@Autowired
-	protected AttachmentsActivator activator;
+	protected AttachmentsActivator activator = new AttachmentsActivator();
 
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_ATT_CONTEXT)
