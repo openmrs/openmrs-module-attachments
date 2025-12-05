@@ -1,7 +1,6 @@
 package org.openmrs.module.attachments.obs;
 
 import org.openmrs.Obs;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.obs.ComplexData;
 import org.openmrs.obs.ComplexObsHandler;
@@ -25,7 +24,7 @@ public class DefaultAttachmentHandler extends AbstractAttachmentHandler {
 	protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view) {
 		// We invoke the parent to inherit from the file reading routines.
 		Obs tmpObs = new Obs();
-		tmpObs.setValueComplex(valueComplex.getFileName()); // Temp obs used as a safety
+		tmpObs.setValueComplex(valueComplex.getSimplifiedValueComplex()); // Temp obs used as a safety
 
 		ComplexData complexData;
 		if (view.equals(AttachmentsConstants.ATT_VIEW_THUMBNAIL)) {

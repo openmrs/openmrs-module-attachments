@@ -52,25 +52,9 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 		setVoided(obs.getVoided());
 		setVoidedBy(obs.getVoidedBy());
 		setVoidReason(obs.getVoidReason());
-
 		setDateTime(obs.getObsDatetime());
 		setComment(obs.getComment());
-
-		// Chomp the UUID off the end of the obs if any
-		String filename = new ValueComplex(obs.getValueComplex()).getFileName();
-		if (filename != null) {
-			int uuidIdx = filename.lastIndexOf("_" + obs.getUuid());
-			if (uuidIdx > 0) {
-				int extIdx = filename.lastIndexOf(".");
-				String extension = "";
-				if (extIdx > 0 && extIdx > uuidIdx) {
-					extension = filename.substring(extIdx);
-				}
-				filename = filename.substring(0, uuidIdx) + extension;
-			}
-		}
-
-		setFilename(filename);
+		setFilename(removeUuidFromFileName(new ValueComplex(obs.getValueComplex()).getFileName(), obs.getUuid()));
 		setComplexData(obs.getComplexData());
 	}
 
@@ -162,5 +146,20 @@ public class Attachment extends BaseOpenmrsData implements java.io.Serializable 
 
 	public void setBytesContentFamily(ContentFamily bytesContentFamily) {
 		this.bytesContentFamily = bytesContentFamily;
+	}
+
+	private String removeUuidFromFileName(String name, String obsUuid) {
+		if (name != null) {
+			int uuidIdx = name.lastIndexOf("_" + obsUuid);
+			if (uuidIdx > 0) {
+				int extIdx = name.lastIndexOf(".");
+				String extension = "";
+				if (extIdx > 0 && extIdx > uuidIdx) {
+					extension = name.substring(extIdx);
+				}
+				name = name.substring(0, uuidIdx) + extension;
+			}
+		}
+		return name;
 	}
 }
