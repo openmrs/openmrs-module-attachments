@@ -76,6 +76,32 @@ public class AttachmentResourceTest {
 	}
 
 	@Test
+	public void get_shouldReturnFilenamePropertyIfNewCore2_8Format() {
+		// Arrange
+		AttachmentResource res = new AttachmentResource();
+		ObsService service = mock(ObsService.class);
+		mockedContext.when(Context::getObsService).thenReturn(service);
+		Obs attachmentObs = new Obs();
+		attachmentObs.setUuid("1234");
+		attachmentObs.setId(1);
+		Concept attachmentConcept = new ConceptComplex();
+		ConceptDatatype datatype = new ConceptDatatype();
+		datatype.setHl7Abbreviation("ED");
+		attachmentConcept.setDatatype(datatype);
+		attachmentObs.setConcept(attachmentConcept);
+		attachmentObs.setValueComplex(
+				"m3ks | instructions.default | text/plain | filename.png image |complex_obs/some-path/some-uuid_filename.png");
+		when(service.getObsByUuid("1234")).thenReturn(attachmentObs);
+		when(service.getComplexObs(1, AttachmentsConstants.ATT_VIEW_CRUD)).thenReturn(attachmentObs);
+
+		// Act
+		Attachment attachment = res.getByUniqueId("1234");
+
+		// Assert
+		assertThat(attachment.getFilename(), equalTo("filename.png"));
+	}
+
+	@Test
 	public void search_shouldInvokeApiForEncounterAttachments() {
 		// Setup
 		AttachmentResource res = new AttachmentResource();

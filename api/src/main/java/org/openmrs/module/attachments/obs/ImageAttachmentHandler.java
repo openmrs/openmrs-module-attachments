@@ -28,17 +28,28 @@ public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 	@Override
 	protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view) {
 
-		String dataKey = ((ImageHandler) getParent()).parseDataKey(obs);
-		String fileName = valueComplex.getFileName();
+		Obs tmpObs = new Obs();
 
-		if (view.equals(AttachmentsConstants.ATT_VIEW_THUMBNAIL)
-				&& storageService.exists(appendThumbnailSuffix(dataKey))) {
-			fileName = appendThumbnailSuffix(fileName);
+		if (valueComplex.getKey() == null) {
+			// old pre-Core 2.8
+			if (view.equals(AttachmentsConstants.ATT_VIEW_THUMBNAIL)
+					&& storageService.exists(appendThumbnailSuffix(valueComplex.getFileName()))) {
+				tmpObs.setValueComplex(appendThumbnailSuffix(valueComplex.getFileName()));
+			} else {
+				tmpObs.setValueComplex(valueComplex.getSimplifiedValueComplex());
+			}
+		} else {
+			// Core 2.8 and above
+			if (view.equals(AttachmentsConstants.ATT_VIEW_THUMBNAIL)
+					&& storageService.exists(appendThumbnailSuffix(valueComplex.getKey()))) {
+				tmpObs.setValueComplex(ValueComplex.buildSimplifiedValueComplex(valueComplex.getFileName(),
+						appendThumbnailSuffix(valueComplex.getKey())));
+			} else {
+				tmpObs.setValueComplex(valueComplex.getSimplifiedValueComplex());
+			}
 		}
 
 		// We invoke the parent to inherit from the file reading routines.
-		Obs tmpObs = new Obs();
-		tmpObs.setValueComplex(fileName); // Temp obs used as a safety
 		tmpObs = getParent().getObs(tmpObs, AttachmentsConstants.IMAGE_HANDLER_VIEW); // ImageHandler doesn't handle
 		// several views
 		ComplexData complexData = tmpObs.getComplexData();
@@ -87,7 +98,6 @@ public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 		int imageWidth = image.getWidth();
 		saveThumbnailIfNeeded(obs, imageHeight, imageWidth);
 
-		// We invoke the parent to inherit from the file saving routines.
 		return new ValueComplex(complexData.getInstructions(), complexData.getMimeType(), obs.getValueComplex());
 	}
 
@@ -103,7 +113,6 @@ public class ImageAttachmentHandler extends AbstractAttachmentHandler {
 	 *            image height
 	 * @param imageWidth
 	 *            image width
-	 * @return savedFileName new renamed file name or original file name
 	 */
 	public void saveThumbnailIfNeeded(Obs obs, int imageHeight, int imageWidth) {
 		if ((imageHeight <= THUMBNAIL_MAX_HEIGHT) && (imageWidth <= THUMBNAIL_MAX_WIDTH)) {

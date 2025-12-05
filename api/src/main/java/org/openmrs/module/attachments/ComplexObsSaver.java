@@ -31,6 +31,7 @@ import static org.openmrs.module.attachments.AttachmentsContext.getCompressionRa
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 @Component(AttachmentsConstants.COMPONENT_COMPLEXOBS_SAVER)
 public class ComplexObsSaver {
@@ -83,9 +84,9 @@ public class ComplexObsSaver {
 			image = Thumbnails.of(ImageIO.read(multipartFile.getInputStream())).scale(compressionRatio)
 					.asBufferedImage();
 		}
-		obs.setComplexData(complexDataHelper
-				.build(instructions, multipartFile.getOriginalFilename(), image, multipartFile.getContentType())
-				.asComplexData());
+		obs.setComplexData(complexDataHelper.build(instructions,
+				replacePipeCharactersInFilenameWithUnderscores(multipartFile.getOriginalFilename()), image,
+				multipartFile.getContentType()).asComplexData());
 		obs = context.getObsService().saveObs(obs, getClass().toString());
 		return obs;
 	}
@@ -96,9 +97,15 @@ public class ComplexObsSaver {
 		conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
 		prepareComplexObs(visit, person, encounter, fileCaption, formFieldNamespace, formFieldPath);
 
-		obs.setComplexData(complexDataHelper.build(instructions, multipartFile.getOriginalFilename(),
+		obs.setComplexData(complexDataHelper.build(instructions,
+				replacePipeCharactersInFilenameWithUnderscores(multipartFile.getOriginalFilename()),
 				multipartFile.getBytes(), multipartFile.getContentType()).asComplexData());
 		obs = context.getObsService().saveObs(obs, getClass().toString());
 		return obs;
+	}
+
+	// since we use | as a separator in filenames, we need to replace it with _
+	private String replacePipeCharactersInFilenameWithUnderscores(String filename) {
+		return filename != null ? filename.replaceAll(Pattern.quote("|"), "_") : null;
 	}
 }
