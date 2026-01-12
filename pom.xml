@@ -4,7 +4,7 @@
 
   <groupId>org.openmrs.module</groupId>
   <artifactId>attachments</artifactId>
-  <version>4.0.0-SNAPSHOT</version>
+  <version>4.0.0</version>
   <packaging>pom</packaging>
   <name>Attachments</name>
   <description>
@@ -26,7 +26,7 @@
     <connection>scm:git:git@github.com:openmrs/openmrs-module-attachments.git</connection>
     <developerConnection>scm:git:git@github.com:openmrs/openmrs-module-attachments.git</developerConnection>
     <url>https://github.com/openmrs/openmrs-module-attachments</url>
-    <tag>HEAD</tag>
+    <tag>4.0.0</tag>
   </scm>
 
   <modules>
