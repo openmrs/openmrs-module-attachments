@@ -1,20 +1,16 @@
 package org.openmrs.module.attachments;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.module.attachments.AttachmentsConstants;
-import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.AttachmentsConstants.ContentFamily;
-import org.openmrs.test.Verifies;
 
 public class AttachmentsContextTest {
 
@@ -28,7 +24,7 @@ public class AttachmentsContextTest {
 	}
 
 	@Test
-	@Verifies(value = "A simple JSON saved as a global property should be parse into a Map<String, String>.", method = "getMapByGlobalProperty(globalPropertyName)")
+
 	public void context_shouldReturnSimpleMap() {
 
 		// Setup
@@ -51,7 +47,7 @@ public class AttachmentsContextTest {
 	}
 
 	@Test
-	@Verifies(value = "A JSON saved as a global property should be parse into a List<String>.", method = "getMapByGlobalProperty(globalPropertyName)")
+
 	public void context_shouldReturnList() {
 
 		// Setup
