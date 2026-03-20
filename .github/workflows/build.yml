@@ -11,8 +11,8 @@ jobs:
   build:
     uses: openmrs/openmrs-contrib-gha-workflows/.github/workflows/build-backend-module.yml@main
     with:
-      java_versions: '["8"]'
-      main_java_version: '8'
+      java_versions: '["11"]'
+      main_java_version: '11'
     secrets:
       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
       MAVEN_REPO_USERNAME: ${{ secrets.MAVEN_REPO_USERNAME }}
