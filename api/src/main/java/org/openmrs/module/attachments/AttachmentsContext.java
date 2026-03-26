@@ -1,12 +1,4 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
- * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
- *
- * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
- * graphic logo is a trademark of OpenMRS Inc.
- */
+
 package org.openmrs.module.attachments;
 
 import java.util.ArrayList;
@@ -290,7 +282,7 @@ public class AttachmentsContext {
 
 	/**
 	 * @param contentFamily
-	 *            The content family ('IMAGE', 'PDF', 'OTHER', ... etc).
+	 *            The content family ('IMAGE', 'PDF', 'OTHER', .. etc).
 	 * @return The concept complex configured to save files belonging to the content
 	 *         family, and if none is found the default concept complex is returned.
 	 */
