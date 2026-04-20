@@ -65,7 +65,8 @@ public class ValueComplex {
 	protected String instructions = INSTRUCTIONS_NONE;
 	protected String mimeType = AttachmentsConstants.UNKNOWN_MIME_TYPE;
 	protected String fileName = AttachmentsConstants.MODULE_SHORT_ID.toLowerCase() + "_file.dat";
-	// the key used to retrieve the file from the StorageService (as of Core 2.8)
+	// the key used to retrieve the file from the attachmentsService. (as of Core
+	// 2.8)
 	protected String key = null;
 
 	public ValueComplex(String valueComplex) {

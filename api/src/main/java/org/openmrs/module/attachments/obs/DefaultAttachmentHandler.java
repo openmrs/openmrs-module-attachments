@@ -21,6 +21,7 @@ public class DefaultAttachmentHandler extends AbstractAttachmentHandler {
 		return binaryDataHandler;
 	}
 
+	@Override
 	protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view) {
 		// We invoke the parent to inherit from the file reading routines.
 		Obs tmpObs = new Obs();
@@ -41,10 +42,12 @@ public class DefaultAttachmentHandler extends AbstractAttachmentHandler {
 				complexData.getData(), valueComplex.getMimeType()).asComplexData();
 	}
 
+	@Override
 	protected boolean deleteComplexData(Obs obs) {
 		return getParent().purgeComplexData(obs);
 	}
 
+	@Override
 	protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData) {
 		// We invoke the parent to inherit from the file saving routines.
 		obs = getParent().saveObs(obs);
