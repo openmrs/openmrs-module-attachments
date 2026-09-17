@@ -46,21 +46,9 @@ public class ComplexObsSaver {
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXDATA_HELPER)
 	protected ComplexDataHelper complexDataHelper;
 
-	@Autowired
-	@Qualifier(AttachmentsConstants.COMPONENT_VISIT_COMPATIBILITY)
-	protected VisitCompatibility visitCompatibility;
-
-	protected Obs obs = new Obs();
-
-	protected ConceptComplex conceptComplex;
-
-	public Obs getObs() {
-		return obs;
-	}
-
-	protected void prepareComplexObs(Visit visit, Person person, Encounter encounter, String fileCaption,
-			String formFieldNamespace, String formFieldPath) {
-		obs = new Obs(person, conceptComplex,
+	protected Obs prepareComplexObs(Visit visit, Person person, Encounter encounter, String fileCaption,
+			String formFieldNamespace, String formFieldPath, ConceptComplex conceptComplex) {
+		Obs obs = new Obs(person, conceptComplex,
 				visit == null || visit.getStopDatetime() == null ? new Date() : visit.getStopDatetime(),
 				encounter != null ? encounter.getLocation() : null);
 		obs.setEncounter(encounter); // may be null
@@ -68,14 +56,16 @@ public class ComplexObsSaver {
 		if (StringUtils.isNotBlank(formFieldNamespace) && StringUtils.isNotBlank(formFieldPath)) {
 			obs.setFormField(formFieldNamespace, formFieldPath);
 		}
+		return obs;
 	}
 
 	public Obs saveImageAttachment(Visit visit, Person person, Encounter encounter, String fileCaption,
 			MultipartFile multipartFile, String instructions, String formFieldNamespace, String formFieldPath)
 			throws IOException {
 
-		conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
-		prepareComplexObs(visit, person, encounter, fileCaption, formFieldNamespace, formFieldPath);
+		ConceptComplex conceptComplex = context.getConceptComplex(ContentFamily.IMAGE);
+		Obs obs = prepareComplexObs(visit, person, encounter, fileCaption, formFieldNamespace, formFieldPath,
+				conceptComplex);
 
 		Object image = multipartFile.getInputStream();
 		double compressionRatio = getCompressionRatio(multipartFile.getSize(),
@@ -94,8 +84,9 @@ public class ComplexObsSaver {
 	public Obs saveOtherAttachment(Visit visit, Person person, Encounter encounter, String fileCaption,
 			MultipartFile multipartFile, String instructions, String formFieldNamespace, String formFieldPath)
 			throws IOException {
-		conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
-		prepareComplexObs(visit, person, encounter, fileCaption, formFieldNamespace, formFieldPath);
+		ConceptComplex conceptComplex = context.getConceptComplex(ContentFamily.OTHER);
+		Obs obs = prepareComplexObs(visit, person, encounter, fileCaption, formFieldNamespace, formFieldPath,
+				conceptComplex);
 
 		obs.setComplexData(complexDataHelper.build(instructions,
 				replacePipeCharactersInFilenameWithUnderscores(multipartFile.getOriginalFilename()),
