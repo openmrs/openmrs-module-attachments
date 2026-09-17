@@ -4,7 +4,7 @@
 
   <groupId>org.openmrs.module</groupId>
   <artifactId>attachments</artifactId>
-  <version>4.1.0-SNAPSHOT</version>
+  <version>5.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Attachments</name>
   <description>
@@ -35,8 +35,8 @@
   </modules>
 
   <properties>
-    <openMRSVersion>2.8.3</openMRSVersion>
-    <webservices.restVersion>3.0.0</webservices.restVersion>
+    <openMRSVersion>2.5.9</openMRSVersion>
+    <webservices.restVersion>2.39.0</webservices.restVersion>
     <serialization.xstreamVersion>0.3.0</serialization.xstreamVersion>
     <javaxVersion>4.0.1</javaxVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -124,8 +124,8 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
-            <target>8</target>
-            <source>8</source>
+            <target>11</target>
+            <source>11</source>
           </configuration>
         </plugin>
         <plugin>

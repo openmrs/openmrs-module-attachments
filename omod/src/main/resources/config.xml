@@ -5,18 +5,18 @@
 	<!-- Module Properties -->
 	<id>${project.parent.artifactId}</id>
 	<name>${project.parent.name}</name>
-	<version>${project.parent.version}</version>
+	<version>5.0.0-SNAPSHOT</version>
 	<package>${project.parent.groupId}.${project.parent.artifactId}</package>
 	<author>${project.parent.organization.name}</author>
 	<description>${project.parent.description}</description>
 	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
-	<require_version>${openMRSVersion}</require_version>
+	<require_version>2.5.9</require_version>
 	<!-- / Module Properties -->
 
 	<require_modules>
-		<require_module version="${webservices.restVersion}">
-			org.openmrs.module.webservices.rest
-		</require_module>
+    	<require_module version="2.39.0">
+        	org.openmrs.module.webservices.rest
+    	</require_module>
 	</require_modules>
 
 	<!-- Module Activator -->

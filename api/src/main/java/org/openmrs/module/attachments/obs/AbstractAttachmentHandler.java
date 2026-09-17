@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Obs;
-import org.openmrs.api.StorageService;
+import org.openmrs.module.attachments.AttachmentsService;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.obs.ComplexData;
 import org.openmrs.obs.ComplexObsHandler;
@@ -34,7 +34,7 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	protected final Log log = LogFactory.getLog(getClass());
 
 	@Autowired
-	protected StorageService storageService;
+	protected AttachmentsService attachmentsService;
 
 	@Autowired
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXDATA_HELPER)
@@ -44,97 +44,59 @@ public abstract class AbstractAttachmentHandler implements ComplexObsHandler {
 	@Qualifier(AttachmentsConstants.COMPONENT_COMPLEXVIEW_HELPER)
 	private ComplexViewHelper complexViewHelper;
 
-	/*
-	 * Appends THUMBNAIL_SUFFIX to a file name or storage service key
-	 */
-	public static String appendThumbnailSuffix(String fileNameOrKey) {
-		String fileName = FilenameUtils.removeExtension(fileNameOrKey);
-		String ext = FilenameUtils.getExtension(fileNameOrKey);
-		return fileName + THUMBNAIL_SUFFIX + (StringUtils.isEmpty(ext) ? "" : "." + ext);
-	}
-
-	public void setComplexViewHelper(ComplexViewHelper complexViewHelper) {
-		this.complexViewHelper = complexViewHelper;
-	}
-
-	public AbstractAttachmentHandler() {
-		super();
-	}
-
 	protected ComplexDataHelper getComplexDataHelper() {
 		return complexDataHelper;
 	}
 
-	/*
-	 * Complex data CRUD - Read
-	 */
-	abstract protected ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view);
+	protected ComplexViewHelper getComplexViewHelper() {
+		return complexViewHelper;
+	}
 
-	/*
-	 * Complex data CRUD - Delete
-	 */
-	abstract protected boolean deleteComplexData(Obs obs);
-
-	/*
-	 * Complex data CRUD - Save (Update)
-	 */
-	abstract protected ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData);
-
-	abstract protected ComplexObsHandler getParent();
-
+	@Override
 	public String[] getSupportedViews() {
 		return supportedViews;
 	}
 
+	@Override
 	public boolean supportsView(String view) {
-		return Arrays.asList(getSupportedViews()).contains(view);
+		return Arrays.asList(supportedViews).contains(view);
 	}
 
-	public AttachmentComplexData getAttachmentComplexData(ComplexData complexData) {
+	protected abstract ComplexObsHandler getParent();
 
-		if (!(complexData instanceof AttachmentComplexData)) {
-			return complexDataHelper.build(ValueComplex.INSTRUCTIONS_DEFAULT, complexData.getTitle(),
-					complexData.getData(), complexDataHelper.getContentType(complexData));
-		}
+	protected abstract ComplexData readComplexData(Obs obs, ValueComplex valueComplex, String view);
 
-		return (AttachmentComplexData) complexData;
-	}
+	protected abstract boolean deleteComplexData(Obs obs);
 
-	/*
-	 * Drifts to our own CRUD overloadable routine when it is our implementation.
-	 */
+	protected abstract ValueComplex saveComplexData(Obs obs, AttachmentComplexData complexData);
+
 	@Override
-	final public Obs getObs(Obs obs, String view) {
-
+	public Obs getObs(Obs obs, String view) {
+		if (!supportsView(view)) {
+			obs.setValueComplex(FilenameUtils.getName(obs.getValueComplex()));
+			return obs;
+		}
 		ValueComplex valueComplex = new ValueComplex(obs.getValueComplex());
+		ComplexData complexData = readComplexData(obs, valueComplex, view);
+		obs.setComplexData(complexData);
+		return obs;
+	}
 
-		if (StringUtils.isEmpty(view)) {
-			view = AttachmentsConstants.ATT_VIEW_ORIGINAL;
+	@Override
+	public Obs saveObs(Obs obs) {
+		ComplexData complexData = obs.getComplexData();
+		if (complexData == null || complexData.getData() == null) {
+			throw new IllegalArgumentException("Complex data is required");
 		}
-
-		ComplexData attData = readComplexData(obs, valueComplex, view);
-		obs.setComplexData(attData);
+		AttachmentComplexData attachmentComplexData = (AttachmentComplexData) complexData.getData();
+		ValueComplex valueComplex = saveComplexData(obs, attachmentComplexData);
+		obs.setValueComplex(valueComplex.toString());
+		obs = getParent().saveObs(obs);
 		return obs;
 	}
 
-	/*
-	 * Drifts to our own CRUD overloadable routine when it is our implementation.
-	 */
 	@Override
-	final public boolean purgeComplexData(Obs obs) {
+	public boolean purgeComplexData(Obs obs) {
 		return deleteComplexData(obs);
-	}
-
-	/*
-	 * Drifts to our own CRUD overloadable routine when it is our implementation.
-	 */
-	@Override
-	final public Obs saveObs(Obs obs) {
-
-		AttachmentComplexData complexData = getAttachmentComplexData(obs.getComplexData());
-
-		ValueComplex valueComplex = saveComplexData(obs, complexData);
-		obs.setValueComplex(valueComplex.getValueComplex());
-		return obs;
 	}
 }
