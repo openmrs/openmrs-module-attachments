@@ -1,7 +1,6 @@
 package org.openmrs.module.attachments;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -11,8 +10,6 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.module.attachments.AttachmentsConstants;
-import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.AttachmentsConstants.ContentFamily;
 import org.openmrs.test.Verifies;
 
@@ -39,7 +36,7 @@ public class AttachmentsContextTest {
 
 		String jsonMap = "{\"" + IMAGE_STR + "\":\"" + IMAGE_UUID + "\",\"" + OTHER_STR + "\":\"" + OTHER_UUID + "\"}";
 		String gpName = AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_MAP;
-		when(adminService.getGlobalProperty(eq(gpName))).thenReturn(jsonMap);
+		when(adminService.getGlobalProperty(gpName)).thenReturn(jsonMap);
 
 		// Replay
 		Map<String, String> map = context.getMapByGlobalProperty(gpName);
@@ -60,7 +57,7 @@ public class AttachmentsContextTest {
 
 		String jsonList = "[\"" + IMAGE_UUID + "\",\"" + OTHER_UUID + "\"]";
 		String gpName = AttachmentsConstants.GP_CONCEPT_COMPLEX_UUID_LIST;
-		when(adminService.getGlobalProperty(eq(gpName))).thenReturn(jsonList);
+		when(adminService.getGlobalProperty(gpName)).thenReturn(jsonList);
 
 		// Replay
 		List<String> list = context.getConceptComplexList();
