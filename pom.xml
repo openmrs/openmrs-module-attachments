@@ -39,6 +39,7 @@
     <webservices.restVersion>3.0.0</webservices.restVersion>
     <serialization.xstreamVersion>0.3.0</serialization.xstreamVersion>
     <javaxVersion>4.0.1</javaxVersion>
+    <byteBuddyVersion>1.18.7</byteBuddyVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
