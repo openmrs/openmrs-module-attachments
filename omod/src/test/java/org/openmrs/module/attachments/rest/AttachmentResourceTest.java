@@ -9,10 +9,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import org.mockito.MockedStatic;
 import org.openmrs.Concept;
@@ -31,12 +31,12 @@ import org.openmrs.module.attachments.obs.Attachment;
 import org.openmrs.module.attachments.obs.ComplexDataHelperImpl;
 
 // TODO these tests fail for me running locally, not sure why
-@Ignore
+@Disabled
 public class AttachmentResourceTest {
 
 	private MockedStatic<Context> mockedContext;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		mockedContext = mockStatic(Context.class);
 		AttachmentsContext ctx = mock(AttachmentsContext.class);
@@ -45,7 +45,7 @@ public class AttachmentResourceTest {
 				AttachmentsContext.class)).thenReturn(ctx);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		mockedContext.close();
 	}

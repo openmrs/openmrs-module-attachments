@@ -16,14 +16,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.openmrs.Concept;
 import org.openmrs.ConceptComplex;
 import org.openmrs.Encounter;
@@ -312,7 +312,7 @@ public class AttachmentsContext {
 		TypeReference<ArrayList<String>> typeRef = new TypeReference<ArrayList<String>>() {
 		};
 		try {
-			list = mapper.readValue(StringEscapeUtils.unescapeHtml(globalProperty), typeRef);
+			list = mapper.readValue(StringEscapeUtils.unescapeHtml4(globalProperty), typeRef);
 		} catch (Exception e) {
 			log.error("Could not parse global property '" + globalPropertyName + "' into a List<String>.", e);
 		}

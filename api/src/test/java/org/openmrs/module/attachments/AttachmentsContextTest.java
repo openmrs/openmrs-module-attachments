@@ -1,14 +1,14 @@
 package org.openmrs.module.attachments;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.module.attachments.AttachmentsConstants.ContentFamily;
 import org.openmrs.test.Verifies;
@@ -19,7 +19,7 @@ public class AttachmentsContextTest {
 
 	private AdministrationService adminService = mock(AdministrationService.class);
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		context.administrationService = adminService;
 	}

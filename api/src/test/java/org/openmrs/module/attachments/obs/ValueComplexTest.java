@@ -1,11 +1,11 @@
 package org.openmrs.module.attachments.obs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.openmrs.module.attachments.obs.ValueComplex.buildValueComplex;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.test.Verifies;
 

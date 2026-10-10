@@ -5,7 +5,7 @@ import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
@@ -89,7 +89,7 @@ public class AttachmentBytesResource extends BaseRestController {
 	public static String getExtension(String fileName, String mimeType) {
 		String ext = FilenameUtils.getExtension(fileName);
 		String extFromMimeType = AttachmentsContext.getExtension(mimeType);
-		if (!org.apache.commons.lang.StringUtils.isEmpty(ext)) {
+		if (!org.apache.commons.lang3.StringUtils.isEmpty(ext)) {
 			if (ext.length() > 6) { // this is a bit arbitrary, just to discriminate funny named files such as
 				// "uiohdz.iuhezuidhuih"
 				ext = extFromMimeType;

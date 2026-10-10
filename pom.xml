@@ -4,7 +4,7 @@
 
   <groupId>org.openmrs.module</groupId>
   <artifactId>attachments</artifactId>
-  <version>4.1.1-SNAPSHOT</version>
+  <version>5.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Attachments</name>
   <description>
@@ -35,13 +35,25 @@
   </modules>
 
   <properties>
-    <openMRSVersion>2.8.3</openMRSVersion>
-    <webservices.restVersion>3.0.0</webservices.restVersion>
+    <openMRSVersion>3.0.0-SNAPSHOT</openMRSVersion>
+    <webservices.restVersion>5.0.0-SNAPSHOT</webservices.restVersion>
     <serialization.xstreamVersion>0.3.0</serialization.xstreamVersion>
-    <javaxVersion>4.0.1</javaxVersion>
+    <maven.compiler.release>21</maven.compiler.release>
     <byteBuddyVersion>1.18.7</byteBuddyVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.openmrs</groupId>
+        <artifactId>openmrs-bom</artifactId>
+        <version>${openMRSVersion}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -52,22 +64,8 @@
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.openmrs.web</groupId>
-      <artifactId>openmrs-web</artifactId>
-      <version>${openMRSVersion}</version>
-      <scope>provided</scope>
-      <type>jar</type>
-    </dependency>
-    <dependency>
       <groupId>org.openmrs.api</groupId>
       <artifactId>openmrs-api</artifactId>
-      <version>${openMRSVersion}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openmrs.web</groupId>
-      <artifactId>openmrs-web</artifactId>
       <version>${openMRSVersion}</version>
       <type>test-jar</type>
       <scope>test</scope>
@@ -124,9 +122,10 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.15.0</version>
           <configuration>
-            <target>8</target>
-            <source>8</source>
+            <release>${maven.compiler.release}</release>
+            <parameters>true</parameters>
           </configuration>
         </plugin>
         <plugin>

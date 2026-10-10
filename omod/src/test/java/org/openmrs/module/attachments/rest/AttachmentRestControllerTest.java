@@ -1,9 +1,10 @@
 package org.openmrs.module.attachments.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -15,14 +16,14 @@ import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.Random;
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.binary.Base64;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -60,14 +61,14 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 
 	private Obs obs;
 
-	@Before
+	@BeforeEach
 	public void setup() throws IOException {
 		testHelper.init();
 		obs = testHelper.getTestComplexObs();
 		new Random().nextBytes(randomData);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws IOException {
 		testHelper.tearDown();
 	}
@@ -116,10 +117,10 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 		SimpleObject result = deserialize(handle(req));
 
 		// Verify
-		Assert.assertEquals(getUuid(), PropertyUtils.getProperty(result, "uuid"));
-		Assert.assertNotNull(PropertyUtils.getProperty(result, "comment"));
-		Assert.assertNotNull(PropertyUtils.getProperty(result, "bytesMimeType"));
-		Assert.assertNotNull(PropertyUtils.getProperty(result, "bytesContentFamily"));
+		Assertions.assertEquals(getUuid(), PropertyUtils.getProperty(result, "uuid"));
+		Assertions.assertNotNull(PropertyUtils.getProperty(result, "comment"));
+		Assertions.assertNotNull(PropertyUtils.getProperty(result, "bytesMimeType"));
+		Assertions.assertNotNull(PropertyUtils.getProperty(result, "bytesContentFamily"));
 	}
 
 	@Test
@@ -229,11 +230,11 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 			ComplexData complexData = obs.getComplexData();
 
 			// Verify
-			Assert.assertEquals(obs.getComment(), fileCaption);
-			Assert.assertEquals(complexData.getTitle(), fileName);
-			Assert.assertArrayEquals(randomData, (byte[]) complexData.getData());
-			Assert.assertNotNull(obs.getEncounter());
-			Assert.assertEquals(obs.getEncounter().getEncounterType(), ctx.getEncounterType());
+			Assertions.assertEquals(obs.getComment(), fileCaption);
+			Assertions.assertEquals(complexData.getTitle(), fileName);
+			Assertions.assertArrayEquals(randomData, (byte[]) complexData.getData());
+			Assertions.assertNotNull(obs.getEncounter());
+			Assertions.assertEquals(obs.getEncounter().getEncounterType(), ctx.getEncounterType());
 		}
 	}
 
@@ -258,10 +259,10 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 		ComplexData complexData = obs.getComplexData();
 
 		// Verify
-		Assert.assertEquals(obs.getComment(), fileCaption);
-		Assert.assertEquals(complexData.getTitle(), fileName);
-		Assert.assertArrayEquals(randomData, (byte[]) complexData.getData());
-		Assert.assertNull(obs.getEncounter());
+		Assertions.assertEquals(obs.getComment(), fileCaption);
+		Assertions.assertEquals(complexData.getTitle(), fileName);
+		Assertions.assertArrayEquals(randomData, (byte[]) complexData.getData());
+		Assertions.assertNull(obs.getEncounter());
 
 	}
 
@@ -287,10 +288,10 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 		ComplexData complexData = obs.getComplexData();
 
 		// Verify
-		Assert.assertEquals(obs.getComment(), fileCaption);
-		Assert.assertEquals(complexData.getTitle(), fileName);
-		Assert.assertArrayEquals(randomData, (byte[]) complexData.getData());
-		Assert.assertEquals(obs.getEncounter().getUuid(), encounter.getUuid());
+		Assertions.assertEquals(obs.getComment(), fileCaption);
+		Assertions.assertEquals(complexData.getTitle(), fileName);
+		Assertions.assertArrayEquals(randomData, (byte[]) complexData.getData());
+		Assertions.assertEquals(obs.getEncounter().getUuid(), encounter.getUuid());
 	}
 
 	@Test
@@ -328,14 +329,14 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 		byte[] bytesOut = BaseComplexData.getByteArray(complexData);
 
 		// Verify
-		Assert.assertEquals(obs.getComment(), fileCaption);
+		Assertions.assertEquals(obs.getComment(), fileCaption);
 		System.out.println(complexData.getTitle());
-		Assert.assertTrue(complexData.getTitle().startsWith("testFile2"));
-		Assert.assertArrayEquals(bytesIn, bytesOut);
-		Assert.assertNull(obs.getEncounter());
+		Assertions.assertTrue(complexData.getTitle().startsWith("testFile2"));
+		Assertions.assertArrayEquals(bytesIn, bytesOut);
+		Assertions.assertNull(obs.getEncounter());
 	}
 
-	@Test(expected = IllegalRequestException.class)
+	@Test
 	public void postAttachment_shouldThrowWhenVisitAndEncounterDoNotMatch() throws Exception {
 		// Setup
 		String fileCaption = "Test file caption";
@@ -354,10 +355,10 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 		request.addParameter("fileCaption", fileCaption);
 
 		// Replay
-		SimpleObject response = deserialize(handle(request));
+		assertThrows(IllegalRequestException.class, () -> handle(request));
 	}
 
-	@Test(expected = IllegalRequestException.class)
+	@Test
 	public void postAttachment_shouldNotUploadFileAboveSizeLimit() throws Exception {
 		// Setup
 		String fileCaption = "Test file caption";
@@ -376,7 +377,7 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 		request.addParameter("fileCaption", fileCaption);
 
 		// Replay
-		SimpleObject response = deserialize(handle(request));
+		assertThrows(IllegalRequestException.class, () -> handle(request));
 	}
 
 	@Test
@@ -408,10 +409,10 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 		byte[] bytesContent = downloadResponse.getContentAsByteArray();
 
 		// Verify
-		Assert.assertArrayEquals(randomData, bytesContent);
-		Assert.assertEquals(downloadResponse.getContentType(), mimeType);
-		Assert.assertEquals(downloadResponse.getHeader("File-Name"), fileName);
-		Assert.assertEquals(downloadResponse.getHeader("File-Ext"), fileExtension);
+		Assertions.assertArrayEquals(randomData, bytesContent);
+		Assertions.assertEquals(downloadResponse.getContentType(), mimeType);
+		Assertions.assertEquals(downloadResponse.getHeader("File-Name"), fileName);
+		Assertions.assertEquals(downloadResponse.getHeader("File-Ext"), fileExtension);
 
 	}
 
@@ -443,8 +444,8 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 				.get("results")).get(0);
 
 		// Verify
-		Assert.assertEquals("application/octet-stream", result.get("bytesMimeType"));
-		Assert.assertEquals(ContentFamily.OTHER.toString(), result.get("bytesContentFamily"));
+		Assertions.assertEquals("application/octet-stream", result.get("bytesMimeType"));
+		Assertions.assertEquals(ContentFamily.OTHER.toString(), result.get("bytesContentFamily"));
 	}
 
 }

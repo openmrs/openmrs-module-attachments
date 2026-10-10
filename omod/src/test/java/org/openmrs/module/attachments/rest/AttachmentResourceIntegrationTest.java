@@ -2,8 +2,8 @@ package org.openmrs.module.attachments.rest;
 
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.obs.Attachment;
@@ -18,13 +18,13 @@ public class AttachmentResourceIntegrationTest extends BaseDelegatingResourceTes
 
 	private Obs obs;
 
-	@Before
+	@BeforeEach
 	public void before() throws Exception {
 		testHelper.init();
 		obs = testHelper.saveNormalSizeImageAttachment();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws IOException {
 		testHelper.tearDown();
 	}

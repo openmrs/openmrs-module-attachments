@@ -48,8 +48,11 @@
     </bean>
 
 	<!-- Handlers that can be set to complex concepts -->
-	<bean parent="obsServiceTarget">
-		<property name="handlers">
+	<bean class="org.springframework.beans.factory.config.MethodInvokingBean">
+		<property name="targetObject" ref="obsService" />
+		<property name="targetMethod" value="setHandlers" />
+		<property name="arguments">
+			<list>
 			<map>
 				<entry>
 					<key>
@@ -66,6 +69,7 @@
 						class="org.openmrs.module.attachments.obs.ImageAttachmentHandler" />
 				</entry>
 			</map>
+			</list>
 		</property>
 	</bean>
 

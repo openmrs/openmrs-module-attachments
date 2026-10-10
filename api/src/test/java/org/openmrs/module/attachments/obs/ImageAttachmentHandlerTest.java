@@ -9,14 +9,15 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.attachments.AttachmentsConstants;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
@@ -24,12 +25,12 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 	@Autowired
 	protected TestHelper testHelper;
 
-	@Before
+	@BeforeEach
 	public void setup() throws IOException {
 		testHelper.init();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws IOException {
 		testHelper.tearDown();
 	}
@@ -45,14 +46,14 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 
 		File originalFile = new File(testHelper.encode(originalFilePath));
-		Assert.assertTrue(originalFile.exists());
+		Assertions.assertTrue(originalFile.exists());
 
 		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
-		Assert.assertTrue(thumbnail.exists());
+		Assertions.assertTrue(thumbnail.exists());
 
-		Assert.assertThat(thumbnail.length(), lessThan(originalFile.length()));
+		MatcherAssert.assertThat(thumbnail.length(), lessThan(originalFile.length()));
 		BufferedImage img = ImageIO.read(thumbnail);
-		Assert.assertEquals(ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT, Math.max(img.getHeight(), img.getWidth()));
+		Assertions.assertEquals(ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT, Math.max(img.getHeight(), img.getWidth()));
 	}
 
 	@Test
@@ -66,18 +67,18 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 
 		File originalFile = new File(testHelper.encode(originalFilePath));
-		Assert.assertTrue(originalFile.exists());
+		Assertions.assertTrue(originalFile.exists());
 
 		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
-		Assert.assertTrue(thumbnail.exists());
+		Assertions.assertTrue(thumbnail.exists());
 
 		// Purge Obs
 		obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
 		Context.getObsService().purgeObs(obs);
 
 		// Verify Deleted
-		Assert.assertFalse(originalFile.exists());
-		Assert.assertFalse(thumbnail.exists());
+		Assertions.assertFalse(originalFile.exists());
+		Assertions.assertFalse(thumbnail.exists());
 	}
 
 	@Test
@@ -90,7 +91,7 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		String originalFilePath = testHelper.getFilePathFromObs(obs);
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
-		Assert.assertTrue(thumbnail.exists());
+		Assertions.assertTrue(thumbnail.exists());
 
 		String thumbnailName = thumbnail.getName();
 		byte[] expectedBytes = new BaseComplexData(testHelper.decode(thumbnailName), ImageIO.read(thumbnail))
@@ -102,7 +103,7 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		byte[] actualBytes = BaseComplexData.getByteArray(obs.getComplexData());
 
 		// Verify
-		Assert.assertArrayEquals(expectedBytes, actualBytes);
+		Assertions.assertArrayEquals(expectedBytes, actualBytes);
 	}
 
 	@Test
@@ -116,13 +117,13 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 
 		File originalFile = new File(testHelper.encode(originalFilePath));
-		Assert.assertTrue(originalFile.exists());
+		Assertions.assertTrue(originalFile.exists());
 
 		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
-		Assert.assertFalse(thumbnail.exists());
+		Assertions.assertFalse(thumbnail.exists());
 
 		BufferedImage img = ImageIO.read(originalFile);
-		Assert.assertTrue(ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT >= Math.max(img.getHeight(), img.getWidth()));
+		Assertions.assertTrue(ImageAttachmentHandler.THUMBNAIL_MAX_HEIGHT >= Math.max(img.getHeight(), img.getWidth()));
 
 	}
 
@@ -137,17 +138,17 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 		String thumbnailFilePath = appendThumbnailSuffix(originalFilePath);
 
 		File originalFile = new File(testHelper.encode(originalFilePath));
-		Assert.assertTrue(originalFile.exists());
+		Assertions.assertTrue(originalFile.exists());
 
 		File thumbnail = new File(testHelper.encode(thumbnailFilePath));
-		Assert.assertFalse(thumbnail.exists()); // thumbnail should never have been created
+		Assertions.assertFalse(thumbnail.exists()); // thumbnail should never have been created
 
 		// Purge Obs
 		obs = Context.getObsService().getComplexObs(obs.getId(), AttachmentsConstants.ATT_VIEW_CRUD);
 		Context.getObsService().purgeObs(obs);
 
 		// Verify Deleted
-		Assert.assertFalse(originalFile.exists());
+		Assertions.assertFalse(originalFile.exists());
 	}
 
 	@Test
@@ -158,7 +159,7 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 
 		String originalFilePath = testHelper.getFilePathFromObs(obs);
 		File originalFile = new File(testHelper.encode(originalFilePath));
-		Assert.assertTrue(originalFile.exists());
+		Assertions.assertTrue(originalFile.exists());
 
 		byte[] expectedBytes = new BaseComplexData(testHelper.decode(originalFile.getName()),
 				ImageIO.read(originalFile)).asByteArray();
@@ -170,8 +171,8 @@ public class ImageAttachmentHandlerTest extends BaseModuleContextSensitiveTest {
 				AttachmentsConstants.ATT_VIEW_ORIGINAL);
 
 		// Verify
-		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obsThumbnailView.getComplexData()));
-		Assert.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obsOriginalView.getComplexData()));
+		Assertions.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obsThumbnailView.getComplexData()));
+		Assertions.assertArrayEquals(expectedBytes, BaseComplexData.getByteArray(obsOriginalView.getComplexData()));
 	}
 
 }

@@ -5,7 +5,7 @@ import static org.openmrs.module.attachments.AttachmentsContext.isMimeTypeHandle
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.attachments.AttachmentsConstants;

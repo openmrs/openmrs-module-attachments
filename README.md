@@ -19,8 +19,11 @@ cd openmrs-module-attachments
 mvn clean package
 ```
 ##### Runtime requirements & compatibility
-* [Core 2.3.0 and beyond](https://github.com/openmrs/openmrs-core)
-* [OpenMRS REST Web Services module 2.33.0 and beyond](https://github.com/openmrs/openmrs-module-webservices.rest)
+* [Core 3.0.0 and beyond](https://github.com/openmrs/openmrs-core)
+* [OpenMRS REST Web Services module 5.0.0 and beyond](https://github.com/openmrs/openmrs-module-webservices.rest)
+* Java 21 or later
+
+For OpenMRS 2.x, use version 4.x or earlier of this module.
 
 ----
 
