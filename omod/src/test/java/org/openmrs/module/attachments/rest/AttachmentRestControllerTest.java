@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.Random;
@@ -23,6 +24,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Concept;
+import org.openmrs.ConceptComplex;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -413,6 +416,26 @@ public class AttachmentRestControllerTest extends MainResourceControllerTest {
 		Assert.assertEquals(downloadResponse.getHeader("File-Name"), fileName);
 		Assert.assertEquals(downloadResponse.getHeader("File-Ext"), fileExtension);
 
+	}
+
+	@Test
+	public void getAttachmentBytes_shouldDownloadFileOfObsHandledByCoreBinaryDataHandler() throws Exception {
+
+		// Setup: a complex obs whose concept uses Core's BinaryDataHandler, not an
+		// Attachments handler (eg. a "PDF FILE" concept listed as an attachment)
+		Concept concept = Context.getConceptService().getConceptByName("OutOfAttachmentsTestComplex");
+		Assert.assertEquals("BinaryDataHandler", ((ConceptComplex) concept).getHandler());
+		Obs binaryObs = new Obs(Context.getPersonService().getPerson(2), concept, new Date(), null);
+		binaryObs.setComplexData(new ComplexData("report.pdf", randomData));
+		binaryObs = obsService.saveObs(binaryObs, null);
+
+		// Replay: same request as the Core Apps attachments UI
+		MockHttpServletResponse downloadResponse = handle(newGetRequest(getURI() + "/" + binaryObs.getUuid() + "/bytes",
+				new Parameter("view", AttachmentsConstants.ATT_VIEW_ORIGINAL)));
+
+		// Verify
+		Assert.assertArrayEquals(randomData, downloadResponse.getContentAsByteArray());
+		Assert.assertEquals("report.pdf", downloadResponse.getHeader("File-Name"));
 	}
 
 	@Test
